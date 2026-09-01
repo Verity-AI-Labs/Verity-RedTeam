@@ -20,6 +20,7 @@ from verity_core.scorecard import scorecard_path
 from verity_redteam import __version__
 from verity_redteam.config import RedTeamConfig, load_redteam_config
 from verity_redteam.judge import LlmJudge
+from verity_redteam.reporting import build_redteam_report
 from verity_redteam.runner import RedTeamRunner
 from verity_redteam.strategies import get_strategy
 from verity_redteam.validation.benchmarks import BENCHMARK_NAMES, resolve_benchmark
@@ -102,6 +103,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="directory of scorecard JSON files (default: config results_dir)",
     )
     report.add_argument("--json", action="store_true", help="emit JSON instead of text")
+    report.add_argument(
+        "--corpus",
+        action="store_true",
+        help=(
+            "summarize across all audited scorecards: alpha distribution, "
+            "domain and exploit-category breakdown, ranking, and VRC stats"
+        ),
+    )
     report.set_defaults(handler=_cmd_report)
 
     vrc = subcommands.add_parser(
@@ -341,6 +350,14 @@ def _cmd_report(args: argparse.Namespace, config: RedTeamConfig) -> int:
     except FileNotFoundError as exc:
         print(f"{PROGRAM}: {exc}", file=sys.stderr)
         return EXIT_ERROR
+
+    if args.corpus:
+        report = build_redteam_report(scorecards, results_dir=results_dir, vrc_dir=config.vrc_dir)
+        if args.json:
+            _emit(report.to_dict())
+            return EXIT_OK
+        print(report.to_text())
+        return EXIT_OK
 
     rows = []
     for card in scorecards:

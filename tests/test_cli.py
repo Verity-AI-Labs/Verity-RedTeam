@@ -27,6 +27,7 @@ def test_parser_requires_a_command() -> None:
     assert parser.parse_args(["batch", "--dry-run"]).dry_run is True
     assert parser.parse_args(["batch", "--domain", "code", "--resume"]).resume is True
     assert parser.parse_args(["vrc", "list", "corpus/task-1"]).command == "vrc"
+    assert parser.parse_args(["report", "--corpus"]).corpus is True
     parsed = parser.parse_args(["validate", "--benchmark", "terminal-wrench", "--dry-run"])
     assert parsed.command == "validate"
     assert parsed.benchmark == "terminal-wrench"
@@ -81,6 +82,31 @@ def test_report_flags_a_failed_precheck(tmp_path: Path, capsys: Any) -> None:
 def test_report_missing_dir_is_an_error(tmp_path: Path) -> None:
     code = main(["report", "--results-dir", str(tmp_path / "nope")])
     assert code == EXIT_ERROR
+
+
+def test_report_corpus_summarizes_alpha_and_categories(tmp_path: Path, capsys: Any) -> None:
+    card = Scorecard(env_id="env-a", metadata={"domain": "code"})
+    card.set_axis(
+        "V1",
+        0.5,
+        "verity-redteam",
+        evidence={
+            "n_trials": 8,
+            "n_successes": 4,
+            "strategy": "freeform",
+            "serious_alpha": 0.5,
+            "observed_categories": ["output-spoofing"],
+        },
+    )
+    (tmp_path / "env-a.json").write_text(json.dumps(card.to_dict()), encoding="utf-8")
+    code = main(["report", "--results-dir", str(tmp_path), "--corpus"])
+    captured = capsys.readouterr()
+    assert code == EXIT_OK
+    assert "Alpha distribution" in captured.out
+    assert "By domain" in captured.out
+    assert "output-spoofing" in captured.out
+    assert "env-a" in captured.out
+    assert "0.500" in captured.out
 
 
 def test_run_audits_one_corpus_entry(tmp_path: Path, monkeypatch: Any, capsys: Any) -> None:
