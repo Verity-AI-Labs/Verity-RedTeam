@@ -22,6 +22,8 @@ from verity_redteam.config import RedTeamConfig, load_redteam_config
 from verity_redteam.judge import LlmJudge
 from verity_redteam.runner import RedTeamRunner
 from verity_redteam.strategies import get_strategy
+from verity_redteam.validation.benchmarks import BENCHMARK_NAMES, resolve_benchmark
+from verity_redteam.validation.evaluate import evaluate_benchmark
 from verity_redteam.vrc import last_user_preview, load_vrc_entries
 
 logger = logging.getLogger(__name__)
@@ -116,6 +118,45 @@ def build_parser() -> argparse.ArgumentParser:
     vrc_list.add_argument("env_id", help="environment id as recorded on the VRC entries")
     vrc_list.add_argument("--json", action="store_true", help="dump the raw entries as JSON")
     vrc_list.set_defaults(handler=_cmd_vrc_list)
+
+    validate = subcommands.add_parser(
+        "validate",
+        help="score RedTeam against a labeled hackability benchmark",
+        description=(
+            "Run (or score) RedTeam against Terminal Wrench (recall at K<=4) "
+            "or ImpossibleBench (precision). Live audits need a model server "
+            "and Docker; --skip-run scores existing scorecards only."
+        ),
+    )
+    validate.add_argument(
+        "--benchmark",
+        required=True,
+        choices=BENCHMARK_NAMES,
+        help="terminal-wrench (recall@4, gate 60%) or impossiblebench (precision, gate 90%)",
+    )
+    validate.add_argument("--corpus", type=Path, help="corpus directory of YAML manifests")
+    validate.add_argument(
+        "--results-dir",
+        type=Path,
+        help="scorecard directory to write and/or read",
+    )
+    validate.add_argument("--json", action="store_true", help="emit JSON instead of text")
+    validate.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="print the labeled set and kill-gate, then exit before auditing",
+    )
+    validate.add_argument(
+        "--resume",
+        action="store_true",
+        help="skip envs that already have scorecards",
+    )
+    validate.add_argument(
+        "--skip-run",
+        action="store_true",
+        help="do not audit; evaluate scorecards already in --results-dir",
+    )
+    validate.set_defaults(handler=_cmd_validate)
 
     return parser
 
@@ -352,6 +393,95 @@ def _cmd_vrc_list(args: argparse.Namespace, config: RedTeamConfig) -> int:
         preview = last_user_preview(entry.trajectory)
         print(f"{entry.id}  {entry.exploit_type}  {entry.discovered_at.isoformat()}  {preview}")
     return EXIT_OK
+
+
+def _load_scorecards_optional(results_dir: Path) -> list[Any]:
+    try:
+        return load_scorecards(results_dir)
+    except FileNotFoundError:
+        return []
+
+
+def _print_validation_text(payload: dict[str, Any]) -> None:
+    k = payload.get("k")
+    metric = str(payload.get("metric") or "")
+    if metric == "recall":
+        label = f"recall@{k}"
+        value = payload.get("recall")
+    else:
+        label = "precision"
+        value = payload.get("precision_unrestricted")
+    gate = payload.get("gate")
+    status = "PASS" if payload.get("passed") else "FAIL"
+    print(f"benchmark: {payload.get('benchmark')}")
+    print(
+        f"labeled: {payload.get('n_labeled')}  scored: {payload.get('n_scored')}  "
+        f"auditable: {payload.get('n_auditable')}"
+    )
+    print(f"{label}: {float(value or 0):.3f}  gate: >= {float(gate or 0):.2f}  {status}")
+    print(
+        f"tp={payload.get('true_positives')} fp={payload.get('false_positives')} "
+        f"fn={payload.get('false_negatives')} tn={payload.get('true_negatives')} "
+        f"f1@{k}={float(payload.get('f1') or 0):.3f}"
+    )
+
+
+def _cmd_validate(args: argparse.Namespace, config: RedTeamConfig) -> int:
+    corpus_dir = Path(args.corpus or config.corpus_dir)
+    resolved = resolve_benchmark(corpus_dir, args.benchmark)
+    spec = resolved.spec
+    results_dir = Path(args.results_dir or config.results_dir)
+
+    if args.dry_run:
+        print(f"benchmark: {spec.name}")
+        print(f"metric: {spec.metric}" + (f"@{spec.k}" if spec.k else ""))
+        print(f"gate: >= {spec.gate:.2f}")
+        print(f"labeled: {len(resolved.env_ids)}  auditable: {len(resolved.auditable)}")
+        if spec.expected_count is not None:
+            print(f"expected: {spec.expected_count}")
+        if resolved.catalog_only:
+            print("catalog_only: true  (no Core adapter; cannot live-audit)")
+        for index, manifest in enumerate(resolved.manifests):
+            if index:
+                print()
+            _print_resolved_spec(manifest)
+        return EXIT_OK
+
+    should_run = bool(resolved.auditable) and not args.skip_run and not resolved.catalog_only
+    if should_run:
+        config.ensure_dirs()
+        Path(results_dir).mkdir(parents=True, exist_ok=True)
+        with ModelClient.from_config(config.core) as client:
+            runner = _build_runner(config, client)
+            batch = run_batch(
+                list(resolved.auditable),
+                runner.audit,
+                results_dir=results_dir,
+                resume=args.resume,
+                model_client=client,
+            )
+        if batch.interrupted:
+            print(f"{PROGRAM}: validation interrupted", file=sys.stderr)
+            return EXIT_ERROR
+
+    scorecards = _load_scorecards_optional(results_dir)
+    if spec.metric == "precision" and not any(
+        card.env_id in set(resolved.env_ids) for card in scorecards
+    ):
+        print(
+            f"{PROGRAM}: {spec.name} has no audited scorecards in {results_dir}. "
+            "ImpossibleBench is catalog-only in Verity-Corpus until a Core adapter "
+            "exists; pass --results-dir with per-instance audits to compute precision.",
+            file=sys.stderr,
+        )
+        return EXIT_ERROR
+
+    payload = evaluate_benchmark(resolved, scorecards)
+    if args.json:
+        _emit(payload)
+    else:
+        _print_validation_text(payload)
+    return EXIT_OK if payload["passed"] else EXIT_ERROR
 
 
 def main(argv: Sequence[str] | None = None) -> int:

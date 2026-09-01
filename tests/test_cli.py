@@ -27,6 +27,10 @@ def test_parser_requires_a_command() -> None:
     assert parser.parse_args(["batch", "--dry-run"]).dry_run is True
     assert parser.parse_args(["batch", "--domain", "code", "--resume"]).resume is True
     assert parser.parse_args(["vrc", "list", "corpus/task-1"]).command == "vrc"
+    parsed = parser.parse_args(["validate", "--benchmark", "terminal-wrench", "--dry-run"])
+    assert parsed.command == "validate"
+    assert parsed.benchmark == "terminal-wrench"
+    assert parsed.dry_run is True
 
 
 def test_report_lists_v1_from_scorecards(tmp_path: Path, capsys: Any) -> None:
@@ -310,3 +314,176 @@ def test_vrc_list_json_dumps_raw_entries(tmp_path: Path, capsys: Any) -> None:
     assert payload[0]["id"] == entry.id
     assert payload[0]["exploit_type"] == "freeform"
     assert payload[0]["trajectory"][0]["content"] == "bypass"
+
+
+_TW_VALIDATE_YAML = """
+source_defaults:
+  type: git
+  url: https://github.com/few-sh/terminal-wrench
+  commit: abc
+entries:
+  - name: "5"
+    path: tasks/5/claude-opus-4.6/original_task
+    domain: {category: terminal}
+    adapter: terminal
+  - name: "8"
+    path: tasks/8/claude-opus-4.6/original_task
+    domain: {category: terminal}
+    adapter: terminal
+"""
+
+_IB_VALIDATE_YAML = """
+entries:
+  - name: impossible-swebench-harness
+    source:
+      type: git
+      url: https://github.com/safety-research/impossiblebench
+      commit: abc
+      path: src/impossiblebench/swebench_tasks.py
+    domain: {category: code}
+    adapter: docker_test
+    status: catalog
+  - name: impossible-livecodebench-harness
+    source:
+      type: git
+      url: https://github.com/safety-research/impossiblebench
+      commit: abc
+      path: src/impossiblebench/livecodebench_tasks.py
+    domain: {category: code}
+    adapter: docker_test
+    status: catalog
+"""
+
+
+def _write_v1_card(results: Path, env_id: str, *, hack_attempts: list[int]) -> None:
+    from verity_core.scorecard import scorecard_path
+
+    card = Scorecard(env_id=env_id)
+    n_successes = len(hack_attempts)
+    card.set_axis(
+        "V1",
+        1.0 if n_successes else 0.0,
+        "verity-redteam",
+        evidence={
+            "n_trials": 4,
+            "n_successes": n_successes,
+            "hack_attempts": hack_attempts,
+            "strategy": "freeform",
+        },
+    )
+    card.to_json(scorecard_path(results, env_id))
+
+
+def test_validate_dry_run_lists_the_labeled_set(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: Any
+) -> None:
+    corpus = tmp_path / "manifests"
+    corpus.mkdir()
+    (corpus / "terminal_wrench.yaml").write_text(_TW_VALIDATE_YAML, encoding="utf-8")
+
+    def boom(*args: object, **kwargs: object) -> None:
+        raise AssertionError("dry-run must not open a model client")
+
+    monkeypatch.setattr("verity_redteam.cli.ModelClient.from_config", boom)
+    code = main(
+        ["validate", "--benchmark", "terminal-wrench", "--corpus", str(corpus), "--dry-run"]
+    )
+    captured = capsys.readouterr()
+    assert code == EXIT_OK
+    assert "benchmark: terminal-wrench" in captured.out
+    assert "metric: recall@4" in captured.out
+    assert "labeled: 2" in captured.out
+
+
+def test_validate_skip_run_reports_recall_against_scorecards(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: Any
+) -> None:
+    from verity_redteam.validation.benchmarks import TERMINAL_WRENCH, resolve_benchmark
+
+    corpus = tmp_path / "manifests"
+    corpus.mkdir()
+    (corpus / "terminal_wrench.yaml").write_text(_TW_VALIDATE_YAML, encoding="utf-8")
+    results = tmp_path / "results"
+    resolved = resolve_benchmark(corpus, TERMINAL_WRENCH)
+    for env_id in resolved.env_ids:
+        _write_v1_card(results, env_id, hack_attempts=[0])
+
+    def boom(*args: object, **kwargs: object) -> None:
+        raise AssertionError("skip-run must not open a model client")
+
+    monkeypatch.setattr("verity_redteam.cli.ModelClient.from_config", boom)
+    code = main(
+        [
+            "validate",
+            "--benchmark",
+            "terminal-wrench",
+            "--corpus",
+            str(corpus),
+            "--results-dir",
+            str(results),
+            "--skip-run",
+        ]
+    )
+    captured = capsys.readouterr()
+    assert code == EXIT_OK
+    assert "PASS" in captured.out
+    assert "recall@4: 1.000" in captured.out
+
+
+def test_validate_impossiblebench_without_scorecards_is_an_error(
+    tmp_path: Path, capsys: Any
+) -> None:
+    corpus = tmp_path / "manifests"
+    corpus.mkdir()
+    (corpus / "impossiblebench.yaml").write_text(_IB_VALIDATE_YAML, encoding="utf-8")
+    code = main(
+        [
+            "validate",
+            "--benchmark",
+            "impossiblebench",
+            "--corpus",
+            str(corpus),
+            "--results-dir",
+            str(tmp_path / "results"),
+        ]
+    )
+    captured = capsys.readouterr()
+    assert code == EXIT_ERROR
+    assert "catalog-only" in captured.err
+
+
+def test_validate_impossiblebench_precision_from_scorecards(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: Any
+) -> None:
+    from verity_redteam.validation.benchmarks import IMPOSSIBLEBENCH, resolve_benchmark
+
+    corpus = tmp_path / "manifests"
+    corpus.mkdir()
+    (corpus / "impossiblebench.yaml").write_text(_IB_VALIDATE_YAML, encoding="utf-8")
+    results = tmp_path / "results"
+    resolved = resolve_benchmark(corpus, IMPOSSIBLEBENCH)
+    for env_id in resolved.env_ids:
+        _write_v1_card(results, env_id, hack_attempts=[])
+
+    def boom(*args: object, **kwargs: object) -> None:
+        raise AssertionError("catalog-only ImpossibleBench must not live-audit")
+
+    monkeypatch.setattr("verity_redteam.cli.ModelClient.from_config", boom)
+    code = main(
+        [
+            "validate",
+            "--benchmark",
+            "impossiblebench",
+            "--corpus",
+            str(corpus),
+            "--results-dir",
+            str(results),
+            "--json",
+        ]
+    )
+    captured = capsys.readouterr()
+    assert code == EXIT_OK
+    payload = json.loads(captured.out)
+    assert payload["benchmark"] == "impossiblebench"
+    assert payload["precision_unrestricted"] == 1.0
+    assert payload["passed"] is True
