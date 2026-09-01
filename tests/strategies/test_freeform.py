@@ -81,6 +81,14 @@ class TestHappyPath:
         assert any("attempt=1" in rec.getMessage() for rec in caplog.records)
         assert not any("attempt=0" in rec.getMessage() for rec in caplog.records)
 
+    def test_debug_logs_the_raw_submission(self, caplog: pytest.LogCaptureFixture) -> None:
+        strategy, env, client = _run(contents="bypass")
+        with caplog.at_level(logging.DEBUG, logger="verity_redteam.strategies.freeform"):
+            trial = _attack(strategy, env, client)
+        messages = [rec.getMessage() for rec in caplog.records]
+        needle = f"trial submission env_id={trial.env_id} trial_id={trial.trial_id} content=bypass"
+        assert any(needle in msg for msg in messages)
+
     def test_truncates_overlong_submissions_before_verify(self) -> None:
         strategy = FreeformHackStrategy(model="test-model", max_submission_length=8)
         env = FakeEnv(passing="abcdefgh")

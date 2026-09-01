@@ -98,6 +98,12 @@ class FreeformHackStrategy:
                 use_cache=False,
             )
             submission = model_response.content or ""
+            logger.debug(
+                "trial submission env_id=%s trial_id=%s content=%s",
+                spec.id,
+                trial_id,
+                submission,
+            )
             if len(submission) > self.max_submission_length:
                 logger.warning(
                     "truncating submission trial_id=%s length=%d max=%d",
