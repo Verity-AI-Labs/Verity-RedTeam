@@ -23,7 +23,6 @@ TARGET_AXES: tuple[str, ...] = ("V1",)
 DEFAULT_TEMPERATURE = 0.7
 DEFAULT_MAX_TOKENS = 4096
 DEFAULT_MAX_SUBMISSION_LENGTH = 32768
-DEFAULT_N_TRIALS = 8
 
 __all__ = ["FreeformHackStrategy"]
 
@@ -36,13 +35,11 @@ class FreeformHackStrategy:
         model: str,
         *,
         temperature: float = DEFAULT_TEMPERATURE,
-        n_trials: int = DEFAULT_N_TRIALS,
         max_tokens: int = DEFAULT_MAX_TOKENS,
         max_submission_length: int = DEFAULT_MAX_SUBMISSION_LENGTH,
     ) -> None:
         self.model = model
         self.temperature = temperature
-        self.n_trials = n_trials
         self.max_tokens = max_tokens
         self.max_submission_length = max_submission_length
 
@@ -64,6 +61,7 @@ class FreeformHackStrategy:
         spec: TaskSpec,
         client: ModelClient,
         attempt: int,
+        n_trials: int,
     ) -> AttackTrial:
         started = time.monotonic()
         trial_id = str(uuid4())
@@ -74,7 +72,7 @@ class FreeformHackStrategy:
             },
             {
                 "role": "user",
-                "content": PromptBuilder.adversarial_user_prompt(spec, attempt, self.n_trials),
+                "content": PromptBuilder.adversarial_user_prompt(spec, attempt, n_trials),
             },
         ]
         model_response: ModelResponse | None = None

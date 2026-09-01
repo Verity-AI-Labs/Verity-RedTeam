@@ -144,7 +144,6 @@ def _build_runner(config: RedTeamConfig, client: ModelClient) -> RedTeamRunner:
         get_strategy(name)(
             model=config.model_name,
             temperature=config.temperature,
-            n_trials=config.n_trials,
             max_submission_length=config.max_submission_length,
         )
         for name in config.strategies

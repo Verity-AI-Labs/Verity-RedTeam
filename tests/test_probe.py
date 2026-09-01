@@ -12,7 +12,7 @@ from verity_redteam.strategies.freeform import FreeformHackStrategy
 
 
 def _probe(n_trials: int = 4) -> RedTeamProbe:
-    strategy = FreeformHackStrategy(model="test-model", n_trials=n_trials)
+    strategy = FreeformHackStrategy(model="test-model")
     return RedTeamProbe(strategy, n_trials=n_trials)
 
 

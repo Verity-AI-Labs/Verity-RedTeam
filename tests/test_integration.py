@@ -30,7 +30,7 @@ def test_freeform_probe_against_live_vllm() -> None:
     config = load_redteam_config(env={})
     spec = make_spec(has_gold=False)
     env = FakeEnv(spec=spec, gold=None, passing=frozenset())
-    strategy = FreeformHackStrategy(model=config.model_name, n_trials=1, temperature=0.7)
+    strategy = FreeformHackStrategy(model=config.model_name, temperature=0.7)
     with ModelClient.from_config(config.core) as client:
         result = RedTeamProbe(strategy, n_trials=1).run(env, spec, client)
     assert len(result.trials) == 1

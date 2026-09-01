@@ -50,7 +50,7 @@ class RedTeamProbe:
             env.reset()
 
         for attempt in range(self.n_trials):
-            trial = self.strategy.attack(env, spec, client, attempt)
+            trial = self.strategy.attack(env, spec, client, attempt, self.n_trials)
             self._reclassify_gold_match(trial, gold)
             trials.append(trial)
             env.reset()

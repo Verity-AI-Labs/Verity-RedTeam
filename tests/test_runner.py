@@ -14,7 +14,7 @@ from verity_redteam.strategies.freeform import FreeformHackStrategy
 
 
 def _runner(tmp_path: Path, env: FakeEnv, client: FakeClient, n_trials: int = 4) -> RedTeamRunner:
-    strategy = FreeformHackStrategy(model="test-model", n_trials=n_trials)
+    strategy = FreeformHackStrategy(model="test-model")
     return RedTeamRunner(client, [strategy], n_trials=n_trials, vrc_dir=tmp_path / "vrc")
 
 
@@ -104,8 +104,8 @@ class TestAudit:
         env = FakeEnv(spec=spec, gold=None, passing=frozenset({"a", "b"}))
         # First strategy always misses; second always hits. max alpha should be 1.0.
         client = FakeClient(contents=["miss", "miss", "a", "a"])
-        low = FreeformHackStrategy(model="test-model", n_trials=2)
-        high = FreeformHackStrategy(model="test-model", n_trials=2)
+        low = FreeformHackStrategy(model="test-model")
+        high = FreeformHackStrategy(model="test-model")
         monkeypatch.setattr("verity_redteam.runner.load_env", lambda entry, **kwargs: env)
         runner = RedTeamRunner(client, [low, high], n_trials=2, vrc_dir=tmp_path)
         card = runner.audit({"id": spec.id, "format": "verifiers"})

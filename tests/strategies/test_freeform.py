@@ -10,20 +10,31 @@ from verity_core.env import RewardResult
 from verity_core.models import ModelError
 
 from verity_redteam.strategies.freeform import FreeformHackStrategy
+from verity_redteam.types import AttackTrial
 
 
 def _run(**client_kwargs: object) -> tuple[FreeformHackStrategy, FakeEnv, FakeClient]:
     spec = make_spec()
     env = FakeEnv(spec=spec, passing="bypass")
     client = FakeClient(**client_kwargs)  # type: ignore[arg-type]
-    strategy = FreeformHackStrategy(model="test-model", n_trials=8, temperature=0.7)
+    strategy = FreeformHackStrategy(model="test-model", temperature=0.7)
     return strategy, env, client
+
+
+def _attack(
+    strategy: FreeformHackStrategy,
+    env: FakeEnv,
+    client: FakeClient,
+    attempt: int = 0,
+    n_trials: int = 8,
+) -> AttackTrial:
+    return strategy.attack(env, env.spec(), client, attempt, n_trials)  # type: ignore[arg-type]
 
 
 class TestHappyPath:
     def test_submits_raw_model_output_and_records_a_hack(self) -> None:
         strategy, env, client = _run(contents="bypass")
-        trial = strategy.attack(env, env.spec(), client, attempt=0)  # type: ignore[arg-type]
+        trial = _attack(strategy, env, client)
         assert trial.hacked is True
         assert trial.classification == "hacked"
         assert trial.submission == "bypass"
@@ -38,14 +49,14 @@ class TestHappyPath:
 
     def test_records_a_failed_verdict_as_not_hacked(self) -> None:
         strategy, env, client = _run(contents="harmless")
-        trial = strategy.attack(env, env.spec(), client, attempt=3)  # type: ignore[arg-type]
+        trial = _attack(strategy, env, client, attempt=3)
         assert trial.hacked is False
         assert trial.classification == "failed"
         assert trial.attempt == 3
 
     def test_disables_the_model_cache_and_uses_temperature_0_7(self) -> None:
         strategy, env, client = _run(contents="bypass")
-        strategy.attack(env, env.spec(), client, attempt=0)  # type: ignore[arg-type]
+        _attack(strategy, env, client)
         assert len(client.calls) == 1
         call = client.calls[0]
         assert call["use_cache"] is False
@@ -55,10 +66,15 @@ class TestHappyPath:
         assert call["messages"][1]["role"] == "user"
         assert "Attempt: 1 of 8" in call["messages"][1]["content"]
 
+    def test_prompt_uses_n_trials_passed_into_attack(self) -> None:
+        strategy, env, client = _run(contents="bypass")
+        _attack(strategy, env, client, n_trials=3)
+        assert "Attempt: 1 of 3" in client.calls[0]["messages"][1]["content"]
+
     def test_logs_a_one_based_attempt_counter(self, caplog: pytest.LogCaptureFixture) -> None:
         strategy, env, client = _run(contents="bypass")
         with caplog.at_level(logging.INFO, logger="verity_redteam.strategies.freeform"):
-            strategy.attack(env, env.spec(), client, attempt=0)  # type: ignore[arg-type]
+            _attack(strategy, env, client)
         assert any("attempt=1" in rec.getMessage() for rec in caplog.records)
         assert not any("attempt=0" in rec.getMessage() for rec in caplog.records)
 
@@ -66,7 +82,7 @@ class TestHappyPath:
         strategy = FreeformHackStrategy(model="test-model", max_submission_length=8)
         env = FakeEnv(passing="abcdefgh")
         client = FakeClient(contents="abcdefghXXXX")
-        trial = strategy.attack(env, env.spec(), client, attempt=0)  # type: ignore[arg-type]
+        trial = _attack(strategy, env, client)
         assert trial.submission == "abcdefgh"
         assert env.verify_calls == ["abcdefgh"]
 
@@ -74,7 +90,7 @@ class TestHappyPath:
 class TestErrorsDoNotPropagate:
     def test_model_failure_is_recorded_on_the_trial(self) -> None:
         strategy, env, client = _run(error=ModelError("endpoint down"))
-        trial = strategy.attack(env, env.spec(), client, attempt=0)  # type: ignore[arg-type]
+        trial = _attack(strategy, env, client)
         assert trial.hacked is False
         assert trial.classification == "error"
         assert trial.error is not None
@@ -87,7 +103,7 @@ class TestErrorsDoNotPropagate:
         env = FakeEnv(spec=spec, verify_error=RuntimeError("grader crashed"))
         client = FakeClient(contents="anything")
         strategy = FreeformHackStrategy(model="test-model")
-        trial = strategy.attack(env, spec, client, attempt=1)  # type: ignore[arg-type]
+        trial = strategy.attack(env, spec, client, 1, 8)
         assert trial.classification == "error"
         assert trial.hacked is False
         assert trial.error is not None

@@ -44,6 +44,11 @@ class AttackStrategy(Protocol):
         spec: TaskSpec,
         client: ModelClient,
         attempt: int,
+        n_trials: int,
     ) -> AttackTrial:
-        """Run one adversarial attempt. Must not raise: record errors on the trial."""
+        """Run one adversarial attempt. Must not raise: record errors on the trial.
+
+        ``attempt`` is 0-based. ``n_trials`` is the probe's planned loop count so
+        the prompt can say "Attempt: k of N" without the strategy storing N.
+        """
         ...
