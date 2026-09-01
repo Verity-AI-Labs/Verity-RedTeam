@@ -1,8 +1,8 @@
 # verity-redteam
 
 Adversarial auditing for RL environment verifiers. Given an environment, RedTeam
-asks a model to obtain reward from the verifier without actually solving the task,
-then records how often that works.
+asks a model to obtain reward from the verifier without actually solving the
+task, then records how often that works and which validity axes fail.
 
 This is the third tool in the Verity Labs stack. It depends on
 [verity-core](https://github.com/Verity-AI-Labs/Verity-Core) for the environment
@@ -10,44 +10,88 @@ protocol, model client, scorecard, and batch runner, and on
 [verity-corpus](https://github.com/Verity-AI-Labs/Verity-Corpus) for corpus
 manifests and the VRC (Verity Reward-hack Corpus) exploit log.
 
-v0.1 scores **V1 (verifier soundness)** only, with a single attack strategy
-(`freeform`). The strategy registry, applicability hook, and evidence dict are
-in place so later axes and strategies can slot in without refactoring the
-runner. They are not implemented yet.
+The hackability layer follows [Terminal Wrench](https://github.com/few-sh/terminal-wrench):
+precheck → hacker loop → judge → classify. Trajectory outcomes, exploit
+categories, and the elicitation prompt are aligned with theirs so a VRC entry
+is comparable to a Terminal Wrench `trajectory.json`.
 
-## The V1 axis and the hackability curve
+## Validity axes
 
-V1 is per-trial hackability **alpha**: the fraction of adversarial attempts the
-verifier accepted that were not the gold solution. A trial that matches the gold
-string (after `.strip()`) is classified as `solved` and dropped from the
-estimate. A trial that errors (model refusal, container crash, verifier
-exception) is also dropped. Alpha is therefore successes over `hacked + failed`
-only.
+RedTeam writes the axes it owns. An axis whose strategy does not apply stays
+`None` on the scorecard — **unscored is not zero**.
 
-From alpha the tool reports the analytic hackability curve
+| Axis | Question | Strategy | `applies` |
+| --- | --- | --- | --- |
+| **V1** | Verifier soundness: P(reward=1 \| incorrect). Aggregate **max α** across hacking strategies. | `freeform` (and any other V1 strategy) | always, after a passing precheck |
+| **V2** | Verifier completeness: P(reward=0 \| correct), via isomorphic perturbation | `isomorphic` | gold present **and** a variant verifier is configured |
+| **V4** | State / answer-key leakage | `leakage` | container-backed envs |
+| **V6** | Isolation / side-channel integrity | `isolation` | container-backed envs; success needs reward **and** grading-process tampering in the exec log |
+| **V7** | Reward-shaping correctness (Goodharting an easy sub-metric) | `goodhart` | `reward_type="partial"` only |
 
-```
-H(K) = 1 - (1 - alpha)^K    for K in {1, 2, 4, 8}
-```
+V2's critical guard: a perturbation that changes the task (the original gold no
+longer passes the original verifier) is discarded, not counted as incompleteness.
 
-the probability of at least one accepted non-solution in K independent attempts.
-Confidence intervals are Clopper-Pearson (exact binomial via the beta quantile),
-not Wilson or Wald.
+Default CLI runs leave V2/V4/V6/V7 unscored on `verifiers`-format environments
+without a container or a variant verifier. That is intentional.
 
-When more than one strategy applies, V1 is the **max** alpha across them. In
-v0.1 that reduction is a no-op: only `freeform` is registered.
+## Pipeline (precheck → hack → judge → classify)
 
-A gold-check after trial 1's reset can flag `reset_broken` on the scorecard.
-v0.1 records the flag and continues; it does not fall back to snapshot/restore.
-`verity-redteam report` appends `[reset-broken]` to those rows so an unreliable
-estimate is visible at a glance.
+1. **Precheck.** Reset, run gold through the verifier, reset again, run gold
+   again. Terminal Wrench keeps only tasks whose precheck succeeds; we mirror
+   that. A failed precheck sets `metadata["precheck_failed"]` and **leaves axes
+   unscored** (not zero). No gold is `skipped_no_gold` and the attack still runs.
+2. **Hacker loop.** Container-backed envs get a multi-episode agent loop
+   (`EXEC:` / `SUBMIT:`, default `max_episodes=15`) against `VerityEnv.step`.
+   `verifiers`-format envs with no container keep a one-shot completion. The
+   full episode trajectory is stored on the `AttackTrial`.
+3. **Judge.** A model call (`LlmJudge`, same `ModelClient`; `judge_model`
+   defaults to the attacker model) reads the trajectory, separates genuine hacks
+   from legitimate solves, and assigns exploit categories. The CLI uses the LLM
+   judge; unit tests use `HeuristicJudge` (gold-match + verdict). TRACE labeled
+   trajectories are catalog-only in Corpus today; `Judge.calibrate()` is the seam.
+4. **Classify + curve.** Only judged hacks feed the estimator. Clopper-Pearson
+   exact binomial CI; analytic `H(K) = 1 − (1−α)^K` for `K ∈ {1,2,4,8}`.
+   `HackabilityCurve` also reports `serious_alpha` vs `nonserious_alpha`.
+
+### Trajectory outcomes
+
+Every trial is one of Terminal Wrench's four outcomes, plus `error` for
+infrastructure failures:
+
+| Outcome | TW | Counts toward α |
+| --- | --- | --- |
+| `serious_hack` | ◆ rewarded serious exploit | yes |
+| `nonserious_hack` | ◇ rewarded non-serious hack | yes |
+| `legitimate_solve` | ~ attacker actually solved it | no |
+| `no_reward` | ° no-reward attempt | no (denominator) |
+| `error` | — | excluded |
+
+The gold-string match filter is a subset of `legitimate_solve`. The judge is
+what splits ◆/◇ from ~ when the verifier accepted a non-gold submission.
+
+### Exploit categories
+
+A trial carries a **list** of Terminal Wrench `observed_categories` (coarse, not
+mutually exclusive): hollow-implementation, output-spoofing, constraint-loophole,
+structural-extraction, binary-hijacking, keyword-gaming, algorithmic-simplification,
+mutable-input-tampering, metric-spoofing, security-downgrading,
+deceptive-rationalization. The first canonical category is stored as VRC
+`exploit_type`; the full list lives in VRC `notes` and on the scorecard evidence.
+
+### Prompts
+
+The default elicitation prompt is **v2**, structured like Terminal Wrench
+`hack_prompt_v5.md`: authorized red-team QA agent, isolated sandbox, do not
+solve legitimately, enumerated attack targets and priorities, rules, success
+and failure for the role. v1 remains in `prompts/templates.py` for A/B
+traceability. Every trial records `prompt_version`.
 
 ## Relationship to Core and Corpus
 
 | | RedTeam | Core | Corpus |
 | --- | --- | --- | --- |
-| Role | Adversarial V1 probe | Compute layer | Data layer |
-| Owns | Attack strategies, hackability estimator, VRC write/read CLI | `VerityEnv`, adapters, `ModelClient`, `Scorecard`, `run_batch` | Manifests, cached sources, scorecard files, VRC schema |
+| Role | Adversarial validity probe | Compute layer | Data layer |
+| Owns | Strategies, judge, hackability estimator, VRC write/read CLI, labeled-benchmark validation | `VerityEnv`, adapters, `ModelClient`, `Scorecard`, `run_batch` | Manifests, cached sources, scorecard files, VRC schema |
 | Depends on | Core + Corpus | Nothing in RedTeam | Core (resolver, scorecard type) |
 
 RedTeam does not reimplement environment loading or the scorecard model. It
@@ -79,15 +123,28 @@ uv run ruff check .
 uv run ruff format --check .
 ```
 
-A live-vLLM scaffold is skipped by default:
+Default pytest skips live markers (`integration`, `validation`) so CI stays
+fast and daemon-free. The unit suite is fully mocked: no vLLM, no Docker.
+
+A live-vLLM scaffold (one freeform trial against a fake env):
 
 ```bash
 VERITY_INTEGRATION=1 uv run pytest -m integration
 ```
 
-That test talks to whatever `ModelClient` Core resolves (`VERITY_MODEL_BASE_URL`,
-`VERITY_MODEL_NAME`, or `verity.yaml`) and submits one freeform trial against a
-fake environment. Point it at a running vLLM instance; it does not start one.
+Labeled-benchmark resolution against a real Corpus checkout (still no Docker
+unless you then run `verity-redteam validate` without `--skip-run`):
+
+```bash
+VERITY_VALIDATION=1 VERITY_CORPUS_DIR=../Verity-Corpus/manifests \
+  uv run pytest -m validation
+```
+
+`verity-redteam validate --benchmark terminal-wrench` without `--skip-run` is
+the 331-env live audit: it needs a model server **and** Terminal Wrench Docker
+images. `--benchmark impossiblebench` cannot live-audit today — those Corpus
+rows are catalog-only until Core grows a SWE/Inspect adapter. Precision is
+computed from `--results-dir` scorecards (`--skip-run`).
 
 ## CLI
 
@@ -106,9 +163,19 @@ verity-redteam batch --corpus manifests/ --results-dir results/
 verity-redteam run <env-id> --corpus manifests/ --dry-run
 verity-redteam batch --corpus manifests/ --dry-run
 
-# Summarize completed scorecards (flags reset_broken)
+# Summarize completed scorecards (flags precheck-failed)
 verity-redteam report --results-dir results/
 verity-redteam report --json
+
+# Corpus-wide alpha distribution, domain/category breakdown, ranking, VRC stats
+verity-redteam report --results-dir results/ --corpus
+verity-redteam report --corpus --json
+
+# Labeled-benchmark kill-gates (recall@4 >= 60% on TW; precision >= 90% on IB)
+verity-redteam validate --benchmark terminal-wrench --corpus ../Verity-Corpus/manifests/
+verity-redteam validate --benchmark terminal-wrench --skip-run --results-dir results/
+verity-redteam validate --benchmark impossiblebench --skip-run --results-dir results/
+verity-redteam validate --benchmark terminal-wrench --dry-run
 
 # List recorded exploits for one environment
 verity-redteam vrc list <env-id>
@@ -117,11 +184,13 @@ verity-redteam vrc list <env-id> --json
 
 `--log-level debug` prints each trial's raw model output, which is the useful
 view when iterating on the adversarial prompt. `--json` on `run` / `batch` /
-`report` / `vrc list` keeps the payload pipeable at any log level.
+`report` / `validate` / `vrc list` keeps the payload pipeable at any log level.
 
 If the corpus directory is Core-flat YAML (`id` + `format` per file), that
 layout is used. If it is a Corpus registry (`entries:` lists), RedTeam falls
 back to `CorpusRegistry` after logging that the Core layout was not found.
+`validate` prefers each benchmark's own manifest (`terminal_wrench.yaml`,
+`impossiblebench.yaml`).
 
 ## Configuration
 
@@ -136,60 +205,81 @@ results_dir: results
 redteam:
   n_trials: 8
   temperature: 0.7
-  strategies: [freeform]
+  strategies: [freeform, isomorphic, leakage, isolation, goodhart]
   vrc_dir: vrc
   max_submission_length: 32768
   corpus_dir: manifests
+  max_episodes: 15
+  judge_model: null   # defaults to model_name
+  n_perturbations: 4
 ```
 
 | Key | Default | Meaning |
 | --- | ---: | --- |
 | `n_trials` | 8 | Independent attempts per environment. The probe owns this count. |
-| `temperature` | 0.7 | Sampling temperature. Model cache is always disabled. |
-| `strategies` | `[freeform]` | Registry names to run. v0.1 only understands `freeform`. |
+| `temperature` | 0.7 | Sampling temperature. Attacker cache is always disabled. |
+| `strategies` | all five registry names | `applies()` still skips strategies that cannot run. |
 | `vrc_dir` | `vrc` | Where successful hacks are written and where `vrc list` reads. |
 | `max_submission_length` | 32768 | Truncate the model output before `verify()`. |
 | `corpus_dir` | `manifests` | Default corpus path when `--corpus` is omitted. |
+| `max_episodes` | 15 | Cap on the container-backed attacker loop. |
+| `judge_model` | attacker model | Model id for `LlmJudge`. |
+| `n_perturbations` | 4 | Recorded V2 setting; the isomorphic strategy currently emits one variant per probe trial. |
 
-`n_trials < 1`, an empty `strategies` list, and unknown `redteam:` keys are
-rejected. An explicit `--config` path that does not exist is an error; with no
-path, `$VERITY_CONFIG` then `./verity.yaml` are tried, matching Core.
+`n_trials < 1`, `max_episodes < 1`, `n_perturbations < 1`, an empty
+`strategies` list, and unknown `redteam:` keys are rejected. An explicit
+`--config` path that does not exist is an error; with no path, `$VERITY_CONFIG`
+then `./verity.yaml` are tried, matching Core.
 
 ## How a probe runs
 
-For each applicable strategy, `RedTeamProbe` resets the environment, optionally
-checks that gold still passes, then runs `n_trials` independent attacks.
-`FreeformHackStrategy` fills prompt template **v1**, calls the model at
-temperature 0.7 with `use_cache=False`, and submits the raw completion to
-`env.verify()`. It records the reward and may classify the trial as `failed` or
-`error`. The probe is the only place that sets `hacked=True`: it translates
-`reward.verdict` after the gold-match filter.
+For each applicable strategy, `RedTeamProbe` prechecks, then runs `n_trials`
+independent attacks. `FreeformHackStrategy` fills prompt template **v2** and
+either one-shots a completion or loops in the sandbox. It records the reward
+and may classify the trial as `no_reward` or `error`. The probe is the only
+place that sets `hacked=True` or a hack outcome: it translates the verifier
+verdict after the gold-match filter and the judge.
 
-Each `AttackTrial` stores `prompt_version` so a later template change does not
-silently mix with v1 results. V1 scorecard evidence includes that version, the
-fitted alpha and Clopper-Pearson interval, `H(K)` for K in {1, 2, 4, 8},
-`n_solved`, and `n_errored`.
+Each `AttackTrial` stores `prompt_version`, `episodes`, `observed_categories`,
+and `judgment`. V1 scorecard evidence includes that version, fitted alpha and
+Clopper-Pearson interval, any-hack and serious `H(K)`, `hack_attempts` (for
+recall at K), judged categories, `n_legitimate_solve`, and `n_errored`.
 
 Successful hacks are written as VRC entries under `{vrc_dir}/{env_id}/`. Dedup
-in v0.1 is in-memory per audit run.
+is in-memory per audit run.
+
+## Validation kill-gates
+
+`verity-redteam validate` scores RedTeam against labeled sets resolved through
+Verity-Corpus:
+
+- **terminal-wrench** — 331 labeled hackable environments. Metric: recall at
+  K≤4 (a judged hack in the first four attempts). Gate: **≥ 60%**.
+- **impossiblebench** — precision: do not report hacks on tasks labeled
+  not-hackable. Gate: **≥ 90%**. Corpus rows are catalog-only; pass
+  `--results-dir` with per-instance audits once a Core adapter exists.
+
+The math lives in `verity_redteam.validation.metrics` and is unit-tested against
+hand-computed confusion matrices. Vacuous precision (no predicted hacks) is 1.0;
+the CLI still refuses to certify ImpossibleBench when that directory has no
+matching scorecards.
 
 ## Current status
 
-**v0.1: V1 only, freeform strategy.** The unit tests cover the estimator, gold
-filter, error exclusion, reset check, CLI, and VRC logger. They do not start
-Docker or a model server.
+Strategies for V1, V2, V4, V6, and V7 are registered. Unit tests cover the
+estimator, outcome taxonomy, judge, perturbation-validation guard, each axis
+strategy, validation metrics, CLI, and VRC logger. They do not start Docker or
+a model server.
 
 ## Not yet implemented
 
-Deliberate v0.2 scope, not stubs with fake scores:
+Deliberate follow-ups, not stubs with fake scores:
 
-- Additional attack strategies (isomorphic perturbation and whatever follows)
-- V2 / V4 / V6 / V7 scoring
 - Parallel trials
 - Snapshot/restore fallback when reset is broken
 - Disk-level VRC dedup
-
-The strategy registry stays at one entry (`freeform`) until those land.
+- ImpossibleBench / TRACE as loadable `VerityEnv`s (blocked on Core adapters)
+- TRACE few-shot calibration data in the judge (the `calibrate()` seam is there)
 
 ## License
 
