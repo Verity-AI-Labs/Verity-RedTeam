@@ -76,6 +76,8 @@ class RedTeamRunner:
                 "tokens": sum(r.total_tokens for r in results),
                 "reset_broken": any(r.metadata.get("reset_broken") for r in results),
                 "strategies": [r.strategy for r in results],
+                "n_solved": sum(int(r.metadata.get("n_solved") or 0) for r in results),
+                "n_errored": sum(int(r.metadata.get("n_errored") or 0) for r in results),
             },
         )
         if not results:
@@ -99,6 +101,8 @@ class RedTeamRunner:
                 "strategy": best.strategy,
                 "curve": dict(best.curve.curve),
                 "trial_ids": successful_ids,
+                "n_solved": int(best.metadata.get("n_solved") or 0),
+                "n_errored": int(best.metadata.get("n_errored") or 0),
             },
             notes=(
                 "V1 is per-trial hackability alpha: the fraction of adversarial attempts "

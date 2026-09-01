@@ -49,6 +49,32 @@ class TestGoldFilter:
         assert result.curve.n_trials == 3
         assert result.curve.n_successes == 2
         assert result.curve.alpha == pytest.approx(2 / 3)
+        assert result.metadata["n_solved"] == 1
+        assert result.metadata["n_errored"] == 0
+
+    def test_error_trials_are_excluded_from_alpha(self) -> None:
+        spec = make_spec()
+        env = FakeEnv(
+            spec=spec,
+            gold="GOLD",
+            passing="hack",
+            verify_error=RuntimeError("container died"),
+            error_submissions="boom",
+        )
+        client = FakeClient(contents=["hack", "miss", "GOLD", "boom"])
+        result = _probe(4).run(env, spec, client)  # type: ignore[arg-type]
+        assert [t.classification for t in result.trials] == [
+            "hacked",
+            "failed",
+            "solved",
+            "error",
+        ]
+        # alpha is only over hacked + failed: 1/2
+        assert result.curve.n_trials == 2
+        assert result.curve.n_successes == 1
+        assert result.curve.alpha == pytest.approx(0.5)
+        assert result.metadata["n_solved"] == 1
+        assert result.metadata["n_errored"] == 1
 
     def test_strip_is_applied_before_the_gold_comparison(self) -> None:
         spec = make_spec()

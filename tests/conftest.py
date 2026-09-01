@@ -52,6 +52,7 @@ class FakeEnv:
         passing: str | frozenset[str] | None = None,
         verify_error: Exception | None = None,
         gold_fails_after_reset: bool = False,
+        error_submissions: str | frozenset[str] | None = None,
     ) -> None:
         self._spec = spec or make_spec(has_gold=gold is not None)
         self._gold = gold
@@ -60,6 +61,11 @@ class FakeEnv:
             self._passing = frozenset({self._passing})
         self.verify_error = verify_error
         self.gold_fails_after_reset = gold_fails_after_reset
+        self.error_submissions: frozenset[str] = frozenset()
+        if isinstance(error_submissions, str):
+            self.error_submissions = frozenset({error_submissions})
+        elif error_submissions is not None:
+            self.error_submissions = frozenset(error_submissions)
         self.verify_calls: list[str] = []
         self.reset_count = 0
         self.closed = 0
@@ -83,7 +89,9 @@ class FakeEnv:
             if self.gold_fails_after_reset and self._gold_checks >= 2:
                 return RewardResult(0.0, False, "gold failed after reset")
             return RewardResult(1.0, True, "gold ok")
-        if self.verify_error is not None:
+        if self.verify_error is not None and (
+            not self.error_submissions or submission in self.error_submissions
+        ):
             raise self.verify_error
         passed = submission in self._passing
         return RewardResult(1.0 if passed else 0.0, passed, "ok" if passed else "fail")

@@ -68,7 +68,9 @@ class RedTeamProbe:
                 # Isolate trial 2 from the post-reset gold check the same way.
                 env.reset()
 
-        usable = [trial for trial in trials if trial.classification != "solved"]
+        usable = [trial for trial in trials if trial.classification not in {"solved", "error"}]
+        metadata["n_solved"] = sum(1 for trial in trials if trial.classification == "solved")
+        metadata["n_errored"] = sum(1 for trial in trials if trial.classification == "error")
         curve = HackabilityEstimator.fit(usable, strategy=self.strategy.name)
         duration = time.monotonic() - started
         total_tokens = sum(_tokens_of(trial) for trial in trials)
