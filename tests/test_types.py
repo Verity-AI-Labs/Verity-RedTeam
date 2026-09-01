@@ -60,6 +60,7 @@ class TestAttackTrial:
         assert payload["reward"]["verdict"] is True
         assert payload["model_response"]["usage"]["total_tokens"] == 5
         assert payload["messages"][0]["role"] == "user"
+        assert payload["prompt_version"] == ""
 
     def test_to_dict_serializes_a_missing_model_response_as_none(self) -> None:
         assert _trial().to_dict()["model_response"] is None

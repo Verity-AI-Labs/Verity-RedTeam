@@ -35,6 +35,7 @@ class TestAudit:
         assert v1.evidence["n_trials"] == 4
         assert v1.evidence["n_successes"] == 2
         assert v1.evidence["strategy"] == "freeform"
+        assert v1.evidence["prompt_version"] == "v1"
         assert set(v1.evidence["curve"]) == {1, 2, 4, 8}
         assert len(v1.evidence["trial_ids"]) == 2
         assert card.metadata["audited_by"] == TOOL_NAME

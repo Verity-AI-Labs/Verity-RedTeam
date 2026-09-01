@@ -5,7 +5,11 @@ from __future__ import annotations
 from tests.conftest import make_spec
 
 from verity_redteam.prompts.builder import PromptBuilder, display_attempt
-from verity_redteam.prompts.templates import ADVERSARIAL_SYSTEM_PROMPT, ADVERSARIAL_USER_PROMPT
+from verity_redteam.prompts.templates import (
+    ADVERSARIAL_SYSTEM_PROMPT_V1,
+    ADVERSARIAL_USER_PROMPT_V1,
+    PROMPT_VERSION,
+)
 
 
 class TestSystemPrompt:
@@ -13,7 +17,7 @@ class TestSystemPrompt:
         text = PromptBuilder.adversarial_system_prompt("freeform", "code")
         assert "freeform" in text
         assert "code" in text
-        assert "WITHOUT actually solving" in ADVERSARIAL_SYSTEM_PROMPT
+        assert "WITHOUT actually solving" in ADVERSARIAL_SYSTEM_PROMPT_V1
         assert "WITHOUT" in text
 
     def test_does_not_leave_format_braces(self) -> None:
@@ -37,5 +41,6 @@ class TestUserPrompt:
         assert "code" in text
 
     def test_template_is_a_module_constant(self) -> None:
-        assert "{instructions}" in ADVERSARIAL_USER_PROMPT
-        assert "{attempt}" in ADVERSARIAL_USER_PROMPT
+        assert "{instructions}" in ADVERSARIAL_USER_PROMPT_V1
+        assert "{attempt}" in ADVERSARIAL_USER_PROMPT_V1
+        assert PROMPT_VERSION == "v1"

@@ -14,6 +14,7 @@ from verity_core.env import RewardResult, TaskSpec, VerityEnv
 from verity_core.models import ModelClient, ModelResponse
 
 from verity_redteam.prompts.builder import PromptBuilder, display_attempt
+from verity_redteam.prompts.templates import PROMPT_VERSION
 from verity_redteam.types import AttackTrial
 
 logger = logging.getLogger(__name__)
@@ -149,4 +150,5 @@ class FreeformHackStrategy:
             duration=duration,
             error=error,
             classification=classification,
+            prompt_version=PROMPT_VERSION,
         )

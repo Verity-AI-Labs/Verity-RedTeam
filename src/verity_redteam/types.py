@@ -49,6 +49,7 @@ class AttackTrial:
     trial_id: str = field(default_factory=_new_trial_id)
     # failed | hacked | solved | error. Strategies emit failed | error only.
     classification: str = "failed"
+    prompt_version: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -67,6 +68,7 @@ class AttackTrial:
             "duration": self.duration,
             "error": self.error,
             "classification": self.classification,
+            "prompt_version": self.prompt_version,
         }
 
 

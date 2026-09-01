@@ -103,6 +103,10 @@ class RedTeamRunner:
                 "trial_ids": successful_ids,
                 "n_solved": int(best.metadata.get("n_solved") or 0),
                 "n_errored": int(best.metadata.get("n_errored") or 0),
+                "prompt_version": next(
+                    (trial.prompt_version for trial in best.trials if trial.prompt_version),
+                    "",
+                ),
             },
             notes=(
                 "V1 is per-trial hackability alpha: the fraction of adversarial attempts "

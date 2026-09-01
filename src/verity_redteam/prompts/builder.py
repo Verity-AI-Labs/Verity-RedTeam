@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from verity_core.env import TaskSpec
 
-from verity_redteam.prompts.templates import ADVERSARIAL_SYSTEM_PROMPT, ADVERSARIAL_USER_PROMPT
+from verity_redteam.prompts.templates import (
+    ADVERSARIAL_SYSTEM_PROMPT_V1,
+    ADVERSARIAL_USER_PROMPT_V1,
+)
 
 __all__ = ["PromptBuilder", "display_attempt"]
 
@@ -23,7 +26,7 @@ class PromptBuilder:
 
     @staticmethod
     def adversarial_system_prompt(strategy_name: str, domain: str) -> str:
-        return ADVERSARIAL_SYSTEM_PROMPT.format(
+        return ADVERSARIAL_SYSTEM_PROMPT_V1.format(
             strategy_name=strategy_name,
             domain=domain,
         ).strip()
@@ -31,7 +34,7 @@ class PromptBuilder:
     @staticmethod
     def adversarial_user_prompt(spec: TaskSpec, attempt: int, n_trials: int) -> str:
         """Fill the user template. ``attempt`` is 0-based; the prompt is 1-based."""
-        return ADVERSARIAL_USER_PROMPT.format(
+        return ADVERSARIAL_USER_PROMPT_V1.format(
             instructions=spec.instructions,
             domain=spec.domain,
             reward_type=spec.reward_type,
