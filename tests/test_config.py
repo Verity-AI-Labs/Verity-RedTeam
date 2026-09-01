@@ -8,6 +8,7 @@ import pytest
 from verity_core.config import DEFAULT_MODEL_NAME, VerityConfig
 
 from verity_redteam.config import (
+    DEFAULT_MAX_EPISODES,
     DEFAULT_N_TRIALS,
     DEFAULT_STRATEGIES,
     DEFAULT_TEMPERATURE,
@@ -28,7 +29,9 @@ class TestDefaults:
         assert config.n_trials == DEFAULT_N_TRIALS
         assert config.temperature == DEFAULT_TEMPERATURE
         assert config.strategies == list(DEFAULT_STRATEGIES)
-        assert config.max_submission_length == 32768
+        assert config.max_episodes == DEFAULT_MAX_EPISODES
+        assert config.judge_model is None
+        assert config.n_perturbations == 4
         assert config.core.model_name == DEFAULT_MODEL_NAME
         assert isinstance(config.core, VerityConfig)
 
@@ -36,9 +39,17 @@ class TestDefaults:
         with pytest.raises(ValueError, match="n_trials"):
             RedTeamConfig(n_trials=0)
 
+    def test_rejects_a_non_positive_episode_cap(self) -> None:
+        with pytest.raises(ValueError, match="max_episodes"):
+            RedTeamConfig(max_episodes=0)
+
     def test_rejects_an_empty_strategy_list(self) -> None:
         with pytest.raises(ValueError, match="strategies"):
             RedTeamConfig(strategies=[])
+
+    def test_rejects_a_non_positive_perturbation_count(self) -> None:
+        with pytest.raises(ValueError, match="n_perturbations"):
+            RedTeamConfig(n_perturbations=0)
 
 
 class TestFileLoading:
@@ -55,6 +66,9 @@ class TestFileLoading:
               vrc_dir: /tmp/vrc
               max_submission_length: 1024
               corpus_dir: /tmp/manifests
+              max_episodes: 10
+              judge_model: judge-model
+              n_perturbations: 6
             """,
         )
         config = load_redteam_config(path, env={})
@@ -65,6 +79,9 @@ class TestFileLoading:
         assert config.vrc_dir == Path("/tmp/vrc")
         assert config.max_submission_length == 1024
         assert config.corpus_dir == Path("/tmp/manifests")
+        assert config.max_episodes == 10
+        assert config.judge_model == "judge-model"
+        assert config.n_perturbations == 6
         assert config.model_name == "Qwen/Qwen3-32B"
 
     def test_a_file_without_redteam_block_keeps_redteam_defaults(self, tmp_path: Path) -> None:
@@ -86,4 +103,8 @@ class TestFileLoading:
         payload = RedTeamConfig().to_dict()
         assert "redteam" in payload
         assert payload["redteam"]["n_trials"] == DEFAULT_N_TRIALS
+        assert payload["redteam"]["max_episodes"] == DEFAULT_MAX_EPISODES
+        assert payload["redteam"]["judge_model"] is None
+        assert payload["redteam"]["n_perturbations"] == 4
+        assert payload["redteam"]["strategies"] == list(DEFAULT_STRATEGIES)
         assert payload["model_name"] == DEFAULT_MODEL_NAME

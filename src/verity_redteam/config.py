@@ -24,14 +24,24 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_N_TRIALS = 8
 DEFAULT_TEMPERATURE = 0.7
-DEFAULT_STRATEGIES: tuple[str, ...] = ("freeform",)
+DEFAULT_STRATEGIES: tuple[str, ...] = (
+    "freeform",
+    "isomorphic",
+    "leakage",
+    "isolation",
+    "goodhart",
+)
 DEFAULT_VRC_DIR = Path("vrc")
 DEFAULT_MAX_SUBMISSION_LENGTH = 32768
 DEFAULT_CORPUS_DIR = Path("manifests")
+DEFAULT_MAX_EPISODES = 15
+DEFAULT_N_PERTURBATIONS = 4
 
 __all__ = [
     "DEFAULT_CORPUS_DIR",
+    "DEFAULT_MAX_EPISODES",
     "DEFAULT_MAX_SUBMISSION_LENGTH",
+    "DEFAULT_N_PERTURBATIONS",
     "DEFAULT_N_TRIALS",
     "DEFAULT_STRATEGIES",
     "DEFAULT_TEMPERATURE",
@@ -70,6 +80,9 @@ class RedTeamConfig:
     vrc_dir: Path = field(default_factory=lambda: DEFAULT_VRC_DIR)
     max_submission_length: int = DEFAULT_MAX_SUBMISSION_LENGTH
     corpus_dir: Path = field(default_factory=lambda: DEFAULT_CORPUS_DIR)
+    max_episodes: int = DEFAULT_MAX_EPISODES
+    judge_model: str | None = None
+    n_perturbations: int = DEFAULT_N_PERTURBATIONS
 
     def __post_init__(self) -> None:
         self.vrc_dir = _parse_path(self.vrc_dir)
@@ -82,6 +95,10 @@ class RedTeamConfig:
             )
         if not self.strategies:
             raise ValueError("strategies must be a non-empty list of strategy names")
+        if self.max_episodes < 1:
+            raise ValueError(f"max_episodes must be >= 1, got {self.max_episodes}")
+        if self.n_perturbations < 1:
+            raise ValueError(f"n_perturbations must be >= 1, got {self.n_perturbations}")
 
     @property
     def model_name(self) -> str:
@@ -109,6 +126,9 @@ class RedTeamConfig:
                 "vrc_dir": str(self.vrc_dir),
                 "max_submission_length": self.max_submission_length,
                 "corpus_dir": str(self.corpus_dir),
+                "max_episodes": self.max_episodes,
+                "judge_model": self.judge_model,
+                "n_perturbations": self.n_perturbations,
             },
         }
 
@@ -129,10 +149,17 @@ def _coerce_redteam(data: dict[str, Any], *, source: str) -> dict[str, Any]:
             continue
         if key in ("vrc_dir", "corpus_dir"):
             coerced[key] = _parse_path(value)
-        elif key == "n_trials" or key == "max_submission_length":
+        elif key in {
+            "n_trials",
+            "max_submission_length",
+            "max_episodes",
+            "n_perturbations",
+        }:
             coerced[key] = _parse_int(value, source=f"{source}.{key}")
         elif key == "temperature":
             coerced[key] = _parse_float(value, source=f"{source}.{key}")
+        elif key == "judge_model":
+            coerced[key] = None if value in ("", None) else str(value)
         elif key == "strategies":
             if isinstance(value, str):
                 coerced[key] = [value]
