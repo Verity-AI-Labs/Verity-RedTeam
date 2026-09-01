@@ -1,7 +1,7 @@
 """Strategy registry.
 
-v0.1 ships one strategy. ``register_strategy`` is the hook later releases use to
-add isomorphic perturbation and whatever follows without touching the runner.
+``register_strategy`` is the hook later releases use to add strategies without
+touching the runner.
 """
 
 from __future__ import annotations
@@ -9,6 +9,10 @@ from __future__ import annotations
 import logging
 
 from verity_redteam.strategies.freeform import FreeformHackStrategy
+from verity_redteam.strategies.goodhart import GoodhartStrategy
+from verity_redteam.strategies.isolation import IsolationStrategy
+from verity_redteam.strategies.isomorphic import IsomorphicPerturbationStrategy
+from verity_redteam.strategies.leakage import LeakageStrategy
 from verity_redteam.strategies.protocol import AttackStrategy
 
 logger = logging.getLogger(__name__)
@@ -19,6 +23,10 @@ __all__ = [
     "STRATEGY_REGISTRY",
     "AttackStrategy",
     "FreeformHackStrategy",
+    "GoodhartStrategy",
+    "IsolationStrategy",
+    "IsomorphicPerturbationStrategy",
+    "LeakageStrategy",
     "get_strategy",
     "register_strategy",
 ]
@@ -43,3 +51,7 @@ def get_strategy(name: str) -> type:
 
 
 register_strategy("freeform", FreeformHackStrategy)
+register_strategy("isomorphic", IsomorphicPerturbationStrategy)
+register_strategy("leakage", LeakageStrategy)
+register_strategy("isolation", IsolationStrategy)
+register_strategy("goodhart", GoodhartStrategy)

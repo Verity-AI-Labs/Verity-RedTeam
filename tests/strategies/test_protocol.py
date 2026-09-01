@@ -37,6 +37,19 @@ class TestRegistry:
         assert "freeform" in STRATEGY_REGISTRY
         assert get_strategy("freeform") is FreeformHackStrategy
 
+    def test_axis_strategies_are_registered(self) -> None:
+        from verity_redteam.strategies import (
+            GoodhartStrategy,
+            IsolationStrategy,
+            IsomorphicPerturbationStrategy,
+            LeakageStrategy,
+        )
+
+        assert get_strategy("isomorphic") is IsomorphicPerturbationStrategy
+        assert get_strategy("leakage") is LeakageStrategy
+        assert get_strategy("isolation") is IsolationStrategy
+        assert get_strategy("goodhart") is GoodhartStrategy
+
     def test_unknown_strategy_names_the_registered_ones(self) -> None:
         with pytest.raises(KeyError, match="unknown strategy 'nope'"):
             get_strategy("nope")
