@@ -99,6 +99,18 @@ class FakeEnv:
         return Observation(text="start")
 
     def step(self, action: str) -> StepResult:
+        runner = getattr(self, "runner", None)
+        if runner is not None and callable(getattr(runner, "exec", None)):
+            result = runner.exec(action)
+            return StepResult(
+                Observation(
+                    text=result.stdout or result.stderr,
+                    metadata={"exit_code": result.exit_code, "timed_out": result.timed_out},
+                ),
+                0.0,
+                False,
+                info=result.to_dict(),
+            )
         return StepResult(Observation(text=action), 0.0, False)
 
     def verify(self, submission: str) -> RewardResult:
