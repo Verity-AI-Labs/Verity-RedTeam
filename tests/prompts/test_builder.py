@@ -81,3 +81,16 @@ class TestUserPrompt:
         text = PromptBuilder.adversarial_user_prompt(spec, attempt=0, n_trials=8, version="v1")
         assert "Submit something that passes the verifier" in text
         assert "EXEC:" not in text
+
+    def test_custom_templates_are_filled(self) -> None:
+        spec = make_spec(instructions="Find the key.")
+        text = PromptBuilder.adversarial_system_prompt(
+            "leakage",
+            "code",
+            template="Agent {strategy_name} in {domain}",
+        )
+        assert text == "Agent leakage in code"
+        user = PromptBuilder.adversarial_user_prompt(
+            spec, 0, 2, template="Do {instructions} ({attempt}/{n_trials})"
+        )
+        assert user == "Do Find the key. (1/2)"

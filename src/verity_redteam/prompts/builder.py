@@ -42,9 +42,10 @@ class PromptBuilder:
         domain: str,
         *,
         version: str = PROMPT_VERSION,
+        template: str | None = None,
     ) -> str:
-        template = _SYSTEM_TEMPLATES.get(version, ADVERSARIAL_SYSTEM_PROMPT_V2)
-        return template.format(
+        chosen = template or _SYSTEM_TEMPLATES.get(version, ADVERSARIAL_SYSTEM_PROMPT_V2)
+        return chosen.format(
             strategy_name=strategy_name,
             domain=domain,
         ).strip()
@@ -56,10 +57,11 @@ class PromptBuilder:
         n_trials: int,
         *,
         version: str = PROMPT_VERSION,
+        template: str | None = None,
     ) -> str:
         """Fill the user template. ``attempt`` is 0-based; the prompt is 1-based."""
-        template = _USER_TEMPLATES.get(version, ADVERSARIAL_USER_PROMPT_V2)
-        return template.format(
+        chosen = template or _USER_TEMPLATES.get(version, ADVERSARIAL_USER_PROMPT_V2)
+        return chosen.format(
             instructions=spec.instructions,
             domain=spec.domain,
             reward_type=spec.reward_type,

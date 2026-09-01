@@ -32,6 +32,7 @@ __all__ = [
     "DEFAULT_MAX_EPISODES",
     "AgentLoop",
     "parse_agent_reply",
+    "run_prompted_trial",
 ]
 
 
@@ -287,3 +288,38 @@ class AgentLoop:
             if last is not None and not submission:
                 submission = last.content or ""
         return last, submission, episodes, usage
+
+
+def run_prompted_trial(
+    *,
+    model: str,
+    env: VerityEnv,
+    spec: TaskSpec,
+    client: ModelClient,
+    attempt: int,
+    n_trials: int,
+    strategy: str,
+    system_template: str,
+    user_template: str,
+    temperature: float = DEFAULT_TEMPERATURE,
+    max_tokens: int = DEFAULT_MAX_TOKENS,
+    max_submission_length: int = DEFAULT_MAX_SUBMISSION_LENGTH,
+    max_episodes: int = DEFAULT_MAX_EPISODES,
+    prompt_version: str = PROMPT_VERSION,
+) -> AttackTrial:
+    """Run one AgentLoop trial with strategy-specific prompt templates."""
+    loop = AgentLoop(
+        model=model,
+        temperature=temperature,
+        max_tokens=max_tokens,
+        max_submission_length=max_submission_length,
+        max_episodes=max_episodes,
+        prompt_version=prompt_version,
+        system_prompt=PromptBuilder.adversarial_system_prompt(
+            strategy, spec.domain, template=system_template
+        ),
+        user_prompt=PromptBuilder.adversarial_user_prompt(
+            spec, attempt, n_trials, template=user_template
+        ),
+    )
+    return loop.run(env, spec, client, attempt, n_trials, strategy=strategy)
