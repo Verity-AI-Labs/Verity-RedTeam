@@ -19,6 +19,7 @@ from verity_core.scorecard import scorecard_path
 
 from verity_redteam import __version__
 from verity_redteam.config import RedTeamConfig, load_redteam_config
+from verity_redteam.judge import LlmJudge
 from verity_redteam.runner import RedTeamRunner
 from verity_redteam.strategies import get_strategy
 from verity_redteam.vrc import last_user_preview, load_vrc_entries
@@ -210,14 +211,18 @@ def _build_runner(config: RedTeamConfig, client: ModelClient) -> RedTeamRunner:
             model=config.model_name,
             temperature=config.temperature,
             max_submission_length=config.max_submission_length,
+            max_episodes=config.max_episodes,
         )
         for name in config.strategies
     ]
+    judge_model = config.judge_model or config.model_name
+    judge = LlmJudge(client, judge_model)
     return RedTeamRunner(
         client,
         strategies,
         n_trials=config.n_trials,
         vrc_dir=config.vrc_dir,
+        judge=judge,
     )
 
 
