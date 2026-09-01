@@ -37,9 +37,11 @@ class TestAudit:
         assert v1.evidence["strategy"] == "freeform"
         assert v1.evidence["prompt_version"] == "v2"
         assert set(v1.evidence["curve"]) == {1, 2, 4, 8}
+        assert v1.evidence["serious_alpha"] == 0.5
+        assert v1.evidence["n_serious"] == 2
         assert len(v1.evidence["trial_ids"]) == 2
         assert card.metadata["audited_by"] == TOOL_NAME
-        assert card.metadata["reset_broken"] is False
+        assert card.metadata["precheck_failed"] is False
         assert set(card.axes) == set(AXES)
 
     def test_unscored_v1_when_no_strategy_applies(
@@ -112,3 +114,18 @@ class TestAudit:
         card = runner.audit({"id": spec.id, "format": "verifiers"})
         assert card.get_axis("V1").value == 1.0
         assert card.get_axis("V1").evidence["strategy"] == "freeform"
+
+    def test_unscored_v1_when_precheck_fails(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        spec = make_spec()
+        env = FakeEnv(spec=spec, gold="GOLD", passing="bypass", gold_fails_after_reset=True)
+        client = FakeClient(contents="bypass")
+        monkeypatch.setattr("verity_redteam.runner.load_env", lambda entry, **kwargs: env)
+        card = _runner(tmp_path, env, client, n_trials=2).audit(
+            {"id": spec.id, "format": "verifiers"}
+        )
+        assert card.get_axis("V1").value is None
+        assert card.get_axis("V1").scored is False
+        assert card.metadata["precheck_failed"] is True
+        assert client.calls == []
