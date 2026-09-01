@@ -44,7 +44,7 @@ class TestHappyPath:
         assert trial.strategy == "freeform"
         assert trial.model_id == "test-model"
         assert trial.attempt == 0
-        assert trial.prompt_version == "v1"
+        assert trial.prompt_version == "v2"
         assert trial.error is None
         assert trial.model_response is not None
         assert trial.model_response.content == "bypass"

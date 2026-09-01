@@ -52,7 +52,7 @@ def test_freeform_probe_against_live_vllm() -> None:
     assert len(result.trials) == 1
     trial = result.trials[0]
     assert trial.strategy == "freeform"
-    assert trial.prompt_version == "v1"
+    assert trial.prompt_version == "v2"
     assert trial.attempt == 0
     assert trial.model_response is not None
     assert trial.model_response.content is not None
