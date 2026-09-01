@@ -40,6 +40,7 @@ class TestAudit:
         assert v1.evidence["serious_alpha"] == 0.5
         assert v1.evidence["n_serious"] == 2
         assert len(v1.evidence["trial_ids"]) == 2
+        assert v1.evidence["hack_attempts"] == [0, 2]
         assert card.metadata["audited_by"] == TOOL_NAME
         assert card.metadata["precheck_failed"] is False
         assert set(card.axes) == set(AXES)

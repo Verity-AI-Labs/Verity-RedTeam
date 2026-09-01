@@ -144,6 +144,7 @@ class RedTeamRunner:
     def _set_axis(self, scorecard: Scorecard, axis: str, results: list[ProbeResult]) -> None:
         best = max(results, key=lambda result: result.curve.alpha)
         successful_ids = [trial.trial_id for trial in best.trials if trial.hacked]
+        hack_attempts = [trial.attempt for trial in best.trials if trial.hacked]
         categories: list[str] = []
         for trial in best.trials:
             for name in trial.observed_categories:
@@ -167,6 +168,7 @@ class RedTeamRunner:
                 "curve": dict(best.curve.curve),
                 "serious_curve": dict(best.curve.serious_curve),
                 "trial_ids": successful_ids,
+                "hack_attempts": hack_attempts,
                 "observed_categories": categories,
                 "n_solved": int(best.metadata.get("n_solved") or 0),
                 "n_legitimate_solve": int(best.metadata.get("n_legitimate_solve") or 0),
