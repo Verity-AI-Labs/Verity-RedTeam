@@ -58,8 +58,9 @@ select = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-q -m 'not integration'"
+addopts = "-q -m 'not integration and not validation'"
 pythonpath = ["src", "."]
 markers = [
     "integration: live vLLM / Docker tests skipped by default",
+    "validation: live labeled-benchmark audits skipped by default",
 ]
