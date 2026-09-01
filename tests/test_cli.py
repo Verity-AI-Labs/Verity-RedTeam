@@ -13,6 +13,14 @@ from verity_core.scorecard import Scorecard
 from verity_redteam.cli import EXIT_ERROR, EXIT_OK, _load_entries, build_parser, main
 
 
+def test_cli_imports_core_helpers_from_the_package_root() -> None:
+    import verity_core
+
+    for name in ("configure_logging", "load_corpus", "load_scorecards"):
+        assert name in verity_core.__all__
+        assert callable(getattr(verity_core, name))
+
+
 def test_parser_requires_a_command() -> None:
     parser = build_parser()
     assert parser.parse_args(["run", "env-1"]).command == "run"

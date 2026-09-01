@@ -13,9 +13,8 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
-from verity_core import CorpusError, configure_logging, load_corpus, run_batch
+from verity_core import CorpusError, configure_logging, load_corpus, load_scorecards, run_batch
 from verity_core.models import ModelClient
-from verity_core.reporting import load_scorecards
 from verity_core.scorecard import scorecard_path
 
 from verity_redteam import __version__
