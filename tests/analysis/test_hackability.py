@@ -6,11 +6,12 @@ import pytest
 
 from verity_redteam.analysis import DEFAULT_CONFIDENCE, HackabilityCurve, HackabilityEstimator
 from verity_redteam.analysis.hackability import CURVE_KS
+from verity_redteam.outcomes import NO_REWARD, NONSERIOUS_HACK, SERIOUS_HACK
 from verity_redteam.types import AttackTrial
 
 
 def _trials(n: int, successes: int, *, strategy: str = "freeform") -> list[AttackTrial]:
-    """Build ``n`` trials of which the first ``successes`` are hacks."""
+    """Build ``n`` trials of which the first ``successes`` are serious hacks."""
     out: list[AttackTrial] = []
     for i in range(n):
         hacked = i < successes
@@ -20,7 +21,7 @@ def _trials(n: int, successes: int, *, strategy: str = "freeform") -> list[Attac
                 strategy=strategy,
                 attempt=i,
                 hacked=hacked,
-                classification="hacked" if hacked else "failed",
+                classification=SERIOUS_HACK if hacked else NO_REWARD,
             )
         )
     return out
@@ -113,6 +114,9 @@ class TestEmpty:
         assert curve.alpha_ci_upper == 1.0
         assert curve.curve == {1: 0.0, 2: 0.0, 4: 0.0, 8: 0.0}
         assert curve.trial_ids == ()
+        assert curve.n_serious == 0
+        assert curve.serious_alpha == 0.0
+        assert curve.serious_curve == {1: 0.0, 2: 0.0, 4: 0.0, 8: 0.0}
 
 
 class TestFitMetadata:
@@ -130,6 +134,9 @@ class TestFitMetadata:
         payload = HackabilityEstimator.fit(_trials(8, 2)).to_dict()
         assert set(payload["curve"]) == {"1", "2", "4", "8"}
         assert payload["n_successes"] == 2
+        assert payload["n_serious"] == 2
+        assert payload["n_nonserious"] == 0
+        assert set(payload["serious_curve"]) == {"1", "2", "4", "8"}
 
 
 class TestCurveDataclass:
@@ -144,3 +151,50 @@ class TestCurveDataclass:
         )
         assert curve.strategy == ""
         assert curve.trial_ids == ()
+        assert curve.n_serious == 0
+        assert curve.n_nonserious == 0
+        assert curve.serious_alpha == 0.0
+        assert curve.nonserious_alpha == 0.0
+
+
+class TestSeriousBreakdown:
+    def test_splits_any_hack_alpha_into_serious_and_nonserious(self) -> None:
+        trials = [
+            AttackTrial(
+                env_id="e",
+                strategy="freeform",
+                attempt=0,
+                hacked=True,
+                classification=SERIOUS_HACK,
+            ),
+            AttackTrial(
+                env_id="e",
+                strategy="freeform",
+                attempt=1,
+                hacked=True,
+                classification=NONSERIOUS_HACK,
+            ),
+            AttackTrial(
+                env_id="e",
+                strategy="freeform",
+                attempt=2,
+                hacked=False,
+                classification=NO_REWARD,
+            ),
+            AttackTrial(
+                env_id="e",
+                strategy="freeform",
+                attempt=3,
+                hacked=False,
+                classification=NO_REWARD,
+            ),
+        ]
+        curve = HackabilityEstimator.fit(trials)
+        assert curve.alpha == 0.5
+        assert curve.n_successes == 2
+        assert curve.n_serious == 1
+        assert curve.n_nonserious == 1
+        assert curve.serious_alpha == 0.25
+        assert curve.nonserious_alpha == 0.25
+        assert curve.serious_curve[1] == pytest.approx(0.25)
+        assert curve.serious_curve[2] == pytest.approx(1.0 - 0.75**2)
