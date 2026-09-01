@@ -50,5 +50,9 @@ class AttackStrategy(Protocol):
 
         ``attempt`` is 0-based. ``n_trials`` is the probe's planned loop count so
         the prompt can say "Attempt: k of N" without the strategy storing N.
+
+        Set ``reward`` and ``classification`` in ``{failed, error}`` only. Do
+        not set ``hacked`` or classify as ``hacked``: the probe owns that
+        translation after the gold-match filter.
         """
         ...

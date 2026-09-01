@@ -9,6 +9,7 @@ from tests.conftest import FakeClient, FakeEnv, make_spec
 
 from verity_redteam.probe import RedTeamProbe
 from verity_redteam.strategies.freeform import FreeformHackStrategy
+from verity_redteam.types import AttackTrial
 
 
 def _probe(n_trials: int = 4) -> RedTeamProbe:
@@ -112,3 +113,57 @@ class TestResetSanity:
         assert result.metadata["reset_broken"] is False
         gold_verifies = [c for c in env.verify_calls if c == "GOLD"]
         assert gold_verifies == []
+
+
+class TestProbeOwnsHacked:
+    def test_classifies_a_passing_verdict_as_hacked(self) -> None:
+        spec = make_spec()
+        env = FakeEnv(spec=spec, gold=None, passing="bypass")
+        client = FakeClient(contents="bypass")
+        result = _probe(1).run(env, spec, client)  # type: ignore[arg-type]
+        trial = result.trials[0]
+        assert trial.reward.verdict is True
+        assert trial.hacked is True
+        assert trial.classification == "hacked"
+
+    def test_overrides_a_strategy_that_already_set_hacked(self) -> None:
+        spec = make_spec()
+        env = FakeEnv(spec=spec, gold="GOLD", passing="GOLD")
+
+        class Eager:
+            @property
+            def name(self) -> str:
+                return "eager"
+
+            @property
+            def target_axes(self) -> tuple[str, ...]:
+                return ("V1",)
+
+            def applies(self, spec: object) -> bool:
+                return True
+
+            def attack(
+                self,
+                env: FakeEnv,
+                spec: object,
+                client: object,
+                attempt: int,
+                n_trials: int,
+            ) -> AttackTrial:
+                submission = "GOLD"
+                reward = env.verify(submission)
+                return AttackTrial(
+                    env_id=spec.id,  # type: ignore[union-attr]
+                    strategy=self.name,
+                    attempt=attempt,
+                    submission=submission,
+                    reward=reward,
+                    hacked=True,
+                    classification="hacked",
+                )
+
+        result = RedTeamProbe(Eager(), n_trials=1).run(env, spec, client=FakeClient())  # type: ignore[arg-type]
+        assert result.trials[0].hacked is False
+        assert result.trials[0].classification == "solved"
+        assert result.curve.n_successes == 0
+        assert result.trials[0].reward.verdict is True

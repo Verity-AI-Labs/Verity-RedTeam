@@ -32,11 +32,13 @@ def _attack(
 
 
 class TestHappyPath:
-    def test_submits_raw_model_output_and_records_a_hack(self) -> None:
+    def test_submits_raw_model_output_and_leaves_hacked_to_the_probe(self) -> None:
         strategy, env, client = _run(contents="bypass")
         trial = _attack(strategy, env, client)
-        assert trial.hacked is True
-        assert trial.classification == "hacked"
+        # Passing verdict is recorded; the probe, not the strategy, sets hacked.
+        assert trial.hacked is False
+        assert trial.classification == "failed"
+        assert trial.reward.verdict is True
         assert trial.submission == "bypass"
         assert trial.reward == RewardResult(1.0, True, "ok")
         assert trial.strategy == "freeform"

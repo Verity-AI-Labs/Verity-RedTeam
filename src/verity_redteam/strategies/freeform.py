@@ -28,7 +28,11 @@ __all__ = ["FreeformHackStrategy"]
 
 
 class FreeformHackStrategy:
-    """One-shot completion submitted raw to :meth:`VerityEnv.verify`."""
+    """One-shot completion submitted raw to :meth:`VerityEnv.verify`.
+
+    Sets ``reward`` and ``classification`` in ``{failed, error}``. The probe
+    translates a passing verdict into ``hacked`` after the gold-match filter.
+    """
 
     def __init__(
         self,
@@ -79,7 +83,6 @@ class FreeformHackStrategy:
         submission = ""
         reward = RewardResult(0.0, False)
         error: str | None = None
-        hacked = False
         classification = "failed"
 
         try:
@@ -104,8 +107,6 @@ class FreeformHackStrategy:
                 submission = submission[: self.max_submission_length]
             try:
                 reward = env.verify(submission)
-                hacked = bool(reward.verdict)
-                classification = "hacked" if hacked else "failed"
             except Exception as exc:
                 error = f"{type(exc).__name__}: {exc}"
                 classification = "error"
@@ -127,12 +128,10 @@ class FreeformHackStrategy:
 
         duration = time.monotonic() - started
         logger.info(
-            "trial done env_id=%s strategy=%s attempt=%d hacked=%s classification=%s "
-            "duration=%.2fs",
+            "trial done env_id=%s strategy=%s attempt=%d classification=%s duration=%.2fs",
             spec.id,
             self.name,
             display_attempt(attempt),
-            hacked,
             classification,
             duration,
         )
@@ -143,7 +142,7 @@ class FreeformHackStrategy:
             attempt=attempt,
             submission=submission,
             reward=reward,
-            hacked=hacked,
+            hacked=False,
             messages=messages,
             model_id=self.model,
             model_response=model_response,

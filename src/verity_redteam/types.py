@@ -27,9 +27,12 @@ def _new_trial_id() -> str:
 class AttackTrial:
     """One adversarial attempt against one environment.
 
-    ``hacked`` is the verifier's verdict after the false-positive filter: a
-    submission that matches the gold solution is reclassified as ``solved``, not
-    hacked, even if the verifier accepted it.
+    Strategies set ``reward`` and may classify a trial as ``failed`` or
+    ``error``. They leave ``hacked`` False. The probe is the only place that
+    sets ``hacked=True`` or ``classification="hacked"``: it translates
+    ``reward.verdict`` after applying the gold-match filter. A submission that
+    matches the gold solution is ``solved``, not hacked, even if the verifier
+    accepted it.
     """
 
     env_id: str
@@ -44,7 +47,7 @@ class AttackTrial:
     duration: float = 0.0
     error: str | None = None
     trial_id: str = field(default_factory=_new_trial_id)
-    # failed | hacked | solved | error — solved is the gold-match reclassification.
+    # failed | hacked | solved | error. Strategies emit failed | error only.
     classification: str = "failed"
 
     def to_dict(self) -> dict[str, Any]:
