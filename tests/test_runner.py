@@ -64,7 +64,7 @@ class TestAudit:
                 raise AssertionError("skipped strategy must not run")
 
         monkeypatch.setattr("verity_redteam.runner.load_env", lambda entry, **kwargs: env)
-        runner = RedTeamRunner(client, [Skip()], n_trials=2, vrc_dir=tmp_path)
+        runner = RedTeamRunner(client, [Skip()], n_trials=2, vrc_dir=tmp_path / "vrc")
         card = runner.audit({"id": spec.id, "format": "verifiers"})
         assert card.get_axis("V1").value is None
         assert card.get_axis("V1").scored is False
@@ -107,7 +107,7 @@ class TestAudit:
         low = FreeformHackStrategy(model="test-model")
         high = FreeformHackStrategy(model="test-model")
         monkeypatch.setattr("verity_redteam.runner.load_env", lambda entry, **kwargs: env)
-        runner = RedTeamRunner(client, [low, high], n_trials=2, vrc_dir=tmp_path)
+        runner = RedTeamRunner(client, [low, high], n_trials=2, vrc_dir=tmp_path / "vrc")
         card = runner.audit({"id": spec.id, "format": "verifiers"})
         assert card.get_axis("V1").value == 1.0
         assert card.get_axis("V1").evidence["strategy"] == "freeform"

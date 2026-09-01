@@ -4,14 +4,34 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Iterator
+from pathlib import Path
 from typing import Any
 
 import pytest
 from verity_core.env import Observation, RewardResult, StepResult, TaskSpec
 from verity_core.models import ModelError, ModelResponse, TokenUsage
 
+REPO_ROOT = Path(__file__).resolve().parent.parent
 REDTEAM_NAMESPACE = "verity_redteam"
 CORE_NAMESPACE = "verity_core"
+
+
+def _files_under(directory: Path) -> set[Path]:
+    if not directory.exists():
+        return set()
+    return {path for path in directory.rglob("*") if path.is_file()}
+
+
+@pytest.fixture(scope="session", autouse=True)
+def fail_if_vrc_leaks_into_the_repo() -> Iterator[None]:
+    """Fail the suite if any test writes VRC files next to the repo."""
+    vrc_root = REPO_ROOT / "vrc"
+    before = _files_under(vrc_root)
+    yield
+    leaked = _files_under(vrc_root) - before
+    if leaked:
+        relative = ", ".join(sorted(str(path.relative_to(REPO_ROOT)) for path in leaked))
+        pytest.fail(f"tests wrote VRC files into the repo working directory: {relative}")
 
 
 @pytest.fixture(autouse=True)

@@ -79,9 +79,19 @@ def test_run_audits_one_corpus_entry(tmp_path: Path, monkeypatch: Any, capsys: A
 
     monkeypatch.setattr("verity_redteam.cli.ModelClient", _ClientCtx)
 
+    config = tmp_path / "verity.yaml"
+    config.write_text(
+        f"results_dir: {json.dumps(str(tmp_path / 'core-results'))}\n"
+        f"redteam:\n"
+        f"  vrc_dir: {json.dumps(str(tmp_path / 'vrc'))}\n",
+        encoding="utf-8",
+    )
+
     results = tmp_path / "results"
     code = main(
         [
+            "--config",
+            str(config),
             "run",
             "corpus/task-1",
             "--corpus",
