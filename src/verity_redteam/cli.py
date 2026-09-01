@@ -308,7 +308,9 @@ def _cmd_report(args: argparse.Namespace, config: RedTeamConfig) -> int:
                 "n_trials": evidence.get("n_trials"),
                 "n_successes": evidence.get("n_successes"),
                 "strategy": evidence.get("strategy"),
-                "reset_broken": bool(card.metadata.get("reset_broken")),
+                "precheck_failed": bool(
+                    card.metadata.get("precheck_failed") or card.metadata.get("reset_broken")
+                ),
             }
         )
 
@@ -326,7 +328,7 @@ def _cmd_report(args: argparse.Namespace, config: RedTeamConfig) -> int:
         value = "—" if row["v1"] is None else f"{row['v1']:.3f}"
         n = "—" if row["n_trials"] is None else str(row["n_trials"])
         hits = "—" if row["n_successes"] is None else str(row["n_successes"])
-        flag = " [reset-broken]" if row["reset_broken"] else ""
+        flag = " [precheck-failed]" if row["precheck_failed"] else ""
         print(
             f"{row['env_id']:<40.40}  {value:>7}  {n:>4}  {hits:>4}  {row['strategy'] or '—'}{flag}"
         )

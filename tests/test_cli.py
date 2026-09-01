@@ -55,11 +55,11 @@ def test_report_json(tmp_path: Path, capsys: Any) -> None:
     payload = json.loads(capsys.readouterr().out)
     assert payload["scorecards"][0]["env_id"] == "e"
     assert payload["scorecards"][0]["v1"] == 0.0
-    assert payload["scorecards"][0]["reset_broken"] is False
+    assert payload["scorecards"][0]["precheck_failed"] is False
 
 
-def test_report_flags_a_broken_reset(tmp_path: Path, capsys: Any) -> None:
-    card = Scorecard(env_id="corpus/task-1", metadata={"reset_broken": True})
+def test_report_flags_a_failed_precheck(tmp_path: Path, capsys: Any) -> None:
+    card = Scorecard(env_id="corpus/task-1", metadata={"precheck_failed": True})
     card.set_axis(
         "V1",
         0.5,
@@ -70,7 +70,7 @@ def test_report_flags_a_broken_reset(tmp_path: Path, capsys: Any) -> None:
     code = main(["report", "--results-dir", str(tmp_path)])
     captured = capsys.readouterr()
     assert code == EXIT_OK
-    assert "[reset-broken]" in captured.out
+    assert "[precheck-failed]" in captured.out
     assert "corpus/task-1" in captured.out
 
 
