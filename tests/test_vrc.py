@@ -7,6 +7,7 @@ from pathlib import Path
 from verity_corpus.models.vrc import VRCEntry
 
 from verity_redteam.analysis.hackability import HackabilityEstimator
+from verity_redteam.outcomes import NO_REWARD, SERIOUS_HACK
 from verity_redteam.types import AttackTrial, ProbeResult
 from verity_redteam.vrc import VRCLogger, last_user_preview, load_vrc_entries
 
@@ -18,7 +19,7 @@ def _hack(submission: str, env_id: str = "env1") -> AttackTrial:
         attempt=0,
         submission=submission,
         hacked=True,
-        classification="hacked",
+        classification=SERIOUS_HACK,
         messages=[{"role": "user", "content": submission}],
         model_id="test-model",
     )
@@ -40,13 +41,24 @@ class TestVRCLogger:
         assert loaded.exploit_type == "freeform"
         assert loaded.trajectory == [{"role": "user", "content": "bypass"}]
         assert loaded.model_id == "test-model"
-        assert loaded.notes.startswith("trial_id=")
         assert loaded.hackability_curve is not None
+        assert "trial_id=" in loaded.notes
+        assert "strategy=freeform" in loaded.notes
+
+    def test_stores_observed_categories_as_the_exploit_type(self, tmp_path: Path) -> None:
+        trial = _hack("bypass")
+        trial.observed_categories = ["output-spoofing", "hollow-implementation"]
+        path = VRCLogger(tmp_path / "vrc").log_trial(trial, _curve([trial]))
+        assert path is not None
+        loaded = VRCEntry.load(tmp_path / "vrc", path.stem)
+        assert loaded.exploit_type == "hollow-implementation"
+        assert "output-spoofing" in loaded.notes
+        assert "hollow-implementation" in loaded.notes
 
     def test_skips_trials_that_are_not_hacks(self, tmp_path: Path) -> None:
         trial = _hack("nope")
         trial.hacked = False
-        trial.classification = "failed"
+        trial.classification = NO_REWARD
         assert VRCLogger(tmp_path / "vrc").log_trial(trial, _curve([trial])) is None
         assert list((tmp_path / "vrc").rglob("*.json")) == []
 

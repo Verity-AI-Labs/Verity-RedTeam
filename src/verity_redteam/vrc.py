@@ -14,6 +14,7 @@ from typing import Any
 from verity_corpus.models.vrc import VRCEntry
 
 from verity_redteam.analysis.hackability import HackabilityCurve
+from verity_redteam.outcomes import normalize_categories
 from verity_redteam.types import AttackTrial, ProbeResult
 
 logger = logging.getLogger(__name__)
@@ -63,13 +64,19 @@ class VRCLogger:
             )
             return None
         self._seen.add(key)
+        categories = normalize_categories(trial.observed_categories)
+        exploit_type = categories[0] if categories else trial.strategy
+        notes = (
+            f"trial_id={trial.trial_id} outcome={trial.classification} "
+            f"strategy={trial.strategy} categories={','.join(categories)}"
+        )
         entry = VRCEntry(
             env_id=trial.env_id,
-            exploit_type=trial.strategy,
+            exploit_type=exploit_type,
             trajectory=list(trial.messages),
             hackability_curve=dict(curve.curve),
             model_id=trial.model_id,
-            notes=f"trial_id={trial.trial_id}",
+            notes=notes,
         )
         path = entry.save(self.vrc_dir)
         logger.info(
