@@ -55,6 +55,23 @@ def test_report_json(tmp_path: Path, capsys: Any) -> None:
     payload = json.loads(capsys.readouterr().out)
     assert payload["scorecards"][0]["env_id"] == "e"
     assert payload["scorecards"][0]["v1"] == 0.0
+    assert payload["scorecards"][0]["reset_broken"] is False
+
+
+def test_report_flags_a_broken_reset(tmp_path: Path, capsys: Any) -> None:
+    card = Scorecard(env_id="corpus/task-1", metadata={"reset_broken": True})
+    card.set_axis(
+        "V1",
+        0.5,
+        "verity-redteam",
+        evidence={"n_trials": 2, "n_successes": 1, "strategy": "freeform"},
+    )
+    (tmp_path / "corpus__task-1.json").write_text(json.dumps(card.to_dict()), encoding="utf-8")
+    code = main(["report", "--results-dir", str(tmp_path)])
+    captured = capsys.readouterr()
+    assert code == EXIT_OK
+    assert "[reset-broken]" in captured.out
+    assert "corpus/task-1" in captured.out
 
 
 def test_report_missing_dir_is_an_error(tmp_path: Path) -> None:
