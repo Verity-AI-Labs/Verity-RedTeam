@@ -10,6 +10,7 @@ from typing import Any
 import pytest
 from verity_core.env import Observation, RewardResult, StepResult, TaskSpec
 from verity_core.models import ModelError, ModelResponse, TokenUsage
+from verity_core.runner import ExecResult
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 REDTEAM_NAMESPACE = "verity_redteam"
@@ -73,6 +74,7 @@ class FakeEnv:
         verify_error: Exception | None = None,
         gold_fails_after_reset: bool = False,
         error_submissions: str | frozenset[str] | None = None,
+        rewards: dict[str, RewardResult] | None = None,
     ) -> None:
         self._spec = spec or make_spec(has_gold=gold is not None)
         self._gold = gold
@@ -90,6 +92,9 @@ class FakeEnv:
         self.reset_count = 0
         self.closed = 0
         self._gold_checks = 0
+        self.runner = None
+        self.entry: dict[str, Any] | None = None
+        self._rewards = dict(rewards or {})
 
     def spec(self) -> TaskSpec:
         return self._spec
@@ -126,6 +131,8 @@ class FakeEnv:
         ):
             raise self.verify_error
         passed = submission in self._passing
+        if submission in self._rewards:
+            return self._rewards[submission]
         return RewardResult(1.0 if passed else 0.0, passed, "ok" if passed else "fail")
 
     def gold_solution(self) -> str | None:
@@ -146,6 +153,30 @@ class FakeEnv:
 
     def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
         self.close()
+
+
+class FakeRunner:
+    """Minimal SandboxRunner.exec stand-in for container-backed FakeEnv tests."""
+
+    def __init__(self) -> None:
+        self.seen: list[str] = []
+
+    def exec(
+        self,
+        command: str,
+        *,
+        timeout: int | None = None,
+        workdir: str | None = None,
+        user: str | None = None,
+    ) -> ExecResult:
+        self.seen.append(command)
+        return ExecResult(
+            exit_code=0,
+            stdout=f"observed:{command}",
+            stderr="",
+            duration_seconds=0.01,
+            command=command,
+        )
 
 
 class FakeClient:
