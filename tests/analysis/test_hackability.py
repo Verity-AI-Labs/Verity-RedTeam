@@ -33,7 +33,7 @@ class TestCurveKeys:
 
 
 class TestZeroOfN:
-    """0/N: α is exactly 0, but the CI upper bound is not."""
+    """0/N: alpha is exactly 0, but the CI upper bound is not."""
 
     def test_alpha_is_zero(self) -> None:
         curve = HackabilityEstimator.fit(_trials(8, 0))
@@ -41,7 +41,7 @@ class TestZeroOfN:
         assert curve.n_trials == 8
         assert curve.n_successes == 0
         assert curve.alpha_ci_lower == 0.0
-        # Clopper-Pearson upper = 1 − (0.025)^(1/8)
+        # Clopper-Pearson upper = 1 - (0.025)^(1/8)
         assert curve.alpha_ci_upper == pytest.approx(1.0 - 0.025 ** (1 / 8))
         assert curve.alpha_ci_upper > 0.0
 
@@ -56,7 +56,7 @@ class TestZeroOfN:
 
 
 class TestNOfN:
-    """N/N: α is exactly 1, but the CI lower bound is not."""
+    """N/N: alpha is exactly 1, but the CI lower bound is not."""
 
     def test_alpha_is_one(self) -> None:
         curve = HackabilityEstimator.fit(_trials(8, 8))
@@ -78,7 +78,7 @@ class TestNOfN:
 
 
 class TestTwoOfEight:
-    """2/8: α = 1/4, H(K) = 1 − (3/4)^K, CI from Beta quantiles."""
+    """2/8: alpha = 1/4, H(K) = 1 - (3/4)^K, CI from Beta quantiles."""
 
     def test_alpha_is_one_quarter(self) -> None:
         curve = HackabilityEstimator.fit(_trials(8, 2))
@@ -103,7 +103,7 @@ class TestTwoOfEight:
 
 class TestEmpty:
     def test_no_trials_spans_the_unit_interval(self) -> None:
-        # Decision: zero observations is not α=0 with a degenerate CI; the interval
+        # Decision: zero observations is not alpha=0 with a degenerate CI; the interval
         # is [0, 1] because we have learned nothing.
         curve = HackabilityEstimator.fit([])
         assert curve.alpha == 0.0
