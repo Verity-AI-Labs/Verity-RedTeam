@@ -13,7 +13,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
-from verity_core import configure_logging, load_corpus, run_batch
+from verity_core import CorpusError, configure_logging, load_corpus, run_batch
 from verity_core.models import ModelClient
 from verity_core.reporting import load_scorecards
 from verity_core.scorecard import scorecard_path
@@ -113,22 +113,42 @@ def _load_entries(corpus_dir: Path, domain: list[str] | str | None = None) -> li
     """Prefer Core-flat manifests; fall back to the corpus registry if needed."""
     try:
         return load_corpus(corpus_dir, domain=domain)
-    except Exception as core_exc:
-        logger.debug("load_corpus failed (%s); trying CorpusRegistry", core_exc)
-        try:
-            from verity_corpus.registry import CorpusRegistry
-            from verity_corpus.resolver import core_manifest
-        except ImportError:
-            raise core_exc from None
+    except CorpusError as core_exc:
+        logger.info("core manifest layout not found, trying corpus registry")
+        return _load_entries_from_registry(corpus_dir, domain=domain, core_exc=core_exc)
 
-        registry = CorpusRegistry(corpus_dir)
-        entries = registry.all()
-        if not entries:
-            raise core_exc from None
-        if domain:
-            wanted = {domain} if isinstance(domain, str) else set(domain)
-            entries = [e for e in entries if e.domain.category in wanted]
-        return [core_manifest(e) for e in entries if e.status != "catalog"]
+
+def _load_entries_from_registry(
+    corpus_dir: Path,
+    *,
+    domain: list[str] | str | None,
+    core_exc: CorpusError,
+) -> list[dict[str, Any]]:
+    try:
+        from verity_corpus.registry import CorpusRegistry, RegistryError
+        from verity_corpus.resolver import core_manifest
+    except ImportError as exc:
+        raise ValueError(
+            f"could not load corpus from {corpus_dir}: {core_exc}; "
+            f"corpus registry is unavailable ({exc})"
+        ) from core_exc
+
+    try:
+        entries = CorpusRegistry(corpus_dir).all()
+    except RegistryError as registry_exc:
+        raise ValueError(
+            f"could not load corpus from {corpus_dir}: core: {core_exc}; registry: {registry_exc}"
+        ) from registry_exc
+
+    if not entries:
+        raise ValueError(
+            f"could not load corpus from {corpus_dir}: core: {core_exc}; registry: no entries found"
+        ) from core_exc
+
+    if domain:
+        wanted = {domain} if isinstance(domain, str) else set(domain)
+        entries = [entry for entry in entries if entry.domain.category in wanted]
+    return [core_manifest(entry) for entry in entries if entry.status != "catalog"]
 
 
 def _find_entry(corpus_dir: Path, env_id: str) -> dict[str, Any]:

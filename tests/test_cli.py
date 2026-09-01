@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 from typing import Any
 
+import pytest
 from verity_core.scorecard import Scorecard
 
-from verity_redteam.cli import EXIT_ERROR, EXIT_OK, build_parser, main
+from verity_redteam.cli import EXIT_ERROR, EXIT_OK, _load_entries, build_parser, main
 
 
 def test_parser_requires_a_command() -> None:
@@ -105,3 +107,60 @@ def test_run_audits_one_corpus_entry(tmp_path: Path, monkeypatch: Any, capsys: A
     assert "V1" in capsys.readouterr().out
     written = list(results.glob("*.json"))
     assert len(written) == 1
+
+
+class TestLoadEntries:
+    def test_core_flat_manifests_load_without_the_registry(self, tmp_path: Path) -> None:
+        (tmp_path / "task.yaml").write_text(
+            "id: corpus/task-1\nformat: verifiers\ndomain: code\ninstructions: do it\n",
+            encoding="utf-8",
+        )
+        entries = _load_entries(tmp_path)
+        assert len(entries) == 1
+        assert entries[0]["id"] == "corpus/task-1"
+        assert entries[0]["format"] == "verifiers"
+
+    def test_falls_back_to_the_corpus_registry(
+        self, tmp_path: Path, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        (tmp_path / "bench.yaml").write_text(
+            """
+source_defaults:
+  type: local
+  path: .
+entries:
+  - name: Registry Env
+    domain: code
+    adapter: verifiers
+    metadata:
+      instructions: from the registry
+""",
+            encoding="utf-8",
+        )
+        with caplog.at_level(logging.INFO, logger="verity_redteam.cli"):
+            entries = _load_entries(tmp_path)
+        assert any(
+            "core manifest layout not found, trying corpus registry" in rec.getMessage()
+            for rec in caplog.records
+        )
+        assert len(entries) == 1
+        assert entries[0]["format"] == "verifiers"
+        assert entries[0]["instructions"] == "from the registry"
+
+    def test_neither_layout_raises_a_combined_error(self, tmp_path: Path) -> None:
+        (tmp_path / "noise.yaml").write_text("{}\n", encoding="utf-8")
+        with pytest.raises(ValueError, match="could not load corpus") as caught:
+            _load_entries(tmp_path)
+        message = str(caught.value)
+        assert "core:" in message
+        assert "registry: no entries found" in message
+
+    def test_non_structural_load_corpus_errors_propagate(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        def boom(*args: object, **kwargs: object) -> list[dict[str, Any]]:
+            raise RuntimeError("disk failed")
+
+        monkeypatch.setattr("verity_redteam.cli.load_corpus", boom)
+        with pytest.raises(RuntimeError, match="disk failed"):
+            _load_entries(tmp_path)
