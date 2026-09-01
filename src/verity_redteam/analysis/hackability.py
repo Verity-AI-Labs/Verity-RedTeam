@@ -1,0 +1,106 @@
+"""Hackability curve: how likely a verifier is to accept a non-solution.
+
+α is the per-trial success rate. The curve H(K) = 1 − (1−α)^K is the probability
+of at least one success in K independent attempts. Confidence intervals use the
+Clopper-Pearson exact binomial method (via the beta quantile function), not Wilson
+or Wald: when we report hackability to a customer, the interval should not be
+optimistic at the edges.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Sequence
+from dataclasses import dataclass, field
+from typing import Any
+
+from scipy.stats import beta
+
+from verity_redteam.types import AttackTrial
+
+DEFAULT_CONFIDENCE = 0.95
+CURVE_KS: tuple[int, ...] = (1, 2, 4, 8)
+
+__all__ = [
+    "CURVE_KS",
+    "DEFAULT_CONFIDENCE",
+    "HackabilityCurve",
+    "HackabilityEstimator",
+]
+
+
+@dataclass(slots=True)
+class HackabilityCurve:
+    """Fitted per-trial rate, exact CI, and analytic H(K) values."""
+
+    alpha: float
+    alpha_ci_lower: float
+    alpha_ci_upper: float
+    n_trials: int
+    n_successes: int
+    curve: dict[int, float]
+    strategy: str = ""
+    trial_ids: tuple[str, ...] = field(default_factory=tuple)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "alpha": self.alpha,
+            "alpha_ci_lower": self.alpha_ci_lower,
+            "alpha_ci_upper": self.alpha_ci_upper,
+            "n_trials": self.n_trials,
+            "n_successes": self.n_successes,
+            "curve": {str(k): v for k, v in self.curve.items()},
+            "strategy": self.strategy,
+            "trial_ids": list(self.trial_ids),
+        }
+
+
+def _clopper_pearson(k: int, n: int, confidence: float) -> tuple[float, float]:
+    """Exact binomial CI. 0/n has a nonzero upper bound; n/n has a nonzero lower bound."""
+    if n <= 0:
+        # No observations: the interval is the whole [0, 1] line, not a point at zero.
+        return 0.0, 1.0
+    tail = 1.0 - confidence
+    if k == 0:
+        lower = 0.0
+    else:
+        lower = float(beta.ppf(tail / 2.0, k, n - k + 1))
+    if k == n:
+        upper = 1.0
+    else:
+        upper = float(beta.ppf(1.0 - tail / 2.0, k + 1, n - k))
+    return lower, upper
+
+
+def _h(alpha: float, k: int) -> float:
+    """H(K) = 1 − (1−α)^K, the chance of at least one success in K independent trials."""
+    if k <= 0:
+        return 0.0
+    return 1.0 - (1.0 - alpha) ** k
+
+
+class HackabilityEstimator:
+    """Fit a :class:`HackabilityCurve` from a sequence of trials."""
+
+    @staticmethod
+    def fit(
+        trials: Sequence[AttackTrial],
+        *,
+        confidence: float = DEFAULT_CONFIDENCE,
+        strategy: str = "",
+    ) -> HackabilityCurve:
+        n = len(trials)
+        successes = [trial for trial in trials if trial.hacked]
+        k = len(successes)
+        alpha = 0.0 if n == 0 else k / n
+        lower, upper = _clopper_pearson(k, n, confidence)
+        name = strategy or (trials[0].strategy if trials else "")
+        return HackabilityCurve(
+            alpha=alpha,
+            alpha_ci_lower=lower,
+            alpha_ci_upper=upper,
+            n_trials=n,
+            n_successes=k,
+            curve={k_val: _h(alpha, k_val) for k_val in CURVE_KS},
+            strategy=name,
+            trial_ids=tuple(trial.trial_id for trial in trials),
+        )
