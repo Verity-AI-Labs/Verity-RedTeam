@@ -8,7 +8,7 @@ from verity_corpus.models.vrc import VRCEntry
 
 from verity_redteam.analysis.hackability import HackabilityEstimator
 from verity_redteam.types import AttackTrial, ProbeResult
-from verity_redteam.vrc import VRCLogger
+from verity_redteam.vrc import VRCLogger, last_user_preview, load_vrc_entries
 
 
 def _hack(submission: str, env_id: str = "env1") -> AttackTrial:
@@ -81,3 +81,30 @@ class TestVRCLogger:
         assert logger.log_trial(a, _curve([a])) is not None
         assert logger.log_trial(b, _curve([b])) is not None
         assert len(list((tmp_path / "vrc").rglob("*.json"))) == 2
+
+
+class TestLoadVrcEntries:
+    def test_reads_entries_for_one_env_id(self, tmp_path: Path) -> None:
+        vrc_dir = tmp_path / "vrc"
+        trial = _hack("bypass" * 20, env_id="corpus/task-1")
+        VRCLogger(vrc_dir).log_trial(trial, _curve([trial]))
+        entries = load_vrc_entries(vrc_dir, "corpus/task-1")
+        assert len(entries) == 1
+        assert entries[0].env_id == "corpus/task-1"
+        assert entries[0].exploit_type == "freeform"
+        preview = last_user_preview(entries[0].trajectory)
+        assert len(preview) == 80
+        assert preview == ("bypass" * 20)[:80]
+
+    def test_returns_empty_when_the_folder_is_missing(self, tmp_path: Path) -> None:
+        assert load_vrc_entries(tmp_path / "vrc", "absent") == []
+
+    def test_preview_uses_the_last_user_message(self) -> None:
+        trajectory = [
+            {"role": "system", "content": "sys"},
+            {"role": "user", "content": "first"},
+            {"role": "assistant", "content": "ok"},
+            {"role": "user", "content": "second-and-final"},
+        ]
+        assert last_user_preview(trajectory) == "second-and-final"
+        assert last_user_preview(trajectory, n=6) == "second"

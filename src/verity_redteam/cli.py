@@ -21,6 +21,7 @@ from verity_redteam import __version__
 from verity_redteam.config import RedTeamConfig, load_redteam_config
 from verity_redteam.runner import RedTeamRunner
 from verity_redteam.strategies import get_strategy
+from verity_redteam.vrc import last_user_preview, load_vrc_entries
 
 logger = logging.getLogger(__name__)
 
@@ -99,6 +100,21 @@ def build_parser() -> argparse.ArgumentParser:
     )
     report.add_argument("--json", action="store_true", help="emit JSON instead of text")
     report.set_defaults(handler=_cmd_report)
+
+    vrc = subcommands.add_parser(
+        "vrc",
+        help="inspect recorded VRC exploits",
+        description="Read-side commands for the Verity Reward-hack Corpus.",
+    )
+    vrc_sub = vrc.add_subparsers(dest="vrc_command", metavar="<vrc-command>", required=True)
+    vrc_list = vrc_sub.add_parser(
+        "list",
+        help="list VRC entries for one environment",
+        description="Read VRC entries from config.vrc_dir/<env-id>/.",
+    )
+    vrc_list.add_argument("env_id", help="environment id as recorded on the VRC entries")
+    vrc_list.add_argument("--json", action="store_true", help="dump the raw entries as JSON")
+    vrc_list.set_defaults(handler=_cmd_vrc_list)
 
     return parser
 
@@ -310,6 +326,20 @@ def _cmd_report(args: argparse.Namespace, config: RedTeamConfig) -> int:
         n = "—" if row["n_trials"] is None else str(row["n_trials"])
         hits = "—" if row["n_successes"] is None else str(row["n_successes"])
         print(f"{row['env_id']:<40.40}  {value:>7}  {n:>4}  {hits:>4}  {row['strategy'] or '—'}")
+    return EXIT_OK
+
+
+def _cmd_vrc_list(args: argparse.Namespace, config: RedTeamConfig) -> int:
+    entries = load_vrc_entries(config.vrc_dir, args.env_id)
+    if args.json:
+        _emit([entry.model_dump(mode="json") for entry in entries])
+        return EXIT_OK
+    if not entries:
+        print(f"{config.vrc_dir / args.env_id}: no VRC entries")
+        return EXIT_OK
+    for entry in entries:
+        preview = last_user_preview(entry.trajectory)
+        print(f"{entry.id}  {entry.exploit_type}  {entry.discovered_at.isoformat()}  {preview}")
     return EXIT_OK
 
 

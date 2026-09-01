@@ -26,7 +26,7 @@ def test_parser_requires_a_command() -> None:
     assert parser.parse_args(["run", "env-1", "--dry-run"]).dry_run is True
     assert parser.parse_args(["batch", "--dry-run"]).dry_run is True
     assert parser.parse_args(["batch", "--domain", "code", "--resume"]).resume is True
-    assert parser.parse_args(["report", "--results-dir", "results"]).command == "report"
+    assert parser.parse_args(["vrc", "list", "corpus/task-1"]).command == "vrc"
 
 
 def test_report_lists_v1_from_scorecards(tmp_path: Path, capsys: Any) -> None:
@@ -240,3 +240,56 @@ def test_batch_dry_run_prints_each_entry(
     assert "id: corpus/task-2" in captured.out
     assert "instructions: one" in captured.out
     assert "instructions: two" in captured.out
+
+
+def test_vrc_list_prints_entries(tmp_path: Path, capsys: Any) -> None:
+    from verity_corpus.models.vrc import VRCEntry
+
+    vrc_dir = tmp_path / "vrc"
+    entry = VRCEntry(
+        env_id="corpus/task-1",
+        exploit_type="freeform",
+        trajectory=[
+            {"role": "system", "content": "sys"},
+            {"role": "user", "content": "first"},
+            {"role": "user", "content": "Y" * 100},
+        ],
+        model_id="test-model",
+    )
+    entry.save(vrc_dir)
+    config = tmp_path / "verity.yaml"
+    config.write_text(
+        f"redteam:\n  vrc_dir: {json.dumps(str(vrc_dir))}\n",
+        encoding="utf-8",
+    )
+    code = main(["--config", str(config), "vrc", "list", "corpus/task-1"])
+    captured = capsys.readouterr()
+    assert code == EXIT_OK
+    assert entry.id in captured.out
+    assert "freeform" in captured.out
+    assert ("Y" * 80) in captured.out
+    assert ("Y" * 81) not in captured.out
+
+
+def test_vrc_list_json_dumps_raw_entries(tmp_path: Path, capsys: Any) -> None:
+    from verity_corpus.models.vrc import VRCEntry
+
+    vrc_dir = tmp_path / "vrc"
+    entry = VRCEntry(
+        env_id="env1",
+        exploit_type="freeform",
+        trajectory=[{"role": "user", "content": "bypass"}],
+        model_id="test-model",
+    )
+    entry.save(vrc_dir)
+    config = tmp_path / "verity.yaml"
+    config.write_text(
+        f"redteam:\n  vrc_dir: {json.dumps(str(vrc_dir))}\n",
+        encoding="utf-8",
+    )
+    code = main(["--config", str(config), "vrc", "list", "env1", "--json"])
+    payload = json.loads(capsys.readouterr().out)
+    assert code == EXIT_OK
+    assert payload[0]["id"] == entry.id
+    assert payload[0]["exploit_type"] == "freeform"
+    assert payload[0]["trajectory"][0]["content"] == "bypass"

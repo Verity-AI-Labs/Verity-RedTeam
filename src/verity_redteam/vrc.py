@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import logging
 from pathlib import Path
+from typing import Any
 
 from verity_corpus.models.vrc import VRCEntry
 
@@ -17,7 +18,29 @@ from verity_redteam.types import AttackTrial, ProbeResult
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["VRCLogger"]
+USER_PREVIEW_CHARS = 80
+
+__all__ = ["USER_PREVIEW_CHARS", "VRCLogger", "last_user_preview", "load_vrc_entries"]
+
+
+def last_user_preview(trajectory: list[dict[str, Any]], n: int = USER_PREVIEW_CHARS) -> str:
+    """Return the first ``n`` chars of the last user message in a trajectory."""
+    content = ""
+    for message in trajectory:
+        if message.get("role") == "user":
+            content = str(message.get("content") or "")
+    return content[:n]
+
+
+def load_vrc_entries(vrc_dir: Path | str, env_id: str) -> list[VRCEntry]:
+    """Load every VRC JSON file under ``{vrc_dir}/{env_id}/``."""
+    folder = Path(vrc_dir) / env_id
+    if not folder.is_dir():
+        return []
+    entries: list[VRCEntry] = []
+    for path in sorted(folder.glob("*.json")):
+        entries.append(VRCEntry.model_validate_json(path.read_text(encoding="utf-8")))
+    return entries
 
 
 class VRCLogger:
