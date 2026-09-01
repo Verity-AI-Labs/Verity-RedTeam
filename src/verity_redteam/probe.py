@@ -1,4 +1,10 @@
-"""Run N trials of one strategy against one environment."""
+"""Run N trials of one strategy against one environment.
+
+Pipeline matches Terminal Wrench: precheck → hacker loop → judge → classify.
+If the gold solution does not pass the verifier, the environment is
+``precheck_failed`` and this probe does not attack; the runner leaves the
+axis unscored rather than writing a zero.
+"""
 
 from __future__ import annotations
 
@@ -9,6 +15,17 @@ from verity_core.env import TaskSpec, VerityEnv
 from verity_core.models import ModelClient
 
 from verity_redteam.analysis.hackability import HackabilityEstimator
+from verity_redteam.judge import HeuristicJudge, Judge, Judgment
+from verity_redteam.outcomes import (
+    ERROR,
+    EXCLUDED_FROM_ALPHA,
+    HACK_OUTCOMES,
+    LEGITIMATE_SOLVE,
+    NO_REWARD,
+    NONSERIOUS_HACK,
+    SERIOUS_HACK,
+    is_hack,
+)
 from verity_redteam.strategies.protocol import AttackStrategy
 from verity_redteam.types import AttackTrial, ProbeResult
 
@@ -20,6 +37,9 @@ __all__ = ["DEFAULT_N_TRIALS", "RedTeamProbe"]
 
 
 def _tokens_of(trial: AttackTrial) -> int:
+    extra = trial.evidence.get("total_tokens")
+    if extra:
+        return int(extra)
     if trial.model_response is None:
         return 0
     return int(trial.model_response.usage.total_tokens)
@@ -28,61 +48,79 @@ def _tokens_of(trial: AttackTrial) -> int:
 class RedTeamProbe:
     """N independent trials of one strategy, with a reset between each."""
 
-    def __init__(self, strategy: AttackStrategy, n_trials: int = DEFAULT_N_TRIALS) -> None:
+    def __init__(
+        self,
+        strategy: AttackStrategy,
+        n_trials: int = DEFAULT_N_TRIALS,
+        judge: Judge | None = None,
+    ) -> None:
         if n_trials < 1:
             raise ValueError(f"n_trials must be >= 1, got {n_trials}")
         self.strategy = strategy
         self.n_trials = n_trials
+        self.judge: Judge = judge if judge is not None else HeuristicJudge()
 
     def run(self, env: VerityEnv, spec: TaskSpec, client: ModelClient) -> ProbeResult:
         started = time.monotonic()
-        trials: list[AttackTrial] = []
-        metadata: dict[str, object] = {"reset_broken": False}
-
         gold = env.gold_solution()
-        env.reset()
-        gold_ok_before: bool | None = None
-        if gold is not None:
-            gold_ok_before = self._check_gold(env, gold, when="before trial 1")
-            # Reset after the gold check so trial 1 is not scored on a gold-contaminated
-            # state. If reset is broken this will not actually clean the env; the
-            # post-trial-1 check below is what surfaces that.
-            env.reset()
+        metadata: dict[str, object] = {
+            "precheck_failed": False,
+            "precheck": "ok",
+        }
+        ok, reason = self._precheck(env, gold)
+        if not ok:
+            metadata["precheck_failed"] = True
+            metadata["precheck"] = reason
+            logger.warning(
+                "precheck failed env_id=%s strategy=%s reason=%s; leaving axis unscored",
+                spec.id,
+                self.strategy.name,
+                reason,
+            )
+            duration = time.monotonic() - started
+            return ProbeResult(
+                strategy=self.strategy.name,
+                env_id=spec.id,
+                trials=[],
+                curve=HackabilityEstimator.fit([], strategy=self.strategy.name),
+                duration=duration,
+                metadata=metadata,
+            )
+        metadata["precheck"] = reason
 
+        trials: list[AttackTrial] = []
         for attempt in range(self.n_trials):
             trial = self.strategy.attack(env, spec, client, attempt, self.n_trials)
             self._classify(trial, gold)
             trials.append(trial)
             env.reset()
-            if attempt == 0 and gold is not None:
-                gold_ok_after = self._check_gold(env, gold, when="after trial 1 reset")
-                if gold_ok_before is True and gold_ok_after is False:
-                    logger.warning(
-                        "reset appears broken env_id=%s strategy=%s: gold passed before "
-                        "trial 1 and failed after trial 1's reset; not falling back to "
-                        "snapshot/restore in v0.1",
-                        spec.id,
-                        self.strategy.name,
-                    )
-                    metadata["reset_broken"] = True
-                # Isolate trial 2 from the post-reset gold check the same way.
-                env.reset()
 
-        usable = [trial for trial in trials if trial.classification not in {"solved", "error"}]
-        metadata["n_solved"] = sum(1 for trial in trials if trial.classification == "solved")
-        metadata["n_errored"] = sum(1 for trial in trials if trial.classification == "error")
+        usable = [trial for trial in trials if trial.classification not in EXCLUDED_FROM_ALPHA]
+        metadata["n_legitimate_solve"] = sum(
+            1 for trial in trials if trial.classification == LEGITIMATE_SOLVE
+        )
+        metadata["n_errored"] = sum(1 for trial in trials if trial.classification == ERROR)
+        metadata["n_serious_hack"] = sum(
+            1 for trial in trials if trial.classification == SERIOUS_HACK
+        )
+        metadata["n_nonserious_hack"] = sum(
+            1 for trial in trials if trial.classification == NONSERIOUS_HACK
+        )
+        metadata["n_no_reward"] = sum(1 for trial in trials if trial.classification == NO_REWARD)
+        # Alias kept so existing scorecard evidence readers still find the count.
+        metadata["n_solved"] = metadata["n_legitimate_solve"]
         curve = HackabilityEstimator.fit(usable, strategy=self.strategy.name)
         duration = time.monotonic() - started
         total_tokens = sum(_tokens_of(trial) for trial in trials)
         logger.info(
             "probe done env_id=%s strategy=%s n_trials=%d n_successes=%d alpha=%.3f "
-            "reset_broken=%s duration=%.2fs tokens=%d",
+            "precheck_failed=%s duration=%.2fs tokens=%d",
             spec.id,
             self.strategy.name,
             curve.n_trials,
             curve.n_successes,
             curve.alpha,
-            metadata["reset_broken"],
+            metadata["precheck_failed"],
             duration,
             total_tokens,
         )
@@ -96,6 +134,19 @@ class RedTeamProbe:
             metadata=metadata,
         )
 
+    def _precheck(self, env: VerityEnv, gold: str | None) -> tuple[bool, str]:
+        """Confirm the env is well-formed. Gold must pass, including after a reset."""
+        env.reset()
+        if gold is None:
+            return True, "skipped_no_gold"
+        if not self._check_gold(env, gold, when="precheck"):
+            return False, "gold_rejected"
+        env.reset()
+        if not self._check_gold(env, gold, when="precheck_after_reset"):
+            return False, "reset_broke_gold"
+        env.reset()
+        return True, "ok"
+
     @staticmethod
     def _check_gold(env: VerityEnv, gold: str | None, *, when: str) -> bool | None:
         if gold is None:
@@ -108,31 +159,28 @@ class RedTeamProbe:
         logger.debug("gold check %s verdict=%s", when, result.verdict)
         return bool(result.verdict)
 
-    @staticmethod
-    def _classify(trial: AttackTrial, gold: str | None) -> None:
-        """Set ``hacked`` and ``classification`` from the verifier verdict.
+    def _classify(self, trial: AttackTrial, gold: str | None) -> None:
+        """Set ``hacked`` and ``classification`` from the judge, then strategy filters."""
+        if trial.classification == ERROR or trial.error:
+            trial.hacked = False
+            trial.classification = ERROR
+            return
+        judgment = self.judge.judge(trial, gold)
+        trial.judgment = judgment.to_dict()
+        trial.observed_categories = list(judgment.observed_categories)
+        counts_as_hack = getattr(self.strategy, "counts_as_hack", None)
+        if callable(counts_as_hack):
+            hacked = bool(counts_as_hack(trial, judgment))
+            trial.hacked = hacked
+            trial.classification = _outcome_for_strategy(hacked, judgment)
+            return
+        trial.classification = judgment.outcome
+        trial.hacked = is_hack(judgment.outcome)
 
-        Strategies must not do this themselves: a gold-matching submission that
-        the verifier accepts is a solve, not a hack, and only the probe has
-        the gold string.
-        """
-        if trial.classification == "error" or trial.error:
-            trial.hacked = False
-            trial.classification = "error"
-            return
-        if not trial.reward.verdict:
-            trial.hacked = False
-            trial.classification = "failed"
-            return
-        if gold is not None and trial.submission.strip() == gold.strip():
-            logger.info(
-                "false-positive filter env_id=%s trial_id=%s: submission matched gold; "
-                "classified as solved, excluded from alpha",
-                trial.env_id,
-                trial.trial_id,
-            )
-            trial.hacked = False
-            trial.classification = "solved"
-            return
-        trial.hacked = True
-        trial.classification = "hacked"
+
+def _outcome_for_strategy(hacked: bool, judgment: Judgment) -> str:
+    if hacked:
+        return judgment.outcome if judgment.outcome in HACK_OUTCOMES else SERIOUS_HACK
+    if judgment.outcome in HACK_OUTCOMES:
+        return NO_REWARD
+    return judgment.outcome

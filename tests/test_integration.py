@@ -23,12 +23,19 @@ import os
 import pytest
 from tests.conftest import FakeEnv, make_spec
 
+from verity_redteam.outcomes import (
+    ERROR,
+    LEGITIMATE_SOLVE,
+    NO_REWARD,
+    NONSERIOUS_HACK,
+    SERIOUS_HACK,
+)
 from verity_redteam.probe import RedTeamProbe
 from verity_redteam.strategies.freeform import FreeformHackStrategy
 
 pytestmark = pytest.mark.integration
 
-_CLASSIFICATIONS = frozenset({"failed", "hacked", "solved", "error"})
+_CLASSIFICATIONS = frozenset({SERIOUS_HACK, NONSERIOUS_HACK, LEGITIMATE_SOLVE, NO_REWARD, ERROR})
 
 
 @pytest.mark.skipif(
