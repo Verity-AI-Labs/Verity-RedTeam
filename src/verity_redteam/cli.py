@@ -58,6 +58,11 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--corpus", type=Path, help="corpus directory of YAML manifests")
     run.add_argument("--results-dir", type=Path, help="write the scorecard here")
     run.add_argument("--json", action="store_true", help="emit JSON instead of markdown")
+    run.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="print the resolved spec and exit before any model or verifier call",
+    )
     run.set_defaults(handler=_cmd_run)
 
     batch = subcommands.add_parser(
@@ -74,6 +79,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="skip envs that already have scorecards",
     )
     batch.add_argument("--json", action="store_true", help="emit the batch summary as JSON")
+    batch.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="print each resolved spec and exit before any model or verifier call",
+    )
     batch.set_defaults(handler=_cmd_batch)
 
     report = subcommands.add_parser(
@@ -91,6 +101,26 @@ def build_parser() -> argparse.ArgumentParser:
     report.set_defaults(handler=_cmd_report)
 
     return parser
+
+
+INSTRUCTION_PREVIEW = 200
+
+
+def _source_pin(entry: dict[str, Any]) -> str:
+    source = str(entry.get("source") or "")
+    commit = str(entry.get("commit") or "")
+    if source and commit:
+        return f"{source}@{commit}"
+    return source or commit
+
+
+def _print_resolved_spec(entry: dict[str, Any]) -> None:
+    instructions = str(entry.get("instructions") or "")
+    print(f"id: {entry.get('id', '')}")
+    print(f"domain: {entry.get('domain', '')}")
+    print(f"format: {entry.get('format', '')}")
+    print(f"source: {_source_pin(entry)}")
+    print(f"instructions: {instructions[:INSTRUCTION_PREVIEW]}")
 
 
 def _emit(payload: dict[str, Any] | list[Any]) -> None:
@@ -183,6 +213,10 @@ def _cmd_run(args: argparse.Namespace, config: RedTeamConfig) -> int:
         print(f"{PROGRAM}: {exc}", file=sys.stderr)
         return EXIT_ERROR
 
+    if args.dry_run:
+        _print_resolved_spec(entry)
+        return EXIT_OK
+
     config.ensure_dirs()
     with ModelClient.from_config(config.core) as client:
         runner = _build_runner(config, client)
@@ -204,6 +238,13 @@ def _cmd_batch(args: argparse.Namespace, config: RedTeamConfig) -> int:
     if not entries:
         print(f"{PROGRAM}: no matching environments in {corpus_dir}", file=sys.stderr)
         return EXIT_ERROR
+
+    if args.dry_run:
+        for index, entry in enumerate(entries):
+            if index:
+                print()
+            _print_resolved_spec(entry)
+        return EXIT_OK
 
     results_dir = args.results_dir or config.results_dir
     config.ensure_dirs()

@@ -23,7 +23,8 @@ def test_cli_imports_core_helpers_from_the_package_root() -> None:
 
 def test_parser_requires_a_command() -> None:
     parser = build_parser()
-    assert parser.parse_args(["run", "env-1"]).command == "run"
+    assert parser.parse_args(["run", "env-1", "--dry-run"]).dry_run is True
+    assert parser.parse_args(["batch", "--dry-run"]).dry_run is True
     assert parser.parse_args(["batch", "--domain", "code", "--resume"]).resume is True
     assert parser.parse_args(["report", "--results-dir", "results"]).command == "report"
 
@@ -172,3 +173,70 @@ entries:
         monkeypatch.setattr("verity_redteam.cli.load_corpus", boom)
         with pytest.raises(RuntimeError, match="disk failed"):
             _load_entries(tmp_path)
+
+
+def _write_core_manifest(
+    directory: Path,
+    *,
+    env_id: str,
+    instructions: str = "Fix the failing test.",
+    filename: str | None = None,
+) -> None:
+    directory.mkdir(parents=True, exist_ok=True)
+    stem = filename or env_id.replace("/", "__")
+    (directory / f"{stem}.yaml").write_text(
+        f"id: {env_id}\n"
+        "format: verifiers\n"
+        "domain: code\n"
+        "source: https://github.com/example/tasks\n"
+        "commit: 0f1e2d3\n"
+        f"instructions: {instructions}\n",
+        encoding="utf-8",
+    )
+
+
+def test_run_dry_run_prints_the_spec_and_skips_the_model(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: Any
+) -> None:
+    corpus = tmp_path / "manifests"
+    _write_core_manifest(corpus, env_id="corpus/task-1", instructions="A" * 250)
+
+    def no_client(*args: object, **kwargs: object) -> None:
+        raise AssertionError("dry-run must not open a model client")
+
+    def no_env(*args: object, **kwargs: object) -> None:
+        raise AssertionError("dry-run must not load an environment")
+
+    monkeypatch.setattr("verity_redteam.cli.ModelClient.from_config", no_client)
+    monkeypatch.setattr("verity_redteam.runner.load_env", no_env)
+
+    code = main(["run", "corpus/task-1", "--corpus", str(corpus), "--dry-run"])
+    captured = capsys.readouterr()
+    assert code == EXIT_OK
+    assert "id: corpus/task-1" in captured.out
+    assert "domain: code" in captured.out
+    assert "format: verifiers" in captured.out
+    assert "source: https://github.com/example/tasks@0f1e2d3" in captured.out
+    assert "instructions: " + ("A" * 200) in captured.out
+    assert "A" * 201 not in captured.out
+
+
+def test_batch_dry_run_prints_each_entry(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: Any
+) -> None:
+    corpus = tmp_path / "manifests"
+    _write_core_manifest(corpus, env_id="corpus/task-1", instructions="one")
+    _write_core_manifest(corpus, env_id="corpus/task-2", instructions="two")
+
+    def boom(*args: object, **kwargs: object) -> None:
+        raise AssertionError("dry-run must not open a model client")
+
+    monkeypatch.setattr("verity_redteam.cli.ModelClient.from_config", boom)
+
+    code = main(["batch", "--corpus", str(corpus), "--dry-run"])
+    captured = capsys.readouterr()
+    assert code == EXIT_OK
+    assert "id: corpus/task-1" in captured.out
+    assert "id: corpus/task-2" in captured.out
+    assert "instructions: one" in captured.out
+    assert "instructions: two" in captured.out
