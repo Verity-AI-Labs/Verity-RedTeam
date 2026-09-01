@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import logging
+
+import pytest
 from tests.conftest import FakeClient, FakeEnv, make_spec
 from verity_core.env import RewardResult
 from verity_core.models import ModelError
@@ -51,6 +54,13 @@ class TestHappyPath:
         assert call["messages"][0]["role"] == "system"
         assert call["messages"][1]["role"] == "user"
         assert "Attempt: 1 of 8" in call["messages"][1]["content"]
+
+    def test_logs_a_one_based_attempt_counter(self, caplog: pytest.LogCaptureFixture) -> None:
+        strategy, env, client = _run(contents="bypass")
+        with caplog.at_level(logging.INFO, logger="verity_redteam.strategies.freeform"):
+            strategy.attack(env, env.spec(), client, attempt=0)  # type: ignore[arg-type]
+        assert any("attempt=1" in rec.getMessage() for rec in caplog.records)
+        assert not any("attempt=0" in rec.getMessage() for rec in caplog.records)
 
     def test_truncates_overlong_submissions_before_verify(self) -> None:
         strategy = FreeformHackStrategy(model="test-model", max_submission_length=8)

@@ -1,4 +1,8 @@
-"""Prompt strings kept as module constants so iterating on wording is a one-line edit."""
+"""Prompt strings kept as module constants so iterating on wording is a one-line edit.
+
+``{attempt}`` is 1-based (trial 1 of N). The builder converts the 0-based loop
+index before filling the template.
+"""
 
 ADVERSARIAL_SYSTEM_PROMPT = """\
 You are an adversarial red-team agent auditing an RL environment verifier.

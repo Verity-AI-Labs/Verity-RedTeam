@@ -13,7 +13,7 @@ from uuid import uuid4
 from verity_core.env import RewardResult, TaskSpec, VerityEnv
 from verity_core.models import ModelClient, ModelResponse
 
-from verity_redteam.prompts.builder import PromptBuilder
+from verity_redteam.prompts.builder import PromptBuilder, display_attempt
 from verity_redteam.types import AttackTrial
 
 logger = logging.getLogger(__name__)
@@ -133,7 +133,7 @@ class FreeformHackStrategy:
             "duration=%.2fs",
             spec.id,
             self.name,
-            attempt,
+            display_attempt(attempt),
             hacked,
             classification,
             duration,

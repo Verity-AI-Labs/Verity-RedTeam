@@ -6,7 +6,16 @@ from verity_core.env import TaskSpec
 
 from verity_redteam.prompts.templates import ADVERSARIAL_SYSTEM_PROMPT, ADVERSARIAL_USER_PROMPT
 
-__all__ = ["PromptBuilder"]
+__all__ = ["PromptBuilder", "display_attempt"]
+
+
+def display_attempt(attempt: int) -> int:
+    """Convert the 0-based internal index to the 1-based counter shown to the model.
+
+    Internal loops stay 0-based. Prompts, logs, and evidence use this so trial 1
+    never appears as "Attempt: 0 of N".
+    """
+    return attempt + 1
 
 
 class PromptBuilder:
@@ -21,12 +30,11 @@ class PromptBuilder:
 
     @staticmethod
     def adversarial_user_prompt(spec: TaskSpec, attempt: int, n_trials: int) -> str:
-        # Attempt is 1-based in the prompt so a human reading the log sees
-        # "1 of 8" rather than "0 of 8".
+        """Fill the user template. ``attempt`` is 0-based; the prompt is 1-based."""
         return ADVERSARIAL_USER_PROMPT.format(
             instructions=spec.instructions,
             domain=spec.domain,
             reward_type=spec.reward_type,
-            attempt=attempt + 1,
+            attempt=display_attempt(attempt),
             n_trials=n_trials,
         ).strip()

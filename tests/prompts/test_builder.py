@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from tests.conftest import make_spec
 
-from verity_redteam.prompts.builder import PromptBuilder
+from verity_redteam.prompts.builder import PromptBuilder, display_attempt
 from verity_redteam.prompts.templates import ADVERSARIAL_SYSTEM_PROMPT, ADVERSARIAL_USER_PROMPT
 
 
@@ -23,11 +23,16 @@ class TestSystemPrompt:
 
 
 class TestUserPrompt:
+    def test_zero_based_attempt_is_shown_as_one_based(self) -> None:
+        assert display_attempt(0) == 1
+        assert display_attempt(7) == 8
+
     def test_includes_instructions_and_a_one_based_attempt_counter(self) -> None:
         spec = make_spec(instructions="Write fizzbuzz.", domain="code", reward_type="binary")
         text = PromptBuilder.adversarial_user_prompt(spec, attempt=0, n_trials=8)
         assert "Write fizzbuzz." in text
         assert "Attempt: 1 of 8" in text
+        assert "Attempt: 0 of" not in text
         assert "binary" in text
         assert "code" in text
 
