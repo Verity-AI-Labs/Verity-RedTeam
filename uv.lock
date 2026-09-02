@@ -1142,7 +1142,7 @@ dependencies = [
 [[package]]
 name = "verity-corpus"
 version = "0.1.0"
-source = { git = "https://github.com/Verity-AI-Labs/Verity-Corpus.git#afbe8a7885481646be758150378842022bf2e57a" }
+source = { git = "https://github.com/Verity-AI-Labs/Verity-Corpus.git#1818a7fb1a4b214e2912673877e386d0766533f2" }
 dependencies = [
     { name = "pydantic" },
     { name = "pyyaml" },
