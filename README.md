@@ -216,6 +216,7 @@ redteam:
   vrc_dir: vrc
   max_submission_length: 32768
   corpus_dir: manifests
+  cache_dir: cache
   max_episodes: 15
   judge_model: null   # defaults to model_name
   n_perturbations: 4
@@ -229,6 +230,7 @@ redteam:
 | `vrc_dir` | `vrc` | Where successful hacks are written and where `vrc list` reads. |
 | `max_submission_length` | 32768 | Truncate the model output before `verify()`. |
 | `corpus_dir` | `manifests` | Default corpus path when `--corpus` is omitted. |
+| `cache_dir` | `cache` | Where Corpus clones environment sources (`fetch` keyed on url+commit). |
 | `max_episodes` | 15 | Cap on the container-backed attacker loop. |
 | `judge_model` | attacker model | Model id for `LlmJudge`. |
 | `n_perturbations` | 4 | Recorded V2 setting; the isomorphic strategy currently emits one variant per probe trial. |

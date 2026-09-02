@@ -17,6 +17,7 @@ coverage.xml
 
 # Verity runtime artifacts
 .verity_cache/
+cache/
 results/
 vrc/
 

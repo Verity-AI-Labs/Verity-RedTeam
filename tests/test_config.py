@@ -8,6 +8,7 @@ import pytest
 from verity_core.config import DEFAULT_MODEL_NAME, VerityConfig
 
 from verity_redteam.config import (
+    DEFAULT_CACHE_DIR,
     DEFAULT_MAX_EPISODES,
     DEFAULT_N_TRIALS,
     DEFAULT_STRATEGIES,
@@ -30,6 +31,7 @@ class TestDefaults:
         assert config.temperature == DEFAULT_TEMPERATURE
         assert config.strategies == list(DEFAULT_STRATEGIES)
         assert config.max_episodes == DEFAULT_MAX_EPISODES
+        assert config.cache_dir == DEFAULT_CACHE_DIR
         assert config.judge_model is None
         assert config.n_perturbations == 4
         assert config.core.model_name == DEFAULT_MODEL_NAME
@@ -66,6 +68,7 @@ class TestFileLoading:
               vrc_dir: /tmp/vrc
               max_submission_length: 1024
               corpus_dir: /tmp/manifests
+              cache_dir: /tmp/verity-cache
               max_episodes: 10
               judge_model: judge-model
               n_perturbations: 6
@@ -79,6 +82,7 @@ class TestFileLoading:
         assert config.vrc_dir == Path("/tmp/vrc")
         assert config.max_submission_length == 1024
         assert config.corpus_dir == Path("/tmp/manifests")
+        assert config.cache_dir == Path("/tmp/verity-cache")
         assert config.max_episodes == 10
         assert config.judge_model == "judge-model"
         assert config.n_perturbations == 6
@@ -106,5 +110,6 @@ class TestFileLoading:
         assert payload["redteam"]["max_episodes"] == DEFAULT_MAX_EPISODES
         assert payload["redteam"]["judge_model"] is None
         assert payload["redteam"]["n_perturbations"] == 4
+        assert payload["redteam"]["cache_dir"] == str(DEFAULT_CACHE_DIR)
         assert payload["redteam"]["strategies"] == list(DEFAULT_STRATEGIES)
         assert payload["model_name"] == DEFAULT_MODEL_NAME

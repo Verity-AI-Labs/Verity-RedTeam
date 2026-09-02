@@ -34,10 +34,12 @@ DEFAULT_STRATEGIES: tuple[str, ...] = (
 DEFAULT_VRC_DIR = Path("vrc")
 DEFAULT_MAX_SUBMISSION_LENGTH = 32768
 DEFAULT_CORPUS_DIR = Path("manifests")
+DEFAULT_CACHE_DIR = Path("cache")
 DEFAULT_MAX_EPISODES = 15
 DEFAULT_N_PERTURBATIONS = 4
 
 __all__ = [
+    "DEFAULT_CACHE_DIR",
     "DEFAULT_CORPUS_DIR",
     "DEFAULT_MAX_EPISODES",
     "DEFAULT_MAX_SUBMISSION_LENGTH",
@@ -80,6 +82,7 @@ class RedTeamConfig:
     vrc_dir: Path = field(default_factory=lambda: DEFAULT_VRC_DIR)
     max_submission_length: int = DEFAULT_MAX_SUBMISSION_LENGTH
     corpus_dir: Path = field(default_factory=lambda: DEFAULT_CORPUS_DIR)
+    cache_dir: Path = field(default_factory=lambda: DEFAULT_CACHE_DIR)
     max_episodes: int = DEFAULT_MAX_EPISODES
     judge_model: str | None = None
     n_perturbations: int = DEFAULT_N_PERTURBATIONS
@@ -87,6 +90,7 @@ class RedTeamConfig:
     def __post_init__(self) -> None:
         self.vrc_dir = _parse_path(self.vrc_dir)
         self.corpus_dir = _parse_path(self.corpus_dir)
+        self.cache_dir = _parse_path(self.cache_dir)
         if self.n_trials < 1:
             raise ValueError(f"n_trials must be >= 1, got {self.n_trials}")
         if self.max_submission_length < 1:
@@ -115,6 +119,7 @@ class RedTeamConfig:
     def ensure_dirs(self) -> None:
         self.core.ensure_dirs()
         self.vrc_dir.mkdir(parents=True, exist_ok=True)
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -126,6 +131,7 @@ class RedTeamConfig:
                 "vrc_dir": str(self.vrc_dir),
                 "max_submission_length": self.max_submission_length,
                 "corpus_dir": str(self.corpus_dir),
+                "cache_dir": str(self.cache_dir),
                 "max_episodes": self.max_episodes,
                 "judge_model": self.judge_model,
                 "n_perturbations": self.n_perturbations,
@@ -147,7 +153,7 @@ def _coerce_redteam(data: dict[str, Any], *, source: str) -> dict[str, Any]:
     for key, value in data.items():
         if value is None:
             continue
-        if key in ("vrc_dir", "corpus_dir"):
+        if key in ("vrc_dir", "corpus_dir", "cache_dir"):
             coerced[key] = _parse_path(value)
         elif key in {
             "n_trials",
