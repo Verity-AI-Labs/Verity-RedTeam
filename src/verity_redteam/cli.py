@@ -23,7 +23,11 @@ from verity_redteam.judge import LlmJudge
 from verity_redteam.reporting import build_redteam_report
 from verity_redteam.runner import RedTeamRunner
 from verity_redteam.strategies import get_strategy
-from verity_redteam.validation.benchmarks import BENCHMARK_NAMES, resolve_benchmark
+from verity_redteam.validation.benchmarks import (
+    BENCHMARK_NAMES,
+    ResolvedBenchmark,
+    resolve_benchmark,
+)
 from verity_redteam.validation.evaluate import evaluate_benchmark
 from verity_redteam.vrc import last_user_preview, load_vrc_entries
 
@@ -70,12 +74,22 @@ def build_parser() -> argparse.ArgumentParser:
     )
     run.set_defaults(handler=_cmd_run)
 
+    list_cmd = subcommands.add_parser(
+        "list",
+        help="list corpus environment ids",
+        description="Print id, name, domain, and adapter for each corpus entry.",
+    )
+    list_cmd.add_argument("--corpus", type=Path, help="corpus directory of YAML manifests")
+    list_cmd.add_argument("--domain", action="append", help="only this domain (repeatable)")
+    list_cmd.set_defaults(handler=_cmd_list)
+
     batch = subcommands.add_parser(
         "batch",
         help="audit every matching environment",
         description="Audit all matching corpus entries via verity-core's run_batch.",
     )
     batch.add_argument("--domain", action="append", help="only this domain (repeatable)")
+    _add_selection_flags(batch)
     batch.add_argument("--corpus", type=Path, help="corpus directory of YAML manifests")
     batch.add_argument("--results-dir", type=Path, help="write scorecards here")
     batch.add_argument(
@@ -144,6 +158,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="terminal-wrench (recall@4, gate 60%) or impossiblebench (precision, gate 90%)",
     )
     validate.add_argument("--corpus", type=Path, help="corpus directory of YAML manifests")
+    _add_selection_flags(validate)
     validate.add_argument(
         "--results-dir",
         type=Path,
@@ -171,6 +186,30 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 INSTRUCTION_PREVIEW = 200
+
+
+def _positive_int(value: str) -> int:
+    try:
+        parsed = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(f"must be an integer, got {value!r}") from exc
+    if parsed < 1:
+        raise argparse.ArgumentTypeError("must be >= 1")
+    return parsed
+
+
+def _add_selection_flags(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--id",
+        action="append",
+        dest="env_ids",
+        help="only this environment id (repeatable)",
+    )
+    parser.add_argument(
+        "--limit",
+        type=_positive_int,
+        help="audit at most N matching environments, after --domain/--id filters",
+    )
 
 
 def _source_pin(entry: dict[str, Any]) -> str:
@@ -246,6 +285,94 @@ def _load_entries_from_registry(
     return manifests
 
 
+def _select_entries(
+    entries: list[dict[str, Any]],
+    *,
+    env_ids: list[str] | None = None,
+    limit: int | None = None,
+) -> list[dict[str, Any]]:
+    if env_ids:
+        wanted = set(env_ids)
+        known = {str(entry.get("id")) for entry in entries}
+        missing = sorted(wanted - known)
+        if missing:
+            raise ValueError("environment(s) not found: " + ", ".join(missing))
+        entries = [entry for entry in entries if str(entry.get("id")) in wanted]
+    entries = sorted(entries, key=lambda item: str(item.get("id") or ""))
+    if limit is not None:
+        entries = entries[:limit]
+    return entries
+
+
+def _select_benchmark(
+    resolved: ResolvedBenchmark,
+    *,
+    env_ids: list[str] | None = None,
+    limit: int | None = None,
+) -> ResolvedBenchmark:
+    pairs = list(zip(resolved.entries, resolved.manifests, strict=True))
+    if env_ids:
+        wanted = set(env_ids)
+        known = {str(entry.id) for entry, _manifest in pairs}
+        missing = sorted(wanted - known)
+        if missing:
+            raise ValueError("environment(s) not found: " + ", ".join(missing))
+        pairs = [(entry, manifest) for entry, manifest in pairs if entry.id in wanted]
+    pairs.sort(key=lambda item: str(item[0].id))
+    if limit is not None:
+        pairs = pairs[:limit]
+    if not pairs:
+        return ResolvedBenchmark(spec=resolved.spec, entries=(), manifests=())
+    selected_entries, selected_manifests = zip(*pairs, strict=True)
+    return ResolvedBenchmark(
+        spec=resolved.spec,
+        entries=tuple(selected_entries),
+        manifests=tuple(selected_manifests),
+    )
+
+
+def _list_entry_rows(
+    corpus_dir: Path, domain: list[str] | str | None = None
+) -> list[dict[str, str]]:
+    try:
+        from verity_corpus.registry import CorpusRegistry, RegistryError
+    except ImportError:
+        entries = load_corpus(corpus_dir, domain=domain)
+        rows = [
+            {
+                "id": str(entry.get("id") or ""),
+                "name": str(entry.get("name") or ""),
+                "domain": str(entry.get("domain") or ""),
+                "adapter": str(entry.get("format") or ""),
+            }
+            for entry in entries
+        ]
+        rows.sort(key=lambda row: row["id"])
+        return rows
+
+    try:
+        entries = CorpusRegistry(corpus_dir).all()
+    except RegistryError as registry_exc:
+        raise ValueError(
+            f"could not load corpus from {corpus_dir}: {registry_exc}"
+        ) from registry_exc
+
+    if domain:
+        wanted = {domain} if isinstance(domain, str) else set(domain)
+        entries = [entry for entry in entries if entry.domain.category in wanted]
+    rows = [
+        {
+            "id": entry.id,
+            "name": entry.name,
+            "domain": entry.domain.category,
+            "adapter": entry.adapter,
+        }
+        for entry in entries
+    ]
+    rows.sort(key=lambda row: row["id"])
+    return rows
+
+
 def _find_entry(corpus_dir: Path, env_id: str) -> dict[str, Any]:
     entries = _load_entries(corpus_dir)
     for entry in entries:
@@ -302,9 +429,32 @@ def _cmd_run(args: argparse.Namespace, config: RedTeamConfig) -> int:
     return EXIT_OK
 
 
+def _cmd_list(args: argparse.Namespace, config: RedTeamConfig) -> int:
+    corpus_dir = Path(args.corpus or config.corpus_dir)
+    rows = _list_entry_rows(corpus_dir, domain=args.domain)
+    if not rows:
+        print(f"{PROGRAM}: no matching environments in {corpus_dir}", file=sys.stderr)
+        return EXIT_ERROR
+
+    id_width = max(len("ID"), max(len(row["id"]) for row in rows))
+    name_width = max(len("NAME"), max(len(row["name"]) for row in rows))
+    domain_width = max(len("DOMAIN"), max(len(row["domain"]) for row in rows))
+    print(f"{'ID':<{id_width}}  {'NAME':<{name_width}}  {'DOMAIN':<{domain_width}}  ADAPTER")
+    for row in rows:
+        print(
+            f"{row['id']:<{id_width}}  {row['name']:<{name_width}}  "
+            f"{row['domain']:<{domain_width}}  {row['adapter']}"
+        )
+    return EXIT_OK
+
+
 def _cmd_batch(args: argparse.Namespace, config: RedTeamConfig) -> int:
     corpus_dir = args.corpus or config.corpus_dir
-    entries = _load_entries(Path(corpus_dir), domain=args.domain)
+    entries = _select_entries(
+        _load_entries(Path(corpus_dir), domain=args.domain),
+        env_ids=args.env_ids,
+        limit=args.limit,
+    )
     if not entries:
         print(f"{PROGRAM}: no matching environments in {corpus_dir}", file=sys.stderr)
         return EXIT_ERROR
@@ -444,7 +594,11 @@ def _print_validation_text(payload: dict[str, Any]) -> None:
 
 def _cmd_validate(args: argparse.Namespace, config: RedTeamConfig) -> int:
     corpus_dir = Path(args.corpus or config.corpus_dir)
-    resolved = resolve_benchmark(corpus_dir, args.benchmark)
+    resolved = _select_benchmark(
+        resolve_benchmark(corpus_dir, args.benchmark),
+        env_ids=args.env_ids,
+        limit=args.limit,
+    )
     spec = resolved.spec
     results_dir = Path(args.results_dir or config.results_dir)
 

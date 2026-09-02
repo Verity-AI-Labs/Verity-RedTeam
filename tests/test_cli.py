@@ -26,6 +26,17 @@ def test_parser_requires_a_command() -> None:
     assert parser.parse_args(["run", "env-1", "--dry-run"]).dry_run is True
     assert parser.parse_args(["batch", "--dry-run"]).dry_run is True
     assert parser.parse_args(["batch", "--domain", "code", "--resume"]).resume is True
+    listed = parser.parse_args(["list", "--domain", "code"])
+    assert listed.command == "list"
+    assert listed.domain == ["code"]
+    selected = parser.parse_args(["batch", "--id", "abc", "--id", "def", "--limit", "3"])
+    assert selected.env_ids == ["abc", "def"]
+    assert selected.limit == 3
+    validated = parser.parse_args(
+        ["validate", "--benchmark", "terminal-wrench", "--id", "abc", "--limit", "2"]
+    )
+    assert validated.env_ids == ["abc"]
+    assert validated.limit == 2
     assert parser.parse_args(["vrc", "list", "corpus/task-1"]).command == "vrc"
     assert parser.parse_args(["report", "--corpus"]).corpus is True
     parsed = parser.parse_args(["validate", "--benchmark", "terminal-wrench", "--dry-run"])
@@ -319,6 +330,123 @@ def test_batch_dry_run_prints_each_entry(
     assert "instructions: two" in captured.out
 
 
+def test_list_prints_id_name_domain_and_adapter(tmp_path: Path, capsys: Any) -> None:
+    corpus = tmp_path / "manifests"
+    id_code = _write_registry_manifest(
+        corpus, name="Alpha Env", relpath="alpha", domain="code", adapter="verifiers"
+    )
+    id_term = _write_registry_manifest(
+        corpus, name="Beta Env", relpath="beta", domain="terminal", adapter="terminal"
+    )
+    code = main(["list", "--corpus", str(corpus)])
+    captured = capsys.readouterr()
+    assert code == EXIT_OK
+    lines = [line for line in captured.out.splitlines() if line.strip()]
+    assert lines[0].split()[:4] == ["ID", "NAME", "DOMAIN", "ADAPTER"]
+    by_id = {line.split()[0]: line for line in lines[1:]}
+    assert "Alpha Env" in by_id[id_code]
+    assert "code" in by_id[id_code]
+    assert "verifiers" in by_id[id_code]
+    assert "Beta Env" in by_id[id_term]
+    assert "terminal" in by_id[id_term]
+    assert list(by_id) == sorted(by_id)
+
+
+def test_list_filters_by_domain(tmp_path: Path, capsys: Any) -> None:
+    corpus = tmp_path / "manifests"
+    id_code = _write_registry_manifest(
+        corpus, name="Alpha Env", relpath="alpha", domain="code", adapter="verifiers"
+    )
+    id_term = _write_registry_manifest(
+        corpus, name="Beta Env", relpath="beta", domain="terminal", adapter="terminal"
+    )
+    code = main(["list", "--corpus", str(corpus), "--domain", "code"])
+    captured = capsys.readouterr()
+    assert code == EXIT_OK
+    assert id_code in captured.out
+    assert "Alpha Env" in captured.out
+    assert id_term not in captured.out
+    assert "Beta Env" not in captured.out
+
+
+def test_batch_dry_run_filters_by_id(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: Any
+) -> None:
+    corpus = tmp_path / "manifests"
+    id_one = _write_registry_manifest(corpus, name="Task One", relpath="task-1", instructions="one")
+    id_two = _write_registry_manifest(corpus, name="Task Two", relpath="task-2", instructions="two")
+
+    def boom(*args: object, **kwargs: object) -> None:
+        raise AssertionError("dry-run must not open a model client")
+
+    monkeypatch.setattr("verity_redteam.cli.ModelClient.from_config", boom)
+    code = main(["batch", "--corpus", str(corpus), "--id", id_two, "--dry-run"])
+    captured = capsys.readouterr()
+    assert code == EXIT_OK
+    assert f"id: {id_two}" in captured.out
+    assert "instructions: two" in captured.out
+    assert f"id: {id_one}" not in captured.out
+
+
+def test_batch_limit_is_deterministic_after_filters(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: Any
+) -> None:
+    corpus = tmp_path / "manifests"
+    ids = [
+        _write_registry_manifest(corpus, name="Task A", relpath="a", instructions="a"),
+        _write_registry_manifest(corpus, name="Task B", relpath="b", instructions="b"),
+        _write_registry_manifest(corpus, name="Task C", relpath="c", instructions="c"),
+    ]
+    expected = sorted(ids)[:2]
+
+    def boom(*args: object, **kwargs: object) -> None:
+        raise AssertionError("dry-run must not open a model client")
+
+    monkeypatch.setattr("verity_redteam.cli.ModelClient.from_config", boom)
+    first = main(["batch", "--corpus", str(corpus), "--limit", "2", "--dry-run"])
+    out_first = capsys.readouterr().out
+    second = main(["batch", "--corpus", str(corpus), "--limit", "2", "--dry-run"])
+    out_second = capsys.readouterr().out
+    assert first == EXIT_OK
+    assert second == EXIT_OK
+    assert out_first == out_second
+    for env_id in expected:
+        assert f"id: {env_id}" in out_first
+    omitted = (set(ids) - set(expected)).pop()
+    assert f"id: {omitted}" not in out_first
+
+    chosen = [ids[0], ids[2]]
+    after_id = main(
+        [
+            "batch",
+            "--corpus",
+            str(corpus),
+            "--id",
+            chosen[0],
+            "--id",
+            chosen[1],
+            "--limit",
+            "1",
+            "--dry-run",
+        ]
+    )
+    out_after_id = capsys.readouterr().out
+    assert after_id == EXIT_OK
+    kept = sorted(chosen)[0]
+    dropped = sorted(chosen)[1]
+    assert f"id: {kept}" in out_after_id
+    assert f"id: {dropped}" not in out_after_id
+
+
+def test_batch_unknown_id_is_an_error(tmp_path: Path, capsys: Any) -> None:
+    corpus = tmp_path / "manifests"
+    _write_registry_manifest(corpus, name="Task One", relpath="task-1")
+    code = main(["batch", "--corpus", str(corpus), "--id", "missing", "--dry-run"])
+    captured = capsys.readouterr()
+    assert code == EXIT_ERROR
+    assert "environment(s) not found: missing" in captured.err
+
+
 def test_vrc_list_prints_entries(tmp_path: Path, capsys: Any) -> None:
     from verity_corpus.models.vrc import VRCEntry
 
@@ -449,6 +577,57 @@ def test_validate_dry_run_lists_the_labeled_set(
     assert "benchmark: terminal-wrench" in captured.out
     assert "metric: recall@4" in captured.out
     assert "labeled: 2" in captured.out
+
+
+def test_validate_dry_run_filters_by_id_and_limit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: Any
+) -> None:
+    from verity_redteam.validation.benchmarks import TERMINAL_WRENCH, resolve_benchmark
+
+    corpus = tmp_path / "manifests"
+    corpus.mkdir()
+    (corpus / "terminal_wrench.yaml").write_text(_TW_VALIDATE_YAML, encoding="utf-8")
+    env_ids = sorted(resolve_benchmark(corpus, TERMINAL_WRENCH).env_ids)
+
+    def boom(*args: object, **kwargs: object) -> None:
+        raise AssertionError("dry-run must not open a model client")
+
+    monkeypatch.setattr("verity_redteam.cli.ModelClient.from_config", boom)
+    by_id = main(
+        [
+            "validate",
+            "--benchmark",
+            "terminal-wrench",
+            "--corpus",
+            str(corpus),
+            "--id",
+            env_ids[1],
+            "--dry-run",
+        ]
+    )
+    captured = capsys.readouterr()
+    assert by_id == EXIT_OK
+    assert f"id: {env_ids[1]}" in captured.out
+    assert f"id: {env_ids[0]}" not in captured.out
+    assert "labeled: 1" in captured.out
+
+    limited = main(
+        [
+            "validate",
+            "--benchmark",
+            "terminal-wrench",
+            "--corpus",
+            str(corpus),
+            "--limit",
+            "1",
+            "--dry-run",
+        ]
+    )
+    captured = capsys.readouterr()
+    assert limited == EXIT_OK
+    assert "labeled: 1" in captured.out
+    assert f"id: {env_ids[0]}" in captured.out
+    assert f"id: {env_ids[1]}" not in captured.out
 
 
 def test_validate_skip_run_reports_recall_against_scorecards(

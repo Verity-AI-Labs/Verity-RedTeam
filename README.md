@@ -158,6 +158,12 @@ verity-redteam run <env-id> --corpus ../Verity-Corpus/manifests/
 # Audit every matching environment (Core's run_batch, resumable)
 verity-redteam batch --domain code --resume
 verity-redteam batch --corpus manifests/ --results-dir results/
+verity-redteam batch --id <env-id> --id <env-id>
+verity-redteam batch --domain terminal --limit 10 --dry-run
+
+# List environment ids, names, domains, and adapters
+verity-redteam list --corpus ../Verity-Corpus/manifests/
+verity-redteam list --corpus manifests/ --domain terminal
 
 # Print the resolved spec and exit before any model or verifier call
 verity-redteam run <env-id> --corpus manifests/ --dry-run
@@ -176,6 +182,7 @@ verity-redteam validate --benchmark terminal-wrench --corpus ../Verity-Corpus/ma
 verity-redteam validate --benchmark terminal-wrench --skip-run --results-dir results/
 verity-redteam validate --benchmark impossiblebench --skip-run --results-dir results/
 verity-redteam validate --benchmark terminal-wrench --dry-run
+verity-redteam validate --benchmark terminal-wrench --id <env-id> --limit 4 --dry-run
 
 # List recorded exploits for one environment
 verity-redteam vrc list <env-id>
