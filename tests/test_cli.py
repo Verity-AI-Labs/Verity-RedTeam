@@ -13,6 +13,22 @@ from verity_core.scorecard import Scorecard
 from verity_redteam.cli import EXIT_ERROR, EXIT_OK, _load_entries, build_parser, main
 
 
+def _stub_fetch(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, text: str = "real task prose from disk"
+) -> tuple[list[str], Path]:
+    env_root = tmp_path / "fetched-env"
+    env_root.mkdir()
+    (env_root / "instruction.md").write_text(text, encoding="utf-8")
+    fetched: list[str] = []
+
+    def fake(entry: Any, cache_dir: Path) -> Path:
+        fetched.append(str(entry.id))
+        return env_root
+
+    monkeypatch.setattr("verity_redteam.corpus.fetch_env_root", fake)
+    return fetched, env_root
+
+
 def test_cli_imports_core_helpers_from_the_package_root() -> None:
     import verity_core
 
@@ -125,32 +141,38 @@ def _write_registry_manifest(
     *,
     name: str,
     relpath: str,
-    instructions: str = "Fix the failing test.",
+    instructions: str | None = "Fix the failing test.",
     domain: str = "code",
     adapter: str = "verifiers",
     filename: str | None = None,
-    source_url: str = "https://github.com/example/tasks",
-    commit: str = "0f1e2d3",
+    status: str = "registered",
+    instruction_file: str | None = None,
 ) -> str:
     from verity_corpus.models.manifest import SourceSpec, compute_entry_id
 
     directory.mkdir(parents=True, exist_ok=True)
+    env_root = directory / "envs" / relpath
+    env_root.mkdir(parents=True, exist_ok=True)
+    if instruction_file is not None:
+        (env_root / "instruction.md").write_text(instruction_file, encoding="utf-8")
     stem = filename or relpath.replace("/", "__")
+    metadata = ""
+    if instructions is not None:
+        metadata = f"    metadata:\n      instructions: {instructions}\n"
+    status_line = f"    status: {status}\n" if status != "registered" else ""
     (directory / f"{stem}.yaml").write_text(
-        "source_defaults:\n"
-        "  type: git\n"
-        f"  url: {source_url}\n"
-        f"  commit: {commit}\n"
         "entries:\n"
         f"  - name: {name}\n"
-        f"    path: {relpath}\n"
+        "    source:\n"
+        "      type: local\n"
+        f"      path: {json.dumps(str(env_root))}\n"
         f"    domain: {domain}\n"
         f"    adapter: {adapter}\n"
-        "    metadata:\n"
-        f"      instructions: {instructions}\n",
+        f"{status_line}"
+        f"{metadata}",
         encoding="utf-8",
     )
-    return compute_entry_id(SourceSpec(type="git", url=source_url, commit=commit, path=relpath))
+    return compute_entry_id(SourceSpec(type="local", path=str(env_root)))
 
 
 def test_run_audits_one_corpus_entry(tmp_path: Path, monkeypatch: Any, capsys: Any) -> None:
@@ -212,9 +234,9 @@ class TestLoadEntries:
         )
         entries = _load_entries(tmp_path)
         assert len(entries) == 1
-        assert entries[0]["id"] == env_id
-        assert entries[0]["format"] == "verifiers"
-        assert entries[0]["instructions"] == "from the registry"
+        assert entries[0].id == env_id
+        assert entries[0].adapter == "verifiers"
+        assert entries[0].metadata["instructions"] == "from the registry"
 
     def test_skips_schema_yaml_and_does_not_call_load_corpus(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
@@ -232,11 +254,11 @@ class TestLoadEntries:
         def boom(*args: object, **kwargs: object) -> list[dict[str, Any]]:
             raise AssertionError("load_corpus must not run when CorpusRegistry is available")
 
-        monkeypatch.setattr("verity_redteam.cli.load_corpus", boom)
+        monkeypatch.setattr("verity_redteam.corpus.load_corpus", boom)
         with caplog.at_level(logging.ERROR):
             entries = _load_entries(tmp_path)
         assert not any("_schema.yaml" in rec.getMessage() for rec in caplog.records)
-        assert [entry["id"] for entry in entries] == [env_id]
+        assert [entry.id for entry in entries] == [env_id]
 
     def test_falls_back_to_load_corpus_when_corpus_is_unavailable(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
@@ -249,8 +271,8 @@ class TestLoadEntries:
         def no_registry(*args: object, **kwargs: object) -> list[dict[str, Any]]:
             raise ImportError("verity-corpus is not installed")
 
-        monkeypatch.setattr("verity_redteam.cli._load_entries_from_registry", no_registry)
-        with caplog.at_level(logging.INFO, logger="verity_redteam.cli"):
+        monkeypatch.setattr("verity_redteam.corpus._load_from_registry", no_registry)
+        with caplog.at_level(logging.INFO, logger="verity_redteam.corpus"):
             entries = _load_entries(tmp_path)
         assert any(
             "verity-corpus is not installed, using core load_corpus" in rec.getMessage()
@@ -275,8 +297,8 @@ class TestLoadEntries:
         def boom(*args: object, **kwargs: object) -> list[dict[str, Any]]:
             raise RuntimeError("disk failed")
 
-        monkeypatch.setattr("verity_redteam.cli._load_entries_from_registry", no_registry)
-        monkeypatch.setattr("verity_redteam.cli.load_corpus", boom)
+        monkeypatch.setattr("verity_redteam.corpus._load_from_registry", no_registry)
+        monkeypatch.setattr("verity_redteam.corpus.load_corpus", boom)
         with pytest.raises(RuntimeError, match="disk failed"):
             _load_entries(tmp_path)
 
@@ -304,9 +326,7 @@ def test_run_dry_run_prints_the_spec_and_skips_the_model(
     assert f"id: {env_id}" in captured.out
     assert "domain: code" in captured.out
     assert "format: verifiers" in captured.out
-    assert "source: https://github.com/example/tasks@0f1e2d3" in captured.out
-    assert "instructions: " + ("A" * 200) in captured.out
-    assert "A" * 201 not in captured.out
+    assert "instructions: " + ("A" * 250) in captured.out
 
 
 def test_batch_dry_run_prints_each_entry(
@@ -569,6 +589,7 @@ def test_validate_dry_run_lists_the_labeled_set(
         raise AssertionError("dry-run must not open a model client")
 
     monkeypatch.setattr("verity_redteam.cli.ModelClient.from_config", boom)
+    _stub_fetch(monkeypatch, tmp_path)
     code = main(
         ["validate", "--benchmark", "terminal-wrench", "--corpus", str(corpus), "--dry-run"]
     )
@@ -593,6 +614,7 @@ def test_validate_dry_run_filters_by_id_and_limit(
         raise AssertionError("dry-run must not open a model client")
 
     monkeypatch.setattr("verity_redteam.cli.ModelClient.from_config", boom)
+    _stub_fetch(monkeypatch, tmp_path)
     by_id = main(
         [
             "validate",

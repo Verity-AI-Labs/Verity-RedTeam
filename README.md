@@ -195,9 +195,12 @@ view when iterating on the adversarial prompt. `--json` on `run` / `batch` /
 
 `--corpus` directories are loaded through verity-corpus's `CorpusRegistry`,
 which skips `_schema.yaml`, merges `source_defaults`, computes deterministic
-ids, and rejects duplicates. Core's `load_corpus` is used only when
-verity-corpus is not installed. `validate` prefers each benchmark's own
-manifest (`terminal_wrench.yaml`, `impossiblebench.yaml`).
+ids, and rejects duplicates. Selected environments are fetched through
+Corpus's `fetcher` (shared clones keyed on url+commit) before `core_manifest`
+reads task instructions from disk. `list` never fetches. Core's
+`load_corpus` is used only when verity-corpus is not installed. `validate`
+prefers each benchmark's own manifest (`terminal_wrench.yaml`,
+`impossiblebench.yaml`).
 
 ## Configuration
 

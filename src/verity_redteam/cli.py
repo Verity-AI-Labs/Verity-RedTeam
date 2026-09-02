@@ -13,12 +13,18 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
-from verity_core import configure_logging, load_corpus, load_scorecards, run_batch
+from verity_core import configure_logging, load_scorecards, run_batch
 from verity_core.models import ModelClient
 from verity_core.scorecard import scorecard_path
 
 from verity_redteam import __version__
 from verity_redteam.config import RedTeamConfig, load_redteam_config
+from verity_redteam.corpus import (
+    list_entry_rows,
+    load_auditable_entries,
+    resolve_selected,
+    select_entries,
+)
 from verity_redteam.judge import LlmJudge
 from verity_redteam.reporting import build_redteam_report
 from verity_redteam.runner import RedTeamRunner
@@ -26,6 +32,7 @@ from verity_redteam.strategies import get_strategy
 from verity_redteam.validation.benchmarks import (
     BENCHMARK_NAMES,
     ResolvedBenchmark,
+    materialize_benchmark,
     resolve_benchmark,
 )
 from verity_redteam.validation.evaluate import evaluate_benchmark
@@ -185,7 +192,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-INSTRUCTION_PREVIEW = 200
+INSTRUCTION_PREVIEW = 600
 
 
 def _positive_int(value: str) -> int:
@@ -244,64 +251,18 @@ def _configure_logging(level: str) -> None:
             break
 
 
-def _load_entries(corpus_dir: Path, domain: list[str] | str | None = None) -> list[dict[str, Any]]:
-    """Load a ``--corpus`` directory through CorpusRegistry when verity-corpus is installed.
-
-    Corpus owns the canonical manifest-directory semantics: skip ``_schema.yaml``
-    and other non-entries files, merge ``source_defaults``, compute deterministic
-    ids, and reject duplicates. Core's ``load_corpus`` is only used when
-    verity-corpus itself cannot be imported.
-    """
-    try:
-        return _load_entries_from_registry(corpus_dir, domain=domain)
-    except ImportError:
-        logger.info("verity-corpus is not installed, using core load_corpus")
-        return load_corpus(corpus_dir, domain=domain)
-
-
-def _load_entries_from_registry(
-    corpus_dir: Path,
-    *,
-    domain: list[str] | str | None = None,
-) -> list[dict[str, Any]]:
-    from verity_corpus.registry import CorpusRegistry, RegistryError
-    from verity_corpus.resolver import core_manifest
-
-    try:
-        entries = CorpusRegistry(corpus_dir).all()
-    except RegistryError as registry_exc:
-        raise ValueError(
-            f"could not load corpus from {corpus_dir}: {registry_exc}"
-        ) from registry_exc
-
-    if not entries:
-        raise ValueError(f"could not load corpus from {corpus_dir}: no entries found")
-
-    if domain:
-        wanted = {domain} if isinstance(domain, str) else set(domain)
-        entries = [entry for entry in entries if entry.domain.category in wanted]
-    manifests = [core_manifest(entry) for entry in entries if entry.status != "catalog"]
-    manifests.sort(key=lambda item: str(item.get("id") or ""))
-    return manifests
+def _load_entries(corpus_dir: Path, domain: list[str] | str | None = None) -> list[Any]:
+    """Load auditable registry entries without fetching sources."""
+    return load_auditable_entries(corpus_dir, domain=domain)
 
 
 def _select_entries(
-    entries: list[dict[str, Any]],
+    entries: list[Any],
     *,
     env_ids: list[str] | None = None,
     limit: int | None = None,
-) -> list[dict[str, Any]]:
-    if env_ids:
-        wanted = set(env_ids)
-        known = {str(entry.get("id")) for entry in entries}
-        missing = sorted(wanted - known)
-        if missing:
-            raise ValueError("environment(s) not found: " + ", ".join(missing))
-        entries = [entry for entry in entries if str(entry.get("id")) in wanted]
-    entries = sorted(entries, key=lambda item: str(item.get("id") or ""))
-    if limit is not None:
-        entries = entries[:limit]
-    return entries
+) -> list[Any]:
+    return select_entries(entries, env_ids=env_ids, limit=limit)
 
 
 def _select_benchmark(
@@ -310,75 +271,36 @@ def _select_benchmark(
     env_ids: list[str] | None = None,
     limit: int | None = None,
 ) -> ResolvedBenchmark:
-    pairs = list(zip(resolved.entries, resolved.manifests, strict=True))
+    entries = list(resolved.entries)
     if env_ids:
         wanted = set(env_ids)
-        known = {str(entry.id) for entry, _manifest in pairs}
+        known = {str(entry.id) for entry in entries}
         missing = sorted(wanted - known)
         if missing:
             raise ValueError("environment(s) not found: " + ", ".join(missing))
-        pairs = [(entry, manifest) for entry, manifest in pairs if entry.id in wanted]
-    pairs.sort(key=lambda item: str(item[0].id))
+        entries = [entry for entry in entries if str(entry.id) in wanted]
+    entries.sort(key=lambda item: str(item.id))
     if limit is not None:
-        pairs = pairs[:limit]
-    if not pairs:
-        return ResolvedBenchmark(spec=resolved.spec, entries=(), manifests=())
-    selected_entries, selected_manifests = zip(*pairs, strict=True)
-    return ResolvedBenchmark(
-        spec=resolved.spec,
-        entries=tuple(selected_entries),
-        manifests=tuple(selected_manifests),
-    )
+        entries = entries[:limit]
+    return ResolvedBenchmark(spec=resolved.spec, entries=tuple(entries), manifests=())
 
 
 def _list_entry_rows(
     corpus_dir: Path, domain: list[str] | str | None = None
 ) -> list[dict[str, str]]:
-    try:
-        from verity_corpus.registry import CorpusRegistry, RegistryError
-    except ImportError:
-        entries = load_corpus(corpus_dir, domain=domain)
-        rows = [
-            {
-                "id": str(entry.get("id") or ""),
-                "name": str(entry.get("name") or ""),
-                "domain": str(entry.get("domain") or ""),
-                "adapter": str(entry.get("format") or ""),
-            }
-            for entry in entries
-        ]
-        rows.sort(key=lambda row: row["id"])
-        return rows
-
-    try:
-        entries = CorpusRegistry(corpus_dir).all()
-    except RegistryError as registry_exc:
-        raise ValueError(
-            f"could not load corpus from {corpus_dir}: {registry_exc}"
-        ) from registry_exc
-
-    if domain:
-        wanted = {domain} if isinstance(domain, str) else set(domain)
-        entries = [entry for entry in entries if entry.domain.category in wanted]
-    rows = [
-        {
-            "id": entry.id,
-            "name": entry.name,
-            "domain": entry.domain.category,
-            "adapter": entry.adapter,
-        }
-        for entry in entries
-    ]
-    rows.sort(key=lambda row: row["id"])
-    return rows
+    return list_entry_rows(corpus_dir, domain=domain)
 
 
-def _find_entry(corpus_dir: Path, env_id: str) -> dict[str, Any]:
-    entries = _load_entries(corpus_dir)
-    for entry in entries:
-        if str(entry.get("id")) == env_id:
+def _find_entry(corpus_dir: Path, env_id: str) -> Any:
+    for entry in _load_entries(corpus_dir):
+        ident = entry.get("id") if isinstance(entry, dict) else entry.id
+        if str(ident) == env_id:
             return entry
     raise KeyError(f"environment {env_id!r} not found in {corpus_dir}")
+
+
+def _resolve_for_run(entries: list[Any], config: RedTeamConfig) -> list[dict[str, Any]]:
+    return resolve_selected(entries, cache_dir=Path(config.cache_dir))
 
 
 def _build_runner(config: RedTeamConfig, client: ModelClient) -> RedTeamRunner:
@@ -410,14 +332,15 @@ def _cmd_run(args: argparse.Namespace, config: RedTeamConfig) -> int:
         print(f"{PROGRAM}: {exc}", file=sys.stderr)
         return EXIT_ERROR
 
+    (manifest,) = _resolve_for_run([entry], config)
     if args.dry_run:
-        _print_resolved_spec(entry)
+        _print_resolved_spec(manifest)
         return EXIT_OK
 
     config.ensure_dirs()
     with ModelClient.from_config(config.core) as client:
         runner = _build_runner(config, client)
-        scorecard = runner.audit(entry)
+        scorecard = runner.audit(manifest)
 
     results_dir = args.results_dir or config.results_dir
     scorecard.to_json(scorecard_path(results_dir, scorecard.env_id))
@@ -450,15 +373,16 @@ def _cmd_list(args: argparse.Namespace, config: RedTeamConfig) -> int:
 
 def _cmd_batch(args: argparse.Namespace, config: RedTeamConfig) -> int:
     corpus_dir = args.corpus or config.corpus_dir
-    entries = _select_entries(
+    selected = _select_entries(
         _load_entries(Path(corpus_dir), domain=args.domain),
         env_ids=args.env_ids,
         limit=args.limit,
     )
-    if not entries:
+    if not selected:
         print(f"{PROGRAM}: no matching environments in {corpus_dir}", file=sys.stderr)
         return EXIT_ERROR
 
+    entries = _resolve_for_run(selected, config)
     if args.dry_run:
         for index, entry in enumerate(entries):
             if index:
@@ -601,6 +525,9 @@ def _cmd_validate(args: argparse.Namespace, config: RedTeamConfig) -> int:
     )
     spec = resolved.spec
     results_dir = Path(args.results_dir or config.results_dir)
+    needs_manifests = args.dry_run or (not args.skip_run and not resolved.catalog_only)
+    if needs_manifests:
+        resolved = materialize_benchmark(resolved, Path(config.cache_dir))
 
     if args.dry_run:
         print(f"benchmark: {spec.name}")

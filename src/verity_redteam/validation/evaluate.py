@@ -118,7 +118,7 @@ def evaluate_benchmark(
         "metric_value": metric_value,
         "passed": passed,
         "n_labeled": len(resolved.env_ids),
-        "n_auditable": len(resolved.auditable),
+        "n_auditable": len(resolved.auditable_entries),
         "n_scored": sum(1 for card in scorecards if card.env_id in set(resolved.env_ids)),
         "catalog_only": resolved.catalog_only,
         "expected_count": spec.expected_count,

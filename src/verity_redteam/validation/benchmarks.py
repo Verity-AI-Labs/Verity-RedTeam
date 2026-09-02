@@ -31,6 +31,7 @@ __all__ = [
     "BenchmarkSpec",
     "ResolvedBenchmark",
     "get_benchmark",
+    "materialize_benchmark",
     "resolve_benchmark",
 ]
 
@@ -86,7 +87,15 @@ class ResolvedBenchmark:
         return tuple(str(entry.id) for entry in self.entries)
 
     @property
+    def auditable_entries(self) -> tuple[Any, ...]:
+        return tuple(
+            entry for entry in self.entries if getattr(entry, "status", "registered") != "catalog"
+        )
+
+    @property
     def auditable(self) -> tuple[dict[str, Any], ...]:
+        if len(self.manifests) != len(self.entries):
+            return ()
         return tuple(
             manifest
             for entry, manifest in zip(self.entries, self.manifests, strict=True)
@@ -95,7 +104,7 @@ class ResolvedBenchmark:
 
     @property
     def catalog_only(self) -> bool:
-        return bool(self.entries) and not self.auditable
+        return bool(self.entries) and not self.auditable_entries
 
 
 def get_benchmark(name: str) -> BenchmarkSpec:
@@ -123,8 +132,27 @@ def resolve_benchmark(corpus_dir: Path | str, name: str) -> ResolvedBenchmark:
             f"no {spec.name} environments found in {corpus_dir}; "
             f"expected {spec.manifest_filename} or matching source URLs"
         )
-    manifests = tuple(_core_manifest(entry) for entry in entries)
-    return ResolvedBenchmark(spec=spec, entries=tuple(entries), manifests=manifests)
+    return ResolvedBenchmark(spec=spec, entries=tuple(entries), manifests=())
+
+
+def materialize_benchmark(resolved: ResolvedBenchmark, cache_dir: Path) -> ResolvedBenchmark:
+    """Fetch and resolve non-catalog entries; catalog rows stay unfetched."""
+    from verity_redteam.corpus import resolve_to_core
+
+    manifests: list[dict[str, Any]] = []
+    for entry in resolved.entries:
+        if isinstance(entry, _FlatEntry):
+            manifests.append(dict(entry.payload))
+            continue
+        if getattr(entry, "status", "registered") == "catalog":
+            manifests.append(_core_manifest(entry))
+            continue
+        manifests.append(resolve_to_core(entry, cache_dir))
+    return ResolvedBenchmark(
+        spec=resolved.spec,
+        entries=resolved.entries,
+        manifests=tuple(manifests),
+    )
 
 
 def _from_registry(corpus_dir: Path, spec: BenchmarkSpec) -> list[Any]:

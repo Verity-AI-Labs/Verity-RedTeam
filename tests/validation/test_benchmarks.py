@@ -101,9 +101,10 @@ class TestResolveBenchmark:
         resolved = resolve_benchmark(tmp_path, TERMINAL_WRENCH)
         assert len(resolved.entries) == 2
         assert {entry.name for entry in resolved.entries} == {"5", "8"}
-        assert len(resolved.auditable) == 2
+        assert len(resolved.auditable_entries) == 2
         assert resolved.catalog_only is False
-        assert resolved.manifests[0]["format"] == "terminal"
+        assert resolved.manifests == ()
+        assert resolved.entries[0].adapter == "terminal"
 
     def test_loads_catalog_impossiblebench_rows(self, tmp_path: Path) -> None:
         _write(tmp_path, "impossiblebench.yaml", IB_YAML)
@@ -123,7 +124,7 @@ class TestResolveBenchmark:
         )
         resolved = resolve_benchmark(tmp_path, TERMINAL_WRENCH)
         assert resolved.env_ids == ("tw-5",)
-        assert resolved.auditable[0]["id"] == "tw-5"
+        assert resolved.auditable_entries[0].id == "tw-5"
 
     def test_missing_benchmark_is_an_error(self, tmp_path: Path) -> None:
         _write(tmp_path, "noise.yaml", "{}\n")
