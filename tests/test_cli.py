@@ -109,15 +109,44 @@ def test_report_corpus_summarizes_alpha_and_categories(tmp_path: Path, capsys: A
     assert "0.500" in captured.out
 
 
+def _write_registry_manifest(
+    directory: Path,
+    *,
+    name: str,
+    relpath: str,
+    instructions: str = "Fix the failing test.",
+    domain: str = "code",
+    adapter: str = "verifiers",
+    filename: str | None = None,
+    source_url: str = "https://github.com/example/tasks",
+    commit: str = "0f1e2d3",
+) -> str:
+    from verity_corpus.models.manifest import SourceSpec, compute_entry_id
+
+    directory.mkdir(parents=True, exist_ok=True)
+    stem = filename or relpath.replace("/", "__")
+    (directory / f"{stem}.yaml").write_text(
+        "source_defaults:\n"
+        "  type: git\n"
+        f"  url: {source_url}\n"
+        f"  commit: {commit}\n"
+        "entries:\n"
+        f"  - name: {name}\n"
+        f"    path: {relpath}\n"
+        f"    domain: {domain}\n"
+        f"    adapter: {adapter}\n"
+        "    metadata:\n"
+        f"      instructions: {instructions}\n",
+        encoding="utf-8",
+    )
+    return compute_entry_id(SourceSpec(type="git", url=source_url, commit=commit, path=relpath))
+
+
 def test_run_audits_one_corpus_entry(tmp_path: Path, monkeypatch: Any, capsys: Any) -> None:
     from tests.conftest import FakeClient, FakeEnv, make_spec
 
     manifest = tmp_path / "manifests"
-    manifest.mkdir()
-    (manifest / "task.yaml").write_text(
-        "id: corpus/task-1\nformat: verifiers\ndomain: code\ninstructions: do it\n",
-        encoding="utf-8",
-    )
+    env_id = _write_registry_manifest(manifest, name="Task One", relpath="task-1")
     spec = make_spec()
     env = FakeEnv(spec=spec, gold=None, passing="bypass")
     client = FakeClient(contents="bypass")
@@ -151,7 +180,7 @@ def test_run_audits_one_corpus_entry(tmp_path: Path, monkeypatch: Any, capsys: A
             "--config",
             str(config),
             "run",
-            "corpus/task-1",
+            env_id,
             "--corpus",
             str(manifest),
             "--results-dir",
@@ -166,87 +195,88 @@ def test_run_audits_one_corpus_entry(tmp_path: Path, monkeypatch: Any, capsys: A
 
 
 class TestLoadEntries:
-    def test_core_flat_manifests_load_without_the_registry(self, tmp_path: Path) -> None:
+    def test_prefers_the_corpus_registry(self, tmp_path: Path) -> None:
+        env_id = _write_registry_manifest(
+            tmp_path, name="Registry Env", relpath="task-1", instructions="from the registry"
+        )
+        entries = _load_entries(tmp_path)
+        assert len(entries) == 1
+        assert entries[0]["id"] == env_id
+        assert entries[0]["format"] == "verifiers"
+        assert entries[0]["instructions"] == "from the registry"
+
+    def test_skips_schema_yaml_and_does_not_call_load_corpus(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        (tmp_path / "_schema.yaml").write_text(
+            "# Documented shape of a corpus manifest YAML file.\n"
+            "source_defaults: {}\n"
+            "entries: []\n",
+            encoding="utf-8",
+        )
+        env_id = _write_registry_manifest(
+            tmp_path, name="Real Env", relpath="real", filename="bench"
+        )
+
+        def boom(*args: object, **kwargs: object) -> list[dict[str, Any]]:
+            raise AssertionError("load_corpus must not run when CorpusRegistry is available")
+
+        monkeypatch.setattr("verity_redteam.cli.load_corpus", boom)
+        with caplog.at_level(logging.ERROR):
+            entries = _load_entries(tmp_path)
+        assert not any("_schema.yaml" in rec.getMessage() for rec in caplog.records)
+        assert [entry["id"] for entry in entries] == [env_id]
+
+    def test_falls_back_to_load_corpus_when_corpus_is_unavailable(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+    ) -> None:
         (tmp_path / "task.yaml").write_text(
             "id: corpus/task-1\nformat: verifiers\ndomain: code\ninstructions: do it\n",
             encoding="utf-8",
         )
-        entries = _load_entries(tmp_path)
+
+        def no_registry(*args: object, **kwargs: object) -> list[dict[str, Any]]:
+            raise ImportError("verity-corpus is not installed")
+
+        monkeypatch.setattr("verity_redteam.cli._load_entries_from_registry", no_registry)
+        with caplog.at_level(logging.INFO, logger="verity_redteam.cli"):
+            entries = _load_entries(tmp_path)
+        assert any(
+            "verity-corpus is not installed, using core load_corpus" in rec.getMessage()
+            for rec in caplog.records
+        )
         assert len(entries) == 1
         assert entries[0]["id"] == "corpus/task-1"
         assert entries[0]["format"] == "verifiers"
 
-    def test_falls_back_to_the_corpus_registry(
-        self, tmp_path: Path, caplog: pytest.LogCaptureFixture
-    ) -> None:
-        (tmp_path / "bench.yaml").write_text(
-            """
-source_defaults:
-  type: local
-  path: .
-entries:
-  - name: Registry Env
-    domain: code
-    adapter: verifiers
-    metadata:
-      instructions: from the registry
-""",
-            encoding="utf-8",
-        )
-        with caplog.at_level(logging.INFO, logger="verity_redteam.cli"):
-            entries = _load_entries(tmp_path)
-        assert any(
-            "core manifest layout not found, trying corpus registry" in rec.getMessage()
-            for rec in caplog.records
-        )
-        assert len(entries) == 1
-        assert entries[0]["format"] == "verifiers"
-        assert entries[0]["instructions"] == "from the registry"
-
-    def test_neither_layout_raises_a_combined_error(self, tmp_path: Path) -> None:
+    def test_empty_registry_raises(self, tmp_path: Path) -> None:
         (tmp_path / "noise.yaml").write_text("{}\n", encoding="utf-8")
         with pytest.raises(ValueError, match="could not load corpus") as caught:
             _load_entries(tmp_path)
-        message = str(caught.value)
-        assert "core:" in message
-        assert "registry: no entries found" in message
+        assert "no entries found" in str(caught.value)
 
     def test_non_structural_load_corpus_errors_propagate(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
+        def no_registry(*args: object, **kwargs: object) -> list[dict[str, Any]]:
+            raise ImportError("verity-corpus is not installed")
+
         def boom(*args: object, **kwargs: object) -> list[dict[str, Any]]:
             raise RuntimeError("disk failed")
 
+        monkeypatch.setattr("verity_redteam.cli._load_entries_from_registry", no_registry)
         monkeypatch.setattr("verity_redteam.cli.load_corpus", boom)
         with pytest.raises(RuntimeError, match="disk failed"):
             _load_entries(tmp_path)
-
-
-def _write_core_manifest(
-    directory: Path,
-    *,
-    env_id: str,
-    instructions: str = "Fix the failing test.",
-    filename: str | None = None,
-) -> None:
-    directory.mkdir(parents=True, exist_ok=True)
-    stem = filename or env_id.replace("/", "__")
-    (directory / f"{stem}.yaml").write_text(
-        f"id: {env_id}\n"
-        "format: verifiers\n"
-        "domain: code\n"
-        "source: https://github.com/example/tasks\n"
-        "commit: 0f1e2d3\n"
-        f"instructions: {instructions}\n",
-        encoding="utf-8",
-    )
 
 
 def test_run_dry_run_prints_the_spec_and_skips_the_model(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: Any
 ) -> None:
     corpus = tmp_path / "manifests"
-    _write_core_manifest(corpus, env_id="corpus/task-1", instructions="A" * 250)
+    env_id = _write_registry_manifest(
+        corpus, name="Task One", relpath="task-1", instructions="A" * 250
+    )
 
     def no_client(*args: object, **kwargs: object) -> None:
         raise AssertionError("dry-run must not open a model client")
@@ -257,10 +287,10 @@ def test_run_dry_run_prints_the_spec_and_skips_the_model(
     monkeypatch.setattr("verity_redteam.cli.ModelClient.from_config", no_client)
     monkeypatch.setattr("verity_redteam.runner.load_env", no_env)
 
-    code = main(["run", "corpus/task-1", "--corpus", str(corpus), "--dry-run"])
+    code = main(["run", env_id, "--corpus", str(corpus), "--dry-run"])
     captured = capsys.readouterr()
     assert code == EXIT_OK
-    assert "id: corpus/task-1" in captured.out
+    assert f"id: {env_id}" in captured.out
     assert "domain: code" in captured.out
     assert "format: verifiers" in captured.out
     assert "source: https://github.com/example/tasks@0f1e2d3" in captured.out
@@ -272,8 +302,8 @@ def test_batch_dry_run_prints_each_entry(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: Any
 ) -> None:
     corpus = tmp_path / "manifests"
-    _write_core_manifest(corpus, env_id="corpus/task-1", instructions="one")
-    _write_core_manifest(corpus, env_id="corpus/task-2", instructions="two")
+    id_one = _write_registry_manifest(corpus, name="Task One", relpath="task-1", instructions="one")
+    id_two = _write_registry_manifest(corpus, name="Task Two", relpath="task-2", instructions="two")
 
     def boom(*args: object, **kwargs: object) -> None:
         raise AssertionError("dry-run must not open a model client")
@@ -283,8 +313,8 @@ def test_batch_dry_run_prints_each_entry(
     code = main(["batch", "--corpus", str(corpus), "--dry-run"])
     captured = capsys.readouterr()
     assert code == EXIT_OK
-    assert "id: corpus/task-1" in captured.out
-    assert "id: corpus/task-2" in captured.out
+    assert f"id: {id_one}" in captured.out
+    assert f"id: {id_two}" in captured.out
     assert "instructions: one" in captured.out
     assert "instructions: two" in captured.out
 

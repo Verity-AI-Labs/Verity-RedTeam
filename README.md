@@ -186,11 +186,11 @@ verity-redteam vrc list <env-id> --json
 view when iterating on the adversarial prompt. `--json` on `run` / `batch` /
 `report` / `validate` / `vrc list` keeps the payload pipeable at any log level.
 
-If the corpus directory is Core-flat YAML (`id` + `format` per file), that
-layout is used. If it is a Corpus registry (`entries:` lists), RedTeam falls
-back to `CorpusRegistry` after logging that the Core layout was not found.
-`validate` prefers each benchmark's own manifest (`terminal_wrench.yaml`,
-`impossiblebench.yaml`).
+`--corpus` directories are loaded through verity-corpus's `CorpusRegistry`,
+which skips `_schema.yaml`, merges `source_defaults`, computes deterministic
+ids, and rejects duplicates. Core's `load_corpus` is used only when
+verity-corpus is not installed. `validate` prefers each benchmark's own
+manifest (`terminal_wrench.yaml`, `impossiblebench.yaml`).
 
 ## Configuration
 
