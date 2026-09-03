@@ -17,9 +17,7 @@ def test_image_preflight_fails_cleanly_on_a_missing_tag(
 ) -> None:
     monkeypatch.setattr("verity_redteam.preflight.docker_image_exists", lambda tag: False)
     with pytest.raises(ValueError, match="verity-tw:5") as caught:
-        preflight_images(
-            [{"id": "881806b02177", "format": "terminal", "image": "verity-tw:5"}]
-        )
+        preflight_images([{"id": "881806b02177", "format": "terminal", "image": "verity-tw:5"}])
     message = str(caught.value)
     assert "881806b02177" in message
     assert "verity-tw:5" in message

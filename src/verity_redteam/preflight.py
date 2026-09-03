@@ -46,9 +46,7 @@ def docker_image_exists(tag: str) -> bool:
             f"docker is not installed; cannot verify image {tag!r}. {BUILD_IMAGES_HINT}"
         ) from exc
     except subprocess.TimeoutExpired as exc:
-        raise ValueError(
-            f"timed out inspecting Docker image {tag!r}. {BUILD_IMAGES_HINT}"
-        ) from exc
+        raise ValueError(f"timed out inspecting Docker image {tag!r}. {BUILD_IMAGES_HINT}") from exc
     return result.returncode == 0
 
 
