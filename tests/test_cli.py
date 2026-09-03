@@ -147,6 +147,7 @@ def _write_registry_manifest(
     filename: str | None = None,
     status: str = "registered",
     instruction_file: str | None = None,
+    adapter_config: dict[str, Any] | None = None,
 ) -> str:
     from verity_corpus.models.manifest import SourceSpec, compute_entry_id
 
@@ -160,6 +161,11 @@ def _write_registry_manifest(
     if instructions is not None:
         metadata = f"    metadata:\n      instructions: {instructions}\n"
     status_line = f"    status: {status}\n" if status != "registered" else ""
+    config_block = ""
+    if adapter_config:
+        config_block = "    adapter_config:\n" + "".join(
+            f"      {key}: {json.dumps(value)}\n" for key, value in adapter_config.items()
+        )
     (directory / f"{stem}.yaml").write_text(
         "entries:\n"
         f"  - name: {name}\n"
@@ -169,6 +175,7 @@ def _write_registry_manifest(
         f"    domain: {domain}\n"
         f"    adapter: {adapter}\n"
         f"{status_line}"
+        f"{config_block}"
         f"{metadata}",
         encoding="utf-8",
     )

@@ -26,6 +26,7 @@ from verity_redteam.corpus import (
     select_entries,
 )
 from verity_redteam.judge import LlmJudge
+from verity_redteam.preflight import preflight_images
 from verity_redteam.reporting import build_redteam_report
 from verity_redteam.runner import RedTeamRunner
 from verity_redteam.strategies import get_strategy
@@ -337,6 +338,7 @@ def _cmd_run(args: argparse.Namespace, config: RedTeamConfig) -> int:
         _print_resolved_spec(manifest)
         return EXIT_OK
 
+    preflight_images([manifest])
     config.ensure_dirs()
     with ModelClient.from_config(config.core) as client:
         runner = _build_runner(config, client)
@@ -390,6 +392,7 @@ def _cmd_batch(args: argparse.Namespace, config: RedTeamConfig) -> int:
             _print_resolved_spec(entry)
         return EXIT_OK
 
+    preflight_images(entries)
     results_dir = args.results_dir or config.results_dir
     config.ensure_dirs()
     Path(results_dir).mkdir(parents=True, exist_ok=True)
@@ -546,6 +549,7 @@ def _cmd_validate(args: argparse.Namespace, config: RedTeamConfig) -> int:
 
     should_run = bool(resolved.auditable) and not args.skip_run and not resolved.catalog_only
     if should_run:
+        preflight_images(list(resolved.auditable))
         config.ensure_dirs()
         Path(results_dir).mkdir(parents=True, exist_ok=True)
         with ModelClient.from_config(config.core) as client:

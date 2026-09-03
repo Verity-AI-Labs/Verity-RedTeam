@@ -197,10 +197,14 @@ view when iterating on the adversarial prompt. `--json` on `run` / `batch` /
 which skips `_schema.yaml`, merges `source_defaults`, computes deterministic
 ids, and rejects duplicates. Selected environments are fetched through
 Corpus's `fetcher` (shared clones keyed on url+commit) before `core_manifest`
-reads task instructions from disk. `list` never fetches. Core's
-`load_corpus` is used only when verity-corpus is not installed. `validate`
-prefers each benchmark's own manifest (`terminal_wrench.yaml`,
-`impossiblebench.yaml`).
+reads task instructions from disk. `list` never fetches. `--dry-run` fetches
+so it can print real resolved instructions, then exits before any model or
+verifier call. A live audit additionally preflights container images
+(`terminal`, `docker_test`): Core cannot build from a Dockerfile, so a missing
+tag such as `verity-tw:5` fails immediately and points at Corpus's
+`scripts/build_images.py`. Core's `load_corpus` is used only when
+verity-corpus is not installed. `validate` prefers each benchmark's own
+manifest (`terminal_wrench.yaml`, `impossiblebench.yaml`).
 
 ## Configuration
 
