@@ -1,16 +1,16 @@
 """Sandbox helpers: detect a container-backed env and record its command log.
 
 V6 needs evidence of grading-process tampering. Core's ``SandboxRunner.exec``
-does not keep a history, so this module wraps ``exec`` and records each
-:class:`~verity_core.runner.ExecResult`. Strategies attach the log before the
-hacker loop and parse it afterwards.
+does not keep a history, and the runner is a slotted dataclass, so this module
+cannot intercept by assigning onto ``runner.exec``. A :class:`LoggedExec`
+sits between the agent loop and the runner: it forwards every ``exec`` call
+and records the :class:`~verity_core.runner.ExecResult` as a side effect.
 """
 
 from __future__ import annotations
 
 import logging
 import re
-from collections.abc import Callable
 from typing import Any
 
 from verity_core.runner import ExecResult
@@ -58,6 +58,7 @@ __all__ = [
     "CONTAINER_FORMATS",
     "TAMPER_PATTERNS",
     "CommandLog",
+    "LoggedExec",
     "is_container_backed",
     "looks_like_tampering",
 ]
@@ -81,52 +82,51 @@ def looks_like_tampering(command: str) -> bool:
     return any(pattern.search(command) for pattern in TAMPER_PATTERNS)
 
 
+class LoggedExec:
+    """Forward ``exec`` to a sandbox runner and record each result.
+
+    Holds the real runner; never assigns onto it. Core's ``SandboxRunner`` is
+    ``@dataclass(slots=True)``, so ``runner.exec = wrapped`` is not a viable
+    interception strategy.
+    """
+
+    def __init__(self, runner: Any, log: CommandLog) -> None:
+        self._runner = runner
+        self._log = log
+
+    def exec(
+        self,
+        command: str,
+        *,
+        timeout: int | None = None,
+        workdir: str | None = None,
+        user: str | None = None,
+    ) -> ExecResult:
+        result = self._runner.exec(command, timeout=timeout, workdir=workdir, user=user)
+        self._log.record(result)
+        logger.debug(
+            "logged exec command=%r exit_code=%s",
+            command,
+            getattr(result, "exit_code", None),
+        )
+        return result
+
+
 class CommandLog:
     """Append-only record of ``SandboxRunner.exec`` calls."""
 
     def __init__(self) -> None:
         self.entries: list[dict[str, Any]] = []
-        self._original_exec: Callable[..., ExecResult] | None = None
-        self._runner: Any = None
 
     def record(self, result: ExecResult | dict[str, Any]) -> None:
         payload = result.to_dict() if isinstance(result, ExecResult) else dict(result)
         payload.setdefault("command", "")
         self.entries.append(payload)
 
-    def attach(self, runner: Any) -> CommandLog:
-        """Wrap ``runner.exec`` so every subsequent call is recorded.
-
-        Safe to call more than once on the same log: a second attach is a no-op.
-        """
-        if self._runner is runner and self._original_exec is not None:
-            return self
-        original = runner.exec
-
-        def wrapped(
-            command: str,
-            *,
-            timeout: int | None = None,
-            workdir: str | None = None,
-            user: str | None = None,
-        ) -> ExecResult:
-            result = original(command, timeout=timeout, workdir=workdir, user=user)
-            self.record(result)
-            return result
-
-        self._original_exec = original
-        self._runner = runner
-        runner.exec = wrapped
-        runner.command_log = self
-        logger.debug("command log attached runner=%s", type(runner).__name__)
-        return self
-
-    def detach(self) -> None:
-        """Restore the original ``exec`` if this log wrapped one."""
-        if self._runner is not None and self._original_exec is not None:
-            self._runner.exec = self._original_exec
-        self._original_exec = None
-        self._runner = None
+    def wrap(self, runner: Any) -> LoggedExec:
+        """Return an executor that records each forwarded ``runner.exec`` call."""
+        logger.debug("command log wrapping runner=%s", type(runner).__name__)
+        return LoggedExec(runner, self)
 
     def has_tampering(self) -> bool:
         return any(looks_like_tampering(str(entry.get("command") or "")) for entry in self.entries)

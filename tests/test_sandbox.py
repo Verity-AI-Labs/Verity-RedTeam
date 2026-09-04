@@ -4,31 +4,11 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from verity_core.runner import ExecResult
+import pytest
+from tests.conftest import FakeRunner
+from verity_core.runner import ExecResult, SandboxRunner
 
 from verity_redteam.sandbox import CommandLog, is_container_backed, looks_like_tampering
-
-
-class FakeRunner:
-    def __init__(self) -> None:
-        self.seen: list[str] = []
-
-    def exec(
-        self,
-        command: str,
-        *,
-        timeout: int | None = None,
-        workdir: str | None = None,
-        user: str | None = None,
-    ) -> ExecResult:
-        self.seen.append(command)
-        return ExecResult(
-            exit_code=0,
-            stdout=f"out:{command}",
-            stderr="",
-            duration_seconds=0.01,
-            command=command,
-        )
 
 
 class TestContainerDetection:
@@ -61,23 +41,44 @@ class TestCommandLog:
     def test_records_wrapped_exec_calls_and_detects_tampering(self) -> None:
         runner = FakeRunner()
         log = CommandLog()
-        log.attach(runner)
-        runner.exec("ls /workspace")
-        runner.exec("echo x > /usr/lib/python3.13/sitecustomize.py")
+        executor = log.wrap(runner)
+        executor.exec("ls /workspace")
+        executor.exec("echo x > /usr/lib/python3.13/sitecustomize.py")
         assert log.commands() == [
             "ls /workspace",
             "echo x > /usr/lib/python3.13/sitecustomize.py",
         ]
         assert log.has_tampering() is True
-        assert log.entries[0]["stdout"] == "out:ls /workspace"
-        log.detach()
+        assert log.entries[0]["stdout"] == "observed:ls /workspace"
         runner.exec("PYTHONPATH=/tmp true")
         assert len(log.entries) == 2
 
-    def test_attach_is_idempotent(self) -> None:
+    def test_wrap_does_not_mutate_the_runner(self) -> None:
         runner = FakeRunner()
         log = CommandLog()
-        log.attach(runner)
-        log.attach(runner)
-        runner.exec("ls")
+        first = log.wrap(runner)
+        second = log.wrap(runner)
+        first.exec("ls")
         assert log.commands() == ["ls"]
+        second.exec("pwd")
+        assert log.commands() == ["ls", "pwd"]
+        assert runner.exec.__func__ is FakeRunner.exec
+
+    def test_slotted_runner_rejects_rebinding_exec(self) -> None:
+        runner = FakeRunner()
+        with pytest.raises(AttributeError, match="read-only"):
+            runner.exec = lambda *a, **k: ExecResult(0, "", "", 0.0)  # type: ignore[method-assign]
+
+
+class TestRealSandboxRunnerSlots:
+    def test_core_sandbox_runner_rejects_rebinding_exec(self) -> None:
+        runner = SandboxRunner(image="unused")
+        with pytest.raises(AttributeError, match="read-only"):
+            runner.exec = lambda *a, **k: ExecResult(0, "", "", 0.0)  # type: ignore[method-assign]
+
+    def test_wrap_does_not_assign_onto_a_real_sandbox_runner(self) -> None:
+        runner = SandboxRunner(image="unused")
+        log = CommandLog()
+        executor = log.wrap(runner)
+        assert runner.exec.__func__ is SandboxRunner.exec
+        assert executor.exec.__func__ is not SandboxRunner.exec

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Iterator
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -155,11 +156,16 @@ class FakeEnv:
         self.close()
 
 
+@dataclass(slots=True)
 class FakeRunner:
-    """Minimal SandboxRunner.exec stand-in for container-backed FakeEnv tests."""
+    """SandboxRunner.exec stand-in for container-backed FakeEnv tests.
 
-    def __init__(self) -> None:
-        self.seen: list[str] = []
+    Core's real runner is ``@dataclass(slots=True)``, so ``runner.exec = ...``
+    raises ``AttributeError``. This double is slotted the same way so the
+    suite catches that class of bug instead of a live container run.
+    """
+
+    seen: list[str] = field(default_factory=list)
 
     def exec(
         self,

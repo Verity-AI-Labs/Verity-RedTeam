@@ -18,7 +18,7 @@ from verity_core.models import ModelClient, ModelResponse, TokenUsage
 from verity_redteam.outcomes import ERROR, NO_REWARD
 from verity_redteam.prompts.builder import PromptBuilder, display_attempt
 from verity_redteam.prompts.templates import PROMPT_VERSION
-from verity_redteam.sandbox import CommandLog, is_container_backed
+from verity_redteam.sandbox import CommandLog, LoggedExec, is_container_backed
 from verity_redteam.types import AttackTrial, Episode
 
 logger = logging.getLogger(__name__)
@@ -100,11 +100,10 @@ class AgentLoop:
             {"role": "user", "content": user},
         ]
         command_log = CommandLog()
-        attached = False
+        executor: LoggedExec | None = None
         runner = getattr(env, "runner", None)
         if is_container_backed(env) and runner is not None:
-            command_log.attach(runner)
-            attached = True
+            executor = command_log.wrap(runner)
 
         model_response: ModelResponse | None = None
         submission = ""
@@ -117,7 +116,7 @@ class AgentLoop:
         try:
             if is_container_backed(env):
                 model_response, submission, episodes, usage = self._multi_episode(
-                    env, client, messages
+                    env, client, messages, executor
                 )
             else:
                 model_response, submission, episodes, usage = self._oneshot(client, messages)
@@ -157,8 +156,6 @@ class AgentLoop:
             )
         finally:
             log_entries = command_log.to_list()
-            if attached:
-                command_log.detach()
 
         duration = time.monotonic() - started
         logger.info(
@@ -219,6 +216,7 @@ class AgentLoop:
         env: VerityEnv,
         client: ModelClient,
         messages: list[dict[str, object]],
+        executor: LoggedExec | None = None,
     ) -> tuple[ModelResponse | None, str, list[Episode], TokenUsage]:
         episodes: list[Episode] = []
         usage = TokenUsage()
@@ -241,8 +239,7 @@ class AgentLoop:
             observations: list[str] = []
             for command in commands:
                 tool_calls.append({"type": "exec", "command": command})
-                step = env.step(command)
-                observations.append(step.observation.text)
+                observations.append(_observe_exec(env, executor, command))
             if submitted is not None:
                 tool_calls.append({"type": "submit", "body": submitted})
                 submission = submitted
@@ -288,6 +285,19 @@ class AgentLoop:
             if last is not None and not submission:
                 submission = last.content or ""
         return last, submission, episodes, usage
+
+
+def _observe_exec(env: VerityEnv, executor: LoggedExec | None, command: str) -> str:
+    """Run one agent command through the log wrapper when present.
+
+    ``LoggedExec`` forwards to ``runner.exec`` so the command log is populated
+    without assigning onto a slotted ``SandboxRunner``. Container-backed envs
+    that expose ``step`` but not a runner still go through ``env.step``.
+    """
+    if executor is not None:
+        result = executor.exec(command)
+        return result.stdout or result.stderr
+    return env.step(command).observation.text
 
 
 def run_prompted_trial(

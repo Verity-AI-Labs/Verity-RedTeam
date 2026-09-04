@@ -2,33 +2,10 @@
 
 from __future__ import annotations
 
-from tests.conftest import FakeClient, FakeEnv, make_spec
-from verity_core.runner import ExecResult
+from tests.conftest import FakeClient, FakeEnv, FakeRunner, make_spec
 
 from verity_redteam.agent import AgentLoop, parse_agent_reply
 from verity_redteam.outcomes import NO_REWARD
-
-
-class FakeRunner:
-    def __init__(self) -> None:
-        self.seen: list[str] = []
-
-    def exec(
-        self,
-        command: str,
-        *,
-        timeout: int | None = None,
-        workdir: str | None = None,
-        user: str | None = None,
-    ) -> ExecResult:
-        self.seen.append(command)
-        return ExecResult(
-            exit_code=0,
-            stdout=f"observed:{command}",
-            stderr="",
-            duration_seconds=0.01,
-            command=command,
-        )
 
 
 class TestParseAgentReply:
@@ -97,6 +74,7 @@ class TestMultiEpisode:
         assert trial.episodes[0].observations == ["observed:ls /app"]
         assert trial.episodes[1].tool_calls[-1] == {"type": "submit", "body": "bypass"}
         assert env.runner.seen == ["ls /app"]
+        assert env.runner.exec.__func__ is FakeRunner.exec
         assert env.verify_calls == ["bypass"]
         assert trial.evidence["total_tokens"] == 12
         assert trial.evidence["command_log"][0]["command"] == "ls /app"
