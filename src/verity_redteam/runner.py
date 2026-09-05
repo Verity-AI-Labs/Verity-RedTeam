@@ -14,6 +14,7 @@ from typing import Any
 from verity_core.adapters import load_env
 from verity_core.scorecard import Scorecard
 
+from verity_redteam.archive import TrajectoryArchive, default_archive_dir
 from verity_redteam.judge import Judge
 from verity_redteam.probe import RedTeamProbe
 from verity_redteam.strategies.protocol import AttackStrategy
@@ -68,12 +69,18 @@ class RedTeamRunner:
         n_trials: int,
         vrc_dir: Path | str,
         judge: Judge | None = None,
+        archive_all_trajectories: bool = False,
+        archive_dir: Path | str | None = None,
     ) -> None:
         self.client = client
         self.strategies = list(strategies)
         self.n_trials = n_trials
         self.vrc = VRCLogger(vrc_dir)
         self.judge = judge
+        self.archive: TrajectoryArchive | None = None
+        if archive_all_trajectories:
+            root = Path(archive_dir) if archive_dir is not None else default_archive_dir(vrc_dir)
+            self.archive = TrajectoryArchive(root)
 
     def audit(self, manifest_entry: dict[str, Any]) -> Scorecard:
         env = load_env(manifest_entry)
@@ -97,25 +104,30 @@ class RedTeamRunner:
             result = probe.run(env, spec, self.client)
             results.append(result)
             self.vrc.log_probe(result)
+            if self.archive is not None:
+                self.archive.log_probe(result)
 
         precheck_failed = any(r.metadata.get("precheck_failed") for r in results)
+        metadata: dict[str, Any] = {
+            "domain": spec.domain,
+            "format": str(manifest_entry.get("format", "")),
+            "source": spec.source,
+            "commit": spec.commit,
+            "audited_by": TOOL_NAME,
+            "tokens": sum(r.total_tokens for r in results),
+            "precheck_failed": precheck_failed,
+            "strategies": [r.strategy for r in results],
+            "n_solved": sum(int(r.metadata.get("n_solved") or 0) for r in results),
+            "n_legitimate_solve": sum(
+                int(r.metadata.get("n_legitimate_solve") or 0) for r in results
+            ),
+            "n_errored": sum(int(r.metadata.get("n_errored") or 0) for r in results),
+        }
+        if self.archive is not None:
+            metadata["trajectory_archive"] = str(self.archive.root)
         scorecard = Scorecard(
             env_id=spec.id,
-            metadata={
-                "domain": spec.domain,
-                "format": str(manifest_entry.get("format", "")),
-                "source": spec.source,
-                "commit": spec.commit,
-                "audited_by": TOOL_NAME,
-                "tokens": sum(r.total_tokens for r in results),
-                "precheck_failed": precheck_failed,
-                "strategies": [r.strategy for r in results],
-                "n_solved": sum(int(r.metadata.get("n_solved") or 0) for r in results),
-                "n_legitimate_solve": sum(
-                    int(r.metadata.get("n_legitimate_solve") or 0) for r in results
-                ),
-                "n_errored": sum(int(r.metadata.get("n_errored") or 0) for r in results),
-            },
+            metadata=metadata,
         )
         if not results:
             logger.warning("no applicable strategies env_id=%s; axes left unscored", spec.id)
@@ -143,6 +155,7 @@ class RedTeamRunner:
 
     def _set_axis(self, scorecard: Scorecard, axis: str, results: list[ProbeResult]) -> None:
         best = max(results, key=lambda result: result.curve.alpha)
+        all_ids = [trial.trial_id for trial in best.trials]
         successful_ids = [trial.trial_id for trial in best.trials if trial.hacked]
         hack_attempts = [trial.attempt for trial in best.trials if trial.hacked]
         categories: list[str] = []
@@ -150,33 +163,37 @@ class RedTeamRunner:
             for name in trial.observed_categories:
                 if name not in categories:
                     categories.append(name)
+        evidence: dict[str, Any] = {
+            "alpha": best.curve.alpha,
+            "alpha_ci_lower": best.curve.alpha_ci_lower,
+            "alpha_ci_upper": best.curve.alpha_ci_upper,
+            "serious_alpha": best.curve.serious_alpha,
+            "nonserious_alpha": best.curve.nonserious_alpha,
+            "n_trials": best.curve.n_trials,
+            "n_successes": best.curve.n_successes,
+            "n_serious": best.curve.n_serious,
+            "n_nonserious": best.curve.n_nonserious,
+            "strategy": best.strategy,
+            "curve": dict(best.curve.curve),
+            "serious_curve": dict(best.curve.serious_curve),
+            "trial_ids": all_ids if self.archive is not None else successful_ids,
+            "hack_attempts": hack_attempts,
+            "observed_categories": categories,
+            "n_solved": int(best.metadata.get("n_solved") or 0),
+            "n_legitimate_solve": int(best.metadata.get("n_legitimate_solve") or 0),
+            "n_errored": int(best.metadata.get("n_errored") or 0),
+            "prompt_version": next(
+                (trial.prompt_version for trial in best.trials if trial.prompt_version),
+                "",
+            ),
+        }
+        if self.archive is not None:
+            evidence["hack_trial_ids"] = successful_ids
+            evidence["archive_dir"] = str(self.archive.root)
         scorecard.set_axis(
             axis,
             value=best.curve.alpha,
             tool=TOOL_NAME,
-            evidence={
-                "alpha": best.curve.alpha,
-                "alpha_ci_lower": best.curve.alpha_ci_lower,
-                "alpha_ci_upper": best.curve.alpha_ci_upper,
-                "serious_alpha": best.curve.serious_alpha,
-                "nonserious_alpha": best.curve.nonserious_alpha,
-                "n_trials": best.curve.n_trials,
-                "n_successes": best.curve.n_successes,
-                "n_serious": best.curve.n_serious,
-                "n_nonserious": best.curve.n_nonserious,
-                "strategy": best.strategy,
-                "curve": dict(best.curve.curve),
-                "serious_curve": dict(best.curve.serious_curve),
-                "trial_ids": successful_ids,
-                "hack_attempts": hack_attempts,
-                "observed_categories": categories,
-                "n_solved": int(best.metadata.get("n_solved") or 0),
-                "n_legitimate_solve": int(best.metadata.get("n_legitimate_solve") or 0),
-                "n_errored": int(best.metadata.get("n_errored") or 0),
-                "prompt_version": next(
-                    (trial.prompt_version for trial in best.trials if trial.prompt_version),
-                    "",
-                ),
-            },
+            evidence=evidence,
             notes=AXIS_NOTES.get(axis, ""),
         )

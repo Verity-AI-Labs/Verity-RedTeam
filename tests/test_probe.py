@@ -64,6 +64,8 @@ class TestGoldFilter:
         assert result.curve.alpha == pytest.approx(2 / 3)
         assert result.metadata["n_legitimate_solve"] == 1
         assert result.metadata["n_errored"] == 0
+        assert result.trials[0].evidence["gold_match"] is True
+        assert result.trials[1].evidence["gold_match"] is False
 
     def test_error_trials_are_excluded_from_alpha(self) -> None:
         spec = make_spec()

@@ -49,6 +49,19 @@ def test_configured_model_timeout_reaches_the_constructed_client() -> None:
         assert client.timeout == DEFAULT_MODEL_TIMEOUT
 
 
+def test_archive_flag_reaches_the_constructed_runner() -> None:
+    from tests.conftest import FakeClient
+
+    from verity_redteam.cli import _build_runner
+
+    enabled = RedTeamConfig(archive_all_trajectories=True, strategies=["freeform"])
+    runner = _build_runner(enabled, FakeClient())  # type: ignore[arg-type]
+    assert runner.archive is not None
+    assert runner.archive.root == enabled.trajectory_archive_dir
+    disabled = _build_runner(RedTeamConfig(strategies=["freeform"]), FakeClient())  # type: ignore[arg-type]
+    assert disabled.archive is None
+
+
 def test_cli_imports_core_helpers_from_the_package_root() -> None:
     import verity_core
 

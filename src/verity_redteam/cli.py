@@ -326,6 +326,8 @@ def _build_runner(config: RedTeamConfig, client: ModelClient) -> RedTeamRunner:
         n_trials=config.n_trials,
         vrc_dir=config.vrc_dir,
         judge=judge,
+        archive_all_trajectories=config.archive_all_trajectories,
+        archive_dir=config.trajectory_archive_dir,
     )
 
 

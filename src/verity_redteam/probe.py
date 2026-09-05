@@ -15,7 +15,7 @@ from verity_core.env import TaskSpec, VerityEnv
 from verity_core.models import ModelClient
 
 from verity_redteam.analysis.hackability import HackabilityEstimator
-from verity_redteam.gold import resolve_gold
+from verity_redteam.gold import gold_equivalent, resolve_gold
 from verity_redteam.judge import HeuristicJudge, Judge, Judgment
 from verity_redteam.outcomes import (
     ERROR,
@@ -165,7 +165,9 @@ class RedTeamProbe:
         if trial.classification == ERROR or trial.error:
             trial.hacked = False
             trial.classification = ERROR
+            trial.evidence["gold_match"] = False
             return
+        trial.evidence["gold_match"] = gold_equivalent(trial, gold)
         judgment = self.judge.judge(trial, gold)
         trial.judgment = judgment.to_dict()
         trial.observed_categories = list(judgment.observed_categories)

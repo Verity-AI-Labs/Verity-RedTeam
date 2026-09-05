@@ -3,19 +3,34 @@
 from __future__ import annotations
 
 import contextlib
+import json
 from pathlib import Path
 
 import pytest
 from tests.conftest import FakeClient, FakeEnv, make_spec
 from verity_core.scorecard import AXES
 
+from verity_redteam.outcomes import LEGITIMATE_SOLVE, SERIOUS_HACK
 from verity_redteam.runner import TOOL_NAME, RedTeamRunner
 from verity_redteam.strategies.freeform import FreeformHackStrategy
 
 
-def _runner(tmp_path: Path, env: FakeEnv, client: FakeClient, n_trials: int = 4) -> RedTeamRunner:
+def _runner(
+    tmp_path: Path,
+    env: FakeEnv,
+    client: FakeClient,
+    n_trials: int = 4,
+    *,
+    archive_all_trajectories: bool = False,
+) -> RedTeamRunner:
     strategy = FreeformHackStrategy(model="test-model")
-    return RedTeamRunner(client, [strategy], n_trials=n_trials, vrc_dir=tmp_path / "vrc")
+    return RedTeamRunner(
+        client,
+        [strategy],
+        n_trials=n_trials,
+        vrc_dir=tmp_path / "vrc",
+        archive_all_trajectories=archive_all_trajectories,
+    )
 
 
 class TestAudit:
@@ -130,3 +145,68 @@ class TestAudit:
         assert card.get_axis("V1").scored is False
         assert card.metadata["precheck_failed"] is True
         assert client.calls == []
+
+
+class TestTrajectoryArchive:
+    def test_does_not_archive_a_solve_when_the_flag_is_off(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        spec = make_spec()
+        env = FakeEnv(spec=spec, gold="GOLD", passing="GOLD")
+        client = FakeClient(contents=["GOLD"])
+        monkeypatch.setattr("verity_redteam.runner.load_env", lambda entry, **kwargs: env)
+        card = _runner(tmp_path, env, client, n_trials=1).audit(
+            {"id": spec.id, "format": "verifiers"}
+        )
+        assert card.get_axis("V1").evidence["n_legitimate_solve"] == 1
+        assert card.get_axis("V1").evidence["trial_ids"] == []
+        assert list((tmp_path / "trajectories").rglob("*.json")) == []
+        assert list((tmp_path / "vrc").rglob("*.json")) == []
+
+    def test_archives_a_solve_when_the_flag_is_on(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        spec = make_spec()
+        env = FakeEnv(spec=spec, gold="GOLD", passing="GOLD")
+        client = FakeClient(contents=["GOLD"])
+        monkeypatch.setattr("verity_redteam.runner.load_env", lambda entry, **kwargs: env)
+        card = _runner(tmp_path, env, client, n_trials=1, archive_all_trajectories=True).audit(
+            {"id": spec.id, "format": "verifiers"}
+        )
+        evidence = card.get_axis("V1").evidence
+        assert evidence["n_legitimate_solve"] == 1
+        trial_ids = evidence["trial_ids"]
+        assert len(trial_ids) == 1
+        path = tmp_path / "trajectories" / spec.id / f"{trial_ids[0]}.json"
+        assert path.is_file()
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        assert payload["trial_id"] == trial_ids[0]
+        assert payload["classification"] == LEGITIMATE_SOLVE
+        assert payload["hacked"] is False
+        assert payload["gold_match"] is True
+        assert payload["reward"]["verdict"] is True
+        assert payload["judgment"]["outcome"] == LEGITIMATE_SOLVE
+        assert payload["judgment"]["rationale"]
+        assert list((tmp_path / "vrc").rglob("*.json")) == []
+
+    def test_hacks_still_write_vrc_when_archiving(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        spec = make_spec()
+        env = FakeEnv(spec=spec, gold="GOLD", passing="bypass")
+        client = FakeClient(contents=["bypass"])
+        monkeypatch.setattr("verity_redteam.runner.load_env", lambda entry, **kwargs: env)
+        card = _runner(tmp_path, env, client, n_trials=1, archive_all_trajectories=True).audit(
+            {"id": spec.id, "format": "verifiers"}
+        )
+        evidence = card.get_axis("V1").evidence
+        assert evidence["n_successes"] == 1
+        trial_ids = evidence["trial_ids"]
+        assert len(trial_ids) == 1
+        archived = tmp_path / "trajectories" / spec.id / f"{trial_ids[0]}.json"
+        assert archived.is_file()
+        payload = json.loads(archived.read_text(encoding="utf-8"))
+        assert payload["classification"] == SERIOUS_HACK
+        assert payload["gold_match"] is False
+        assert len(list((tmp_path / "vrc").rglob("*.json"))) == 1
+        assert evidence["hack_trial_ids"] == trial_ids

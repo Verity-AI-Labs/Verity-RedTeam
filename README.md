@@ -228,6 +228,7 @@ redteam:
   judge_model: null   # defaults to model_name
   n_perturbations: 4
   model_timeout: 600  # HTTP request timeout in seconds
+  archive_all_trajectories: false  # persist every trial under trajectories/
 ```
 
 | Key | Default | Meaning |
@@ -243,6 +244,7 @@ redteam:
 | `judge_model` | attacker model | Model id for `LlmJudge`. |
 | `n_perturbations` | 4 | Recorded V2 setting; the isomorphic strategy currently emits one variant per probe trial. |
 | `model_timeout` | 600 | HTTP timeout (seconds) passed to Core's `ModelClient`. Long agentic turns on local hardware routinely exceed Core's 120s default. |
+| `archive_all_trajectories` | false | When true, write every trial (hack, solve, no-reward, error) to `{vrc_dir}/../trajectories/{env_id}/{trial_id}.json` so scorecard `trial_ids` resolve to files. Default off so production runs do not bloat storage. VRC remains hacks-only. |
 
 `n_trials < 1`, `max_episodes < 1`, `n_perturbations < 1`, `model_timeout <= 0`, an empty
 `strategies` list, and unknown `redteam:` keys are rejected. An explicit
@@ -264,7 +266,10 @@ Clopper-Pearson interval, any-hack and serious `H(K)`, `hack_attempts` (for
 recall at K), judged categories, `n_legitimate_solve`, and `n_errored`.
 
 Successful hacks are written as VRC entries under `{vrc_dir}/{env_id}/`. Dedup
-is in-memory per audit run.
+is in-memory per audit run. With `archive_all_trajectories`, every trial is
+also written under `{vrc_dir}/../trajectories/{env_id}/{trial_id}.json`
+(commands, verifier result, judge verdict and rationale, gold-match). Scorecard
+`trial_ids` then name those files, including solves.
 
 ## Validation kill-gates
 
