@@ -19,6 +19,7 @@ __all__ = [
     "fetch_env_root",
     "list_entry_rows",
     "load_auditable_entries",
+    "load_recorded_hacks",
     "load_registry_entries",
     "resolve_selected",
     "resolve_to_core",
@@ -102,6 +103,51 @@ def select_entries(
     if limit is not None:
         entries = entries[:limit]
     return entries
+
+
+def load_recorded_hacks(
+    entry: Any,
+    cache_dir: Path,
+    env_root: Path | None = None,
+) -> Any:
+    """Recorded exploit trajectories for ``entry`` from Corpus's loader.
+
+    Expected shape: an object (or dict) with ``present``, ``trajectories``
+    (each a recorded hack: ``run_id``, ``actions``, ``verifier``, ``metadata``,
+    ``source_path``), and ``message`` when absent. Does not fetch and does
+    not start a container. A missing ``hack_trajectories/`` directory is
+    empty, not an error.
+    """
+    root = Path(env_root) if env_root is not None else None
+    try:
+        from verity_corpus.resolver import load_hack_trajectories
+    except ImportError:
+        load_hack_trajectories = None
+    if (
+        load_hack_trajectories is not None
+        and not isinstance(entry, dict)
+        and hasattr(entry, "source")
+    ):
+        kwargs: dict[str, Any] = {"cache_dir": cache_dir}
+        if root is not None:
+            kwargs["env_root"] = root
+        return load_hack_trajectories(entry, **kwargs)
+    try:
+        from verity_corpus.hack_trajectories import load_from_env_root
+    except ImportError as exc:
+        raise ValueError(
+            "verity-corpus is required to load recorded hack trajectories "
+            "(expected verity_corpus.resolver.load_hack_trajectories)"
+        ) from exc
+    if root is None:
+        raise ValueError("env_root is required to load recorded hacks for a non-registry entry")
+    env_id = _entry_id(entry)
+    task_id = (
+        str(entry.get("name") or env_id)
+        if isinstance(entry, dict)
+        else str(getattr(entry, "name", None) or env_id)
+    )
+    return load_from_env_root(root, task_id=task_id, env_id=env_id)
 
 
 def fetch_env_root(entry: Any, cache_dir: Path) -> Path:

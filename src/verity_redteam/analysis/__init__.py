@@ -5,6 +5,7 @@ from verity_redteam.analysis.hackability import (
     DEFAULT_CONFIDENCE,
     HackabilityCurve,
     HackabilityEstimator,
+    clopper_pearson,
 )
 
 __all__ = [
@@ -12,4 +13,5 @@ __all__ = [
     "DEFAULT_CONFIDENCE",
     "HackabilityCurve",
     "HackabilityEstimator",
+    "clopper_pearson",
 ]

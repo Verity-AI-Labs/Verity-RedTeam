@@ -26,6 +26,7 @@ __all__ = [
     "DEFAULT_CONFIDENCE",
     "HackabilityCurve",
     "HackabilityEstimator",
+    "clopper_pearson",
 ]
 
 
@@ -68,6 +69,11 @@ class HackabilityCurve:
             "nonserious_alpha": self.nonserious_alpha,
             "serious_curve": {str(k): v for k, v in self.serious_curve.items()},
         }
+
+
+def clopper_pearson(k: int, n: int, confidence: float = DEFAULT_CONFIDENCE) -> tuple[float, float]:
+    """Exact binomial CI. 0/n has a nonzero upper bound; n/n has a nonzero lower bound."""
+    return _clopper_pearson(k, n, confidence)
 
 
 def _clopper_pearson(k: int, n: int, confidence: float) -> tuple[float, float]:
