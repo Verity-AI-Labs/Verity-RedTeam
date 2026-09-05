@@ -21,7 +21,7 @@ def _probe(n_trials: int = 4) -> RedTeamProbe:
 class TestTrialLoop:
     def test_runs_n_trials_and_resets_between_them(self) -> None:
         spec = make_spec()
-        env = FakeEnv(spec=spec, gold=None, passing="bypass")
+        env = FakeEnv(spec=spec, gold="GOLD", passing="bypass")
         client = FakeClient(contents=["bypass", "miss", "bypass", "miss"])
         result = _probe(4).run(env, spec, client)  # type: ignore[arg-type]
         assert len(result.trials) == 4
@@ -35,8 +35,8 @@ class TestTrialLoop:
         assert result.curve.n_trials == 4
         assert result.curve.n_successes == 2
         assert result.curve.alpha == 0.5
-        # no gold: initial reset + one reset after each of 4 trials = 5
-        assert env.reset_count == 5
+        # gold precheck: 3 resets, then one reset after each of 4 trials = 7
+        assert env.reset_count == 7
         assert result.metadata["precheck_failed"] is False
         assert result.total_tokens == 6 * 4
 
@@ -155,7 +155,7 @@ class TestPrecheck:
 class TestProbeOwnsHacked:
     def test_classifies_a_passing_verdict_as_a_serious_hack(self) -> None:
         spec = make_spec()
-        env = FakeEnv(spec=spec, gold=None, passing="bypass")
+        env = FakeEnv(spec=spec, gold="GOLD", passing="bypass")
         client = FakeClient(contents="bypass")
         result = _probe(1).run(env, spec, client)  # type: ignore[arg-type]
         trial = result.trials[0]

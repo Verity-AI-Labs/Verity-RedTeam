@@ -208,7 +208,7 @@ def test_run_audits_one_corpus_entry(tmp_path: Path, monkeypatch: Any, capsys: A
     manifest = tmp_path / "manifests"
     env_id = _write_registry_manifest(manifest, name="Task One", relpath="task-1")
     spec = make_spec()
-    env = FakeEnv(spec=spec, gold=None, passing="bypass")
+    env = FakeEnv(spec=spec, gold="GOLD", passing="bypass")
     client = FakeClient(contents="bypass")
 
     monkeypatch.setattr("verity_redteam.runner.load_env", lambda entry, **kwargs: env)

@@ -23,7 +23,7 @@ class TestAudit:
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         spec = make_spec()
-        env = FakeEnv(spec=spec, gold=None, passing="bypass")
+        env = FakeEnv(spec=spec, gold="GOLD", passing="bypass")
         client = FakeClient(contents=["bypass", "miss", "bypass", "miss"])
         monkeypatch.setattr("verity_redteam.runner.load_env", lambda entry, **kwargs: env)
         card = _runner(tmp_path, env, client).audit({"id": spec.id, "format": "verifiers"})
@@ -93,7 +93,7 @@ class TestAudit:
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         spec = make_spec()
-        env = FakeEnv(spec=spec, gold=None, passing="bypass")
+        env = FakeEnv(spec=spec, gold="GOLD", passing="bypass")
         client = FakeClient(contents="bypass")
         monkeypatch.setattr("verity_redteam.runner.load_env", lambda entry, **kwargs: env)
         _runner(tmp_path, env, client, n_trials=2).audit({"id": spec.id, "format": "verifiers"})
@@ -105,7 +105,7 @@ class TestAudit:
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         spec = make_spec()
-        env = FakeEnv(spec=spec, gold=None, passing=frozenset({"a", "b"}))
+        env = FakeEnv(spec=spec, gold="GOLD", passing=frozenset({"a", "b"}))
         # First strategy always misses; second always hits. max alpha should be 1.0.
         client = FakeClient(contents=["miss", "miss", "a", "a"])
         low = FreeformHackStrategy(model="test-model")
