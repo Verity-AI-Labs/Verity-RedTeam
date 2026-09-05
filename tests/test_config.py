@@ -10,6 +10,7 @@ from verity_core.config import DEFAULT_MODEL_NAME, VerityConfig
 from verity_redteam.config import (
     DEFAULT_CACHE_DIR,
     DEFAULT_MAX_EPISODES,
+    DEFAULT_MODEL_TIMEOUT,
     DEFAULT_N_TRIALS,
     DEFAULT_STRATEGIES,
     DEFAULT_TEMPERATURE,
@@ -34,6 +35,7 @@ class TestDefaults:
         assert config.cache_dir == DEFAULT_CACHE_DIR
         assert config.judge_model is None
         assert config.n_perturbations == 4
+        assert config.model_timeout == DEFAULT_MODEL_TIMEOUT
         assert config.core.model_name == DEFAULT_MODEL_NAME
         assert isinstance(config.core, VerityConfig)
 
@@ -52,6 +54,10 @@ class TestDefaults:
     def test_rejects_a_non_positive_perturbation_count(self) -> None:
         with pytest.raises(ValueError, match="n_perturbations"):
             RedTeamConfig(n_perturbations=0)
+
+    def test_rejects_a_non_positive_model_timeout(self) -> None:
+        with pytest.raises(ValueError, match="model_timeout"):
+            RedTeamConfig(model_timeout=0)
 
 
 class TestFileLoading:
@@ -72,6 +78,7 @@ class TestFileLoading:
               max_episodes: 10
               judge_model: judge-model
               n_perturbations: 6
+              model_timeout: 900
             """,
         )
         config = load_redteam_config(path, env={})
@@ -86,6 +93,7 @@ class TestFileLoading:
         assert config.max_episodes == 10
         assert config.judge_model == "judge-model"
         assert config.n_perturbations == 6
+        assert config.model_timeout == 900
         assert config.model_name == "Qwen/Qwen3-32B"
 
     def test_a_file_without_redteam_block_keeps_redteam_defaults(self, tmp_path: Path) -> None:
@@ -110,6 +118,7 @@ class TestFileLoading:
         assert payload["redteam"]["max_episodes"] == DEFAULT_MAX_EPISODES
         assert payload["redteam"]["judge_model"] is None
         assert payload["redteam"]["n_perturbations"] == 4
+        assert payload["redteam"]["model_timeout"] == DEFAULT_MODEL_TIMEOUT
         assert payload["redteam"]["cache_dir"] == str(DEFAULT_CACHE_DIR)
         assert payload["redteam"]["strategies"] == list(DEFAULT_STRATEGIES)
         assert payload["model_name"] == DEFAULT_MODEL_NAME

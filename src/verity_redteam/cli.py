@@ -304,6 +304,10 @@ def _resolve_for_run(entries: list[Any], config: RedTeamConfig) -> list[dict[str
     return resolve_selected(entries, cache_dir=Path(config.cache_dir))
 
 
+def _model_client(config: RedTeamConfig) -> ModelClient:
+    return ModelClient.from_config(config.core, timeout=config.model_timeout)
+
+
 def _build_runner(config: RedTeamConfig, client: ModelClient) -> RedTeamRunner:
     strategies = [
         get_strategy(name)(
@@ -340,7 +344,7 @@ def _cmd_run(args: argparse.Namespace, config: RedTeamConfig) -> int:
 
     preflight_images([manifest])
     config.ensure_dirs()
-    with ModelClient.from_config(config.core) as client:
+    with _model_client(config) as client:
         runner = _build_runner(config, client)
         scorecard = runner.audit(manifest)
 
@@ -397,7 +401,7 @@ def _cmd_batch(args: argparse.Namespace, config: RedTeamConfig) -> int:
     config.ensure_dirs()
     Path(results_dir).mkdir(parents=True, exist_ok=True)
 
-    with ModelClient.from_config(config.core) as client:
+    with _model_client(config) as client:
         runner = _build_runner(config, client)
         batch = run_batch(
             entries,
@@ -552,7 +556,7 @@ def _cmd_validate(args: argparse.Namespace, config: RedTeamConfig) -> int:
         preflight_images(list(resolved.auditable))
         config.ensure_dirs()
         Path(results_dir).mkdir(parents=True, exist_ok=True)
-        with ModelClient.from_config(config.core) as client:
+        with _model_client(config) as client:
             runner = _build_runner(config, client)
             batch = run_batch(
                 list(resolved.auditable),

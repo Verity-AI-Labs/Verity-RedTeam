@@ -227,6 +227,7 @@ redteam:
   max_episodes: 15
   judge_model: null   # defaults to model_name
   n_perturbations: 4
+  model_timeout: 600  # HTTP request timeout in seconds
 ```
 
 | Key | Default | Meaning |
@@ -241,8 +242,9 @@ redteam:
 | `max_episodes` | 15 | Cap on the container-backed attacker loop. |
 | `judge_model` | attacker model | Model id for `LlmJudge`. |
 | `n_perturbations` | 4 | Recorded V2 setting; the isomorphic strategy currently emits one variant per probe trial. |
+| `model_timeout` | 600 | HTTP timeout (seconds) passed to Core's `ModelClient`. Long agentic turns on local hardware routinely exceed Core's 120s default. |
 
-`n_trials < 1`, `max_episodes < 1`, `n_perturbations < 1`, an empty
+`n_trials < 1`, `max_episodes < 1`, `n_perturbations < 1`, `model_timeout <= 0`, an empty
 `strategies` list, and unknown `redteam:` keys are rejected. An explicit
 `--config` path that does not exist is an error; with no path, `$VERITY_CONFIG`
 then `./verity.yaml` are tried, matching Core.

@@ -10,7 +10,15 @@ from typing import Any
 import pytest
 from verity_core.scorecard import Scorecard
 
-from verity_redteam.cli import EXIT_ERROR, EXIT_OK, _load_entries, build_parser, main
+from verity_redteam.cli import (
+    EXIT_ERROR,
+    EXIT_OK,
+    _load_entries,
+    _model_client,
+    build_parser,
+    main,
+)
+from verity_redteam.config import DEFAULT_MODEL_TIMEOUT, RedTeamConfig
 
 
 def _stub_fetch(
@@ -27,6 +35,18 @@ def _stub_fetch(
 
     monkeypatch.setattr("verity_redteam.corpus.fetch_env_root", fake)
     return fetched, env_root
+
+
+def test_configured_model_timeout_reaches_the_constructed_client() -> None:
+    from verity_core.models import DEFAULT_TIMEOUT_SECONDS, ModelClient
+
+    assert DEFAULT_MODEL_TIMEOUT != DEFAULT_TIMEOUT_SECONDS
+    config = RedTeamConfig(model_timeout=777)
+    with _model_client(config) as client:
+        assert isinstance(client, ModelClient)
+        assert client.timeout == 777
+    with _model_client(RedTeamConfig()) as client:
+        assert client.timeout == DEFAULT_MODEL_TIMEOUT
 
 
 def test_cli_imports_core_helpers_from_the_package_root() -> None:

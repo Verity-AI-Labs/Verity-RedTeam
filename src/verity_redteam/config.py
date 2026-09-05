@@ -37,12 +37,14 @@ DEFAULT_CORPUS_DIR = Path("manifests")
 DEFAULT_CACHE_DIR = Path("cache")
 DEFAULT_MAX_EPISODES = 15
 DEFAULT_N_PERTURBATIONS = 4
+DEFAULT_MODEL_TIMEOUT = 600
 
 __all__ = [
     "DEFAULT_CACHE_DIR",
     "DEFAULT_CORPUS_DIR",
     "DEFAULT_MAX_EPISODES",
     "DEFAULT_MAX_SUBMISSION_LENGTH",
+    "DEFAULT_MODEL_TIMEOUT",
     "DEFAULT_N_PERTURBATIONS",
     "DEFAULT_N_TRIALS",
     "DEFAULT_STRATEGIES",
@@ -86,6 +88,7 @@ class RedTeamConfig:
     max_episodes: int = DEFAULT_MAX_EPISODES
     judge_model: str | None = None
     n_perturbations: int = DEFAULT_N_PERTURBATIONS
+    model_timeout: float = DEFAULT_MODEL_TIMEOUT
 
     def __post_init__(self) -> None:
         self.vrc_dir = _parse_path(self.vrc_dir)
@@ -103,6 +106,8 @@ class RedTeamConfig:
             raise ValueError(f"max_episodes must be >= 1, got {self.max_episodes}")
         if self.n_perturbations < 1:
             raise ValueError(f"n_perturbations must be >= 1, got {self.n_perturbations}")
+        if self.model_timeout <= 0:
+            raise ValueError(f"model_timeout must be > 0, got {self.model_timeout}")
 
     @property
     def model_name(self) -> str:
@@ -135,6 +140,7 @@ class RedTeamConfig:
                 "max_episodes": self.max_episodes,
                 "judge_model": self.judge_model,
                 "n_perturbations": self.n_perturbations,
+                "model_timeout": self.model_timeout,
             },
         }
 
@@ -162,7 +168,7 @@ def _coerce_redteam(data: dict[str, Any], *, source: str) -> dict[str, Any]:
             "n_perturbations",
         }:
             coerced[key] = _parse_int(value, source=f"{source}.{key}")
-        elif key == "temperature":
+        elif key in {"temperature", "model_timeout"}:
             coerced[key] = _parse_float(value, source=f"{source}.{key}")
         elif key == "judge_model":
             coerced[key] = None if value in ("", None) else str(value)
