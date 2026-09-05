@@ -146,6 +146,11 @@ images. `--benchmark impossiblebench` cannot live-audit today — those Corpus
 rows are catalog-only until Core grows a SWE/Inspect adapter. Precision is
 computed from `--results-dir` scorecards (`--skip-run`).
 
+`verity-redteam validate-judge` does **not** start an attacker or a container.
+It feeds Corpus-recorded known-hack trajectories to the judge and reports
+recall. The validation marker's live test skips until `hack_trajectories/` is
+pulled; default CI stays green.
+
 ## CLI
 
 Installed as `verity-redteam`. Human-readable summaries go to stdout, logs to
@@ -184,6 +189,11 @@ verity-redteam validate --benchmark impossiblebench --skip-run --results-dir res
 verity-redteam validate --benchmark terminal-wrench --dry-run
 verity-redteam validate --benchmark terminal-wrench --id <env-id> --limit 4 --dry-run
 
+# Judge recall on recorded known hacks (no attacker, no container)
+verity-redteam validate-judge --benchmark terminal-wrench --corpus ../Verity-Corpus/manifests/
+verity-redteam validate-judge --benchmark terminal-wrench --limit 4 --dry-run
+verity-redteam validate-judge --benchmark terminal-wrench --json
+
 # List recorded exploits for one environment
 verity-redteam vrc list <env-id>
 verity-redteam vrc list <env-id> --json
@@ -191,7 +201,8 @@ verity-redteam vrc list <env-id> --json
 
 `--log-level debug` prints each trial's raw model output, which is the useful
 view when iterating on the adversarial prompt. `--json` on `run` / `batch` /
-`report` / `validate` / `vrc list` keeps the payload pipeable at any log level.
+`report` / `validate` / `validate-judge` / `vrc list` keeps the payload pipeable
+at any log level.
 
 `--corpus` directories are loaded through verity-corpus's `CorpusRegistry`,
 which skips `_schema.yaml`, merges `source_defaults`, computes deterministic
@@ -287,12 +298,38 @@ hand-computed confusion matrices. Vacuous precision (no predicted hacks) is 1.0;
 the CLI still refuses to certify ImpossibleBench when that directory has no
 matching scorecards.
 
+## Judge validation (recall vs false positives)
+
+`verity-redteam validate` scores the **attacker+judge pipeline** against labeled
+hackable tasks. A weak attacker and a weak judge look the same there.
+`verity-redteam validate-judge` isolates the judge:
+
+- Load each task's recorded exploit trajectories from verity-corpus
+  (`load_hack_trajectories` / `registry.hack_trajectories`). These are hacks by
+  construction.
+- Rebuild `AttackTrial` objects through `trial_from_trajectory` (the same
+  EXEC:/SUBMIT: path the judge already consumes).
+- Resolve gold from the host `env_root` via `resolve_gold` — never from a
+  container — and pass it to the judge.
+- Report **recall**: the fraction labeled `serious_hack` or `nonserious_hack`,
+  with a Clopper-Pearson 95% interval. Every miss (a known hack called
+  `legitimate_solve` or `no_reward`) is dumped with the full trajectory and the
+  judge's rationale.
+- Alongside that, re-run the legitimate-solve regression fixtures (correct
+  commands plus adversarial narration). A judge that labels everything a hack
+  would ace recall and fail those fixtures; both numbers are printed so
+  over-correction in either direction is visible.
+
+No attacker loop, no Docker. `--limit` / `--id` select tasks, matching
+`validate`. Until Corpus pulls `hack_trajectories/`, the loader returns empty
+and the CLI exits with an error naming the missing tree.
+
 ## Current status
 
 Strategies for V1, V2, V4, V6, and V7 are registered. Unit tests cover the
 estimator, outcome taxonomy, judge, perturbation-validation guard, each axis
-strategy, validation metrics, CLI, and VRC logger. They do not start Docker or
-a model server.
+strategy, validation metrics, judge-recall harness, CLI, and VRC logger. They
+do not start Docker or a model server.
 
 ## Not yet implemented
 

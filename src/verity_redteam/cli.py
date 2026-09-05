@@ -37,6 +37,7 @@ from verity_redteam.validation.benchmarks import (
     resolve_benchmark,
 )
 from verity_redteam.validation.evaluate import evaluate_benchmark
+from verity_redteam.validation.judge import collect_known_hack_cases, evaluate_judge
 from verity_redteam.vrc import last_user_preview, load_vrc_entries
 
 logger = logging.getLogger(__name__)
@@ -189,6 +190,32 @@ def build_parser() -> argparse.ArgumentParser:
         help="do not audit; evaluate scorecards already in --results-dir",
     )
     validate.set_defaults(handler=_cmd_validate)
+
+    validate_judge = subcommands.add_parser(
+        "validate-judge",
+        help="score the judge on recorded known-hack trajectories",
+        description=(
+            "Feed pre-recorded exploits to the judge without running the "
+            "attacker or a container. Reports recall (with a confidence "
+            "interval) and dumps every miss; also re-runs the legitimate-solve "
+            "fixtures so a judge that labels everything a hack cannot hide."
+        ),
+    )
+    validate_judge.add_argument(
+        "--benchmark",
+        required=True,
+        choices=BENCHMARK_NAMES,
+        help="terminal-wrench recorded exploits (judge recall, not attacker recall@4)",
+    )
+    validate_judge.add_argument("--corpus", type=Path, help="corpus directory of YAML manifests")
+    _add_selection_flags(validate_judge)
+    validate_judge.add_argument("--json", action="store_true", help="emit JSON instead of text")
+    validate_judge.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="list recorded-hack counts and host gold, then exit before judging",
+    )
+    validate_judge.set_defaults(handler=_cmd_validate_judge)
 
     return parser
 
@@ -589,6 +616,77 @@ def _cmd_validate(args: argparse.Namespace, config: RedTeamConfig) -> int:
     else:
         _print_validation_text(payload)
     return EXIT_OK if payload["passed"] else EXIT_ERROR
+
+
+def _print_validate_judge_dry_run(
+    resolved: ResolvedBenchmark, cases: list[Any], n_absent: int
+) -> None:
+    spec = resolved.spec
+    n_with = len(resolved.entries) - n_absent
+    gold_tasks = {case.task_id for case in cases if case.gold_present}
+    print(f"benchmark: {spec.name}")
+    print("mode: judge recall on recorded exploits (no attacker, no container)")
+    print(
+        f"labeled: {len(resolved.entries)}  with exploits: {n_with}  "
+        f"absent: {n_absent}  known hacks: {len(cases)}  "
+        f"tasks with gold: {len(gold_tasks)}"
+    )
+    by_task: dict[str, int] = {}
+    for case in cases:
+        key = f"{case.env_id} ({case.task_id})"
+        by_task[key] = by_task.get(key, 0) + 1
+    for label, count in by_task.items():
+        print(f"  {label}: {count} recorded exploit(s)")
+    if n_absent:
+        print(f"  ({n_absent} task(s) with no hack trajectories)")
+
+
+def _cmd_validate_judge(args: argparse.Namespace, config: RedTeamConfig) -> int:
+    corpus_dir = Path(args.corpus or config.corpus_dir)
+    resolved = _select_benchmark(
+        resolve_benchmark(corpus_dir, args.benchmark),
+        env_ids=args.env_ids,
+        limit=args.limit,
+    )
+    cache_dir = Path(config.cache_dir)
+    if resolved.entries:
+        resolved = materialize_benchmark(resolved, cache_dir)
+
+    cases, n_absent = collect_known_hack_cases(
+        resolved.entries,
+        cache_dir=cache_dir,
+        manifests=list(resolved.manifests),
+        fetch=False,
+    )
+    if args.dry_run:
+        _print_validate_judge_dry_run(resolved, cases, n_absent)
+        return EXIT_OK
+
+    if not cases:
+        print(
+            f"{PROGRAM}: no recorded hack trajectories for {resolved.spec.name} "
+            f"in {corpus_dir} (absent={n_absent}). Pull the Terminal Wrench "
+            "hack_trajectories/ tree, then re-run.",
+            file=sys.stderr,
+        )
+        return EXIT_ERROR
+
+    with _model_client(config) as client:
+        judge_model = config.judge_model or config.model_name
+        judge = LlmJudge(client, judge_model)
+        report = evaluate_judge(
+            cases,
+            judge,
+            benchmark=resolved.spec.name,
+            n_tasks=len(resolved.entries),
+            n_tasks_absent=n_absent,
+        )
+
+    if args.json:
+        _emit(report.to_dict())
+    else:
+        print(report.to_text())
+    return EXIT_OK if report.passed else EXIT_ERROR
 
 
 def main(argv: Sequence[str] | None = None) -> int:
