@@ -38,8 +38,10 @@ DEFAULT_CACHE_DIR = Path("cache")
 DEFAULT_MAX_EPISODES = 15
 DEFAULT_N_PERTURBATIONS = 4
 DEFAULT_MODEL_TIMEOUT = 600
+DEFAULT_ARCHIVE_ALL_TRAJECTORIES = False
 
 __all__ = [
+    "DEFAULT_ARCHIVE_ALL_TRAJECTORIES",
     "DEFAULT_CACHE_DIR",
     "DEFAULT_CORPUS_DIR",
     "DEFAULT_MAX_EPISODES",
@@ -73,6 +75,17 @@ def _parse_float(value: Any, *, source: str) -> float:
         raise ValueError(f"{source}: cannot interpret {value!r} as a float") from exc
 
 
+def _parse_bool(value: Any, *, source: str) -> bool:
+    if isinstance(value, bool):
+        return value
+    text = str(value).strip().lower()
+    if text in {"1", "true", "yes", "on"}:
+        return True
+    if text in {"0", "false", "no", "off"}:
+        return False
+    raise ValueError(f"{source}: cannot interpret {value!r} as a boolean")
+
+
 @dataclass(slots=True)
 class RedTeamConfig:
     """Core settings plus the RedTeam probe knobs."""
@@ -89,11 +102,15 @@ class RedTeamConfig:
     judge_model: str | None = None
     n_perturbations: int = DEFAULT_N_PERTURBATIONS
     model_timeout: float = DEFAULT_MODEL_TIMEOUT
+    archive_all_trajectories: bool = DEFAULT_ARCHIVE_ALL_TRAJECTORIES
 
     def __post_init__(self) -> None:
         self.vrc_dir = _parse_path(self.vrc_dir)
         self.corpus_dir = _parse_path(self.corpus_dir)
         self.cache_dir = _parse_path(self.cache_dir)
+        self.archive_all_trajectories = _parse_bool(
+            self.archive_all_trajectories, source="archive_all_trajectories"
+        )
         if self.n_trials < 1:
             raise ValueError(f"n_trials must be >= 1, got {self.n_trials}")
         if self.max_submission_length < 1:
@@ -121,10 +138,17 @@ class RedTeamConfig:
     def results_dir(self) -> Path:
         return self.core.results_dir
 
+    @property
+    def trajectory_archive_dir(self) -> Path:
+        """Sibling of ``vrc_dir``: ``{vrc_dir}/../trajectories``."""
+        return self.vrc_dir.parent / "trajectories"
+
     def ensure_dirs(self) -> None:
         self.core.ensure_dirs()
         self.vrc_dir.mkdir(parents=True, exist_ok=True)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
+        if self.archive_all_trajectories:
+            self.trajectory_archive_dir.mkdir(parents=True, exist_ok=True)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -141,6 +165,7 @@ class RedTeamConfig:
                 "judge_model": self.judge_model,
                 "n_perturbations": self.n_perturbations,
                 "model_timeout": self.model_timeout,
+                "archive_all_trajectories": self.archive_all_trajectories,
             },
         }
 
@@ -170,6 +195,8 @@ def _coerce_redteam(data: dict[str, Any], *, source: str) -> dict[str, Any]:
             coerced[key] = _parse_int(value, source=f"{source}.{key}")
         elif key in {"temperature", "model_timeout"}:
             coerced[key] = _parse_float(value, source=f"{source}.{key}")
+        elif key == "archive_all_trajectories":
+            coerced[key] = _parse_bool(value, source=f"{source}.{key}")
         elif key == "judge_model":
             coerced[key] = None if value in ("", None) else str(value)
         elif key == "strategies":
