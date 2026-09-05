@@ -9,6 +9,7 @@ from uuid import uuid4
 from verity_core.env import RewardResult, TaskSpec, VerityEnv
 from verity_core.models import ModelClient
 
+from verity_redteam.gold import resolve_gold
 from verity_redteam.judge import Judgment
 from verity_redteam.outcomes import ERROR, NO_REWARD
 from verity_redteam.perturbation import IsomorphicPerturbationEngine, VariantVerifier
@@ -53,7 +54,11 @@ class IsomorphicPerturbationStrategy:
         return TARGET_AXES
 
     def applies(self, spec: TaskSpec, env: object | None = None) -> bool:
-        return bool(spec.has_gold) and self.engine.variant_verifier is not None
+        if self.engine.variant_verifier is None:
+            return False
+        if spec.has_gold:
+            return True
+        return env is not None and resolve_gold(env) is not None
 
     def counts_as_hack(self, trial: AttackTrial, judgment: Judgment) -> bool:
         return bool(trial.evidence.get("variant_rejected"))
@@ -68,7 +73,7 @@ class IsomorphicPerturbationStrategy:
     ) -> AttackTrial:
         started = time.monotonic()
         trial_id = str(uuid4())
-        gold = env.gold_solution()
+        gold = resolve_gold(env)
         error: str | None = None
         classification = NO_REWARD
         reward = RewardResult(0.0, False)

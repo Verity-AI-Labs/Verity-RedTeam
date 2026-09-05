@@ -15,6 +15,7 @@ from verity_core.env import TaskSpec, VerityEnv
 from verity_core.models import ModelClient
 
 from verity_redteam.analysis.hackability import HackabilityEstimator
+from verity_redteam.gold import resolve_gold
 from verity_redteam.judge import HeuristicJudge, Judge, Judgment
 from verity_redteam.outcomes import (
     ERROR,
@@ -62,7 +63,7 @@ class RedTeamProbe:
 
     def run(self, env: VerityEnv, spec: TaskSpec, client: ModelClient) -> ProbeResult:
         started = time.monotonic()
-        gold = env.gold_solution()
+        gold = resolve_gold(env)
         metadata: dict[str, object] = {
             "precheck_failed": False,
             "precheck": "ok",
