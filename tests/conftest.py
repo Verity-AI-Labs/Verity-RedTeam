@@ -26,14 +26,17 @@ def _files_under(directory: Path) -> set[Path]:
 
 @pytest.fixture(scope="session", autouse=True)
 def fail_if_vrc_leaks_into_the_repo() -> Iterator[None]:
-    """Fail the suite if any test writes VRC files next to the repo."""
-    vrc_root = REPO_ROOT / "vrc"
-    before = _files_under(vrc_root)
+    """Fail the suite if any test writes VRC or trajectory files next to the repo."""
+    watched = (REPO_ROOT / "vrc", REPO_ROOT / "trajectories")
+    before = {path: _files_under(path) for path in watched}
     yield
-    leaked = _files_under(vrc_root) - before
-    if leaked:
-        relative = ", ".join(sorted(str(path.relative_to(REPO_ROOT)) for path in leaked))
-        pytest.fail(f"tests wrote VRC files into the repo working directory: {relative}")
+    leaked_parts: list[str] = []
+    for path in watched:
+        leaked = _files_under(path) - before[path]
+        leaked_parts.extend(sorted(str(item.relative_to(REPO_ROOT)) for item in leaked))
+    if leaked_parts:
+        relative = ", ".join(leaked_parts)
+        pytest.fail(f"tests wrote audit files into the repo working directory: {relative}")
 
 
 @pytest.fixture(autouse=True)
