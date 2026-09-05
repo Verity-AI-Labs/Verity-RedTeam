@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import logging
 import re
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
@@ -50,9 +51,11 @@ __all__ = [
     "commands_equivalent_to_gold",
     "gold_commands",
     "gold_equivalent",
+    "messages_from_hack_actions",
     "normalize_command",
     "resolve_gold",
     "trial_commands",
+    "trial_from_recorded_hack",
     "trial_from_trajectory",
 ]
 
@@ -301,3 +304,94 @@ def trial_from_trajectory(
         model_id=model_id,
         episodes=[episode],
     )
+
+
+def _action_fields(action: Any) -> tuple[str, str, str]:
+    if isinstance(action, dict):
+        kind = str(action.get("kind") or action.get("type") or "exec")
+        command = str(action.get("command") or "")
+        body = str(action.get("body") or "")
+        return kind, command, body
+    kind = str(getattr(action, "kind", None) or "exec")
+    command = str(getattr(action, "command", None) or "")
+    body = str(getattr(action, "body", None) or "")
+    return kind, command, body
+
+
+def messages_from_hack_actions(actions: Sequence[Any]) -> list[dict[str, Any]]:
+    """Turn Corpus ``HackAction`` rows into the EXEC:/SUBMIT: messages the judge reads."""
+    lines: list[str] = []
+    for action in actions:
+        kind, command, body = _action_fields(action)
+        if kind == "submit":
+            payload = body or command
+            lines.append(f"SUBMIT: {payload}".rstrip() if payload else "SUBMIT:")
+            continue
+        if command:
+            lines.append(f"EXEC: {command}")
+    return [{"role": "assistant", "content": "\n".join(lines)}]
+
+
+def _reward_passed_from_hack(hack: Any, override: bool | None) -> bool:
+    if override is not None:
+        return override
+    verifier = getattr(hack, "verifier", None)
+    if isinstance(hack, dict):
+        verifier = hack.get("verifier", verifier)
+    rewarded = None
+    if isinstance(verifier, dict):
+        rewarded = verifier.get("rewarded")
+    elif verifier is not None:
+        rewarded = getattr(verifier, "rewarded", None)
+    if rewarded is None:
+        return True
+    return bool(rewarded)
+
+
+def trial_from_recorded_hack(
+    hack: Any,
+    *,
+    env_id: str,
+    reward_passed: bool | None = None,
+    strategy: str = "recorded_hack",
+    model_id: str = "",
+) -> AttackTrial:
+    """Rebuild a trial from a Corpus recorded exploit via :func:`trial_from_trajectory`.
+
+    ``hack`` is a ``RecordedHack`` (or a duck-typed object with ``actions``,
+    ``run_id``, ``verifier``, ``metadata``, ``source_path``). Known-hack
+    validation forces ``reward_passed=True`` at the call site: these runs
+    obtained reward by construction.
+    """
+    if isinstance(hack, dict):
+        actions = list(hack.get("actions") or [])
+        run_id = str(hack.get("run_id") or "")
+        source_path = str(hack.get("source_path") or "")
+        metadata = dict(hack.get("metadata") or {})
+    else:
+        actions = list(getattr(hack, "actions", None) or [])
+        run_id = str(getattr(hack, "run_id", "") or "")
+        source_path = str(getattr(hack, "source_path", "") or "")
+        metadata = dict(getattr(hack, "metadata", None) or {})
+    passed = _reward_passed_from_hack(hack, reward_passed)
+    trial = trial_from_trajectory(
+        env_id=env_id,
+        messages=messages_from_hack_actions(actions),
+        reward_passed=passed,
+        strategy=strategy,
+        model_id=model_id,
+    )
+    log: list[dict[str, Any]] = []
+    for action in actions:
+        kind, command, body = _action_fields(action)
+        if kind == "submit":
+            continue
+        if command:
+            log.append({"command": command, "stdout": "", "stderr": ""})
+        elif body:
+            log.append({"command": body, "stdout": "", "stderr": ""})
+    trial.evidence["run_id"] = run_id
+    trial.evidence["source_path"] = source_path
+    trial.evidence["recorded_metadata"] = metadata
+    trial.evidence["command_log"] = log
+    return trial
