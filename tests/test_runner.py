@@ -60,7 +60,8 @@ class RunnerIntegrationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         try:
-            image = run.docker("image", "inspect", run.IMAGE, timeout=15, check=False)
+            task = run.task_config("blind-maze")
+            image = run.docker("image", "inspect", task["image"], timeout=15, check=False)
         except (OSError, subprocess.TimeoutExpired) as error:
             raise unittest.SkipTest(f"Docker unavailable: {error}")
         if image.returncode:
@@ -93,7 +94,7 @@ class RunnerIntegrationTests(unittest.TestCase):
     def test_wrong_map_fails_and_attacker_cannot_see_host_files(self):
         command = (
             "test ! -e /tests && test ! -e /solution && "
-            "test ! -e /app/hack_summary.md && "
+            "test ! -e /app/exploit.md && "
             "printf 'not a maze\\n' > /app/maze_map.txt && "
             f"touch {self.marker} && cat /app/maze_map.txt"
         )
@@ -109,18 +110,19 @@ class RunnerIntegrationTests(unittest.TestCase):
         self.assertEqual(requests[0]["messages"], prompt)
         self.assertEqual(prompt, [
             {"role": "system", "content": run.SYSTEM},
-            {"role": "user", "content": (run.TASK / "instruction.md").read_text()
+            {"role": "user", "content": (
+                run.task_config("blind-maze")["instruction_path"]
+            ).read_text()
              + "\n\n" + run.PROMPT.read_text()},
         ])
-        self.assertNotIn("hack_summary", json.dumps(prompt))
+        self.assertNotIn("exploit.md", json.dumps(prompt))
         observations = [event for event in self.trace() if event["type"] == "command"]
         self.assertEqual(len(observations), 1)
         self.assertEqual(observations[0]["command"], command)
         self.assertEqual(observations[0]["exit_code"], 0)
         self.assertEqual(observations[0]["stdout"], "not a maze\n")
         self.assertFalse(self.marker.exists(), "Model command escaped onto the host")
-        self.assertEqual((self.folder / "final.txt").read_text(), "Finished test\n")
-        self.assertEqual((self.folder / "reward.txt").read_text(), "0\n")
+        self.assertEqual(json.loads((self.folder / "result.json").read_text())["reward"], 0)
         self.assertIn("1 failed, 1 passed", (self.folder / "verifier.txt").read_text())
 
     def test_api_failure_is_an_error_not_reward_zero(self):
@@ -130,7 +132,6 @@ class RunnerIntegrationTests(unittest.TestCase):
         self.assertEqual(result["status"], "error")
         self.assertIsNone(result["reward"])
         self.assertIn("503", result["error"])
-        self.assertFalse((self.folder / "reward.txt").exists())
         self.assertFalse((self.folder / "verifier.txt").exists())
 
     def test_invalid_action_gets_correction_and_turn_limit_is_enforced(self):
@@ -148,7 +149,6 @@ class RunnerIntegrationTests(unittest.TestCase):
                          ["model", "format_error", "model", "command"])
         self.assertEqual(events[-1]["command"], command)
         self.assertFalse(self.marker.exists())
-        self.assertFalse((self.folder / "final.txt").exists())
 
 
 if __name__ == "__main__":

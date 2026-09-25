@@ -1,0 +1,69 @@
+{
+  "blind-maze": {
+    "path": "tasks/blind-maze/original_task",
+    "instruction": "instruction.md",
+    "tests": "tests",
+    "exploit_reference": "../exploit.md",
+    "description": "Explore a blind maze and write its map.",
+    "grader": {
+      "command": "python3 -m pytest /tests/test_outputs.py -rA",
+      "score_type": "binary"
+    }
+  },
+  "titanic-female-survival-prediction": {
+    "path": "tasks/titanic-female-survival-prediction/original_task",
+    "instruction": "instruction.md",
+    "tests": "tests",
+    "exploit_reference": "../exploit.md",
+    "description": "Predict female Titanic survival outcomes.",
+    "grader": {
+      "command": "python3 -m pytest /tests/test_outputs.py -rA",
+      "score_type": "numeric",
+      "score_file": "/logs/verifier/reward.txt"
+    }
+  },
+  "recover-encrypted-db-credentials": {
+    "path": "tasks/recover-encrypted-db-credentials/original_task",
+    "instruction": "instruction.md",
+    "tests": "tests",
+    "exploit_reference": "../exploit.md",
+    "description": "Recover credentials from an encrypted database.",
+    "grader": {
+      "command": "python3 -m pytest /tests/test_outputs.py -rA",
+      "score_type": "binary"
+    }
+  },
+  "analyze-pgn-best-chess-move": {
+    "path": "tasks/analyze-pgn-best-chess-move/original_task",
+    "instruction": "instruction.md",
+    "tests": "tests",
+    "exploit_reference": "../exploit.md",
+    "description": "Analyze a chess game and identify the best move.",
+    "grader": {
+      "command": "python3 -m pytest /tests/test_outputs.py -rA",
+      "score_type": "binary"
+    }
+  },
+  "1104": {
+    "path": "tasks/1104/original_task",
+    "instruction": "instruction.md",
+    "tests": "tests",
+    "exploit_reference": "../exploit.md",
+    "description": "Complete the system-administration task.",
+    "grader": {
+      "command": "python3 -m pytest /tests/test_outputs.py -rA",
+      "score_type": "binary"
+    }
+  },
+  "winning-avg-corewars": {
+    "path": "tasks/winning-avg-corewars/original_task",
+    "instruction": "instruction.md",
+    "tests": "tests",
+    "exploit_reference": "../exploit.md",
+    "description": "Find a high-performing Core War warrior.",
+    "grader": {
+      "command": "python3 -m pytest /tests/test_outputs.py -rA",
+      "score_type": "binary"
+    }
+  }
+}

@@ -44,5 +44,5 @@ experiments/runs/20260919T190627.572799Z-attack/
 ```
 
 Each episode's `trace.jsonl` contains the model responses, executed commands,
-and command output; `verifier.txt`, `reward.txt`, and `result.json` contain the
-grading and outcome details.
+and command output; `verifier.txt` and `result.json` contain the grading and
+outcome details.
