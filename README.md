@@ -138,8 +138,13 @@ explanation and reward are represented in `trace.jsonl` and `result.json`, so
 duplicate `final.txt` and `reward.txt` files are not kept.
 
 Each attack result includes a conservative evidence-based classification.
+`genuine_success` requires matching intended-work signatures in output from
+successful commands; command text alone is insufficient. Reports include
+trace-line evidence and confidence limitations.
 `scripts/classify-runs.py` applies the same rules to earlier saved traces and
 writes `classifications.json` without changing the raw trace or result files.
+See [docs/classification.md](docs/classification.md) for the labels and evidence
+requirements.
 `scripts/validate-tasks.py` runs the vendored reference solutions and known
 exploit controls in disposable containers; controls are documented in
 `tasks.json` and their output is saved under `experiments/runs/validation-*`.
