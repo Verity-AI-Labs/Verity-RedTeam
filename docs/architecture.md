@@ -69,9 +69,16 @@ The trial folder contains only:
 ```text
 prompt.json   Initial model context
 trace.jsonl   Model actions and container observations
+telemetry.jsonl Run/episode IDs and structured execution metrics
 verifier.txt  Grader output
 result.json   Reward, stop reason, timing, and errors
 ```
+
+`telemetry.jsonl` records model-call duration and Ollama token counts when
+available, command duration and exit status, and grading duration and reward.
+It contains metric fields only: prompts, commands, model explanations, and
+grader output are not copied into telemetry. Existing trace and result fields
+remain available for compatibility.
 
 `exploit.md` is reference material from Terminal Wrench. It is not shown to
 the model and is used later to interpret a trajectory.

@@ -137,6 +137,85 @@ class RunnerUnitTests(unittest.TestCase):
         self.assertEqual(docker.call_args_list[1].args[:4],
                          ("exec", "-w", "/workdir", "container"))
 
+    def test_attack_telemetry_has_usage_and_execution_metrics_only(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary)
+            args = SimpleNamespace(
+                model="test-model", host="http://unused", max_turns=2,
+                run_id="test-run", episode_id="test-episode",
+            )
+            command = "echo private-command"
+            explanation = "private explanation"
+            replies = [
+                {"message": {"content": json.dumps({
+                    "command": command, "done": False, "explanation": explanation,
+                })}, "prompt_eval_count": 13, "eval_count": 5},
+                {"message": {"content": json.dumps({
+                    "command": "", "done": True, "explanation": explanation,
+                })}},
+            ]
+            observation = {
+                "command": command, "exit_code": 7,
+                "stdout": "private output", "stderr": "",
+            }
+            with patch.object(run, "chat", side_effect=replies), patch.object(
+                run, "shell", return_value=observation,
+            ):
+                stop_reason = run.attack(
+                    "container", folder, args, run.task_config("blind-maze")
+                )
+
+            self.assertEqual(stop_reason, "finished")
+            metrics = [
+                json.loads(line)
+                for line in (folder / "telemetry.jsonl").read_text().splitlines()
+            ]
+            self.assertEqual([event["type"] for event in metrics],
+                             ["model_call", "command", "model_call"])
+            self.assertEqual(
+                [(event["run_id"], event["episode_id"]) for event in metrics],
+                [("test-run", "test-episode")] * 3,
+            )
+            self.assertEqual(metrics[0]["prompt_tokens"], 13)
+            self.assertEqual(metrics[0]["completion_tokens"], 5)
+            self.assertNotIn("prompt_tokens", metrics[2])
+            self.assertNotIn("completion_tokens", metrics[2])
+            self.assertEqual(metrics[1]["exit_code"], 7)
+            self.assertTrue(all(event["duration_seconds"] >= 0 for event in metrics))
+            telemetry = (folder / "telemetry.jsonl").read_text()
+            for private_value in (command, explanation, "private output"):
+                self.assertNotIn(private_value, telemetry)
+            trace = (folder / "trace.jsonl").read_text()
+            self.assertIn(command, trace)
+            self.assertIn(explanation, trace)
+
+    def test_attempt_telemetry_records_grading_reward_and_identifiers(self):
+        task = run.task_config("blind-maze")
+        args = SimpleNamespace(run_id="shared-run")
+        docker_result = subprocess.CompletedProcess(
+            args=[], returncode=0, stdout="", stderr=""
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary) / "episode"
+            with patch.object(run, "docker", return_value=docker_result), patch.object(
+                run, "attack", return_value="finished",
+            ), patch.object(run, "grade", return_value=0.75):
+                result = run.attempt("attack", folder, args, task)
+
+            self.assertEqual(result["run_id"], "shared-run")
+            self.assertTrue(result["episode_id"])
+            metrics = [
+                json.loads(line)
+                for line in (folder / "telemetry.jsonl").read_text().splitlines()
+            ]
+            self.assertEqual(len(metrics), 1)
+            self.assertEqual(metrics[0]["type"], "grading")
+            self.assertEqual(metrics[0]["reward"], 0.75)
+            self.assertEqual(metrics[0]["status"], "success")
+            self.assertEqual(metrics[0]["run_id"], "shared-run")
+            self.assertEqual(metrics[0]["episode_id"], result["episode_id"])
+            self.assertGreaterEqual(metrics[0]["duration_seconds"], 0)
+
 
 def action(command="", done=False, explanation="Test action"):
     return {"message": {"content": json.dumps({

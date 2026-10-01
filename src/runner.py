@@ -91,6 +91,34 @@ def record(folder, event):
         stream.write(json.dumps(event) + "\n")
 
 
+def record_telemetry(folder, run_id, episode_id, event):
+    """Append metrics without copying prompts, commands, or grader output."""
+    entry = {
+        "schema_version": 1,
+        "run_id": run_id,
+        "episode_id": episode_id,
+        **event,
+    }
+    with (folder / "telemetry.jsonl").open("a") as stream:
+        stream.write(json.dumps(entry) + "\n")
+
+
+def execute_command(container, folder, command, run_id, episode_id, maze=None,
+                    working_directory="/app"):
+    """Run a command and record only its duration and exit status as telemetry."""
+    started = time.monotonic()
+    observation = None
+    try:
+        observation = shell(container, command, maze, working_directory)
+        return observation
+    finally:
+        record_telemetry(folder, run_id, episode_id, {
+            "type": "command",
+            "duration_seconds": time.monotonic() - started,
+            "exit_code": observation["exit_code"] if observation is not None else None,
+        })
+
+
 def build(task, folder):
     """Build the selected task image and return its immutable Docker image ID."""
     folder.mkdir(parents=True, exist_ok=True)
@@ -242,7 +270,27 @@ def attack(container, folder, args, task):
     blocked_repeats = 0
     try:
         for turn in range(1, args.max_turns + 1):
-            reply = chat(messages, args.model, args.host)
+            started = time.monotonic()
+            reply = None
+            try:
+                reply = chat(messages, args.model, args.host)
+            finally:
+                metric = {
+                    "type": "model_call",
+                    "duration_seconds": time.monotonic() - started,
+                    "status": "success" if reply is not None else "error",
+                }
+                if isinstance(reply, dict):
+                    for ollama_key, metric_key in (
+                        ("prompt_eval_count", "prompt_tokens"),
+                        ("eval_count", "completion_tokens"),
+                    ):
+                        count = reply.get(ollama_key)
+                        if type(count) is int and count >= 0:
+                            metric[metric_key] = count
+                record_telemetry(
+                    folder, args.run_id, args.episode_id, metric
+                )
             record(folder, {"type": "model", "turn": turn, "response": reply})
             content = reply.get("message", {}).get("content", "")
             messages.append({"role": "assistant", "content": content})
@@ -301,7 +349,10 @@ def attack(container, folder, args, task):
             }:
                 maze = MazeSession(container)
             try:
-                observation = shell(container, command, maze, task["working_directory"])
+                observation = execute_command(
+                    container, folder, command, args.run_id, args.episode_id,
+                    maze, task["working_directory"],
+                )
                 record(folder, {"type": "command", "turn": turn, **observation})
             except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as error:
                 observation = {
@@ -350,8 +401,18 @@ def attempt(kind, folder, args, task=None):
     task = task or task_config("blind-maze")
     folder.mkdir()
     container = "verity-" + uuid.uuid4().hex[:12]
+    run_id = getattr(args, "run_id", uuid.uuid4().hex)
+    episode_id = uuid.uuid4().hex
+    args.run_id = run_id
+    args.episode_id = episode_id
     started = time.monotonic()
-    result = {"kind": kind, "reward": None, "status": "error"}
+    result = {
+        "kind": kind,
+        "reward": None,
+        "status": "error",
+        "run_id": run_id,
+        "episode_id": episode_id,
+    }
     print(f"{kind}: {folder}", flush=True)
     try:
         docker("run", "-d", "--name", container, "--network", "none", "--init",
@@ -363,31 +424,50 @@ def attempt(kind, folder, args, task=None):
             result["review"] = "pending: classify the trace against task evidence"
         elif kind == "oracle":
             docker("cp", task["root"] / "solution", f"{container}:/solution")
-            observation = shell(container, "bash /solution/solve.sh",
-                                working_directory=task["working_directory"])
+            observation = execute_command(
+                container, folder, "bash /solution/solve.sh", run_id, episode_id,
+                working_directory=task["working_directory"],
+            )
             record(folder, {"type": "command", **observation})
             if observation["exit_code"]:
                 raise RuntimeError("Oracle failed; see trace.jsonl")
         elif kind == "replay":
             # Explicit control with the known answer. NEVER counted as discovery.
-            observation = shell(
+            observation = execute_command(
                 container,
+                folder,
                 "cp /protected/ground_truth_map.txt /app/maze_map.txt",
+                run_id,
+                episode_id,
                 working_directory=task["working_directory"],
             )
             record(folder, {"type": "command", **observation})
             if observation["exit_code"]:
                 raise RuntimeError("Known-cheat replay failed; see trace.jsonl")
         elif kind == "exploit_control":
-            observation = shell(
+            observation = execute_command(
                 container,
+                folder,
                 args.command,
+                run_id,
+                episode_id,
                 working_directory=task["working_directory"],
             )
             record(folder, {"type": "command", **observation})
             if observation["exit_code"]:
                 raise RuntimeError("Known exploit control command failed; see trace.jsonl")
-        result["reward"] = grade(container, folder, task)
+        grading_started = time.monotonic()
+        grading_succeeded = False
+        try:
+            result["reward"] = grade(container, folder, task)
+            grading_succeeded = True
+        finally:
+            record_telemetry(folder, run_id, episode_id, {
+                "type": "grading",
+                "duration_seconds": time.monotonic() - grading_started,
+                "status": "success" if grading_succeeded else "error",
+                "reward": result["reward"] if grading_succeeded else None,
+            })
         result["status"] = "graded"
     except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as error:
         result["error"] = str(error)
@@ -460,7 +540,10 @@ def main():
         parser.error("check controls are currently defined only for blind-maze")
     folder = args.output or RUNS / f"{task['id']}-{stamp}-{args.mode}"
     folder.mkdir(parents=True, exist_ok=False)
+    run_id = uuid.uuid4().hex
+    args.run_id = run_id
     config = {"mode": args.mode, "created_utc": stamp, "task": task["id"],
+              "run_id": run_id,
               "model": args.model if args.mode == "attack" else None,
               "host": args.host, "attempts": args.attempts, "max_turns": args.max_turns}
     save_json(folder / "config.json", config)
