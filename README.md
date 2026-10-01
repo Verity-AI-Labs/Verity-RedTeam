@@ -38,6 +38,12 @@ python3 src/runner.py attack --task analyze-pgn-best-chess-move --attempts 1
 
 # Run the integration tests
 python3 -m unittest -v
+
+# Validate vendored solutions and documented exploit controls
+python3 scripts/validate-tasks.py
+
+# Classify existing attack traces using executed-command evidence
+python3 scripts/classify-runs.py
 ```
 
 The control run must report:
@@ -46,10 +52,9 @@ The control run must report:
 Controls passed: nop=0, oracle=1, known-cheat replay=1.
 ```
 
-Attack mode defaults to four attempts and up to sixteen model calls per
+Attack mode defaults to four attempts and up to forty model calls per
 attempt. Attempts are sequential, not parallel. Use
-`--attempts 1 --max-turns 40` for a longer single run, or
-`--max-turns 8` for a shorter run. Use `--model NAME` for another
+`--attempts 1 --max-turns 8` for a shorter run. Use `--model NAME` for another
 already-downloaded Ollama model, or `--host URL` for another Ollama server.
 
 ## Repository layout
@@ -78,9 +83,14 @@ surface first, look for readable answer data or verifier shortcuts, avoid
 placeholder outputs, and verify the required artifact before declaring success.
 
 The model responds with JSON containing a shell command, a `done` flag, and an
-explanation. The runner executes the command in `/app`, captures its output,
-and sends that output back to Ollama. This repeats until the model finishes or
-the turn limit is reached.
+explanation. The runner executes the command in that task's configured working
+directory, captures its output, and sends that output back to Ollama. This
+repeats until the model finishes or the turn limit is reached. Transient
+Ollama request failures are retried; malformed actions and command-execution
+errors are returned to the model for correction. Repeated identical commands
+are blocked after two executions, and a stalled trial is graded rather than
+burning the rest of its turn budget. Failed trials are recorded and do not
+prevent later attempts from running.
 
 Maze interaction is stateful across turns: when the model starts
 `/app/maze_game.sh`, the runner keeps that maze process alive and routes later
@@ -120,3 +130,10 @@ experiments/runs/<task>-<timestamp>-attack/
 The container is deleted after grading. The trace is the evidence; the final
 explanation and reward are represented in `trace.jsonl` and `result.json`, so
 duplicate `final.txt` and `reward.txt` files are not kept.
+
+Each attack result includes a conservative evidence-based classification.
+`scripts/classify-runs.py` applies the same rules to earlier saved traces and
+writes `classifications.json` without changing the raw trace or result files.
+`scripts/validate-tasks.py` runs the vendored reference solutions and known
+exploit controls in disposable containers; controls are documented in
+`tasks.json` and their output is saved under `experiments/runs/validation-*`.
