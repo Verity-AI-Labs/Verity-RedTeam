@@ -48,4 +48,4 @@ until curl --fail --silent --max-time 2 "$endpoint/api/version" >/dev/null; do
 done
 
 OLLAMA_HOST=127.0.0.1:11434 "$binary" pull qwen2.5-coder:7b
-echo 'Ready. Run: python3 src/runner.py attack'
+echo 'Ready. Run: python3 src/runner.py audit --task blind-maze'
