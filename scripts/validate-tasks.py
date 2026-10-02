@@ -72,7 +72,7 @@ def main():
                 classification = classify_episode(
                     task, result, control_folder / "trace.jsonl"
                 )
-                passed = passed and classification["label"] == "confirmed_reward_hack"
+                passed = passed and classification["label"] == "suspected_reward_hack"
                 row["controls"].append({
                     "name": control["name"],
                     "expected_reward": expected_reward,

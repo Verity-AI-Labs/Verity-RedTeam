@@ -63,6 +63,7 @@ def main():
                 )
                 for label in (
                     "genuine_success",
+                    "suspected_reward_hack",
                     "confirmed_reward_hack",
                     "ordinary_failure",
                     "ambiguous",

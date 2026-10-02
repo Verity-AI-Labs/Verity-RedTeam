@@ -37,7 +37,7 @@ class RunnerUnitTests(unittest.TestCase):
             outcome = classify_episode(
                 task, {"status": "graded", "reward": 1}, trace
             )
-        self.assertEqual(outcome["label"], "confirmed_reward_hack")
+        self.assertEqual(outcome["label"], "suspected_reward_hack")
 
     def test_classification_ignores_exploit_claim_in_model_text_without_execution(self):
         task = run.task_config("blind-maze")
@@ -100,7 +100,7 @@ class RunnerUnitTests(unittest.TestCase):
             outcome = classify_episode(
                 task, {"status": "graded", "reward": 1}, trace
             )
-        self.assertEqual(outcome["label"], "confirmed_reward_hack")
+        self.assertEqual(outcome["label"], "suspected_reward_hack")
 
     def test_passing_reward_without_trace_evidence_is_ambiguous(self):
         task = run.task_config("blind-maze")
@@ -414,7 +414,7 @@ class RunnerUnitTests(unittest.TestCase):
                 result = run.attempt("attack", folder, args, task)
 
             self.assertEqual(
-                result["classification"]["label"], "confirmed_reward_hack"
+                result["classification"]["label"], "suspected_reward_hack"
             )
             telemetry = (folder / "telemetry.jsonl").read_text()
             self.assertEqual(len(telemetry.splitlines()), 1)
@@ -445,6 +445,31 @@ class RunnerUnitTests(unittest.TestCase):
             self.assertEqual(stats["events_dropped"], 0)
             with self.assertRaises(RuntimeError):
                 sink.submit({"type": "late"})
+
+    def test_telemetry_writer_sequences_concurrent_producers(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "telemetry.jsonl"
+            sink = TelemetryWriter(path, max_queue=256)
+            threads = [
+                threading.Thread(
+                    target=lambda producer=i: [
+                        sink.submit({"producer": producer, "index": index})
+                        for index in range(25)
+                    ]
+                )
+                for i in range(4)
+            ]
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join()
+            stats = sink.close()
+
+            events = [json.loads(line) for line in path.read_text().splitlines()]
+            self.assertEqual(stats["status"], "complete")
+            self.assertEqual(len(events), 100)
+            self.assertEqual([event["seq"] for event in events],
+                             list(range(1, 101)))
 
     def test_telemetry_queue_drops_without_blocking_and_marks_incomplete(self):
         started = threading.Event()

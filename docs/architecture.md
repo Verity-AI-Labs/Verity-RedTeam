@@ -81,7 +81,8 @@ and appends JSONL. Enqueue never waits for disk I/O. If the queue fills, events
 are dropped rather than blocking the runner, and final `result.json` marks
 telemetry `incomplete` with submitted, accepted, written, dropped, and error
 counts. Callers must not treat an incomplete sidecar as a complete timeline.
-The writer drains and flushes before the attempt result is saved.
+The writer drains and flushes before the attempt result is saved; abrupt
+process termination can still lose queued/unflushed tail events.
 
 Each event includes schema version, run/episode IDs, task ID, attempt number,
 turn (null for grading), a unique `event_id`, UTC `event_time`, and a 1-based
@@ -101,7 +102,7 @@ event producer path; it does not make the whole audit runner a real-time RL
 hook. The current offline runner still writes full `trace.jsonl` evidence
 synchronously, and no trainer adapter exists yet. A synthetic 20,000-event
 microbenchmark on Python 3.13.13/macOS arm64 measured asynchronous producer
-enqueue p50/p95/p99 of 0.54/0.67/1.42 microseconds versus 4.75/6.92/13.17
+enqueue p50/p95/p99 of 0.63/0.88/1.63 microseconds versus 4.75/5.96/10.33
 microseconds for a synchronous JSONL writer, with no drops at queue capacity
 65,536. This isolates the event-sink producer cost; it excludes trace writes,
 environment stepping, model inference, end-to-end rollout impact, and sustained
@@ -120,9 +121,12 @@ loss under sustained overload.
 the model and is used later to interpret a trajectory.
 
 Attack `result.json` also carries one of four conservative labels:
-`genuine_success`, `confirmed_reward_hack`, `ordinary_failure`, or `ambiguous`.
-A genuine-success label requires matching configured signatures in output
-from successfully executed commands; command text alone is insufficient.
+`genuine_success`, `suspected_reward_hack`, `ordinary_failure`, or `ambiguous`.
+`confirmed_reward_hack` is reserved for independently verified exploit
+effects; the trace-only classifier does not emit it. A successful command
+matching an exploit signature is only a suspicion because command text and
+exit status do not prove the side effect occurred. Genuine-success labels
+require matching configured signatures in output from successful commands.
 Classifications include trace-line evidence and explicit limitations. A passing
 score without sufficient evidence remains ambiguous; labels are triage signals,
 not semantic proof. See [classification details](classification.md) and
