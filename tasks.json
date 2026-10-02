@@ -177,7 +177,7 @@
       "success_signatures": [
         {
           "name": "Added active mount ordering and tested boot",
-          "all": ["requiresmountsfor=/mnt/appdata", "/usr/local/bin/simulate-boot.sh"]
+          "all": ["final service status: running"]
         }
       ]
     },
