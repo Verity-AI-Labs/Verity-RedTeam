@@ -76,9 +76,45 @@ result.json   Reward, stop reason, timing, and errors
 
 `telemetry.jsonl` records model-call duration and Ollama token counts when
 available, command duration and exit status, and grading duration and reward.
-It contains metric fields only: prompts, commands, model explanations, and
-grader output are not copied into telemetry. Existing trace and result fields
-remain available for compatibility.
+Events are placed on a bounded in-process queue; a background thread formats
+and appends JSONL. Enqueue never waits for disk I/O. If the queue fills, events
+are dropped rather than blocking the runner, and final `result.json` marks
+telemetry `incomplete` with submitted, accepted, written, dropped, and error
+counts. Callers must not treat an incomplete sidecar as a complete timeline.
+The writer drains and flushes before the attempt result is saved.
+
+Each event includes schema version, run/episode IDs, task ID, attempt number,
+turn (null for grading), a unique `event_id`, UTC `event_time`, and a 1-based
+per-episode sequence. Model and command events point to the canonical
+`trace.jsonl` line when one exists. Command status distinguishes `executed`,
+`blocked`, and `error`. Token fields are provider-neutral; Ollama's
+`prompt_eval_count` and `eval_count` map to request and response tokens.
+Unavailable counts are null, not zero. Telemetry contains no prompts,
+commands, explanations, command output, or grader output. Grading duration,
+status, and reward remain distinct from stop reason and heuristic
+classification; the raw trace and verifier artifact remain canonical evidence.
+
+### Latency status and limits
+
+The bounded queue removes JSON serialization and sidecar file I/O from the
+event producer path; it does not make the whole audit runner a real-time RL
+hook. The current offline runner still writes full `trace.jsonl` evidence
+synchronously, and no trainer adapter exists yet. A synthetic 20,000-event
+microbenchmark on Python 3.13.13/macOS arm64 measured asynchronous producer
+enqueue p50/p95/p99 of 0.54/0.67/1.42 microseconds versus 4.75/6.92/13.17
+microseconds for a synchronous JSONL writer, with no drops at queue capacity
+65,536. This isolates the event-sink producer cost; it excludes trace writes,
+environment stepping, model inference, end-to-end rollout impact, and sustained
+multi-producer load. Reproduce with
+`python3 scripts/benchmark-telemetry.py --events 20000`.
+
+Do not claim low-overhead training integration from that microbenchmark alone.
+Before adopting a real RL harness, measure paired telemetry-off/on runs under
+representative single- and multi-worker load; report p50/p95/p99 step overhead,
+throughput, queue high-water mark, drops, blocked time, and incomplete episodes.
+Keep telemetry opt-in until the agreed overhead budget and completeness
+criteria pass. A bounded producer cannot guarantee both zero blocking and zero
+loss under sustained overload.
 
 `exploit.md` is reference material from Terminal Wrench. It is not shown to
 the model and is used later to interpret a trajectory.
@@ -94,3 +130,37 @@ Run `python3 scripts/validate-tasks.py` to exercise each vendored reference
 solution and known exploit control in separate disposable containers. A task
 without a valid reference solution or with an exploit blocked by sandbox policy
 is marked unavailable, not silently counted as passing.
+
+## Product architecture beyond the prototype
+
+Verity's product loop is **Discover → Diagnose → Patch → Re-audit**. The
+Terminal Wrench runner is the current offline audit rig, not the full product.
+Keep the following responsibilities separate:
+
+1. **Environment/task registry:** immutable environment and verifier versions,
+   task contracts, seeds, and known controls.
+2. **Audit orchestrator and adapters:** schedule interchangeable attacker
+   models and attempts; isolate environments; normalize action/observation,
+   grading, and harness lifecycle interfaces.
+3. **Low-latency telemetry SDK:** bounded, language-neutral events for
+   observable actions, state-transition references, reward/verifier status,
+   timing, usage counters, and failures. Start with Python; add Rust hooks when
+   profiling or a customer's harness boundary justifies them. Never require
+   private chain-of-thought.
+4. **Evidence store and offline analysis:** join telemetry with protected raw
+   traces and verifier artifacts; produce redacted, trace-backed findings,
+   confidence, and limitations. Telemetry alone is not proof of an exploit.
+5. **Patch and re-audit pipeline:** produce a separately versioned minimal
+   environment/verifier candidate, replay legitimate controls, rerun known and
+   novel attacks, and retain before/after provenance.
+6. **Training-outcome evaluation:** compare baseline-selected environments
+   with Verity-audited/repaired environments under matched starting models,
+   compute, and held-out capability evaluations. Build an Environment Quality
+   Index only after enough outcomes exist to validate its predictive value.
+
+The first gate remains repeatable, independently evidenced exploit
+rediscovery. Subsequent gates are demonstrated diagnosis and safe patching,
+measured low-overhead integration into an actual rollout loop, and finally
+genuine capability gain per GPU-hour. See
+[`rl-harness-integration.md`](rl-harness-integration.md) for telemetry
+interfaces and measurement recommendations.

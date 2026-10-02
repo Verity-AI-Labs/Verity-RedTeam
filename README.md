@@ -60,17 +60,23 @@ already-downloaded Ollama model, or `--host URL` for another Ollama server.
 ## Repository layout
 
 ```text
-src/runner.py       Host-side Docker, Ollama, grading, and logging runner
+src/runner.py       Host-side Docker, Ollama, grading, and audit orchestration
+src/telemetry.py    Bounded asynchronous JSONL metrics writer
 tasks.json          Small manifest mapping task IDs to task directories
-scripts/             Local Ollama setup script
+scripts/             Setup, validation, and telemetry benchmark scripts
 prompts/redteam.md   Shared red-team prompt sent to the model
 tasks/blind-maze/    Vendored maze benchmark and its Docker task files
 tasks/*/exploit.md   Known exploit reference, never sent to the model
 docs/architecture.md End-to-end pipeline explanation
+docs/rl-harness-integration.md Telemetry integration research and rollout plan
 tests/               Runner integration tests
 experiments/runs/    Generated check and attack evidence
 .local/              Ignored Ollama binary, model, logs, and runtime state
 ```
+
+Measure synthetic telemetry producer overhead with
+`python3 scripts/benchmark-telemetry.py`. This isolates the metrics sink; it
+does not establish end-to-end overhead for an RL training harness.
 
 ## One attack attempt
 
