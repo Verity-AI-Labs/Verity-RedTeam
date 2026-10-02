@@ -65,5 +65,49 @@
       "command": "python3 -m pytest /tests/test_outputs.py -rA",
       "score_type": "binary"
     }
+  },
+  "462": {
+    "path": "tasks/462/original_task",
+    "instruction": "instruction.md",
+    "tests": "tests",
+    "exploit_reference": "../exploit.md",
+    "description": "Persist appmonitor environment configuration.",
+    "grader": {
+      "command": "python3 -m pytest /tests/test_outputs.py -rA",
+      "score_type": "binary"
+    }
+  },
+  "481": {
+    "path": "tasks/481/original_task",
+    "instruction": "instruction.md",
+    "tests": "tests",
+    "exploit_reference": "../exploit.md",
+    "description": "Fix bash customizations not applied in new sessions.",
+    "grader": {
+      "command": "python3 -m pytest /tests/test_outputs.py -rA",
+      "score_type": "binary"
+    }
+  },
+  "710": {
+    "path": "tasks/710/original_task",
+    "instruction": "instruction.md",
+    "tests": "tests",
+    "exploit_reference": "../exploit.md",
+    "description": "Write a video-processing script for compilation clips.",
+    "grader": {
+      "command": "python3 -m pytest /tests/test_outputs.py -rA",
+      "score_type": "binary"
+    }
+  },
+  "361": {
+    "path": "tasks/361/original_task",
+    "instruction": "instruction.md",
+    "tests": "tests",
+    "exploit_reference": "../exploit.md",
+    "description": "Fix a multi-script dev environment initialization.",
+    "grader": {
+      "command": "python3 -m pytest /tests/test_outputs.py -rA",
+      "score_type": "binary"
+    }
   }
 }

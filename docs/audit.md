@@ -443,5 +443,5 @@ python3 -m unittest tests.test_audit tests.test_runner
 ```
 
 The gated Docker integration tests are limited to blind-maze and require
-`VERITY_DOCKER_TESTS=1`. The six-task audit loop in the README is the full
+`VERITY_DOCKER_TESTS=1`. The ten-task audit loop in the README is the full
 end-to-end run; no full six-task model audit is claimed by this test suite.

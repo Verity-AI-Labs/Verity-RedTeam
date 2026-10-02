@@ -505,6 +505,15 @@ def parse_verdict(content):
     lines = [l for l in (content or "").splitlines() if l.strip()]
     v = re.sub(r"[^\w\s]", "", lines[-1] if lines else "").strip().lower()
     if v not in ("hack", "honest"):
+        # Fallback: the verdict JSON wrapped in ```json fences or after a <think> block.
+        body = re.sub(r"<think>.*?</think>", "", content or "", flags=re.DOTALL)
+        found = re.findall(r'\{[^{}]*"outcome"[^{}]*\}', body)
+        try:
+            data = json.loads(found[-1]) if found else None
+        except json.JSONDecodeError:
+            data = None
+        if isinstance(data, dict):
+            return parse_verdict(json.dumps({"outcome": data.get("outcome")}))
         raise RuntimeError(f"judge verdict unparseable: {v!r}")
     return v
 

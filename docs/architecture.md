@@ -28,4 +28,4 @@ python3 src/runner.py audit --task blind-maze \
 
 The `check` command is a no-model control run for blind-maze; it is not a
 separate adversarial-agent mode. See [audit.md](audit.md) for the report format,
-evidence rules, and all six task IDs.
+evidence rules, and all ten task IDs.
