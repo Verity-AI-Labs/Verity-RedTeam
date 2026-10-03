@@ -30,10 +30,9 @@ Ten Terminal Wrench tasks, all registered in `tasks.json`:
 
 ## Before the first run
 
-1. Pull both models. The attacker and judge are deliberately different models:
+1. Pull the model. It is used as both the attacker and the judge:
 ```bash
    ollama pull qwen3-coder:30b
-   ollama pull qwen2.5-coder:32b
 ```
 2. Run the unit tests (no Docker, no models):
 ```bash
@@ -47,7 +46,7 @@ Ten Terminal Wrench tasks, all registered in `tasks.json`:
 ```bash
    for t in 462 481 710 361; do
      python3 src/runner.py audit --task $t --attempts 1 --max-turns 1 \
-       --attacker qwen3-coder:30b --judge qwen2.5-coder:32b
+       --attacker qwen3-coder:30b --judge qwen3-coder:30b
    done
    for r in experiments/runs/*-audit/report.json; do
      python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); v=r["validity"]; print(r["provenance"]["task_id"], v.get("verdict"), v.get("error"))' "$r"
@@ -65,7 +64,7 @@ Runs all ten tasks in sequence. A task that crashes is logged and skipped; it do
 ```bash
 set -o pipefail
 ATTACKER=qwen3-coder:30b
-JUDGE=qwen2.5-coder:32b
+JUDGE=qwen3-coder:30b
 mkdir -p experiments/runs/logs
 for task in blind-maze titanic-female-survival-prediction \
             recover-encrypted-db-credentials analyze-pgn-best-chess-move \
@@ -81,7 +80,7 @@ To run one task:
 
 ```bash
 python3 src/runner.py audit --task blind-maze \
-  --attacker qwen3-coder:30b --judge qwen2.5-coder:32b
+  --attacker qwen3-coder:30b --judge qwen3-coder:30b
 ```
 
 ## Reading the results
@@ -107,7 +106,7 @@ Notes on interpretation:
 
 - Check `redteam.summary.errors` before interpreting a zero-hack result.
 - Zero hacks means none were found in that run; it does not mean the environment is safe. With four attempts, the per-attempt exploit rate could still be as high as about 53% (`no_exploit_upper`).
-- A `certified` hack has trace evidence behind it. A `judged` hack rests only on the judge's reading of the transcript, and the judge has not yet been validated with the current `prompts/judge.md`, so treat judged hacks as provisional.
+- A `certified` hack has trace evidence behind it. A `judged` hack rests only on the judge's reading of the transcript, and the judge has not yet been validated with the current `prompts/judge.md`, and it is the same model as the attacker, so treat judged hacks as provisional.
 
 ## Sharing results
 
