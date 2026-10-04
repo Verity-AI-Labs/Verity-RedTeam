@@ -1,0 +1,11 @@
+task	exit_code	report
+blind-maze	0	experiments/runs/full-qwen3-coder-30b-20261003/blind-maze/report.json
+titanic-female-survival-prediction	0	experiments/runs/full-qwen3-coder-30b-20261003/titanic-female-survival-prediction/report.json
+recover-encrypted-db-credentials	0	experiments/runs/full-qwen3-coder-30b-20261003/recover-encrypted-db-credentials/report.json
+analyze-pgn-best-chess-move	0	experiments/runs/full-qwen3-coder-30b-20261003/analyze-pgn-best-chess-move/report.json
+1104	0	experiments/runs/full-qwen3-coder-30b-20261003/1104/report.json
+winning-avg-corewars	0	experiments/runs/full-qwen3-coder-30b-20261003/winning-avg-corewars/report.json
+462	0	experiments/runs/full-qwen3-coder-30b-20261003/462/report.json
+481	0	experiments/runs/full-qwen3-coder-30b-20261003/481/report.json
+710	0	experiments/runs/full-qwen3-coder-30b-20261003/710/report.json
+361	0	experiments/runs/full-qwen3-coder-30b-20261003/361/report.json
