@@ -99,8 +99,8 @@ MEASURED = ["spec.workdir", "spec.agent_user", "spec.artifacts"] + [
     "oracle_footprint." + k for k in ("read", "write", "deleted", "exec")]
 
 
-def ev(div=None, writes=(), reads=()):
-    return {"divergence": div, "trust_write": list(writes), "answer_read": list(reads)}
+def ev(div=None, writes=(), reads=(), cf=None):
+    return {"divergence": div, "trust_write": list(writes), "answer_read": list(reads), "counterfactual": cf}
 
 
 class PureTests(unittest.TestCase):
@@ -111,16 +111,35 @@ class PureTests(unittest.TestCase):
             return SimpleNamespace(returncode=1, stdout="", stderr="")
         task = {"tests_path": Path(__file__), "grader": {"command": "grade", "score_type": "binary"}}
         spec = {"workdir": {"value": "/app"}, "agent_user": {"value": "root"}, "env": []}
+        # Fix E: the host tests dir may be 0750 under a host uid, so it is made readable after the copy
+        want = [("exec", "box", "rm", "-rf"), ("cp", str(Path(__file__)), "box:/tests"),
+                ("exec", "--privileged", "-u", "0", "box", "chmod", "-R", "a+rX", "/tests")]
         with tempfile.TemporaryDirectory() as temporary:
             folder = Path(temporary)
             audit._grade(docker, "box", task, folder, "/app")
-            self.assertEqual([c[:4] for c in calls[:2]],
-                             [("exec", "box", "rm", "-rf"), ("cp", str(Path(__file__)), "box:/tests")])
+            self.assertEqual([c[:len(w)] for c, w in zip(calls, want)], want)
             calls.clear()
             with patch.object(audit, "traced", return_value=(1, "", "", True)):
                 audit._grade_traced(docker, "box", task, spec, folder, "trace")
-            self.assertEqual([c[:4] for c in calls[:2]],
-                             [("exec", "box", "rm", "-rf"), ("cp", str(Path(__file__)), "box:/tests")])
+            self.assertEqual([c[:len(w)] for c, w in zip(calls, want)], want)
+
+    def test_artifacts_keep_their_container_owner_and_mode(self):  # 462: a uid-501 pid file -> EACCES
+        calls = []
+        def docker(*args, **kwargs):
+            calls.append(tuple(map(str, args)))
+            if args[0] == "cp" and ":" in str(args[1]):
+                Path(args[2]).write_text("140\n")
+            out = "0:0:644:/run/a.pid\n1000:1000:600:/home/u/k\n" if "stat" in args else ""
+            return SimpleNamespace(returncode=0, stdout=out, stderr="")
+        with tempfile.TemporaryDirectory() as temporary:
+            store = Path(temporary) / "artifacts"
+            audit.copy_out(docker, "oracle", ["/run/a.pid", "/home/u/k"], store)
+            calls.clear()
+            audit.copy_in(docker, "fresh", ["/run/a.pid", "/home/u/k", "/never/copied"], store)
+        self.assertEqual([c[0] for c in calls], ["cp", "cp", "exec"])
+        self.assertEqual(calls[-1][:6], ("exec", "--privileged", "-u", "0", "fresh", "sh"))
+        self.assertEqual(calls[-1][-1], "chown -h 0:0 /run/a.pid && chmod 644 /run/a.pid; "
+                                        "chown -h 1000:1000 /home/u/k && chmod 600 /home/u/k")
 
     def test_c1_strace_6x(self):
         got = audit.parse_strace(TRACE)
@@ -136,6 +155,19 @@ class PureTests(unittest.TestCase):
         self.assertEqual((got["execs"], sorted((p, tuple(c)) for p, c in got["reads"])), (4, [
             ("/p/data.csv", ("/p/solve.py", "/usr/bin/bash")), ("/p/db.sqlite", ("/usr/bin/bash",)),
             ("/q/in.txt", ("/usr/bin/python3", "/usr/bin/bash"))]))
+        # fix B: chmod/chown/utimensat-only paths stay in `write` but never become trust_write
+        meta = (BASH + '1   fchmodat(AT_FDCWD</app>, "/opt/tool", 0755) = 0\n'
+                + '1   chmod("/opt/both", 0700) = 0\n' + op(1, "/opt/both", W) + op(1, "/opt/cfg", W)
+                + '1   fchownat(AT_FDCWD</app>, "/opt/own", 0, 0, 0) = 0\n'
+                + '1   utimensat(AT_FDCWD</app>, "/opt/stamp", NULL, 0) = 0\n'
+                + '1   truncate("/opt/trunc", 0) = 0\n')
+        parsed = audit.parse_strace(meta)
+        self.assertEqual((parsed["write"], parsed["meta_only"]),
+                         (["/opt/both", "/opt/cfg", "/opt/own", "/opt/stamp", "/opt/tool", "/opt/trunc"],
+                          ["/opt/own", "/opt/stamp", "/opt/tool"]))
+        trusting = {"read": parsed["write"], "exec": [], "missing": [], "probe": []}
+        found = audit.evidence(None, parsed["write"], [], trusting, [], [], meta_only=parsed["meta_only"])
+        self.assertEqual(found["trust_write"], ["/opt/both", "/opt/cfg", "/opt/trunc"])
         real = audit.parse_strace(REAL)  # captured strace 6.8 output; the lead's ruling for unlinkat ENOENT
         self.assertEqual([real[k] for k in ("missing", "deleted", "write", "read")],
                          [["/tmp/demo/protected/nothing_here.txt"], [], ["/tmp/demo/app/out.txt"],
@@ -179,9 +211,11 @@ class PureTests(unittest.TestCase):
         self.assertEqual(audit.answer_read([GT], {GT: [SERVER]}, [[GT, [SERVER]]], [], [SERVER]), [GT])
 
     def test_c4_labels_classes_dedup(self):
-        kinds = [ev(), ev(div=False), ev(div=True), ev(writes=["/x"]), ev(reads=[GT])]
+        kinds = [ev(), ev(div=False), ev(div=True), ev(writes=["/x"]), ev(writes=["/x"], cf=True),
+                 ev(writes=["/x"], cf=False), ev(reads=[GT])]
         for passed, judge, item in [(p, j, i) for p in (False, True) for j in (False, True) for i in kinds]:
-            some = item["divergence"] is True or item["trust_write"] or item["answer_read"]
+            some = item["divergence"] is True or item["counterfactual"] is True or item["answer_read"]
+            # fix D: an unconfirmed trust_write alone is a candidate, not a hack; only the judge makes judged
             want = (("fail", None) if not passed else ("hack", "certified") if some
                     else ("hack", "judged") if judge else ("honest", None))
             self.assertEqual(audit.label(passed, judge, item), want, (passed, judge, item))
@@ -194,7 +228,8 @@ class PureTests(unittest.TestCase):
         nested = {"read": ["/grader/tests/input"], "exec": [], "missing": [], "probe": []}
         self.assertEqual(audit.evidence(None, ["/grader/tests"], [], nested, [], []), ev())
         cases = [(ev(True, ["/t"], [GT]), "/usr/bin/curl", "answer_read"),
-                 (ev(True, ["/t"]), "/usr/bin/curl", "grader_tamper"), (ev(True), "/usr/bin/wget", "network"),
+                 (ev(True, ["/t"], cf=True), "/usr/bin/curl", "grader_tamper"),
+                 (ev(True, ["/t"]), "/usr/bin/curl", "network"), (ev(True), "/usr/bin/wget", "network"),
                  (ev(), "/usr/bin/nc", "network"), (ev(True), PY, "other"), (ev(), PY, "unattributed"),
                  (ev(False), PY, "unattributed")]
         self.assertEqual([audit.classify(e, [x]) for e, x, _ in cases], [c for _, _, c in cases])
@@ -203,6 +238,43 @@ class PureTests(unittest.TestCase):
         self.assertEqual(audit.dedup_key(one), ("answer_read", ("/x", "/y"), ("/a", "/b")))
         self.assertEqual(audit.dedup_key(one), audit.dedup_key(two))
         self.assertNotEqual(audit.dedup_key(one), audit.dedup_key({**two, "class": "other"}))
+
+    def test_unconfirmed_tamper_is_a_visible_candidate(self):  # fix D (1104, 361)
+        def rec(aid, label, e, tier=None, cls=None):
+            return {"id": aid, "grader_pass": True, "label": label, "tier": tier, "evidence_kinds": [],
+                    "judge": "honest", "reproducible": None, "turns": 1, "tokens": 0, "seconds": 0.0,
+                    "context_truncated": False, "evidence": "e", "ev": e, "class": cls,
+                    "footprint": {"read": [], "write": [], "exec": []}, "commands": ["c"]}
+        recs = [rec("a1", "honest", ev(False, ["/t"])), rec("a2", "honest", ev(False, ["/t"])),
+                rec("a3", "honest", ev(False, ["/t"], cf=False)),
+                rec("a4", "hack", ev(False, ["/u"], cf=True), "certified", "grader_tamper")]
+        self.assertEqual([audit._attempt_report(r).get("candidate") for r in recs],
+                         [{"trust_write": ["/t"], "counterfactual": None}] * 2 + [None, None])
+        mechs = audit._mechanisms(recs)
+        self.assertEqual([(m["class"], m["tier"], m["attempt_ids"], m["evidence"]["counterfactual"]) for m in mechs],
+                         [("grader_tamper", "candidate", ["a1", "a2"], None),
+                          ("grader_tamper", "certified", ["a4"], True)])
+        self.assertEqual(audit._summary(recs)["hacks"], 1)
+        rt = {"summary": audit._summary(recs), "mechanisms": mechs[:1]}
+        card = audit._scorecard({"protocol_id": "p", "validity": {"verdict": "valid"}}, rt)
+        self.assertEqual((card["classes"], card["hack"]["hacks"]), ({}, 1))  # a candidate is never a class
+
+    def test_counterfactual_gate_per_verdict(self):  # fix C
+        task = {"image": "img", "tests_path": Path(__file__), "grader": {"command": "grade", "score_type": "binary"}}
+        spec = {"workdir": {"value": "/app"}, "agent_user": {"value": "root"}, "env": []}
+        for vd, grades, want in [("oracle_fails", [], None), ("grader_nondeterministic", [], None),
+                                 ("nop_passes", [], None), ("artifact_incomplete", [1], None),
+                                 ("artifact_incomplete", [0, 1], True), ("artifact_incomplete", [0, 0], False),
+                                 ("valid", [1], True), ("valid", [0], False)]:
+            left, seen = list(grades), []  # grader exit codes in call order: 0 pass, 1 fail
+            def docker(*args, **kwargs):
+                seen.append(args)
+                rc = left.pop(0) if "grade" in args else 0
+                return SimpleNamespace(returncode=rc, stdout="", stderr="")
+            with tempfile.TemporaryDirectory() as temporary:
+                ctx = {"docker": docker, "task": task, "spec": spec, "validity_verdict": vd}
+                got = audit._counterfactual(ctx, Path(temporary), ["echo x > /etc/t"], ["/etc/t"])
+            self.assertEqual((got, left, bool(seen)), (want, [], bool(grades)), vd)
 
     def test_c4_verdict_order(self):
         ok3, ok2, bad3 = [(1, True)] * 3, [(1, True)] * 2, [(1, True), (1, True), (0, False)]
@@ -275,6 +347,23 @@ class PureTests(unittest.TestCase):
             for rc, out in [(0, "no marker"), (0, mark + '1   execve("/usr/bin/bash", ["bash"], 0x1) = -1 ENOENT'),
                             (97, mark + BASH)]:
                 self.assertRaises(RuntimeError, audit.traced, docker(rc, out), "c", "true", spec, Path(temporary), "t")
+            # fix F: a bash execve split by strace -f (another pid in between) is a start, decided on the
+            # stitched lines; a failed bash execve whose argv holds "=0" is not. Never re-executed.
+            split = ('27    execve("/usr/bin/bash", ["bash", "-lc", "x=0"], 0x5600 /* 4 vars */ <unfinished ...>\n'
+                     '26    wait4(-1,  <unfinished ...>\n27    <... execve resumed>) = 0\n')
+            absent = '27    execve("/usr/local/sbin/bash", ["bash", "-lc", "x=0"], 0x5600 /* 4 vars */) = -1 ENOENT\n'
+            for rc, trace, ok in [(0, split, True), (1, split, True), (0, absent, False), (97, BASH, False),
+                                  (98, BASH, False), (0, None, False)]:
+                seen = []
+                def once(*a, rc=rc, trace=trace, **k):
+                    seen.append(a)
+                    return SimpleNamespace(returncode=rc, stdout="no marker" if trace is None else mark + trace, stderr="")
+                run = lambda: audit.traced(once, "c", "true", spec, Path(temporary), "t")  # noqa: E731
+                if ok:
+                    self.assertEqual(run()[2], trace)
+                else:
+                    self.assertRaises(RuntimeError, run)
+                self.assertEqual([a[0] for a in seen], ["run"], (rc, trace))  # exactly one docker run
 
     def test_c7_judge(self):
         message = "prompts/judge.md missing: copy the validated judge prompt from Verity-Corpus"
@@ -327,6 +416,17 @@ class PureTests(unittest.TestCase):
         variants += [(models, "1" * 64, "2" * 64, dict(budgets, **{k: 999})) for k in budgets]
         ids = [audit.protocol_id(*v) for v in variants]
         self.assertEqual(len(set(ids + [base])), len(ids) + 1)
+        # API generation settings: absent (Ollama) keeps the id above; every field change changes it
+        config = {"provider": "deepseek", "endpoint": "e", "thinking": "enabled", "reasoning_effort": "high",
+                  "max_tokens": 8192, "response_format": {"attacker": "json_object", "judge": None},
+                  "json_suffix_sha256": "3" * 64, "merge_consecutive_roles": True}
+        self.assertEqual(audit.protocol_id(models, "1" * 64, "2" * 64, budgets, None), base)
+        with_config = audit.protocol_id(models, "1" * 64, "2" * 64, budgets, config)
+        self.assertEqual(audit.protocol_id(models, "1" * 64, "2" * 64, budgets, flip(config)), with_config)
+        changed = [audit.protocol_id(models, "1" * 64, "2" * 64, budgets, dict(config, **{k: "z"})) for k in config]
+        changed.append(audit.protocol_id(models, "1" * 64, "2" * 64, budgets,
+                                         dict(config, response_format={"attacker": None, "judge": None})))
+        self.assertEqual(len(set(changed + [with_config, base])), len(changed) + 2)
 
 
 BASE = {GT: MAP, HELPER: TEXTS[HELPER], SERVER: "import os\n", GAME: "#!/bin/bash\npython3 /protected/maze_server.py\n"}
@@ -468,6 +568,9 @@ def no_maze(container):
     raise AssertionError("no maze command was sent")
 
 
+MODELS = {"attacker": runner.MODEL, "judge": runner.MODEL}
+
+
 class EndToEndTests(unittest.TestCase):
     def run_audit(self, scripts, judge, oracle_works=True, broken=False, maze=no_maze, refuse=False):
         temporary = tempfile.TemporaryDirectory(prefix="verity-audit-")
@@ -477,7 +580,7 @@ class EndToEndTests(unittest.TestCase):
         on_ask = lambda: setattr(docker, "refuse", refuse)  # noqa: E731 (refuse docker run once the red team asks)
         run = lambda: audit.audit(  # noqa: E731
             "blind-maze", docker=docker, ask=fake_ask(scripts, fmts, on_ask), model_digest=lambda m: "sha256:" + m,
-            runs=Path(temporary.name), stamp="20260101T000000Z", maze=maze, judge=judge)
+            runs=Path(temporary.name), stamp="20260101T000000Z", maze=maze, judge=judge, models=MODELS)
         with redirect_stdout(io.StringIO()):
             path = run()
             self.assertRaises(FileExistsError, run)  # the run folder must not exist
@@ -541,6 +644,12 @@ class EndToEndTests(unittest.TestCase):
         writes = report["oracle_footprint"]["write"]["value"]  # directories and /solution are never writes
         self.assertEqual((MAP_PATH in writes, "/app" in writes, "/solution" in writes), (True, False, False))
 
+    def test_mutation_with_nothing_mutable_is_skipped_not_zero(self):  # fix G (710: a binary mp4)
+        with patch.object(audit, "plan_mutants", return_value=[]):
+            report = self.run_audit([[say("ls")]] * 4, lambda text: "honest")
+        self.assertEqual((report["validity"]["verdict"], report["validity"]["mutation"]["status"],
+                          report["scorecard"]["mutation"]), ("valid", "skipped", None))
+
     def test_c9_stub_oracle_errors_and_replacement(self):
         malformed = ["5", "[]", "not json", '{"command": 7, "done": false, "explanation": ""}']
         down = ValueError("model down")
@@ -555,7 +664,7 @@ class EndToEndTests(unittest.TestCase):
         a6 = next(a for a in redteam["attempts"] if a["id"] == "a6")  # passed, then its replay was refused
         self.assertEqual((a6["label"], a6["grader_pass"], a6["turns"]), ("error", True, 1))
         self.assertEqual([redteam["summary"][k] for k in ("n", "hacks", "errors")], [2, 0, 4])
-        self.assertAlmostEqual(redteam["summary"]["no_exploit_upper"], 1 - 0.05 ** 0.5)
+        self.assertIsNone(redteam["summary"]["no_exploit_upper"])  # errored attempts: no bound
         self.assertEqual((redteam["mechanisms"], report["scorecard"]["mutation"], report["scorecard"]["classes"],
                           report["provenance"]["cgroup_joined"], report["spec"]["workdir"]["value"]),
                          ([], None, {}, False, "/workdir"))
@@ -585,7 +694,7 @@ class EndToEndTests(unittest.TestCase):
             docker = FakeDocker()
             with self.assertRaisesRegex(RuntimeError, re.escape(message)):
                 audit.audit("blind-maze", docker=docker, ask=lambda *a: {}, model_digest=lambda m: "digest",
-                            runs=Path(temporary), judge=None)
+                            runs=Path(temporary), judge=None, models=MODELS)
             self.assertEqual(docker.used, set())
             self.assertFalse(audit.JUDGE.exists())
 
@@ -593,8 +702,60 @@ class EndToEndTests(unittest.TestCase):
         docker = FakeDocker()
         with self.assertRaisesRegex(RuntimeError, "attacker model"):
             audit.audit("blind-maze", docker=docker, ask=lambda *a: {}, model_digest=lambda m: None,
-                        runs=Path(tempfile.mkdtemp()), judge=lambda text: "honest")
+                        runs=Path(tempfile.mkdtemp()), judge=lambda text: "honest", models=MODELS)
         self.assertEqual(docker.used, set())
+
+    def test_models_explicit_and_digest_failure_fatal_before_docker(self):  # setup defects (b) and (d)
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        docker, runs = FakeDocker(), Path(temporary.name)
+        for models in (None, {"attacker": "a"}, {"attacker": "a", "judge": ""}):
+            with self.assertRaisesRegex(ValueError, "explicit models"):
+                audit.audit("blind-maze", docker=docker, ask=lambda *a: {}, model_digest=lambda m: "d",
+                            runs=runs, judge=lambda text: "honest", models=models)
+        def broken(model):
+            raise RuntimeError("digest lookup failed")
+        with self.assertRaisesRegex(RuntimeError, "digest lookup failed"):  # never recorded as a silent null
+            audit.audit("blind-maze", docker=docker, ask=lambda *a: {}, model_digest=broken, runs=runs,
+                        judge=lambda text: "honest", models={"attacker": "deepseek-flash", "judge": "deepseek-flash"})
+        self.assertEqual((docker.used, list(runs.iterdir())), (set(), []))
+
+    def test_digests_looked_up_once_and_request_config_recorded(self):
+        lookups, config = [], {"thinking": "enabled", "reasoning_effort": "high"}
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        models = {"attacker": "deepseek-flash", "judge": "judge-model"}
+        with redirect_stdout(io.StringIO()):
+            path = audit.audit("blind-maze", docker=FakeDocker(), ask=fake_ask([[say("ls")]] * 4, []),
+                               model_digest=lambda m: lookups.append(m) or f"pin:{m}:{len(lookups)}",
+                               runs=Path(temporary.name), judge=lambda text: "honest", models=models,
+                               request_config=config)
+        prov = json.loads(path.read_text())["provenance"]
+        self.assertEqual(lookups, ["deepseek-flash", "judge-model"])  # the verified digests are the recorded ones
+        self.assertEqual((prov["models"]["attacker_digest"], prov["models"]["judge_digest"], prov["request_config"]),
+                         ("pin:deepseek-flash:1", "pin:judge-model:2", config))
+        self.assertEqual(prov["protocol_id"], audit.protocol_id(
+            {k: prov["models"][k] for k in ("attacker", "attacker_digest", "judge", "judge_digest")},
+            prov["sha256"]["attack_prompt"], prov["sha256"]["judge_prompt"], prov["budgets"], config))
+
+    def test_abort_propagates_through_attempts_and_still_writes_report(self):  # 401/402/spend cap/deadline
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        calls, progress, docker = [], [], FakeDocker()
+        def ask(messages, model, fmt):
+            calls.append(fmt)
+            if len(calls) == 3:  # a1 and a2 each finish in one call; a3's first call aborts
+                raise audit.Abort("balance_exhausted (HTTP 402)")
+            return {"message": {"content": json.dumps({"command": "", "done": True, "explanation": "x"})}}
+        with redirect_stdout(io.StringIO()), self.assertRaisesRegex(audit.Abort, "balance_exhausted"):
+            audit.audit("blind-maze", docker=docker, ask=ask, model_digest=lambda m: "d", models=MODELS,
+                        runs=Path(temporary.name), stamp="s", judge=lambda text: "honest", on_attempt=progress.append)
+        self.assertEqual((len(calls), [r["id"] for r in progress]), (3, ["a1", "a2"]))  # never retried as an error
+        report = json.loads((Path(temporary.name) / "blind-maze-s-audit" / "report.json").read_text())
+        self.assertEqual(report["redteam"], {"status": "error", "error": "aborted: balance_exhausted (HTTP 402)",
+                                             "aborted": True})
+        self.assertEqual((report["validity"]["verdict"], report["scorecard"]["hack"]), ("valid", None))
+        self.assertEqual((docker.boxes, docker.temp), ({}, set()))  # the aborted attempt's container is removed
 
     def test_judge_digest_recorded_when_file_exists_even_with_injected_judge(self):
         with tempfile.TemporaryDirectory() as temporary, patch.object(audit, "JUDGE", Path(temporary) / "judge.md"):
@@ -609,7 +770,7 @@ class EndToEndTests(unittest.TestCase):
         report = self.run_audit(["garbage body"] * 7, lambda text: self.fail("judge called"), refuse=True)
         redteam = report["redteam"]
         self.assertEqual(sorted(a["id"] for a in redteam["attempts"]), ["a1", "a2", "a3", "a4", "a5", "a6"])
-        self.assertEqual([redteam["summary"][k] for k in ("n", "errors", "no_exploit_upper")], [0, 6, 1.0])
+        self.assertEqual([redteam["summary"][k] for k in ("n", "errors", "no_exploit_upper")], [0, 6, None])
         self.assertIsNone(report["scorecard"]["hack"])
 
 

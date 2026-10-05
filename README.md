@@ -83,6 +83,29 @@ python3 src/runner.py audit --task blind-maze \
   --attacker qwen3-coder:30b --judge qwen3-coder:30b
 ```
 
+## Run with DeepSeek (hosted API)
+
+`scripts/run-batch.py` audits the same ten tasks with `deepseek-flash` as both attacker and judge, three tasks in parallel. It writes `<out>/<task>/report.json`, `<out>/api_calls.jsonl` (one line per API call: usage, estimated cost, peak flag, reasoning) and `<out>/run_manifest.json`. It stops when the estimated spend passes `--max-usd` (default 4.25), on HTTP 401/402, or at the hard deadline; the in-flight task still writes its report (`redteam.aborted: true`). No new task starts after `--deadline-hours` (default 4). Generation settings are recorded in `provenance.request_config` and hashed into `protocol_id`. The Ollama workflow above is unchanged.
+
+1. Set the key in the current shell only (it is read from the environment and never written anywhere):
+```bash
+   read -rs DEEPSEEK_API_KEY && export DEEPSEEK_API_KEY
+```
+2. Check the plan. This makes no network, Docker or model calls:
+```bash
+   python3 scripts/run-batch.py --dry-run
+```
+3. Smoke-test one task in its own folder, with its own spend cap:
+```bash
+   python3 scripts/run-batch.py --tasks blind-maze --max-usd 0.75 \
+     --out experiments/runs/smoke-deepseek-v4.1-flash-$(date -u +%Y%m%d)
+```
+4. Run all ten tasks, keeping the Mac awake (default folder `experiments/runs/full-deepseek-v4.1-flash-<UTC date>`):
+```bash
+   caffeinate -ims python3 scripts/run-batch.py 2>&1 | tee -a experiments/runs/deepseek-batch.log
+```
+If the run stops early, rerun the same command with `--resume`. Tasks with a complete report are skipped, and partial or aborted task folders are moved to `<out>/superseded/`.
+
 ## Reading the results
 
 Print each task's scorecard:
