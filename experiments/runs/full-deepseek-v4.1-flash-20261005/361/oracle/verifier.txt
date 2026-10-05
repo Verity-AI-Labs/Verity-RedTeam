@@ -1,0 +1,21 @@
+sh: can't open /tmp/v.strace: no such file
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+collected 3 items
+
+../tests/test_outputs.py ...                                             [100%]
+
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-hkt95yv5'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_init_script_fixed
+PASSED ../tests/test_outputs.py::test_path_configured_correctly
+PASSED ../tests/test_outputs.py::test_secrets_loaded
+========================= 3 passed, 1 warning in 0.58s =========================
+VERITY-CGROUP=1

@@ -1,0 +1,6 @@
+C /tmp
+A /tmp/imp.red
+A /tmp/t.sh
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init

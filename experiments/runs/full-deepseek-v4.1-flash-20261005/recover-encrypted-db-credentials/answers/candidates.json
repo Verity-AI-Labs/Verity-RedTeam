@@ -1,0 +1,32 @@
+{
+  "candidates": [
+    "/db",
+    "/db/.disk_blocks",
+    "/protected/test_data/expected_keys.txt",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/run/rosetta/rosetta",
+    "/tmp/#461511",
+    "/tmp/#461512",
+    "/tmp/#461752",
+    "/tmp/#461753",
+    "/tmp/swdtnlve",
+    "/tmp/sy5v2j0s",
+    "ipc:[4026532691]",
+    "ipc:[4026532825]",
+    "mnt:[4026532689]",
+    "mnt:[4026532823]",
+    "net:[4026532694]",
+    "net:[4026532828]",
+    "pid:[4026532692]",
+    "pid:[4026532826]",
+    "uts:[4026532690]",
+    "uts:[4026532824]"
+  ],
+  "S": [
+    "/protected/test_data/expected_keys.txt"
+  ],
+  "sanctioned": {
+    "/protected/test_data/expected_keys.txt": []
+  }
+}

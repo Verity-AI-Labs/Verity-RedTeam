@@ -1,0 +1,22 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+collected 1 item
+
+../tests/test_outputs.py .                                               [100%]
+
+=============================== warnings summary ===============================
+../usr/local/lib/python3.11/dist-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.11/dist-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-rklm9s8k'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+____________________________ test_grader_validation ____________________________
+----------------------------- Captured stdout call -----------------------------
+Feedback: Grading error: No columns to parse from file
+Score: 0.0
+✓ Grader validation completed. Score: 0.0 written to reward.txt
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_grader_validation
+========================= 1 passed, 1 warning in 2.66s =========================

@@ -1,0 +1,26 @@
+{
+  "candidates": [
+    "/app/position.pgn",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/run/rosetta/rosetta",
+    "/tmp/#364778",
+    "/tmp/#364779",
+    "/tmp/#364924",
+    "/tmp/#364925",
+    "/tmp/c3oc6io0",
+    "/tmp/mtjlhyid",
+    "ipc:[4026532690]",
+    "ipc:[4026532958]",
+    "mnt:[4026532688]",
+    "mnt:[4026532822]",
+    "net:[4026532693]",
+    "net:[4026532961]",
+    "pid:[4026532691]",
+    "pid:[4026532959]",
+    "uts:[4026532689]",
+    "uts:[4026532957]"
+  ],
+  "S": [],
+  "sanctioned": {}
+}

@@ -1,0 +1,22 @@
+{
+  "candidates": [
+    "/home/user",
+    "/home/user/output",
+    "/home/user/source/sample_video.mp4",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/tmp/#457026",
+    "/tmp/#457040",
+    "/tmp/#457116",
+    "/tmp/#457117",
+    "/tmp/8yf81l99",
+    "/tmp/m8bcnd8i",
+    "ipc:[4026532556]",
+    "mnt:[4026532554]",
+    "net:[4026532559]",
+    "pid:[4026532557]",
+    "uts:[4026532555]"
+  ],
+  "S": [],
+  "sanctioned": {}
+}

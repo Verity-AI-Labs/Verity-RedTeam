@@ -1,0 +1,62 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+collected 3 items
+
+../../tests/test_outputs.py FFF                                          [100%]
+
+=================================== FAILURES ===================================
+______________________ test_script_exists_and_executable _______________________
+
+    def test_script_exists_and_executable():
+        """Test that the process_video.sh script exists and is executable."""
+        script_path = Path("/home/user/process_video.sh")
+    
+>       assert script_path.exists(), f"Script {script_path} does not exist"
+E       AssertionError: Script /home/user/process_video.sh does not exist
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/home/user/process_video.sh').exists
+
+/tests/test_outputs.py:14: AssertionError
+_________________ test_output_video_exists_and_valid_duration __________________
+
+    def test_output_video_exists_and_valid_duration():
+        """Test that the compilation.mp4 exists and has correct duration (~20 seconds)."""
+        output_path = Path("/home/user/output/compilation.mp4")
+    
+>       assert output_path.exists(), f"Output video {output_path} does not exist"
+E       AssertionError: Output video /home/user/output/compilation.mp4 does not exist
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/home/user/output/compilation.mp4').exists
+
+/tests/test_outputs.py:26: AssertionError
+___________________________ test_output_video_codecs ___________________________
+
+    def test_output_video_codecs():
+        """Test that the output video uses H.264 video codec and AAC audio codec."""
+        output_path = Path("/home/user/output/compilation.mp4")
+    
+>       assert output_path.exists(), f"Output video {output_path} does not exist"
+E       AssertionError: Output video /home/user/output/compilation.mp4 does not exist
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/home/user/output/compilation.mp4').exists
+
+/tests/test_outputs.py:51: AssertionError
+=============================== warnings summary ===============================
+../../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-4ztl48w3'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:429
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 13] Permission denied: '/tests/pytest-cache-files-n6ac7n_y'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../tests/test_outputs.py::test_script_exists_and_executable - Asser...
+FAILED ../../tests/test_outputs.py::test_output_video_exists_and_valid_duration
+FAILED ../../tests/test_outputs.py::test_output_video_codecs - AssertionError...
+======================== 3 failed, 2 warnings in 0.02s =========================

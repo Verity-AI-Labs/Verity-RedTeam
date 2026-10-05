@@ -1,0 +1,3 @@
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init

@@ -1,0 +1,1 @@
+{"/etc/systemd/system/appmonitor.service": ["0", "0", "644"], "/run/appmonitor.pid": ["0", "0", "644"], "/var/log/appmonitor/status.log": ["0", "0", "644"]}

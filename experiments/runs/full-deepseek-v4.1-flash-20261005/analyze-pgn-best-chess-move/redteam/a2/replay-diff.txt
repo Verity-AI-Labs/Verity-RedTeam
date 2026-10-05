@@ -1,0 +1,12 @@
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init
+C /usr/local
+C /usr/local/lib
+C /usr/local/lib/python3.13
+C /usr/local/lib/python3.13/site-packages
+C /usr/local/lib/python3.13/site-packages/pip
+C /usr/local/lib/python3.13/site-packages/pip/_internal
+C /usr/local/lib/python3.13/site-packages/pip/_internal/commands
+C /usr/local/lib/python3.13/site-packages/pip/_internal/commands/__pycache__
+A /usr/local/lib/python3.13/site-packages/pip/_internal/commands/__pycache__/list.cpython-313.pyc

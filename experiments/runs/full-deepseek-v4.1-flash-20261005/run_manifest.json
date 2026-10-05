@@ -1,0 +1,122 @@
+{
+  "status": "complete",
+  "abort_reason": null,
+  "run_date": "2026-10-05",
+  "launched_utc": "2026-10-05T20:38:54.716011+00:00",
+  "finished_utc": "2026-10-05T21:58:13.107199+00:00",
+  "wall_seconds": 4758.4,
+  "out": "/Users/dileepavula/Desktop/Verity Labs/Verity-RedTeam/experiments/runs/full-deepseek-v4.1-flash-20261005",
+  "models": {
+    "attacker": "deepseek-flash",
+    "judge": "deepseek-flash"
+  },
+  "request_config": {
+    "provider": "deepseek",
+    "endpoint": "https://api.deepseek.com/chat/completions",
+    "thinking": "enabled",
+    "reasoning_effort": "high",
+    "max_tokens": 8192,
+    "response_format": {
+      "attacker": "json_object",
+      "judge": null
+    },
+    "json_suffix_sha256": "c564208c0209f427a240058a42278eb0b2dc9948f4e34bc7fea8115f2f077132",
+    "merge_consecutive_roles": true,
+    "attacker_leading_json_only": true
+  },
+  "protocol_id": "e5a701402beb",
+  "budgets": {
+    "attempts": 4,
+    "max_turns": 40,
+    "max_error_retries": 2,
+    "regrades": 3,
+    "fullstate_regrades": 2,
+    "max_mutants": 16,
+    "context_chars": 40000,
+    "observation_chars": 6000
+  },
+  "max_usd": 4.0,
+  "prior_estimated_usd": 0.0,
+  "concurrency": 3,
+  "deadline_hours": 4.0,
+  "hard_deadline_hours": 6.0,
+  "tasks": [
+    "blind-maze",
+    "titanic-female-survival-prediction",
+    "recover-encrypted-db-credentials",
+    "analyze-pgn-best-chess-move",
+    "1104",
+    "winning-avg-corewars",
+    "462",
+    "481",
+    "710",
+    "361"
+  ],
+  "completed": [
+    {
+      "task": "recover-encrypted-db-credentials",
+      "report": "/Users/dileepavula/Desktop/Verity Labs/Verity-RedTeam/experiments/runs/full-deepseek-v4.1-flash-20261005/recover-encrypted-db-credentials/report.json",
+      "section_errors": []
+    },
+    {
+      "task": "titanic-female-survival-prediction",
+      "report": "/Users/dileepavula/Desktop/Verity Labs/Verity-RedTeam/experiments/runs/full-deepseek-v4.1-flash-20261005/titanic-female-survival-prediction/report.json",
+      "section_errors": []
+    },
+    {
+      "task": "1104",
+      "report": "/Users/dileepavula/Desktop/Verity Labs/Verity-RedTeam/experiments/runs/full-deepseek-v4.1-flash-20261005/1104/report.json",
+      "section_errors": []
+    },
+    {
+      "task": "blind-maze",
+      "report": "/Users/dileepavula/Desktop/Verity Labs/Verity-RedTeam/experiments/runs/full-deepseek-v4.1-flash-20261005/blind-maze/report.json",
+      "section_errors": []
+    },
+    {
+      "task": "analyze-pgn-best-chess-move",
+      "report": "/Users/dileepavula/Desktop/Verity Labs/Verity-RedTeam/experiments/runs/full-deepseek-v4.1-flash-20261005/analyze-pgn-best-chess-move/report.json",
+      "section_errors": []
+    },
+    {
+      "task": "winning-avg-corewars",
+      "report": "/Users/dileepavula/Desktop/Verity Labs/Verity-RedTeam/experiments/runs/full-deepseek-v4.1-flash-20261005/winning-avg-corewars/report.json",
+      "section_errors": []
+    },
+    {
+      "task": "481",
+      "report": "/Users/dileepavula/Desktop/Verity Labs/Verity-RedTeam/experiments/runs/full-deepseek-v4.1-flash-20261005/481/report.json",
+      "section_errors": []
+    },
+    {
+      "task": "462",
+      "report": "/Users/dileepavula/Desktop/Verity Labs/Verity-RedTeam/experiments/runs/full-deepseek-v4.1-flash-20261005/462/report.json",
+      "section_errors": []
+    },
+    {
+      "task": "710",
+      "report": "/Users/dileepavula/Desktop/Verity Labs/Verity-RedTeam/experiments/runs/full-deepseek-v4.1-flash-20261005/710/report.json",
+      "section_errors": []
+    },
+    {
+      "task": "361",
+      "report": "/Users/dileepavula/Desktop/Verity Labs/Verity-RedTeam/experiments/runs/full-deepseek-v4.1-flash-20261005/361/report.json",
+      "section_errors": []
+    }
+  ],
+  "skipped": [],
+  "errored": [],
+  "estimated_usd": 0.38448,
+  "calls": 684,
+  "tokens": {
+    "prompt": 4696017,
+    "completion": 384829,
+    "cache_hit": 3747072,
+    "cache_miss": 948945
+  },
+  "cache_hit_ratio": 0.7979,
+  "retries_by_status": {
+    "trailing_text_stripped": 81,
+    "empty": 13
+  }
+}

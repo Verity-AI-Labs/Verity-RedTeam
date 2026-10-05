@@ -1,0 +1,15 @@
+[Unit]
+Description=MyApp Application Service
+# Fixed race condition: ensure the LVM-backed mount is available
+# before the service starts.
+RequiresMountsFor=/mnt/appdata
+After=network.target mnt-appdata.mount local-fs.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/myapp-service.sh
+ExecStop=/bin/rm -f /var/run/myapp.pid
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,106 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+collected 3 items
+
+../tests/test_outputs.py .FF                                             [100%]
+
+=================================== FAILURES ===================================
+____________________ test_environment_variable_persistence _____________________
+
+    def test_environment_variable_persistence():
+        """
+        Test that environment variables are correctly passed to the service.
+        Verifies the daemon's status log contains correct environment variable values.
+        Weight: 35%
+        """
+        log_file = Path("/var/log/appmonitor/status.log")
+    
+        # Ensure daemon has been started (should be done by previous test or solution)
+        if not log_file.exists():
+            # Try to start it
+            unit_file = Path("/etc/systemd/system/appmonitor.service")
+            if unit_file.exists():
+                subprocess.run(["systemctl", "daemon-reload"], check=False)
+                subprocess.run(["systemctl", "start", "appmonitor"], check=False)
+                import time
+                time.sleep(2)
+    
+        assert log_file.exists(), "Status log file /var/log/appmonitor/status.log does not exist"
+    
+        log_content = log_file.read_text()
+    
+        # Check for required environment variables in the log
+        expected_vars = {
+            "APP_DATA_DIR": "/var/lib/appmonitor/data",
+            "APP_LOG_LEVEL": "INFO",
+            "APP_CONFIG_PATH": "/opt/appmonitor/config.json"
+        }
+    
+        for var_name, expected_value in expected_vars.items():
+            # Check that the variable is logged with correct value
+            # The log format includes spaces: "  APP_DATA_DIR=/var/lib/appmonitor/data"
+            expected_pattern = f"{var_name}={expected_value}"
+>           assert expected_pattern in log_content, (
+                f"Environment variable {var_name} not set correctly. "
+                f"Expected '{expected_value}' in log output. Log content:\n{log_content}"
+            )
+E           AssertionError: Environment variable APP_LOG_LEVEL not set correctly. Expected 'INFO' in log output. Log content:
+E             === AppMonitor Started at Mon Oct  5 20:55:35 UTC 2026 ===
+E             PID: 52
+E             Environment Variables:
+E               APP_DATA_DIR=/var/lib/appmonitor/data
+E               APP_LOG_LEVEL=NOT_SET
+E               APP_CONFIG_PATH=NOT_SET
+E             =======================================
+E             
+E           assert 'APP_LOG_LEVEL=INFO' in '=== AppMonitor Started at Mon Oct  5 20:55:35 UTC 2026 ===\nPID: 52\nEnvironment Variables:\n  APP_DATA_DIR=/var/lib/appmonitor/data\n  APP_LOG_LEVEL=NOT_SET\n  APP_CONFIG_PATH=NOT_SET\n=======================================\n'
+
+/tests/test_outputs.py:139: AssertionError
+_________________________ test_correct_implementation __________________________
+
+    def test_correct_implementation():
+        """
+        Test that the solution uses proper systemd mechanisms.
+        Verifies:
+        - Unit file exists in correct location
+        - Unit file has proper [Service] section
+        - Service is enabled for automatic startup
+        Weight: 25%
+        """
+        unit_file = Path("/etc/systemd/system/appmonitor.service")
+    
+        assert unit_file.exists(), "Unit file does not exist at /etc/systemd/system/appmonitor.service"
+    
+        unit_content = unit_file.read_text()
+    
+        # Check for required sections
+        assert "[Unit]" in unit_content, "Unit file missing [Unit] section"
+        assert "[Service]" in unit_content, "Unit file missing [Service] section"
+>       assert "[Install]" in unit_content, "Unit file missing [Install] section"
+E       AssertionError: Unit file missing [Install] section
+E       assert '[Install]' in '[Unit]\nDescription=Application Monitor Daemon\nAfter=network.target\n\n[Service]\nType=simple\nExecStart=/opt/appmonitor/appmonitor\nEnvironment="APP_DATA_DIR=/var/lib/appmonitor/data"\n'
+
+/tests/test_outputs.py:167: AssertionError
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-mievrd12'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:429
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 13] Permission denied: '/tests/pytest-cache-files-coutf19y'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+___________________________ test_service_persistence ___________________________
+----------------------------- Captured stderr call -----------------------------
+System has not been booted with systemd as init system (PID 1). Can't operate.
+Failed to connect to bus: Host is down
+System has not been booted with systemd as init system (PID 1). Can't operate.
+Failed to connect to bus: Host is down
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_service_persistence
+FAILED ../tests/test_outputs.py::test_environment_variable_persistence - Asse...
+FAILED ../tests/test_outputs.py::test_correct_implementation - AssertionError...
+=================== 2 failed, 1 passed, 2 warnings in 4.05s ====================

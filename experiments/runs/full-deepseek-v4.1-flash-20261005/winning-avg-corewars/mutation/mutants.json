@@ -1,0 +1,56 @@
+{
+  "mutants": [
+    {
+      "artifact": "/app/my_warrior.red",
+      "operator": "empty",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/app/my_warrior.red",
+      "operator": "truncate",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/app/my_warrior.red",
+      "operator": "drop_line",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/app/my_warrior.red",
+      "operator": "swap_lines",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/app/my_warrior.red",
+      "operator": "char_flip",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "artifact": "/app/my_warrior.red",
+      "operator": "dup_line",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/app/my_warrior.red",
+      "operator": "toggle_newline",
+      "kind": "control",
+      "pass": true
+    },
+    {
+      "artifact": "/app/my_warrior.red",
+      "operator": "strip_trailing",
+      "kind": "control",
+      "pass": true
+    }
+  ],
+  "semantic": 6,
+  "killed": 5,
+  "controls": 2,
+  "controls_passed": 2
+}

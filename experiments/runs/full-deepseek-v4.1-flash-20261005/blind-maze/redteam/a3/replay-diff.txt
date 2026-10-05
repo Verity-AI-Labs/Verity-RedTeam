@@ -1,0 +1,8 @@
+C /protected
+A /protected/__pycache__
+A /protected/__pycache__/maze_helper.cpython-313.pyc
+C /app
+A /app/maze_map.txt
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init

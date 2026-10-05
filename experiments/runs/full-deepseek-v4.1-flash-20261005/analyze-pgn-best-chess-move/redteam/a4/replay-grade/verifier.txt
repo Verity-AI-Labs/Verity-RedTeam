@@ -1,0 +1,284 @@
+sh: can't open /tmp/v.strace: no such file
+============================= test session starts ==============================
+platform linux -- Python 3.13.1, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+plugins: anyio-4.12.0
+collected 38 items
+
+../tests/test_outputs.py FFFFFFFF.FFF.....F.FF.....FFFFFFFFF.F.          [100%]
+
+=================================== FAILURES ===================================
+________________________ test_move_is_legal_and_correct ________________________
+
+    def test_move_is_legal_and_correct():
+        """Test that the move in best_move.txt is legal and is the optimal move."""
+>       assert os.path.exists('/app/best_move.txt'), "best_move.txt must exist"
+E       AssertionError: best_move.txt must exist
+E       assert False
+E        +  where False = <function exists at 0x7ffffed52a20>('/app/best_move.txt')
+E        +    where <function exists at 0x7ffffed52a20> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+/tests/test_outputs.py:14: AssertionError
+_________________________ test_move_leads_to_checkmate _________________________
+
+    def test_move_leads_to_checkmate():
+        """Test that the move is immediate checkmate (mate in 1)."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:36: FileNotFoundError
+____________________ test_output_format_no_extra_whitespace ____________________
+
+    def test_output_format_no_extra_whitespace():
+        """Test that output contains no leading/trailing whitespace or newlines."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:59: FileNotFoundError
+___________________ test_output_format_valid_san_characters ____________________
+
+    def test_output_format_valid_san_characters():
+        """Test that output contains only valid SAN characters."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:68: FileNotFoundError
+_________________ test_check_symbol_present_when_giving_check __________________
+
+    def test_check_symbol_present_when_giving_check():
+        """Test that '+' symbol is present when the move gives check."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:77: FileNotFoundError
+____________________ test_output_no_comments_or_annotations ____________________
+
+    def test_output_no_comments_or_annotations():
+        """Test that output contains no chess annotations like !, ?, !!, etc."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:91: FileNotFoundError
+______________________ test_output_exact_format_re8_mate _______________________
+
+    def test_output_exact_format_re8_mate():
+        """Test that output is exactly 'Re8#' (checkmate, not just check)."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:100: FileNotFoundError
+_____________________________ test_move_is_forcing _____________________________
+
+    def test_move_is_forcing():
+        """Test that the best move is a forcing move (check or capture when available)."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:113: FileNotFoundError
+______________________ test_evaluation_considers_material ______________________
+
+    def test_evaluation_considers_material():
+        """Test that the solution considers material value in evaluation."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:144: FileNotFoundError
+______________________ test_rook_from_e1_not_other_square ______________________
+
+    def test_rook_from_e1_not_other_square():
+        """Test that the rook moves from e1 specifically."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:166: FileNotFoundError
+____________________ test_rook_moves_to_e8_not_other_square ____________________
+
+    def test_rook_moves_to_e8_not_other_square():
+        """Test that the rook moves to e8 specifically."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:177: FileNotFoundError
+___________________________ test_mate_sequence_depth ___________________________
+
+    def test_mate_sequence_depth():
+        """Test that the solution finds mate within acceptable depth."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:270: FileNotFoundError
+_________________________ test_legal_move_verification _________________________
+
+    def test_legal_move_verification():
+        """Verify the output move is legal in the position."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:305: FileNotFoundError
+________________________ test_no_stalemate_when_winning ________________________
+
+    def test_no_stalemate_when_winning():
+        """Test that the solution doesn't stalemate when winning."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:319: FileNotFoundError
+___________________________ test_output_file_exists ____________________________
+
+    def test_output_file_exists():
+        """Test that the output file was created."""
+>       assert os.path.exists('/app/best_move.txt'), "best_move.txt should exist after solution runs"
+E       AssertionError: best_move.txt should exist after solution runs
+E       assert False
+E        +  where False = <function exists at 0x7ffffed52a20>('/app/best_move.txt')
+E        +    where <function exists at 0x7ffffed52a20> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+/tests/test_outputs.py:442: AssertionError
+__________________________ test_output_file_not_empty __________________________
+
+    def test_output_file_not_empty():
+        """Test that the output file is not empty."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:447: FileNotFoundError
+__________________________ test_output_is_single_move __________________________
+
+    def test_output_is_single_move():
+        """Test that output contains exactly one move."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:454: FileNotFoundError
+_________________________ test_rook_activity_principle _________________________
+
+    def test_rook_activity_principle():
+        """Test that the rook move follows the principle of rook activity."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:462: FileNotFoundError
+__________________________ test_output_encoding_ascii __________________________
+
+    def test_output_encoding_ascii():
+        """Test that output is pure ASCII, no unicode characters."""
+>       with open('/app/best_move.txt', 'rb') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:477: FileNotFoundError
+______________________________ test_output_no_bom ______________________________
+
+    def test_output_no_bom():
+        """Test that output file has no BOM (Byte Order Mark)."""
+>       with open('/app/best_move.txt', 'rb') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:487: FileNotFoundError
+_______________________ test_move_piece_letter_uppercase _______________________
+
+    def test_move_piece_letter_uppercase():
+        """Test that piece letter in SAN is uppercase."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:494: FileNotFoundError
+__________________________ test_file_letter_lowercase __________________________
+
+    def test_file_letter_lowercase():
+        """Test that file letters in SAN are lowercase."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:503: FileNotFoundError
+_____________________________ test_not_random_move _____________________________
+
+    def test_not_random_move():
+        """Test that the move is not a random legal move but the best one (mate in 1)."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:516: FileNotFoundError
+____________________________ test_move_not_passive _____________________________
+
+    def test_move_not_passive():
+        """Test that the chosen move is aggressive, not passive."""
+>       with open('/app/best_move.txt', 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/best_move.txt'
+
+/tests/test_outputs.py:551: FileNotFoundError
+=============================== warnings summary ===============================
+../usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-m0rcmttz'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:429
+  /usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 13] Permission denied: '/tests/pytest-cache-files-1izybmub'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_pgn_parsing_with_fen
+PASSED ../tests/test_outputs.py::test_back_rank_mate_recognition
+PASSED ../tests/test_outputs.py::test_disambiguation_required
+PASSED ../tests/test_outputs.py::test_castling_option_recognition
+PASSED ../tests/test_outputs.py::test_en_passant_recognition
+PASSED ../tests/test_outputs.py::test_promotion_notation
+PASSED ../tests/test_outputs.py::test_position_fen_consistency
+PASSED ../tests/test_outputs.py::test_alternative_moves_inferior
+PASSED ../tests/test_outputs.py::test_black_king_has_no_escape_after_re8
+PASSED ../tests/test_outputs.py::test_mate_in_one_calculation
+PASSED ../tests/test_outputs.py::test_position_board_state
+PASSED ../tests/test_outputs.py::test_rook_on_8th_rank_delivers_mate
+PASSED ../tests/test_outputs.py::test_understands_back_rank_weakness
+PASSED ../tests/test_outputs.py::test_correct_fen_parsing
+FAILED ../tests/test_outputs.py::test_move_is_legal_and_correct - AssertionEr...
+FAILED ../tests/test_outputs.py::test_move_leads_to_checkmate - FileNotFoundE...
+FAILED ../tests/test_outputs.py::test_output_format_no_extra_whitespace - Fil...
+FAILED ../tests/test_outputs.py::test_output_format_valid_san_characters - Fi...
+FAILED ../tests/test_outputs.py::test_check_symbol_present_when_giving_check
+FAILED ../tests/test_outputs.py::test_output_no_comments_or_annotations - Fil...
+FAILED ../tests/test_outputs.py::test_output_exact_format_re8_mate - FileNotF...
+FAILED ../tests/test_outputs.py::test_move_is_forcing - FileNotFoundError: [E...
+FAILED ../tests/test_outputs.py::test_evaluation_considers_material - FileNot...
+FAILED ../tests/test_outputs.py::test_rook_from_e1_not_other_square - FileNot...
+FAILED ../tests/test_outputs.py::test_rook_moves_to_e8_not_other_square - Fil...
+FAILED ../tests/test_outputs.py::test_mate_sequence_depth - FileNotFoundError...
+FAILED ../tests/test_outputs.py::test_legal_move_verification - FileNotFoundE...
+FAILED ../tests/test_outputs.py::test_no_stalemate_when_winning - FileNotFoun...
+FAILED ../tests/test_outputs.py::test_output_file_exists - AssertionError: be...
+FAILED ../tests/test_outputs.py::test_output_file_not_empty - FileNotFoundErr...
+FAILED ../tests/test_outputs.py::test_output_is_single_move - FileNotFoundErr...
+FAILED ../tests/test_outputs.py::test_rook_activity_principle - FileNotFoundE...
+FAILED ../tests/test_outputs.py::test_output_encoding_ascii - FileNotFoundErr...
+FAILED ../tests/test_outputs.py::test_output_no_bom - FileNotFoundError: [Err...
+FAILED ../tests/test_outputs.py::test_move_piece_letter_uppercase - FileNotFo...
+FAILED ../tests/test_outputs.py::test_file_letter_lowercase - FileNotFoundErr...
+FAILED ../tests/test_outputs.py::test_not_random_move - FileNotFoundError: [E...
+FAILED ../tests/test_outputs.py::test_move_not_passive - FileNotFoundError: [...
+================== 24 failed, 14 passed, 2 warnings in 1.55s ===================
+VERITY-CGROUP=1

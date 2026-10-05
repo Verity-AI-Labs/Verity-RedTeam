@@ -1,0 +1,37 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.1, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+collected 2 items
+
+../tests/test_outputs.py ..                                              [100%]
+
+=============================== warnings summary ===============================
+../usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-wybzn33b'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+__________________________ test_maze_map_file_exists ___________________________
+----------------------------- Captured stdout call -----------------------------
+✓ Maze map file exists at /app/maze_map.txt
+____________________________ test_maze_map_contents ____________________________
+----------------------------- Captured stdout call -----------------------------
+
+Agent's maze map:
+#####
+# #S#
+#E# #
+#   #
+#####
+
+Ground truth maze:
+#####
+# #S#
+#E# #
+#   #
+#####
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_maze_map_file_exists
+PASSED ../tests/test_outputs.py::test_maze_map_contents
+========================= 2 passed, 1 warning in 0.02s =========================

@@ -1,0 +1,55 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+collected 3 items
+
+../tests/test_outputs.py ..F                                             [100%]
+
+=================================== FAILURES ===================================
+_________________________ test_correct_implementation __________________________
+
+    def test_correct_implementation():
+        """
+        Test that the solution uses proper systemd mechanisms.
+        Verifies:
+        - Unit file exists in correct location
+        - Unit file has proper [Service] section
+        - Service is enabled for automatic startup
+        Weight: 25%
+        """
+        unit_file = Path("/etc/systemd/system/appmonitor.service")
+    
+        assert unit_file.exists(), "Unit file does not exist at /etc/systemd/system/appmonitor.service"
+    
+        unit_content = unit_file.read_text()
+    
+        # Check for required sections
+        assert "[Unit]" in unit_content, "Unit file missing [Unit] section"
+        assert "[Service]" in unit_content, "Unit file missing [Service] section"
+>       assert "[Install]" in unit_content, "Unit file missing [Install] section"
+E       AssertionError: Unit file missing [Install] section
+E       assert '[Install]' in '[Unit]\nDescription=Application Monitor Daemon\nAfter=network.target\n\n[Service]\nType=simple\nExecStart=/opt/appmon...onitor/config.json"\nPIDFile=/var/run/appmonitor.pid\nRestart=on-failure\nRestartSec=5\n\nWantedBy=multi-user.target\n'
+
+/tests/test_outputs.py:167: AssertionError
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-pmo0ln3h'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:429
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 13] Permission denied: '/tests/pytest-cache-files-tqwgtf_g'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+___________________________ test_service_persistence ___________________________
+----------------------------- Captured stderr call -----------------------------
+System has not been booted with systemd as init system (PID 1). Can't operate.
+Failed to connect to bus: Host is down
+System has not been booted with systemd as init system (PID 1). Can't operate.
+Failed to connect to bus: Host is down
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_service_persistence
+PASSED ../tests/test_outputs.py::test_environment_variable_persistence
+FAILED ../tests/test_outputs.py::test_correct_implementation - AssertionError...
+=================== 1 failed, 2 passed, 2 warnings in 4.05s ====================

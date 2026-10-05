@@ -1,0 +1,58 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 3.46kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/ubuntu:24.04
+#2 DONE 0.4s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [ 1/11] FROM docker.io/library/ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55
+#4 resolve docker.io/library/ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55 done
+#4 DONE 0.0s
+
+#5 [ 9/11] RUN mkdir -p /var/lib/appmonitor/data
+#5 CACHED
+
+#6 [ 8/11] RUN chmod +x /opt/appmonitor/appmonitor     && chmod +x /opt/appmonitor/start.sh
+#6 CACHED
+
+#7 [10/11] WORKDIR /app
+#7 CACHED
+
+#8 [ 7/11] RUN cat > /opt/appmonitor/config.json << 'CONFIG_EOF'
+#8 CACHED
+
+#9 [ 2/11] WORKDIR /app
+#9 CACHED
+
+#10 [ 3/11] RUN apt-get update && apt-get install -y     systemd     systemd-sysv     procps     && apt-get clean     && rm -rf /var/lib/apt/lists/*
+#10 CACHED
+
+#11 [ 4/11] RUN mkdir -p /opt/appmonitor     && mkdir -p /var/log/appmonitor     && chmod 755 /opt/appmonitor     && chmod 755 /var/log/appmonitor
+#11 CACHED
+
+#12 [ 5/11] RUN cat > /opt/appmonitor/appmonitor << 'DAEMON_EOF'
+#12 CACHED
+
+#13 [ 6/11] RUN cat > /opt/appmonitor/start.sh << 'SCRIPT_EOF'
+#13 CACHED
+
+#14 [11/11] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#14 CACHED
+
+#15 exporting to image
+#15 exporting layers done
+#15 exporting manifest sha256:b2627cd037f5f5185f8b2ba08c69ba323d500e69ee9dbea76bd0ad0ce6ebf7ad done
+#15 exporting config sha256:c5ea03b03b60bd7aaf964edd486adceeed78e67a34f9f31f76a7560e0bb408d5 done
+#15 exporting attestation manifest sha256:11b381dd7ee71ccf26110097e532db06b50db79f8c58373d7f526f557853a3f9 done
+#15 exporting manifest list sha256:f28651b3ccc9e2fe3ef0b308c1c7ea985b962c85943faf01c0ccd0645df54cd8 done
+#15 naming to docker.io/library/verity-462:local done
+#15 unpacking to docker.io/library/verity-462:local done
+#15 DONE 0.0s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/qb9ftt8idet6bbo4d0nn67peu

@@ -1,0 +1,7 @@
+=== AppMonitor Started at Mon Oct  5 21:29:29 UTC 2026 ===
+PID: 240
+Environment Variables:
+  APP_DATA_DIR=/var/lib/appmonitor/data
+  APP_LOG_LEVEL=INFO
+  APP_CONFIG_PATH=/opt/appmonitor/config.json
+=======================================

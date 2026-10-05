@@ -1,0 +1,10 @@
+C /home
+C /home/user
+A /home/user/process_video.sh
+C /home/user/output
+A /home/user/output/compilation.mp4
+A /solution
+A /solution/solve.sh
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init

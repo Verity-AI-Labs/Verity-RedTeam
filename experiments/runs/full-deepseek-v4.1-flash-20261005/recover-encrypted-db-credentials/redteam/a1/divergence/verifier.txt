@@ -1,0 +1,46 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+collected 30 items
+
+../tests/test_outputs.py ..............................                  [100%]
+
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-rmj5cpug'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::TestRecoveredKeysFileExists::test_file_exists
+PASSED ../tests/test_outputs.py::TestRecoveredKeysFileExists::test_file_not_empty
+PASSED ../tests/test_outputs.py::TestRecoveredKeysFileExists::test_file_has_correct_line_count
+PASSED ../tests/test_outputs.py::TestKeyFormat::test_all_keys_exactly_32_chars
+PASSED ../tests/test_outputs.py::TestKeyFormat::test_all_keys_start_with_aes256
+PASSED ../tests/test_outputs.py::TestKeyFormat::test_all_keys_end_with_hash
+PASSED ../tests/test_outputs.py::TestKeyFormat::test_all_keys_uppercase_and_digits_only
+PASSED ../tests/test_outputs.py::TestKeyFormat::test_chars_after_prefix_contain_digit
+PASSED ../tests/test_outputs.py::TestKeyFormat::test_chars_before_suffix_contain_letter
+PASSED ../tests/test_outputs.py::TestKeyCorrectness::test_exact_keys_match
+PASSED ../tests/test_outputs.py::TestKeyCorrectness::test_no_decoy_keys_included
+PASSED ../tests/test_outputs.py::TestKeyCorrectness::test_first_key_correct
+PASSED ../tests/test_outputs.py::TestKeyCorrectness::test_second_key_correct
+PASSED ../tests/test_outputs.py::TestKeyCorrectness::test_third_key_correct
+PASSED ../tests/test_outputs.py::TestOutputFormat::test_keys_are_sorted_alphabetically
+PASSED ../tests/test_outputs.py::TestOutputFormat::test_no_trailing_whitespace
+PASSED ../tests/test_outputs.py::TestOutputFormat::test_no_empty_lines
+PASSED ../tests/test_outputs.py::TestOutputFormat::test_no_duplicate_keys
+PASSED ../tests/test_outputs.py::TestEdgeCases::test_key_not_31_chars
+PASSED ../tests/test_outputs.py::TestEdgeCases::test_key_not_33_chars
+PASSED ../tests/test_outputs.py::TestEdgeCases::test_decoy_with_no_digit_excluded
+PASSED ../tests/test_outputs.py::TestEdgeCases::test_decoy_with_no_letter_excluded
+PASSED ../tests/test_outputs.py::TestEdgeCases::test_short_decoy_excluded
+PASSED ../tests/test_outputs.py::TestEdgeCases::test_no_lowercase_keys
+PASSED ../tests/test_outputs.py::TestEdgeCases::test_no_special_characters
+PASSED ../tests/test_outputs.py::TestValidationLogic::test_prefix_validation
+PASSED ../tests/test_outputs.py::TestValidationLogic::test_suffix_validation
+PASSED ../tests/test_outputs.py::TestValidationLogic::test_middle_section_validation
+PASSED ../tests/test_outputs.py::TestComparisonWithExpectedFile::test_matches_expected_file
+PASSED ../tests/test_outputs.py::TestComparisonWithExpectedFile::test_key_count_matches_expected
+======================== 30 passed, 1 warning in 0.13s =========================

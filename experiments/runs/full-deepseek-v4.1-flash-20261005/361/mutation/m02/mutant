@@ -1,0 +1,5 @@
+#!/bin/sh
+# Main initialization script for dev environment
+echo "Starting development environment initialization..."
+
+# FIX: Using . (source) instead of ./ (execute) - variables will now persist to parent shell

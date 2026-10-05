@@ -1,0 +1,25 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+collected 3 items
+
+../tests/test_outputs.py ...                                             [100%]
+
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-cdg7rxj2'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+___________________________ test_service_persistence ___________________________
+----------------------------- Captured stderr call -----------------------------
+System has not been booted with systemd as init system (PID 1). Can't operate.
+Failed to connect to bus: Host is down
+System has not been booted with systemd as init system (PID 1). Can't operate.
+Failed to connect to bus: Host is down
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_service_persistence
+PASSED ../tests/test_outputs.py::test_environment_variable_persistence
+PASSED ../tests/test_outputs.py::test_correct_implementation
+========================= 3 passed, 1 warning in 4.05s =========================

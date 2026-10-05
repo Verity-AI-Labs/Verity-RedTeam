@@ -1,0 +1,692 @@
+27    execve("/usr/bin/nsenter", ["nsenter", "-t", "1", "-m", "-u", "-i", "-n", "-p", "setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xfffffd5646d8 /* 5 vars */) = 0
+27    openat(AT_FDCWD</>, "/proc/1/ns/ipc", O_RDONLY|O_LARGEFILE) = 3<ipc:[4026532556]>
+27    openat(AT_FDCWD</>, "/proc/1/ns/uts", O_RDONLY|O_LARGEFILE) = 4<uts:[4026532555]>
+27    openat(AT_FDCWD</>, "/proc/1/ns/net", O_RDONLY|O_LARGEFILE) = 5<net:[4026532559]>
+27    openat(AT_FDCWD</>, "/proc/1/ns/pid", O_RDONLY|O_LARGEFILE) = 6<pid:[4026532557]>
+27    openat(AT_FDCWD</>, "/proc/1/ns/mnt", O_RDONLY|O_LARGEFILE) = 7<mnt:[4026532554]>
+27    clone(child_stack=NULL, flags=SIGCHLD) = 28
+27    wait4(28,  <unfinished ...>
+28    execve("/usr/local/sbin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xfffff845a018 /* 5 vars */) = -1 ENOENT (No such file or directory)
+28    execve("/usr/local/bin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xfffff845a018 /* 5 vars */) = -1 ENOENT (No such file or directory)
+28    execve("/usr/sbin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xfffff845a018 /* 5 vars */) = -1 ENOENT (No such file or directory)
+28    execve("/usr/bin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xfffff845a018 /* 5 vars */) = 0
+28    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+28    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+28    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libcap-ng.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libcap-ng.so.0.0.0>
+28    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+28    openat(AT_FDCWD</>, "/proc/sys/kernel/cap_last_cap", O_RDONLY) = 3</proc/sys/kernel/cap_last_cap>
+28    openat(AT_FDCWD</>, "/proc/28/status", O_RDONLY|O_CLOEXEC) = 3</proc/28/status>
+28    openat(AT_FDCWD</>, "/proc/28/status", O_RDONLY|O_CLOEXEC) = 3</proc/28/status>
+28    openat(AT_FDCWD</>, "/proc/sys/kernel/cap_last_cap", O_RDONLY) = 3</proc/sys/kernel/cap_last_cap>
+28    openat(AT_FDCWD</>, "/proc/28/status", O_RDONLY|O_CLOEXEC) = 3</proc/28/status>
+28    openat(AT_FDCWD</>, "/proc/28/status", O_RDONLY|O_CLOEXEC) = 3</proc/28/status>
+28    openat(AT_FDCWD</>, "/proc/28/status", O_RDONLY|O_CLOEXEC) = 3</proc/28/status>
+28    execve("/usr/local/sbin/env", ["env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xffffc5ab6dd8 /* 5 vars */) = -1 ENOENT (No such file or directory)
+28    execve("/usr/local/bin/env", ["env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xffffc5ab6dd8 /* 5 vars */) = -1 ENOENT (No such file or directory)
+28    execve("/usr/sbin/env", ["env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xffffc5ab6dd8 /* 5 vars */) = -1 ENOENT (No such file or directory)
+28    execve("/usr/bin/env", ["env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xffffc5ab6dd8 /* 5 vars */) = 0
+28    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+28    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+28    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+28    execve("/usr/local/sbin/timeout", ["timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xaaaadb31b400 /* 2 vars */) = -1 ENOENT (No such file or directory)
+28    execve("/usr/local/bin/timeout", ["timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xaaaadb31b400 /* 2 vars */) = -1 ENOENT (No such file or directory)
+28    execve("/usr/sbin/timeout", ["timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xaaaadb31b400 /* 2 vars */) = -1 ENOENT (No such file or directory)
+28    execve("/usr/bin/timeout", ["timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xaaaadb31b400 /* 2 vars */) = 0
+28    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+28    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+28    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+28    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff930bffd0) = 29
+29    execve("/usr/local/sbin/bash", ["bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xffffe4b11008 /* 2 vars */) = -1 ENOENT (No such file or directory)
+29    execve("/usr/local/bin/bash", ["bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xffffe4b11008 /* 2 vars */) = -1 ENOENT (No such file or directory)
+29    execve("/usr/sbin/bash", ["bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xffffe4b11008 /* 2 vars */ <unfinished ...>
+28    wait4(29,  <unfinished ...>
+29    <... execve resumed>)             = -1 ENOENT (No such file or directory)
+28    <... wait4 resumed>0xffffe4b10ca0, WNOHANG, NULL) = 0
+29    execve("/usr/bin/bash", ["bash", "-lc", "cd /app || exit 97\nbash /solution/solve.sh"], 0xffffe4b11008 /* 2 vars */) = 0
+29    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+29    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+29    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+29    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+29    openat(AT_FDCWD</>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+29    getcwd("/", 4096)                 = 2
+29    newfstatat(AT_FDCWD</>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</>, "/usr/local/sbin/bash", 0xffffcd426d28, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</>, "/usr/local/bin/bash", 0xffffcd426d28, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</>, "/usr/sbin/bash", 0xffffcd426d28, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+29    faccessat(AT_FDCWD</>, "/usr/bin/bash", X_OK) = 0
+29    newfstatat(AT_FDCWD</>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+29    faccessat(AT_FDCWD</>, "/usr/bin/bash", R_OK) = 0
+29    newfstatat(AT_FDCWD</>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=526, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+29    openat(AT_FDCWD</>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+29    openat(AT_FDCWD</>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+29    openat(AT_FDCWD</>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+29    newfstatat(AT_FDCWD</>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+29    openat(AT_FDCWD</>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+29    faccessat2(AT_FDCWD</>, "/etc/profile.d/01-locale-fix.sh", R_OK, AT_EACCESS) = 0
+29    openat(AT_FDCWD</>, "/etc/profile.d/01-locale-fix.sh", O_RDONLY) = 3</etc/profile.d/01-locale-fix.sh>
+29    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa98420f0) = 30
+30    execve("/usr/bin/locale-check", ["/usr/bin/locale-check", "C.UTF-8"], 0xaaaad44593b0 /* 5 vars */) = 0
+30    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+30    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+30    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+30    exit_group(0)                     = ?
+29    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=30, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+29    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 30
+29    wait4(-1, 0xffffcd423390, WNOHANG, NULL) = -1 ECHILD (No child process)
+29    openat(AT_FDCWD</>, "/root/.bash_profile", O_RDONLY) = -1 ENOENT (No such file or directory)
+29    openat(AT_FDCWD</>, "/root/.bash_login", O_RDONLY) = -1 ENOENT (No such file or directory)
+29    openat(AT_FDCWD</>, "/root/.profile", O_RDONLY) = 3</root/.profile>
+29    newfstatat(AT_FDCWD</>, "/root/.bashrc", {st_mode=S_IFREG|0644, st_size=3106, ...}, 0) = 0
+29    openat(AT_FDCWD</>, "/root/.bashrc", O_RDONLY) = 3</root/.bashrc>
+29    newfstatat(AT_FDCWD</>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</>, "/usr/local/sbin/mesg", 0xffffcd4265b8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</>, "/usr/local/bin/mesg", 0xffffcd4265b8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</>, "/usr/sbin/mesg", 0xffffcd4265b8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+29    faccessat(AT_FDCWD</>, "/usr/bin/mesg", X_OK) = 0
+29    newfstatat(AT_FDCWD</>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+29    faccessat(AT_FDCWD</>, "/usr/bin/mesg", R_OK) = 0
+29    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa98420f0) = 31
+29    wait4(-1,  <unfinished ...>
+31    openat(AT_FDCWD</>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+31    execve("/usr/bin/mesg", ["mesg", "n"], 0xaaaad44556c0 /* 5 vars */) = 0
+31    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+31    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+31    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+31    exit_group(2)                     = ?
+29    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 2}], 0, NULL) = 31
+29    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=31, si_uid=0, si_status=2, si_utime=0, si_stime=0} ---
+29    wait4(-1, 0xffffcd425490, WNOHANG, NULL) = -1 ECHILD (No child process)
+29    newfstatat(AT_FDCWD</>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+29    chdir("/app")                     = 0
+29    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffcd426a08, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffcd426a08, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffcd426a08, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+29    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+29    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+29    execve("/usr/bin/bash", ["bash", "/solution/solve.sh"], 0xaaaad44556c0 /* 6 vars */) = 0
+29    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+29    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+29    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+29    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+29    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+29    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xfffffb679b18, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xfffffb679b18, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xfffffb679b18, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+29    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+29    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+29    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=526, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+29    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+29    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+29    openat(AT_FDCWD</app>, "/solution/solve.sh", O_RDONLY) = 3</solution/solve.sh>
+29    newfstatat(AT_FDCWD</app>, "/solution/solve.sh", {st_mode=S_IFREG|0644, st_size=1475, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xfffffb6798d8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xfffffb6798d8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xfffffb6798d8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+29    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+29    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+29    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff93f3d0f0) = 32
+29    wait4(-1,  <unfinished ...>
+32    openat(AT_FDCWD</app>, "/etc/systemd/system/appmonitor.service", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</etc/systemd/system/appmonitor.service>
+32    execve("/usr/bin/cat", ["cat"], 0xaaaae3984640 /* 6 vars */) = 0
+32    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+32    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+32    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+32    exit_group(0)                     = ?
+29    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 32
+29    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=32, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+29    wait4(-1, 0xfffffb6787b0, WNOHANG, NULL) = -1 ECHILD (No child process)
+29    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/systemctl", 0xfffffb6798d8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/local/bin/systemctl", 0xfffffb6798d8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/sbin/systemctl", 0xfffffb6798d8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/systemctl", {st_mode=S_IFREG|0755, st_size=1585008, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/systemctl", {st_mode=S_IFREG|0755, st_size=1585008, ...}, 0) = 0
+29    faccessat(AT_FDCWD</app>, "/usr/bin/systemctl", X_OK) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/systemctl", {st_mode=S_IFREG|0755, st_size=1585008, ...}, 0) = 0
+29    faccessat(AT_FDCWD</app>, "/usr/bin/systemctl", R_OK) = 0
+29    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff93f3d0f0) = 33
+29    wait4(-1,  <unfinished ...>
+33    execve("/usr/bin/systemctl", ["systemctl", "daemon-reload"], 0xaaaae39884c0 /* 6 vars */) = 0
+33    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+33    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libcap.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+33    newfstatat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+33    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libcap.so.2", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libcap.so.2.66>
+33    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/liblz4.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/liblz4.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/liblz4.so.1.9.4>
+33    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libselinux.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+33    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/liblzma.so.5", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/liblzma.so.5", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/liblzma.so.5.4.5>
+33    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libzstd.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libzstd.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libzstd.so.1.5.5>
+33    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libm.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libm.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libm.so.6>
+33    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libblkid.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libblkid.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libblkid.so.1.1.0>
+33    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libgcrypt.so.20", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libgcrypt.so.20", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libgcrypt.so.20.4.3>
+33    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libmount.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libmount.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libmount.so.1.1.0>
+33    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libcrypto.so.3", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libcrypto.so.3", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libcrypto.so.3>
+33    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libgpg-error.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libgpg-error.so.0.34.0>
+33    statfs("/sys/fs/selinux", 0xfffff48726f0) = -1 ENOENT (No such file or directory)
+33    statfs("/selinux", 0xfffff48726f0) = -1 ENOENT (No such file or directory)
+33    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+33    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+33    openat(AT_FDCWD</app>, "/proc/", O_RDONLY|O_NOCTTY|O_CLOEXEC|O_PATH) = 3</proc>
+33    newfstatat(AT_FDCWD</app>, "/proc/1/root", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+33    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+33    faccessat2(AT_FDCWD</app>, "/run/systemd/system/", F_OK, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+33    newfstatat(AT_FDCWD</app>, "/dev/null", {st_mode=S_IFCHR|0666, st_rdev=makedev(0x1, 0x3), ...}, 0) = 0
+33    exit_group(1)                     = ?
+29    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 33
+29    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=33, si_uid=0, si_status=1, si_utime=0, si_stime=1 /* 0.01 s */} ---
+29    wait4(-1, 0xfffffb6787b0, WNOHANG, NULL) = -1 ECHILD (No child process)
+29    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff93f3d0f0) = 40
+29    wait4(-1,  <unfinished ...>
+40    execve("/usr/bin/systemctl", ["systemctl", "enable", "appmonitor"], 0xaaaae39884c0 /* 6 vars */) = 0
+40    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libcap.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+40    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+40    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libcap.so.2", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libcap.so.2.66>
+40    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/liblz4.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/liblz4.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/liblz4.so.1.9.4>
+40    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libselinux.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+40    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/liblzma.so.5", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/liblzma.so.5", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/liblzma.so.5.4.5>
+40    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libzstd.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libzstd.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libzstd.so.1.5.5>
+40    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libm.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libm.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libm.so.6>
+40    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libblkid.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libblkid.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libblkid.so.1.1.0>
+40    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libgcrypt.so.20", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libgcrypt.so.20", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libgcrypt.so.20.4.3>
+40    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libmount.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libmount.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libmount.so.1.1.0>
+40    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libcrypto.so.3", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libcrypto.so.3", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libcrypto.so.3>
+40    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+40    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+40    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libgpg-error.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libgpg-error.so.0.34.0>
+40    statfs("/sys/fs/selinux", 0xffffe2115c50) = -1 ENOENT (No such file or directory)
+40    statfs("/selinux", 0xffffe2115c50) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+40    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/proc/", O_RDONLY|O_NOCTTY|O_CLOEXEC|O_PATH) = 3</proc>
+40    newfstatat(AT_FDCWD</app>, "/etc/systemd/system.control/appmonitor.service", 0xffffe2114e50, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/run/systemd/system.control/appmonitor.service", 0xffffe2114e50, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/run/systemd/transient/appmonitor.service", 0xffffe2114e50, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/etc/systemd/system/appmonitor.service", {st_mode=S_IFREG|0644, st_size=372, ...}, AT_SYMLINK_NOFOLLOW) = 0
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "etc", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</etc>
+40    openat(6</etc>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</etc/systemd>
+40    openat(4</etc/systemd>, "system.control", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "system.control", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "transient", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "etc", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</etc>
+40    openat(6</etc>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</etc/systemd>
+40    openat(4</etc/systemd>, "system", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</etc/systemd/system>
+40    openat(6</etc/systemd/system>, "appmonitor.service.d", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "etc", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</etc>
+40    openat(6</etc>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</etc/systemd>
+40    openat(4</etc/systemd>, "system.attached", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "system", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "system.attached", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "usr", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</usr>
+40    openat(6</usr>, "local", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</usr/local>
+40    openat(4</usr/local>, "lib", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</usr/local/lib>
+40    openat(6</usr/local/lib>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "usr", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</usr>
+40    openat(6</usr>, "lib", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</usr/lib>
+40    openat(4</usr/lib>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</usr/lib/systemd>
+40    openat(6</usr/lib/systemd>, "system", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</usr/lib/systemd/system>
+40    openat(4</usr/lib/systemd/system>, "appmonitor.service.d", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    faccessat(AT_FDCWD</app>, "/etc/init.d/appmonitor", F_OK) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/proc/1/root", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+40    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+40    faccessat2(AT_FDCWD</app>, "/run/systemd/system/", F_OK, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/etc/systemd/system.control/appmonitor.service", O_RDONLY|O_NOCTTY|O_NOFOLLOW|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/run/systemd/system.control/appmonitor.service", O_RDONLY|O_NOCTTY|O_NOFOLLOW|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/run/systemd/transient/appmonitor.service", O_RDONLY|O_NOCTTY|O_NOFOLLOW|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/run/systemd/generator.early/appmonitor.service", O_RDONLY|O_NOCTTY|O_NOFOLLOW|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/etc/systemd/system/appmonitor.service", O_RDONLY|O_NOCTTY|O_NOFOLLOW|O_CLOEXEC) = 3</etc/systemd/system/appmonitor.service>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "etc", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</etc>
+40    openat(6</etc>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</etc/systemd>
+40    openat(4</etc/systemd>, "system.control", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "system.control", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "transient", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "generator.early", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "etc", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</etc>
+40    openat(6</etc>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</etc/systemd>
+40    openat(4</etc/systemd>, "system", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</etc/systemd/system>
+40    openat(6</etc/systemd/system>, "appmonitor.service.d", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "etc", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</etc>
+40    openat(6</etc>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</etc/systemd>
+40    openat(4</etc/systemd>, "system.attached", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "system", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "system.attached", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "generator", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "usr", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</usr>
+40    openat(6</usr>, "local", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</usr/local>
+40    openat(4</usr/local>, "lib", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</usr/local/lib>
+40    openat(6</usr/local/lib>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "usr", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</usr>
+40    openat(6</usr>, "lib", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</usr/lib>
+40    openat(4</usr/lib>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</usr/lib/systemd>
+40    openat(6</usr/lib/systemd>, "system", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</usr/lib/systemd/system>
+40    openat(4</usr/lib/systemd/system>, "appmonitor.service.d", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "generator.late", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/etc/systemd/system/multi-user.target.wants", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+40    symlinkat("/etc/systemd/system/appmonitor.service", AT_FDCWD</app>, "/etc/systemd/system/multi-user.target.wants/appmonitor.service") = 0
+40    newfstatat(AT_FDCWD</app>, "/etc/systemd/system.control/multi-user.target", 0xffffe2114d10, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/run/systemd/system.control/multi-user.target", 0xffffe2114d10, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/run/systemd/transient/multi-user.target", 0xffffe2114d10, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/run/systemd/generator.early/multi-user.target", 0xffffe2114d10, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/etc/systemd/system/multi-user.target", 0xffffe2114d10, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/etc/systemd/system.attached/multi-user.target", 0xffffe2114d10, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/run/systemd/system/multi-user.target", 0xffffe2114d10, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/run/systemd/system.attached/multi-user.target", 0xffffe2114d10, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/run/systemd/generator/multi-user.target", 0xffffe2114d10, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/usr/local/lib/systemd/system/multi-user.target", 0xffffe2114d10, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/usr/lib/systemd/system/multi-user.target", {st_mode=S_IFREG|0644, st_size=540, ...}, AT_SYMLINK_NOFOLLOW) = 0
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "etc", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</etc>
+40    openat(6</etc>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</etc/systemd>
+40    openat(4</etc/systemd>, "system.control", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "system.control", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "transient", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "generator.early", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "etc", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</etc>
+40    openat(6</etc>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</etc/systemd>
+40    openat(4</etc/systemd>, "system", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</etc/systemd/system>
+40    openat(6</etc/systemd/system>, "multi-user.target.d", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "etc", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</etc>
+40    openat(6</etc>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</etc/systemd>
+40    openat(4</etc/systemd>, "system.attached", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "system", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "system.attached", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "generator", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "usr", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</usr>
+40    openat(6</usr>, "local", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</usr/local>
+40    openat(4</usr/local>, "lib", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</usr/local/lib>
+40    openat(6</usr/local/lib>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "usr", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</usr>
+40    openat(6</usr>, "lib", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</usr/lib>
+40    openat(4</usr/lib>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</usr/lib/systemd>
+40    openat(6</usr/lib/systemd>, "system", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</usr/lib/systemd/system>
+40    openat(4</usr/lib/systemd/system>, "multi-user.target.d", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 3</>
+40    statx(3</>, ".", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    statx(3</>, "..", AT_STATX_SYNC_AS_STAT, STATX_TYPE|STATX_INO|STATX_MNT_ID, {stx_mask=STATX_TYPE|STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_ATIME|STATX_INO|STATX_SIZE|STATX_BLOCKS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+40    openat(3</>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4</>
+40    openat(AT_FDCWD</app>, "/", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 5</>
+40    openat(4</>, "run", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 6</run>
+40    openat(6</run>, "systemd", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4</run/systemd>
+40    openat(4</run/systemd>, "generator.late", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
+40    exit_group(0)                     = ?
+29    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 40
+29    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=40, si_uid=0, si_status=0, si_utime=0, si_stime=2 /* 0.02 s */} ---
+29    wait4(-1, 0xfffffb6787b0, WNOHANG, NULL) = -1 ECHILD (No child process)
+29    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff93f3d0f0) = 41
+29    wait4(-1,  <unfinished ...>
+41    execve("/usr/bin/systemctl", ["systemctl", "start", "appmonitor"], 0xaaaae39884c0 /* 6 vars */) = 0
+41    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libcap.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+41    newfstatat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+41    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libcap.so.2", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libcap.so.2.66>
+41    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/liblz4.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/liblz4.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/liblz4.so.1.9.4>
+41    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libselinux.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+41    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/liblzma.so.5", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/liblzma.so.5", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/liblzma.so.5.4.5>
+41    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libzstd.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libzstd.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libzstd.so.1.5.5>
+41    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libm.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libm.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libm.so.6>
+41    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libblkid.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libblkid.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libblkid.so.1.1.0>
+41    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libgcrypt.so.20", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libgcrypt.so.20", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libgcrypt.so.20.4.3>
+41    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libmount.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libmount.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libmount.so.1.1.0>
+41    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libcrypto.so.3", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libcrypto.so.3", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libcrypto.so.3>
+41    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/systemd/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libgpg-error.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libgpg-error.so.0.34.0>
+41    statfs("/sys/fs/selinux", 0xfffff772b1a0) = -1 ENOENT (No such file or directory)
+41    statfs("/selinux", 0xfffff772b1a0) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+41    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/proc/", O_RDONLY|O_NOCTTY|O_CLOEXEC|O_PATH) = 3</proc>
+41    newfstatat(AT_FDCWD</app>, "/proc/1/root", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+41    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+41    faccessat2(AT_FDCWD</app>, "/run/systemd/system/", F_OK, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+41    newfstatat(AT_FDCWD</app>, "/dev/null", {st_mode=S_IFCHR|0666, st_rdev=makedev(0x1, 0x3), ...}, 0) = 0
+41    exit_group(1)                     = ?
+29    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 41
+29    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=41, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+29    wait4(-1, 0xfffffb6787b0, WNOHANG, NULL) = -1 ECHILD (No child process)
+29    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff93f3d0f0) = 42
+29    newfstatat(AT_FDCWD</app>, ".",  <unfinished ...>
+42    openat(AT_FDCWD</app>, "/dev/null", O_RDONLY <unfinished ...>
+29    <... newfstatat resumed>{st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+42    <... openat resumed>)             = 3</dev/null>
+29    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/sleep", 0xfffffb6798d8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/local/bin/sleep", 0xfffffb6798d8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/sbin/sleep", 0xfffffb6798d8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/sleep", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/sleep",  <unfinished ...>
+42    execve("/opt/appmonitor/appmonitor", ["/opt/appmonitor/appmonitor"], 0xaaaae39897c0 /* 9 vars */ <unfinished ...>
+29    <... newfstatat resumed>{st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+42    <... execve resumed>)             = 0
+29    faccessat(AT_FDCWD</app>, "/usr/bin/sleep", X_OK) = 0
+42    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK <unfinished ...>
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/sleep",  <unfinished ...>
+42    <... faccessat resumed>)          = -1 ENOENT (No such file or directory)
+29    <... newfstatat resumed>{st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+42    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+42    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC <unfinished ...>
+29    faccessat(AT_FDCWD</app>, "/usr/bin/sleep", R_OK <unfinished ...>
+42    <... openat resumed>)             = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+29    <... faccessat resumed>)          = 0
+29    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff93f3d0f0) = 43
+42    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+29    wait4(-1,  <unfinished ...>
+43    execve("/usr/bin/sleep", ["sleep", "2"], 0xaaaae39897c0 /* 9 vars */) = 0
+43    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+43    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+43    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+42    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+42    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+42    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+42    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+42    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+42    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=526, ...}, 0) = 0
+42    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+42    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+42    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+42    openat(AT_FDCWD</app>, "/opt/appmonitor/appmonitor", O_RDONLY) = 3</opt/appmonitor/appmonitor>
+42    newfstatat(AT_FDCWD</app>, "/opt/appmonitor/appmonitor", {st_mode=S_IFREG|0755, st_size=664, ...}, 0) = 0
+42    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffaccd00f0) = 44
+44    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+44    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/date", 0xffffc4ef0648, 0) = -1 ENOENT (No such file or directory)
+44    newfstatat(AT_FDCWD</app>, "/usr/local/bin/date", 0xffffc4ef0648, 0) = -1 ENOENT (No such file or directory)
+44    newfstatat(AT_FDCWD</app>, "/usr/sbin/date", 0xffffc4ef0648, 0) = -1 ENOENT (No such file or directory)
+44    newfstatat(AT_FDCWD</app>, "/usr/bin/date", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+44    newfstatat(AT_FDCWD</app>, "/usr/bin/date", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+44    faccessat(AT_FDCWD</app>, "/usr/bin/date", X_OK) = 0
+44    newfstatat(AT_FDCWD</app>, "/usr/bin/date", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+44    faccessat(AT_FDCWD</app>, "/usr/bin/date", R_OK) = 0
+44    execve("/usr/bin/date", ["date"], 0xaaaafa944fa0 /* 9 vars */) = 0
+44    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+44    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+44    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+44    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+44    exit_group(0)                     = ?
+42    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 44
+42    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=44, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+42    wait4(-1, 0xffffc4eef7c0, WNOHANG, NULL) = -1 ECHILD (No child process)
+42    openat(AT_FDCWD</app>, "/var/log/appmonitor/status.log", O_WRONLY|O_CREAT|O_APPEND, 0666) = 3</var/log/appmonitor/status.log>
+42    openat(AT_FDCWD</app>, "/var/log/appmonitor/status.log", O_WRONLY|O_CREAT|O_APPEND, 0666) = 3</var/log/appmonitor/status.log>
+42    openat(AT_FDCWD</app>, "/var/log/appmonitor/status.log", O_WRONLY|O_CREAT|O_APPEND, 0666) = 3</var/log/appmonitor/status.log>
+42    openat(AT_FDCWD</app>, "/var/log/appmonitor/status.log", O_WRONLY|O_CREAT|O_APPEND, 0666) = 3</var/log/appmonitor/status.log>
+42    openat(AT_FDCWD</app>, "/var/log/appmonitor/status.log", O_WRONLY|O_CREAT|O_APPEND, 0666) = 3</var/log/appmonitor/status.log>
+42    openat(AT_FDCWD</app>, "/var/log/appmonitor/status.log", O_WRONLY|O_CREAT|O_APPEND, 0666) = 3</var/log/appmonitor/status.log>
+42    openat(AT_FDCWD</app>, "/var/log/appmonitor/status.log", O_WRONLY|O_CREAT|O_APPEND, 0666) = 3</var/log/appmonitor/status.log>
+42    openat(AT_FDCWD</app>, "/var/run/appmonitor.pid", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</run/appmonitor.pid>
+42    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+42    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/sleep", 0xffffc4ef0dc8, 0) = -1 ENOENT (No such file or directory)
+42    newfstatat(AT_FDCWD</app>, "/usr/local/bin/sleep", 0xffffc4ef0dc8, 0) = -1 ENOENT (No such file or directory)
+42    newfstatat(AT_FDCWD</app>, "/usr/sbin/sleep", 0xffffc4ef0dc8, 0) = -1 ENOENT (No such file or directory)
+42    newfstatat(AT_FDCWD</app>, "/usr/bin/sleep", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+42    newfstatat(AT_FDCWD</app>, "/usr/bin/sleep", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+42    faccessat(AT_FDCWD</app>, "/usr/bin/sleep", X_OK) = 0
+42    newfstatat(AT_FDCWD</app>, "/usr/bin/sleep", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+42    faccessat(AT_FDCWD</app>, "/usr/bin/sleep", R_OK) = 0
+42    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffaccd00f0) = 45
+42    wait4(-1,  <unfinished ...>
+45    execve("/usr/bin/sleep", ["sleep", "60"], 0xaaaafa944fa0 /* 9 vars */) = 0
+45    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+45    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+45    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+43    exit_group(0)                     = ?
+29    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 43
+29    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=43, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+29    wait4(-1, 0xfffffb6787b0, WNOHANG, NULL) = 0
+29    exit_group(0)                     = ?
+28    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=29, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+28    wait4(29, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 29
+28    exit_group(0)                     = ?
+27    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WSTOPPED, NULL) = 28
+27    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=28, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+27    exit_group(0)                     = ?
+42    <... wait4 resumed> <unfinished ...>) = ?
+45    +++ killed by SIGKILL +++
+42    +++ killed by SIGKILL +++

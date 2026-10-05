@@ -1,0 +1,831 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.1, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+plugins: anyio-4.12.0
+collected 38 items
+
+../tests/test_outputs.py FFF.F.FF..FF.....F.FF......FFF..F.F.F.          [100%]
+
+=================================== FAILURES ===================================
+________________________ test_move_is_legal_and_correct ________________________
+
+    def test_move_is_legal_and_correct():
+        """Test that the move in best_move.txt is legal and is the optimal move."""
+        assert os.path.exists('/app/best_move.txt'), "best_move.txt must exist"
+    
+        with open('/app/best_move.txt', 'r') as f:
+            move_san = f.read().strip()
+    
+        with open('/app/position.pgn', 'r') as f:
+            game = chess.pgn.read_game(f)
+    
+        board = game.board()
+    
+        try:
+>           move = board.parse_san(move_san)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:25: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Board('6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1'), san = ''
+
+    def parse_san(self, san: str) -> Move:
+        """
+        Uses the current position as the context to parse a move in standard
+        algebraic notation and returns the corresponding move object.
+    
+        Ambiguous moves are rejected. Overspecified moves (including long
+        algebraic notation) are accepted. Some common syntactical deviations
+        are also accepted.
+    
+        The returned move is guaranteed to be either legal or a null move.
+    
+        :raises:
+            :exc:`ValueError` (specifically an exception specified below) if the SAN is invalid, illegal or ambiguous.
+    
+            - :exc:`InvalidMoveError` if the SAN is syntactically invalid.
+            - :exc:`IllegalMoveError` if the SAN is illegal.
+            - :exc:`AmbiguousMoveError` if the SAN is ambiguous.
+        """
+        # Castling.
+        try:
+            if san in ["O-O", "O-O+", "O-O#", "0-0", "0-0+", "0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_kingside_castling(move))
+            elif san in ["O-O-O", "O-O-O+", "O-O-O#", "0-0-0", "0-0-0+", "0-0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_queenside_castling(move))
+        except StopIteration:
+            raise IllegalMoveError(f"illegal san: {san!r} in {self.fen()}")
+    
+        # Match normal moves.
+        match = SAN_REGEX.match(san)
+        if not match:
+            # Null moves.
+            if san in ["--", "Z0", "0000", "@@@@"]:
+                return Move.null()
+            elif "," in san:
+                raise InvalidMoveError(f"unsupported multi-leg move: {san!r}")
+            else:
+>               raise InvalidMoveError(f"invalid san: {san!r}")
+E               chess.InvalidMoveError: invalid san: ''
+
+/usr/local/lib/python3.13/site-packages/chess/__init__.py:3157: InvalidMoveError
+
+During handling of the above exception, another exception occurred:
+
+    def test_move_is_legal_and_correct():
+        """Test that the move in best_move.txt is legal and is the optimal move."""
+        assert os.path.exists('/app/best_move.txt'), "best_move.txt must exist"
+    
+        with open('/app/best_move.txt', 'r') as f:
+            move_san = f.read().strip()
+    
+        with open('/app/position.pgn', 'r') as f:
+            game = chess.pgn.read_game(f)
+    
+        board = game.board()
+    
+        try:
+            move = board.parse_san(move_san)
+        except:
+>           assert False, f"Move '{move_san}' is not valid SAN or not legal in this position"
+E           AssertionError: Move '' is not valid SAN or not legal in this position
+E           assert False
+
+/tests/test_outputs.py:27: AssertionError
+_________________________ test_move_leads_to_checkmate _________________________
+
+    def test_move_leads_to_checkmate():
+        """Test that the move is immediate checkmate (mate in 1)."""
+        with open('/app/best_move.txt', 'r') as f:
+            move_san = f.read().strip()
+    
+        with open('/app/position.pgn', 'r') as f:
+            game = chess.pgn.read_game(f)
+    
+        board = game.board()
+>       move = board.parse_san(move_san)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:43: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Board('6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1'), san = ''
+
+    def parse_san(self, san: str) -> Move:
+        """
+        Uses the current position as the context to parse a move in standard
+        algebraic notation and returns the corresponding move object.
+    
+        Ambiguous moves are rejected. Overspecified moves (including long
+        algebraic notation) are accepted. Some common syntactical deviations
+        are also accepted.
+    
+        The returned move is guaranteed to be either legal or a null move.
+    
+        :raises:
+            :exc:`ValueError` (specifically an exception specified below) if the SAN is invalid, illegal or ambiguous.
+    
+            - :exc:`InvalidMoveError` if the SAN is syntactically invalid.
+            - :exc:`IllegalMoveError` if the SAN is illegal.
+            - :exc:`AmbiguousMoveError` if the SAN is ambiguous.
+        """
+        # Castling.
+        try:
+            if san in ["O-O", "O-O+", "O-O#", "0-0", "0-0+", "0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_kingside_castling(move))
+            elif san in ["O-O-O", "O-O-O+", "O-O-O#", "0-0-0", "0-0-0+", "0-0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_queenside_castling(move))
+        except StopIteration:
+            raise IllegalMoveError(f"illegal san: {san!r} in {self.fen()}")
+    
+        # Match normal moves.
+        match = SAN_REGEX.match(san)
+        if not match:
+            # Null moves.
+            if san in ["--", "Z0", "0000", "@@@@"]:
+                return Move.null()
+            elif "," in san:
+                raise InvalidMoveError(f"unsupported multi-leg move: {san!r}")
+            else:
+>               raise InvalidMoveError(f"invalid san: {san!r}")
+E               chess.InvalidMoveError: invalid san: ''
+
+/usr/local/lib/python3.13/site-packages/chess/__init__.py:3157: InvalidMoveError
+____________________ test_output_format_no_extra_whitespace ____________________
+
+    def test_output_format_no_extra_whitespace():
+        """Test that output contains no leading/trailing whitespace or newlines."""
+        with open('/app/best_move.txt', 'r') as f:
+            content = f.read()
+        assert content == content.lstrip(), "Output should not have leading whitespace"
+        stripped = content.rstrip()
+>       assert len(stripped.split()) == 1, "Output should be a single move token"
+E       AssertionError: Output should be a single move token
+E       assert 0 == 1
+E        +  where 0 = len([])
+E        +    where [] = <built-in method split of str object at 0x7fffff71a2c8>()
+E        +      where <built-in method split of str object at 0x7fffff71a2c8> = ''.split
+
+/tests/test_outputs.py:63: AssertionError
+_________________ test_check_symbol_present_when_giving_check __________________
+
+    def test_check_symbol_present_when_giving_check():
+        """Test that '+' symbol is present when the move gives check."""
+        with open('/app/best_move.txt', 'r') as f:
+            move_san = f.read().strip()
+        with open('/app/position.pgn', 'r') as f:
+            game = chess.pgn.read_game(f)
+        board = game.board()
+>       move = board.parse_san(move_san)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Board('6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1'), san = ''
+
+    def parse_san(self, san: str) -> Move:
+        """
+        Uses the current position as the context to parse a move in standard
+        algebraic notation and returns the corresponding move object.
+    
+        Ambiguous moves are rejected. Overspecified moves (including long
+        algebraic notation) are accepted. Some common syntactical deviations
+        are also accepted.
+    
+        The returned move is guaranteed to be either legal or a null move.
+    
+        :raises:
+            :exc:`ValueError` (specifically an exception specified below) if the SAN is invalid, illegal or ambiguous.
+    
+            - :exc:`InvalidMoveError` if the SAN is syntactically invalid.
+            - :exc:`IllegalMoveError` if the SAN is illegal.
+            - :exc:`AmbiguousMoveError` if the SAN is ambiguous.
+        """
+        # Castling.
+        try:
+            if san in ["O-O", "O-O+", "O-O#", "0-0", "0-0+", "0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_kingside_castling(move))
+            elif san in ["O-O-O", "O-O-O+", "O-O-O#", "0-0-0", "0-0-0+", "0-0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_queenside_castling(move))
+        except StopIteration:
+            raise IllegalMoveError(f"illegal san: {san!r} in {self.fen()}")
+    
+        # Match normal moves.
+        match = SAN_REGEX.match(san)
+        if not match:
+            # Null moves.
+            if san in ["--", "Z0", "0000", "@@@@"]:
+                return Move.null()
+            elif "," in san:
+                raise InvalidMoveError(f"unsupported multi-leg move: {san!r}")
+            else:
+>               raise InvalidMoveError(f"invalid san: {san!r}")
+E               chess.InvalidMoveError: invalid san: ''
+
+/usr/local/lib/python3.13/site-packages/chess/__init__.py:3157: InvalidMoveError
+______________________ test_output_exact_format_re8_mate _______________________
+
+    def test_output_exact_format_re8_mate():
+        """Test that output is exactly 'Re8#' (checkmate, not just check)."""
+        with open('/app/best_move.txt', 'r') as f:
+            move_san = f.read().strip()
+        # Must be exactly Re8# - checkmate symbol because black king is trapped
+        # No lowercase 're8#', no 'R-e8#', no 'Re8 #', etc.
+>       assert move_san == "Re8#", f"Output must be exactly 'Re8#', got '{move_san}'"
+E       AssertionError: Output must be exactly 'Re8#', got ''
+E       assert '' == 'Re8#'
+E         
+E         - Re8#
+
+/tests/test_outputs.py:104: AssertionError
+_____________________________ test_move_is_forcing _____________________________
+
+    def test_move_is_forcing():
+        """Test that the best move is a forcing move (check or capture when available)."""
+        with open('/app/best_move.txt', 'r') as f:
+            move_san = f.read().strip()
+        with open('/app/position.pgn', 'r') as f:
+            game = chess.pgn.read_game(f)
+        board = game.board()
+>       move = board.parse_san(move_san)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:118: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Board('6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1'), san = ''
+
+    def parse_san(self, san: str) -> Move:
+        """
+        Uses the current position as the context to parse a move in standard
+        algebraic notation and returns the corresponding move object.
+    
+        Ambiguous moves are rejected. Overspecified moves (including long
+        algebraic notation) are accepted. Some common syntactical deviations
+        are also accepted.
+    
+        The returned move is guaranteed to be either legal or a null move.
+    
+        :raises:
+            :exc:`ValueError` (specifically an exception specified below) if the SAN is invalid, illegal or ambiguous.
+    
+            - :exc:`InvalidMoveError` if the SAN is syntactically invalid.
+            - :exc:`IllegalMoveError` if the SAN is illegal.
+            - :exc:`AmbiguousMoveError` if the SAN is ambiguous.
+        """
+        # Castling.
+        try:
+            if san in ["O-O", "O-O+", "O-O#", "0-0", "0-0+", "0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_kingside_castling(move))
+            elif san in ["O-O-O", "O-O-O+", "O-O-O#", "0-0-0", "0-0-0+", "0-0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_queenside_castling(move))
+        except StopIteration:
+            raise IllegalMoveError(f"illegal san: {san!r} in {self.fen()}")
+    
+        # Match normal moves.
+        match = SAN_REGEX.match(san)
+        if not match:
+            # Null moves.
+            if san in ["--", "Z0", "0000", "@@@@"]:
+                return Move.null()
+            elif "," in san:
+                raise InvalidMoveError(f"unsupported multi-leg move: {san!r}")
+            else:
+>               raise InvalidMoveError(f"invalid san: {san!r}")
+E               chess.InvalidMoveError: invalid san: ''
+
+/usr/local/lib/python3.13/site-packages/chess/__init__.py:3157: InvalidMoveError
+______________________ test_rook_from_e1_not_other_square ______________________
+
+    def test_rook_from_e1_not_other_square():
+        """Test that the rook moves from e1 specifically."""
+        with open('/app/best_move.txt', 'r') as f:
+            move_san = f.read().strip()
+        with open('/app/position.pgn', 'r') as f:
+            game = chess.pgn.read_game(f)
+        board = game.board()
+>       move = board.parse_san(move_san)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:171: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Board('6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1'), san = ''
+
+    def parse_san(self, san: str) -> Move:
+        """
+        Uses the current position as the context to parse a move in standard
+        algebraic notation and returns the corresponding move object.
+    
+        Ambiguous moves are rejected. Overspecified moves (including long
+        algebraic notation) are accepted. Some common syntactical deviations
+        are also accepted.
+    
+        The returned move is guaranteed to be either legal or a null move.
+    
+        :raises:
+            :exc:`ValueError` (specifically an exception specified below) if the SAN is invalid, illegal or ambiguous.
+    
+            - :exc:`InvalidMoveError` if the SAN is syntactically invalid.
+            - :exc:`IllegalMoveError` if the SAN is illegal.
+            - :exc:`AmbiguousMoveError` if the SAN is ambiguous.
+        """
+        # Castling.
+        try:
+            if san in ["O-O", "O-O+", "O-O#", "0-0", "0-0+", "0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_kingside_castling(move))
+            elif san in ["O-O-O", "O-O-O+", "O-O-O#", "0-0-0", "0-0-0+", "0-0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_queenside_castling(move))
+        except StopIteration:
+            raise IllegalMoveError(f"illegal san: {san!r} in {self.fen()}")
+    
+        # Match normal moves.
+        match = SAN_REGEX.match(san)
+        if not match:
+            # Null moves.
+            if san in ["--", "Z0", "0000", "@@@@"]:
+                return Move.null()
+            elif "," in san:
+                raise InvalidMoveError(f"unsupported multi-leg move: {san!r}")
+            else:
+>               raise InvalidMoveError(f"invalid san: {san!r}")
+E               chess.InvalidMoveError: invalid san: ''
+
+/usr/local/lib/python3.13/site-packages/chess/__init__.py:3157: InvalidMoveError
+____________________ test_rook_moves_to_e8_not_other_square ____________________
+
+    def test_rook_moves_to_e8_not_other_square():
+        """Test that the rook moves to e8 specifically."""
+        with open('/app/best_move.txt', 'r') as f:
+            move_san = f.read().strip()
+        with open('/app/position.pgn', 'r') as f:
+            game = chess.pgn.read_game(f)
+        board = game.board()
+>       move = board.parse_san(move_san)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:182: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Board('6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1'), san = ''
+
+    def parse_san(self, san: str) -> Move:
+        """
+        Uses the current position as the context to parse a move in standard
+        algebraic notation and returns the corresponding move object.
+    
+        Ambiguous moves are rejected. Overspecified moves (including long
+        algebraic notation) are accepted. Some common syntactical deviations
+        are also accepted.
+    
+        The returned move is guaranteed to be either legal or a null move.
+    
+        :raises:
+            :exc:`ValueError` (specifically an exception specified below) if the SAN is invalid, illegal or ambiguous.
+    
+            - :exc:`InvalidMoveError` if the SAN is syntactically invalid.
+            - :exc:`IllegalMoveError` if the SAN is illegal.
+            - :exc:`AmbiguousMoveError` if the SAN is ambiguous.
+        """
+        # Castling.
+        try:
+            if san in ["O-O", "O-O+", "O-O#", "0-0", "0-0+", "0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_kingside_castling(move))
+            elif san in ["O-O-O", "O-O-O+", "O-O-O#", "0-0-0", "0-0-0+", "0-0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_queenside_castling(move))
+        except StopIteration:
+            raise IllegalMoveError(f"illegal san: {san!r} in {self.fen()}")
+    
+        # Match normal moves.
+        match = SAN_REGEX.match(san)
+        if not match:
+            # Null moves.
+            if san in ["--", "Z0", "0000", "@@@@"]:
+                return Move.null()
+            elif "," in san:
+                raise InvalidMoveError(f"unsupported multi-leg move: {san!r}")
+            else:
+>               raise InvalidMoveError(f"invalid san: {san!r}")
+E               chess.InvalidMoveError: invalid san: ''
+
+/usr/local/lib/python3.13/site-packages/chess/__init__.py:3157: InvalidMoveError
+___________________________ test_mate_sequence_depth ___________________________
+
+    def test_mate_sequence_depth():
+        """Test that the solution finds mate within acceptable depth."""
+        with open('/app/best_move.txt', 'r') as f:
+            move_san = f.read().strip()
+        with open('/app/position.pgn', 'r') as f:
+            game = chess.pgn.read_game(f)
+        board = game.board()
+>       move = board.parse_san(move_san)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:275: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Board('6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1'), san = ''
+
+    def parse_san(self, san: str) -> Move:
+        """
+        Uses the current position as the context to parse a move in standard
+        algebraic notation and returns the corresponding move object.
+    
+        Ambiguous moves are rejected. Overspecified moves (including long
+        algebraic notation) are accepted. Some common syntactical deviations
+        are also accepted.
+    
+        The returned move is guaranteed to be either legal or a null move.
+    
+        :raises:
+            :exc:`ValueError` (specifically an exception specified below) if the SAN is invalid, illegal or ambiguous.
+    
+            - :exc:`InvalidMoveError` if the SAN is syntactically invalid.
+            - :exc:`IllegalMoveError` if the SAN is illegal.
+            - :exc:`AmbiguousMoveError` if the SAN is ambiguous.
+        """
+        # Castling.
+        try:
+            if san in ["O-O", "O-O+", "O-O#", "0-0", "0-0+", "0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_kingside_castling(move))
+            elif san in ["O-O-O", "O-O-O+", "O-O-O#", "0-0-0", "0-0-0+", "0-0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_queenside_castling(move))
+        except StopIteration:
+            raise IllegalMoveError(f"illegal san: {san!r} in {self.fen()}")
+    
+        # Match normal moves.
+        match = SAN_REGEX.match(san)
+        if not match:
+            # Null moves.
+            if san in ["--", "Z0", "0000", "@@@@"]:
+                return Move.null()
+            elif "," in san:
+                raise InvalidMoveError(f"unsupported multi-leg move: {san!r}")
+            else:
+>               raise InvalidMoveError(f"invalid san: {san!r}")
+E               chess.InvalidMoveError: invalid san: ''
+
+/usr/local/lib/python3.13/site-packages/chess/__init__.py:3157: InvalidMoveError
+_________________________ test_legal_move_verification _________________________
+
+    def test_legal_move_verification():
+        """Verify the output move is legal in the position."""
+        with open('/app/best_move.txt', 'r') as f:
+            move_san = f.read().strip()
+        with open('/app/position.pgn', 'r') as f:
+            game = chess.pgn.read_game(f)
+        board = game.board()
+        try:
+>           output_move = board.parse_san(move_san)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:311: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Board('6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1'), san = ''
+
+    def parse_san(self, san: str) -> Move:
+        """
+        Uses the current position as the context to parse a move in standard
+        algebraic notation and returns the corresponding move object.
+    
+        Ambiguous moves are rejected. Overspecified moves (including long
+        algebraic notation) are accepted. Some common syntactical deviations
+        are also accepted.
+    
+        The returned move is guaranteed to be either legal or a null move.
+    
+        :raises:
+            :exc:`ValueError` (specifically an exception specified below) if the SAN is invalid, illegal or ambiguous.
+    
+            - :exc:`InvalidMoveError` if the SAN is syntactically invalid.
+            - :exc:`IllegalMoveError` if the SAN is illegal.
+            - :exc:`AmbiguousMoveError` if the SAN is ambiguous.
+        """
+        # Castling.
+        try:
+            if san in ["O-O", "O-O+", "O-O#", "0-0", "0-0+", "0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_kingside_castling(move))
+            elif san in ["O-O-O", "O-O-O+", "O-O-O#", "0-0-0", "0-0-0+", "0-0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_queenside_castling(move))
+        except StopIteration:
+            raise IllegalMoveError(f"illegal san: {san!r} in {self.fen()}")
+    
+        # Match normal moves.
+        match = SAN_REGEX.match(san)
+        if not match:
+            # Null moves.
+            if san in ["--", "Z0", "0000", "@@@@"]:
+                return Move.null()
+            elif "," in san:
+                raise InvalidMoveError(f"unsupported multi-leg move: {san!r}")
+            else:
+>               raise InvalidMoveError(f"invalid san: {san!r}")
+E               chess.InvalidMoveError: invalid san: ''
+
+/usr/local/lib/python3.13/site-packages/chess/__init__.py:3157: InvalidMoveError
+
+During handling of the above exception, another exception occurred:
+
+    def test_legal_move_verification():
+        """Verify the output move is legal in the position."""
+        with open('/app/best_move.txt', 'r') as f:
+            move_san = f.read().strip()
+        with open('/app/position.pgn', 'r') as f:
+            game = chess.pgn.read_game(f)
+        board = game.board()
+        try:
+            output_move = board.parse_san(move_san)
+            assert output_move in board.legal_moves, f"Move '{move_san}' should be in legal moves"
+        except ValueError:
+>           assert False, f"Move '{move_san}' is not valid in this position"
+E           AssertionError: Move '' is not valid in this position
+E           assert False
+
+/tests/test_outputs.py:314: AssertionError
+________________________ test_no_stalemate_when_winning ________________________
+
+    def test_no_stalemate_when_winning():
+        """Test that the solution doesn't stalemate when winning."""
+        with open('/app/best_move.txt', 'r') as f:
+            move_san = f.read().strip()
+        with open('/app/position.pgn', 'r') as f:
+            game = chess.pgn.read_game(f)
+        board = game.board()
+>       move = board.parse_san(move_san)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:324: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Board('6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1'), san = ''
+
+    def parse_san(self, san: str) -> Move:
+        """
+        Uses the current position as the context to parse a move in standard
+        algebraic notation and returns the corresponding move object.
+    
+        Ambiguous moves are rejected. Overspecified moves (including long
+        algebraic notation) are accepted. Some common syntactical deviations
+        are also accepted.
+    
+        The returned move is guaranteed to be either legal or a null move.
+    
+        :raises:
+            :exc:`ValueError` (specifically an exception specified below) if the SAN is invalid, illegal or ambiguous.
+    
+            - :exc:`InvalidMoveError` if the SAN is syntactically invalid.
+            - :exc:`IllegalMoveError` if the SAN is illegal.
+            - :exc:`AmbiguousMoveError` if the SAN is ambiguous.
+        """
+        # Castling.
+        try:
+            if san in ["O-O", "O-O+", "O-O#", "0-0", "0-0+", "0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_kingside_castling(move))
+            elif san in ["O-O-O", "O-O-O+", "O-O-O#", "0-0-0", "0-0-0+", "0-0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_queenside_castling(move))
+        except StopIteration:
+            raise IllegalMoveError(f"illegal san: {san!r} in {self.fen()}")
+    
+        # Match normal moves.
+        match = SAN_REGEX.match(san)
+        if not match:
+            # Null moves.
+            if san in ["--", "Z0", "0000", "@@@@"]:
+                return Move.null()
+            elif "," in san:
+                raise InvalidMoveError(f"unsupported multi-leg move: {san!r}")
+            else:
+>               raise InvalidMoveError(f"invalid san: {san!r}")
+E               chess.InvalidMoveError: invalid san: ''
+
+/usr/local/lib/python3.13/site-packages/chess/__init__.py:3157: InvalidMoveError
+__________________________ test_output_file_not_empty __________________________
+
+    def test_output_file_not_empty():
+        """Test that the output file is not empty."""
+        with open('/app/best_move.txt', 'r') as f:
+            content = f.read()
+>       assert len(content.strip()) > 0, "best_move.txt should not be empty"
+E       AssertionError: best_move.txt should not be empty
+E       assert 0 > 0
+E        +  where 0 = len('')
+E        +    where '' = <built-in method strip of str object at 0x7fffff71a2c8>()
+E        +      where <built-in method strip of str object at 0x7fffff71a2c8> = ''.strip
+
+/tests/test_outputs.py:449: AssertionError
+__________________________ test_output_is_single_move __________________________
+
+    def test_output_is_single_move():
+        """Test that output contains exactly one move."""
+        with open('/app/best_move.txt', 'r') as f:
+            content = f.read().strip()
+        tokens = content.split()
+>       assert len(tokens) == 1, f"Output should be a single move, got: {tokens}"
+E       AssertionError: Output should be a single move, got: []
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+/tests/test_outputs.py:457: AssertionError
+_________________________ test_rook_activity_principle _________________________
+
+    def test_rook_activity_principle():
+        """Test that the rook move follows the principle of rook activity."""
+        with open('/app/best_move.txt', 'r') as f:
+            move_san = f.read().strip()
+        with open('/app/position.pgn', 'r') as f:
+            game = chess.pgn.read_game(f)
+        board = game.board()
+>       move = board.parse_san(move_san)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:467: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Board('6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1'), san = ''
+
+    def parse_san(self, san: str) -> Move:
+        """
+        Uses the current position as the context to parse a move in standard
+        algebraic notation and returns the corresponding move object.
+    
+        Ambiguous moves are rejected. Overspecified moves (including long
+        algebraic notation) are accepted. Some common syntactical deviations
+        are also accepted.
+    
+        The returned move is guaranteed to be either legal or a null move.
+    
+        :raises:
+            :exc:`ValueError` (specifically an exception specified below) if the SAN is invalid, illegal or ambiguous.
+    
+            - :exc:`InvalidMoveError` if the SAN is syntactically invalid.
+            - :exc:`IllegalMoveError` if the SAN is illegal.
+            - :exc:`AmbiguousMoveError` if the SAN is ambiguous.
+        """
+        # Castling.
+        try:
+            if san in ["O-O", "O-O+", "O-O#", "0-0", "0-0+", "0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_kingside_castling(move))
+            elif san in ["O-O-O", "O-O-O+", "O-O-O#", "0-0-0", "0-0-0+", "0-0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_queenside_castling(move))
+        except StopIteration:
+            raise IllegalMoveError(f"illegal san: {san!r} in {self.fen()}")
+    
+        # Match normal moves.
+        match = SAN_REGEX.match(san)
+        if not match:
+            # Null moves.
+            if san in ["--", "Z0", "0000", "@@@@"]:
+                return Move.null()
+            elif "," in san:
+                raise InvalidMoveError(f"unsupported multi-leg move: {san!r}")
+            else:
+>               raise InvalidMoveError(f"invalid san: {san!r}")
+E               chess.InvalidMoveError: invalid san: ''
+
+/usr/local/lib/python3.13/site-packages/chess/__init__.py:3157: InvalidMoveError
+_______________________ test_move_piece_letter_uppercase _______________________
+
+    def test_move_piece_letter_uppercase():
+        """Test that piece letter in SAN is uppercase."""
+        with open('/app/best_move.txt', 'r') as f:
+            move_san = f.read().strip()
+        # Piece letters should be uppercase
+>       if move_san[0] in 'KQRBN':
+           ^^^^^^^^^^^
+E       IndexError: string index out of range
+
+/tests/test_outputs.py:497: IndexError
+_____________________________ test_not_random_move _____________________________
+
+    def test_not_random_move():
+        """Test that the move is not a random legal move but the best one (mate in 1)."""
+        with open('/app/best_move.txt', 'r') as f:
+            move_san = f.read().strip()
+        with open('/app/position.pgn', 'r') as f:
+            game = chess.pgn.read_game(f)
+        board = game.board()
+    
+        # Count total legal moves
+        total_moves = len(list(board.legal_moves))
+    
+        # The chosen move should be Re8# specifically - the only move that gives immediate mate
+        # There are many legal moves but only one delivers checkmate
+        assert total_moves > 10, "Position should have many legal moves"
+>       assert move_san == "Re8#", "Must choose the best move (Re8# - mate in 1), not random"
+E       AssertionError: Must choose the best move (Re8# - mate in 1), not random
+E       assert '' == 'Re8#'
+E         
+E         - Re8#
+
+/tests/test_outputs.py:528: AssertionError
+____________________________ test_move_not_passive _____________________________
+
+    def test_move_not_passive():
+        """Test that the chosen move is aggressive, not passive."""
+        with open('/app/best_move.txt', 'r') as f:
+            move_san = f.read().strip()
+        with open('/app/position.pgn', 'r') as f:
+            game = chess.pgn.read_game(f)
+        board = game.board()
+>       move = board.parse_san(move_san)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:556: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Board('6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1'), san = ''
+
+    def parse_san(self, san: str) -> Move:
+        """
+        Uses the current position as the context to parse a move in standard
+        algebraic notation and returns the corresponding move object.
+    
+        Ambiguous moves are rejected. Overspecified moves (including long
+        algebraic notation) are accepted. Some common syntactical deviations
+        are also accepted.
+    
+        The returned move is guaranteed to be either legal or a null move.
+    
+        :raises:
+            :exc:`ValueError` (specifically an exception specified below) if the SAN is invalid, illegal or ambiguous.
+    
+            - :exc:`InvalidMoveError` if the SAN is syntactically invalid.
+            - :exc:`IllegalMoveError` if the SAN is illegal.
+            - :exc:`AmbiguousMoveError` if the SAN is ambiguous.
+        """
+        # Castling.
+        try:
+            if san in ["O-O", "O-O+", "O-O#", "0-0", "0-0+", "0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_kingside_castling(move))
+            elif san in ["O-O-O", "O-O-O+", "O-O-O#", "0-0-0", "0-0-0+", "0-0-0#"]:
+                return next(move for move in self.generate_castling_moves() if self.is_queenside_castling(move))
+        except StopIteration:
+            raise IllegalMoveError(f"illegal san: {san!r} in {self.fen()}")
+    
+        # Match normal moves.
+        match = SAN_REGEX.match(san)
+        if not match:
+            # Null moves.
+            if san in ["--", "Z0", "0000", "@@@@"]:
+                return Move.null()
+            elif "," in san:
+                raise InvalidMoveError(f"unsupported multi-leg move: {san!r}")
+            else:
+>               raise InvalidMoveError(f"invalid san: {san!r}")
+E               chess.InvalidMoveError: invalid san: ''
+
+/usr/local/lib/python3.13/site-packages/chess/__init__.py:3157: InvalidMoveError
+=============================== warnings summary ===============================
+../usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-z48f_9xu'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:429
+  /usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 13] Permission denied: '/tests/pytest-cache-files-cofu4zbd'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_output_format_valid_san_characters
+PASSED ../tests/test_outputs.py::test_output_no_comments_or_annotations
+PASSED ../tests/test_outputs.py::test_pgn_parsing_with_fen
+PASSED ../tests/test_outputs.py::test_evaluation_considers_material
+PASSED ../tests/test_outputs.py::test_back_rank_mate_recognition
+PASSED ../tests/test_outputs.py::test_disambiguation_required
+PASSED ../tests/test_outputs.py::test_castling_option_recognition
+PASSED ../tests/test_outputs.py::test_en_passant_recognition
+PASSED ../tests/test_outputs.py::test_promotion_notation
+PASSED ../tests/test_outputs.py::test_position_fen_consistency
+PASSED ../tests/test_outputs.py::test_alternative_moves_inferior
+PASSED ../tests/test_outputs.py::test_black_king_has_no_escape_after_re8
+PASSED ../tests/test_outputs.py::test_mate_in_one_calculation
+PASSED ../tests/test_outputs.py::test_position_board_state
+PASSED ../tests/test_outputs.py::test_rook_on_8th_rank_delivers_mate
+PASSED ../tests/test_outputs.py::test_output_file_exists
+PASSED ../tests/test_outputs.py::test_output_encoding_ascii
+PASSED ../tests/test_outputs.py::test_output_no_bom
+PASSED ../tests/test_outputs.py::test_file_letter_lowercase
+PASSED ../tests/test_outputs.py::test_understands_back_rank_weakness
+PASSED ../tests/test_outputs.py::test_correct_fen_parsing
+FAILED ../tests/test_outputs.py::test_move_is_legal_and_correct - AssertionEr...
+FAILED ../tests/test_outputs.py::test_move_leads_to_checkmate - chess.Invalid...
+FAILED ../tests/test_outputs.py::test_output_format_no_extra_whitespace - Ass...
+FAILED ../tests/test_outputs.py::test_check_symbol_present_when_giving_check
+FAILED ../tests/test_outputs.py::test_output_exact_format_re8_mate - Assertio...
+FAILED ../tests/test_outputs.py::test_move_is_forcing - chess.InvalidMoveErro...
+FAILED ../tests/test_outputs.py::test_rook_from_e1_not_other_square - chess.I...
+FAILED ../tests/test_outputs.py::test_rook_moves_to_e8_not_other_square - che...
+FAILED ../tests/test_outputs.py::test_mate_sequence_depth - chess.InvalidMove...
+FAILED ../tests/test_outputs.py::test_legal_move_verification - AssertionErro...
+FAILED ../tests/test_outputs.py::test_no_stalemate_when_winning - chess.Inval...
+FAILED ../tests/test_outputs.py::test_output_file_not_empty - AssertionError:...
+FAILED ../tests/test_outputs.py::test_output_is_single_move - AssertionError:...
+FAILED ../tests/test_outputs.py::test_rook_activity_principle - chess.Invalid...
+FAILED ../tests/test_outputs.py::test_move_piece_letter_uppercase - IndexErro...
+FAILED ../tests/test_outputs.py::test_not_random_move - AssertionError: Must ...
+FAILED ../tests/test_outputs.py::test_move_not_passive - chess.InvalidMoveErr...
+================== 17 failed, 21 passed, 2 warnings in 1.35s ===================

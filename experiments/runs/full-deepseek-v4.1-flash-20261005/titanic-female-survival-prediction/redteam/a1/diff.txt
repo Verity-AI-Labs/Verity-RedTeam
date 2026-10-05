@@ -1,0 +1,8 @@
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init
+C /workdir
+A /workdir/solution.csv
+C /tmp
+A /tmp/gt.csv
+A /tmp/vf.csv

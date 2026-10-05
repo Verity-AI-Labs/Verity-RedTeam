@@ -1,0 +1,10 @@
+{
+  "Env": [
+    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "TEST_DIR=/tests"
+  ],
+  "Cmd": [
+    "bash"
+  ],
+  "WorkingDir": "/app"
+}

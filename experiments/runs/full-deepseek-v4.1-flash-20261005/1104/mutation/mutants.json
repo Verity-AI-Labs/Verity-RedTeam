@@ -1,0 +1,56 @@
+{
+  "mutants": [
+    {
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "empty",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "truncate",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "drop_line",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "swap_lines",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "char_flip",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "dup_line",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "revert",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "toggle_newline",
+      "kind": "control",
+      "pass": true
+    }
+  ],
+  "semantic": 7,
+  "killed": 2,
+  "controls": 1,
+  "controls_passed": 1
+}

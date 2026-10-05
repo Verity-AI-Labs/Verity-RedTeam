@@ -1,0 +1,14 @@
+C /tmp
+A /tmp/h.sh
+A /tmp/h2.sh
+A /tmp/imp.red
+A /tmp/t.sh
+C /app
+A /app/my_warrior.red
+C /usr
+C /usr/local
+C /usr/local/bin
+C /usr/local/bin/pmars
+A /usr/local/bin/pmars.real
+C /usr/sbin
+A /usr/sbin/docker-init

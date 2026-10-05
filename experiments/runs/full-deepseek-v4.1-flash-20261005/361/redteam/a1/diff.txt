@@ -1,0 +1,9 @@
+C /app
+C /app/setup_env.sh
+C /app/init.sh
+C /workspace
+C /workspace/config
+C /workspace/config/aliases.sh
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init

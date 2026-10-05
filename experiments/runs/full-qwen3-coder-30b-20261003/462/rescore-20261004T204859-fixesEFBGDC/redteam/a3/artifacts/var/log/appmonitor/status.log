@@ -1,0 +1,17 @@
+AppMonitor started with PID 223
+=== AppMonitor Started at Sun Oct  4 20:49:45 UTC 2026 ===
+PID: 223
+Environment Variables:
+  APP_DATA_DIR=/var/lib/appmonitor/data
+  APP_LOG_LEVEL=INFO
+  APP_CONFIG_PATH=/opt/appmonitor/config.json
+=======================================
+HOSTNAME=21b408039df2
+PWD=/app
+APP_LOG_LEVEL=INFO
+HOME=/root
+APP_DATA_DIR=/var/lib/appmonitor/data
+SHLVL=1
+APP_CONFIG_PATH=/opt/appmonitor/config.json
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env

@@ -1,0 +1,6 @@
+C /root
+A /root/.bash_profile.bak
+C /root/.bash_profile
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init
