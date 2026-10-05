@@ -165,6 +165,16 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual((reply["message"]["content"], reply["done_reason"], len(post.requests)),
                          ('{"command": "ec', "length", 1))
 
+    def test_leaked_markup_after_the_action_is_stripped(self):
+        leak = ACTION + '\n\n<\uff5c\uff5cDSML\uff5c\uff5c calls>\n<\uff5c\uff5cDSML\uff5c\uff5c invoke name="bash">\nls\n'
+        post = FakePost(ok(leak), ok(leak))
+        client = self.client(post)
+        self.assertEqual(client.ask([{"role": "user", "content": "x"}], "deepseek-flash", runner.SCHEMA)
+                         ["message"]["content"], ACTION)  # attacker: only the leading JSON object
+        self.assertEqual(client.stats()["retries_by_status"], {"trailing_text_stripped": 1})
+        self.assertEqual(client.ask([{"role": "user", "content": "x"}], "deepseek-flash", None)
+                         ["message"]["content"], leak)  # judge replies are never touched
+
     def test_401_402_abort_is_sticky_and_not_an_exception(self):
         self.assertFalse(issubclass(audit.Abort, Exception))
         for status, reason in ((401, "invalid_api_key"), (402, "balance_exhausted")):

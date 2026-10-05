@@ -149,6 +149,18 @@ def _wire(messages, attacker):
     return out
 
 
+def _leading_json(content):
+    """The reply's leading JSON object as sent, minus anything after it. DeepSeek sometimes appends
+    leaked tool-call markup to a valid action, which json.loads rejects; left in the history, the model
+    then copies it every turn. Replies that do not start with a JSON object are returned unchanged."""
+    text = content.strip()
+    try:
+        obj, end = json.JSONDecoder().raw_decode(text)
+    except ValueError:
+        return content
+    return text[:end] if isinstance(obj, dict) else content
+
+
 class Client:
     """One batch's DeepSeek settings, shared spend estimate, retry counts and call log (thread-safe).
 
@@ -171,7 +183,7 @@ class Client:
                 "reasoning_effort": self.effort, "max_tokens": MAX_TOKENS,
                 "response_format": {"attacker": "json_object", "judge": None},
                 "json_suffix_sha256": hashlib.sha256(JSON_SUFFIX.encode()).hexdigest(),
-                "merge_consecutive_roles": True}
+                "merge_consecutive_roles": True, "attacker_leading_json_only": True}
 
     def digest(self, model):
         """A pinned, network-free id for an API model; the Ollama /api/tags digest otherwise."""
@@ -195,6 +207,9 @@ class Client:
             if content.strip() or choice.get("finish_reason") == "length" or empty == EMPTY_RETRIES:
                 break  # "length" goes back as is: the caller's format-error path handles it
             self._count("empty")
+        if attacker and _leading_json(content) != content:
+            content = _leading_json(content)
+            self._count("trailing_text_stripped")
         usage = data.get("usage") or {}
         return {"message": {"role": "assistant", "content": content},
                 "eval_count": usage.get("completion_tokens") or 0,
