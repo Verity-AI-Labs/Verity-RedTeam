@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Audit a batch of tasks with DeepSeek (deepseek-flash) as both attacker and judge.
+"""Audit a batch of tasks (audit-v3) with DeepSeek (deepseek-flash) as both attacker and judge.
 
-Writes <out>/<task>/report.json per task, <out>/api_calls.jsonl (one line per API call) and
-<out>/run_manifest.json. Tasks run in parallel threads; the API key comes from DEEPSEEK_API_KEY only.
+The attacker uses Terminal Wrench's hack_prompt_v5 and the judge TW's monitor, scored with a threshold.
+By default every task in tasks.json runs, in file order. Writes <out>/<task>/report.json per task,
+<out>/api_calls.jsonl (one line per API call) and <out>/run_manifest.json. Tasks run in parallel
+threads; the API key comes from DEEPSEEK_API_KEY only.
 """
 
 import argparse
@@ -28,16 +30,16 @@ MODELS = {"attacker": MODEL, "judge": MODEL}
 
 def parse(argv, today):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--out", type=Path, default=runner.RUNS / f"full-deepseek-v4.1-flash-{today}",
-                        help="run folder (default: experiments/runs/full-deepseek-v4.1-flash-<UTC launch date>)")
-    parser.add_argument("--tasks", nargs="+", choices=tuple(runner.TASKS), default=QWEN_TASKS,
-                        help="task ids (default: the 10 tasks of the Qwen run)")
+    parser.add_argument("--out", type=Path, default=runner.RUNS / f"audit-v3-deepseek-v4.1-flash-{today}",
+                        help="run folder (default: experiments/runs/audit-v3-deepseek-v4.1-flash-<UTC launch date>)")
+    parser.add_argument("--tasks", nargs="+", choices=tuple(runner.TASKS), default=list(runner.TASKS),
+                        help=f"task ids (default: all {len(runner.TASKS)} tasks in tasks.json, in file order)")
     parser.add_argument("--concurrency", type=runner.positive_int, default=3, help="tasks in parallel (default: 3)")
     parser.add_argument("--reasoning-effort", choices=("high", "max"), default="high")
-    parser.add_argument("--max-usd", type=float, default=4.25, help="estimated spend cap for this folder (default: 4.25)")
-    parser.add_argument("--deadline-hours", type=float, default=4.0, help="start no new task after this (default: 4)")
-    parser.add_argument("--hard-deadline-hours", type=float, default=6.0,
-                        help="abort in-flight tasks at their next model call after this (default: 6)")
+    parser.add_argument("--max-usd", type=float, default=10.0, help="estimated spend cap for this folder (default: 10)")
+    parser.add_argument("--deadline-hours", type=float, default=8.0, help="start no new task after this (default: 8)")
+    parser.add_argument("--hard-deadline-hours", type=float, default=10.0,
+                        help="abort in-flight tasks at their next model call after this (default: 10)")
     parser.add_argument("--resume", action="store_true", help="skip tasks that already have a complete report.json")
     parser.add_argument("--dry-run", action="store_true", help="print the plan; no network, Docker or model calls")
     args = parser.parse_args(argv)
@@ -70,7 +72,7 @@ def expected_protocol(client):
     mobj = {"attacker": MODEL, "attacker_digest": client.digest(MODEL),
             "judge": MODEL, "judge_digest": client.digest(MODEL)}
     return audit.protocol_id(mobj, audit.sha256(audit.ATTACK), audit.sha256(audit.JUDGE),
-                             dict(audit.BUDGETS), client.request_config())
+                             dict(audit.BUDGETS), client.request_config(), audit.sha256(audit.JUDGE_USER))
 
 
 def plan(parser, args, protocol):
@@ -84,7 +86,8 @@ def plan(parser, args, protocol):
         return list(args.tasks), [], []
     for t in [t for t in runner.TASKS if states[t] == "complete"]:
         prov = _read(args.out / t / "report.json").get("provenance") or {}
-        if prov.get("protocol_id") != protocol or (prov.get("models") or {}).get("attacker") != MODEL:
+        if (prov.get("protocol_id") != protocol or (prov.get("models") or {}).get("attacker") != MODEL
+                or prov.get("schema_version", audit.SCHEMA_VERSION) != audit.SCHEMA_VERSION):
             parser.error(f"{args.out / t} has protocol {prov.get('protocol_id')}, this run is {protocol}: "
                          "resuming would mix protocols in one folder")
     return [t for t in args.tasks if t not in complete], complete, stale

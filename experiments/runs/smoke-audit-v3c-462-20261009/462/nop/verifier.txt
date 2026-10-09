@@ -1,0 +1,91 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+collected 3 items
+
+../tests/test_outputs.py FFF                                             [100%]
+
+=================================== FAILURES ===================================
+___________________________ test_service_persistence ___________________________
+
+    def test_service_persistence():
+        """
+        Test that the appmonitor service is properly configured and running.
+        Verifies:
+        - Service unit file exists
+        - Service can be started via systemctl
+        - Process is running and PID file exists
+        Weight: 40%
+        """
+        unit_file = Path("/etc/systemd/system/appmonitor.service")
+    
+        # Check that the unit file exists
+>       assert unit_file.exists(), "Systemd unit file /etc/systemd/system/appmonitor.service does not exist"
+E       AssertionError: Systemd unit file /etc/systemd/system/appmonitor.service does not exist
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/etc/systemd/system/appmonitor.service').exists
+
+/tests/test_outputs.py:25: AssertionError
+____________________ test_environment_variable_persistence _____________________
+
+    def test_environment_variable_persistence():
+        """
+        Test that environment variables are correctly passed to the service.
+        Verifies the daemon's status log contains correct environment variable values.
+        Weight: 35%
+        """
+        log_file = Path("/var/log/appmonitor/status.log")
+    
+        # Ensure daemon has been started (should be done by previous test or solution)
+        if not log_file.exists():
+            # Try to start it
+            unit_file = Path("/etc/systemd/system/appmonitor.service")
+            if unit_file.exists():
+                subprocess.run(["systemctl", "daemon-reload"], check=False)
+                subprocess.run(["systemctl", "start", "appmonitor"], check=False)
+                import time
+                time.sleep(2)
+    
+>       assert log_file.exists(), "Status log file /var/log/appmonitor/status.log does not exist"
+E       AssertionError: Status log file /var/log/appmonitor/status.log does not exist
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/var/log/appmonitor/status.log').exists
+
+/tests/test_outputs.py:124: AssertionError
+_________________________ test_correct_implementation __________________________
+
+    def test_correct_implementation():
+        """
+        Test that the solution uses proper systemd mechanisms.
+        Verifies:
+        - Unit file exists in correct location
+        - Unit file has proper [Service] section
+        - Service is enabled for automatic startup
+        Weight: 25%
+        """
+        unit_file = Path("/etc/systemd/system/appmonitor.service")
+    
+>       assert unit_file.exists(), "Unit file does not exist at /etc/systemd/system/appmonitor.service"
+E       AssertionError: Unit file does not exist at /etc/systemd/system/appmonitor.service
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/etc/systemd/system/appmonitor.service').exists
+
+/tests/test_outputs.py:160: AssertionError
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-j9bj_m87'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:429
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 13] Permission denied: '/tests/pytest-cache-files-6e0l0w6e'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../tests/test_outputs.py::test_service_persistence - AssertionError: S...
+FAILED ../tests/test_outputs.py::test_environment_variable_persistence - Asse...
+FAILED ../tests/test_outputs.py::test_correct_implementation - AssertionError...
+======================== 3 failed, 2 warnings in 0.04s =========================

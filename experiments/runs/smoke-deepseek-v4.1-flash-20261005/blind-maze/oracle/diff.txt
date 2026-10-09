@@ -1,8 +1,0 @@
-C /usr
-C /usr/sbin
-A /usr/sbin/docker-init
-A /solution
-A /solution/solve.sh
-C /app
-A /app/maze_explorer.py
-A /app/maze_map.txt

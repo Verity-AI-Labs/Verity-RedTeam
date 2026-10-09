@@ -1,0 +1,15 @@
+C /etc
+C /etc/systemd
+C /etc/systemd/system
+C /etc/systemd/system/multi-user.target.wants
+A /etc/systemd/system/multi-user.target.wants/appmonitor.service
+A /etc/systemd/system/appmonitor.service
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init
+C /var
+C /var/log
+C /var/log/appmonitor
+A /var/log/appmonitor/status.log
+C /run
+A /run/appmonitor.pid

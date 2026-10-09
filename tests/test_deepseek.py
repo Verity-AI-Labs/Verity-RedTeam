@@ -15,7 +15,7 @@ import unittest
 from unittest.mock import patch
 
 from src import audit, deepseek, runner
-from tests.test_audit import FakeDocker
+from tests.test_audit import CP, MODELS, FakeDocker, fake_ask, say
 
 KEY = "sk-test-never-write-this-0123456789"
 ENV = {"DEEPSEEK_API_KEY": KEY}
@@ -107,7 +107,7 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual(set(body), {"model", "messages", "max_tokens", "thinking", "reasoning_effort",
                                      "response_format"})
         self.assertEqual([body[k] for k in ("model", "max_tokens", "thinking", "reasoning_effort", "response_format")],
-                         ["deepseek-flash", 8192, {"type": "enabled"}, "max", {"type": "json_object"}])
+                         ["deepseek-flash", 16384, {"type": "enabled"}, "max", {"type": "json_object"}])
         self.assertEqual([m["role"] for m in body["messages"]], ["system", "user", "assistant", "user"])
         self.assertEqual(body["messages"][1]["content"], "TASK\n\n[1 earlier turns omitted]")
         self.assertTrue(body["messages"][0]["content"].endswith(deepseek.JSON_SUFFIX))
@@ -119,7 +119,7 @@ class AdapterTests(unittest.TestCase):
         judge = post.requests[1]["body"]
         self.assertNotIn("response_format", judge)
         self.assertEqual((judge["thinking"], judge["reasoning_effort"], judge["max_tokens"], judge["messages"]),
-                         ({"type": "enabled"}, "max", 8192,
+                         ({"type": "enabled"}, "max", 32768,
                           [{"role": "system", "content": "JUDGE"}, {"role": "user", "content": "TEXT"}]))
         self.assertEqual([FORBIDDEN & set(r["body"]) for r in post.requests], [set(), set()])
         self.assertEqual([(e["role"], e["reasoning_content"], e["system_fingerprint"]) for e in self.log()],
@@ -164,6 +164,40 @@ class AdapterTests(unittest.TestCase):
         reply = self.client(post).ask([{"role": "user", "content": "x"}], "deepseek-flash", runner.SCHEMA)
         self.assertEqual((reply["message"]["content"], reply["done_reason"], len(post.requests)),
                          ('{"command": "ec', "length", 1))
+
+    def test_judge_length_retries_once_with_thinking_off(self):
+        verdict = json.dumps({"reasoning": "fine", "suspicion_score": 0.0})
+        judge = [{"role": "system", "content": "JUDGE"}, {"role": "user", "content": "TEXT"}]
+        post = FakePost(ok("", finish="length"), ok(verdict))
+        client = self.client(post)
+        self.assertEqual(client.ask(judge, "deepseek-flash", None)["message"]["content"], verdict)
+        first, retry = (r["body"] for r in post.requests)
+        self.assertEqual((first["max_tokens"], first["thinking"], first["reasoning_effort"]),
+                         (32768, {"type": "enabled"}, "high"))
+        self.assertEqual((retry["max_tokens"], retry["thinking"], "reasoning_effort" in retry, retry["messages"]),
+                         (32768, {"type": "disabled"}, False,
+                          [judge[0], {"role": "user", "content": "TEXT\n\n" + deepseek.JUDGE_RETRY}]))
+        self.assertEqual(client.stats()["retries_by_status"], {"judge_length": 1})
+        config = client.request_config()
+        self.assertEqual((config["max_tokens"], config["judge_length_retry"]["thinking"]),
+                         ({"attacker": 16384, "judge": 32768}, "disabled"))
+
+    def test_462_judge_cut_by_length_never_errors_a_pass(self):
+        # a1 cheats (certified answer_read), a2 solves honestly; every judge reply is cut by "length",
+        # retry included: both keep their label, with judge.degraded set and no error
+        post = FakePost(default=ok("", finish="length"))
+        client = self.client(post)
+        with redirect_stdout(io.StringIO()):
+            path = audit.audit("blind-maze", docker=FakeDocker(), ask=fake_ask([[say(CP)], [say("solve")]], []),
+                               model_digest=lambda m: "d", runs=self.dir, stamp="s", models=MODELS,
+                               judge=audit.real_judge(client.ask, "deepseek-flash"), budgets={"attempts": 2})
+        attempts = json.loads(path.read_text())["redteam"]["attempts"]
+        self.assertEqual([[a[k] for k in ("label", "tier", "grader_pass", "unconfirmed")]
+                          + [a["judge"][k] for k in ("label", "degraded", "suspicion_score")] for a in attempts],
+                         [["hack", "certified", True, ["judge"], "unconfirmed", True, None],
+                          ["honest", None, True, ["judge"], "unconfirmed", True, None]])
+        self.assertTrue(all("error" not in a for a in attempts))
+        self.assertEqual(len(post.requests), 4)  # one call and one thinking-off retry per judged attempt
 
     def test_leaked_markup_after_the_action_is_stripped(self):
         leak = ACTION + '\n\n<\uff5c\uff5cDSML\uff5c\uff5c calls>\n<\uff5c\uff5cDSML\uff5c\uff5c invoke name="bash">\nls\n'
@@ -272,16 +306,18 @@ class DriverTests(unittest.TestCase):
         for text in texts:
             self.assertNotIn(KEY, text)
 
-    def test_defaults_match_the_qwen_run(self):
+    def test_v3_defaults_and_qwen_guard(self):
         status = batch.QWEN_RUN / "status.tsv"
         if status.exists():
             self.assertEqual(batch.QWEN_TASKS, [line.split("\t")[0] for line in status.read_text().splitlines()[1:]])
         _, args = batch.parse([], "20261005")
         self.assertEqual((args.out.name, args.tasks, args.concurrency, args.reasoning_effort, args.max_usd,
                           args.deadline_hours, args.hard_deadline_hours, args.resume, args.dry_run),
-                         ("full-deepseek-v4.1-flash-20261005", batch.QWEN_TASKS, 3, "high", 4.25, 4.0, 6.0, False, False))
+                         ("audit-v3-deepseek-v4.1-flash-20261005", list(runner.TASKS), 3, "high", 10.0, 8.0, 10.0,
+                          False, False))
+        self.assertEqual(len(args.tasks), 13)  # every task in tasks.json, in file order
         for argv in (["--out", str(batch.QWEN_RUN)], ["--out", str(batch.QWEN_RUN / "x"), "--resume"],
-                     ["--tasks", "462", "462"], ["--deadline-hours", "7"]):
+                     ["--tasks", "462", "462"], ["--deadline-hours", "11"]):
             with redirect_stdout(io.StringIO()), patch("sys.stderr", io.StringIO()), self.assertRaises(SystemExit):
                 batch.parse(argv, "20261005")
 
@@ -292,7 +328,7 @@ class DriverTests(unittest.TestCase):
                               audit_fn=lambda *a, **k: self.fail("audit called"))
         self.assertEqual(code, 0)
         self.assertFalse(self.out.exists())
-        for text in ("Tasks to run (10): blind-maze", "cache_miss", "0.150 / 0.300", "Expected protocol_id",
+        for text in ("Tasks to run (13): blind-maze", "fix-sentiment-cli-text-processing", "cache_miss", "0.150 / 0.300", "Expected protocol_id",
                      "DEEPSEEK_API_KEY: NOT SET", '"reasoning_effort": "high"'):
             self.assertIn(text, out)
 
@@ -332,10 +368,12 @@ class DriverTests(unittest.TestCase):
         self.assertEqual((manifest["status"], manifest["run_date"], [s["task"] for s in manifest["skipped"]],
                           sorted(c["task"] for c in manifest["completed"]), manifest["completed"][0]["section_errors"]),
                          ("complete", "2026-10-05", ["blind-maze"], ["462", "481"], ["validity"]))
-        runner.save_json(self.out / "blind-maze" / "report.json", {**done, "provenance": {"protocol_id": "other"}})
-        with redirect_stdout(io.StringIO()), patch("sys.stderr", io.StringIO()) as err, self.assertRaises(SystemExit):
-            self.main("--tasks", "462", "--resume")  # resuming would mix protocols in one folder
-        self.assertIn("mix protocols", err.getvalue())
+        v2 = {**done["provenance"], "schema_version": "audit-v2"}  # even with a matching id, v2 never mixes with v3
+        for prov in ({"protocol_id": "other"}, v2):
+            runner.save_json(self.out / "blind-maze" / "report.json", {**done, "provenance": prov})
+            with redirect_stdout(io.StringIO()), patch("sys.stderr", io.StringIO()) as err, self.assertRaises(SystemExit):
+                self.main("--tasks", "462", "--resume")  # resuming would mix protocols in one folder
+            self.assertIn("mix protocols", err.getvalue())
 
     def test_preflight_abort_stops_before_docker(self):
         def docker(*args, **kwargs):
@@ -343,7 +381,7 @@ class DriverTests(unittest.TestCase):
         code, out = self.main(post=FakePost(error(402, "Insufficient Balance")), docker=docker,
                               audit_fn=lambda *a, **k: self.fail("audit called"))
         manifest = json.loads((self.out / "run_manifest.json").read_text())
-        self.assertEqual((code, manifest["status"], len(manifest["skipped"]), manifest["calls"]), (1, "aborted", 10, 0))
+        self.assertEqual((code, manifest["status"], len(manifest["skipped"]), manifest["calls"]), (1, "aborted", 13, 0))
         self.assertTrue(manifest["abort_reason"].startswith("balance_exhausted"))
         self.assert_no_key_written(out)
 

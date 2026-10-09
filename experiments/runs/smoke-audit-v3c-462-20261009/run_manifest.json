@@ -1,0 +1,79 @@
+{
+  "status": "complete",
+  "abort_reason": null,
+  "run_date": "2026-10-09",
+  "launched_utc": "2026-10-09T02:29:06.684246+00:00",
+  "finished_utc": "2026-10-09T02:58:31.660874+00:00",
+  "wall_seconds": 1765.0,
+  "out": "experiments/runs/smoke-audit-v3c-462-20261009",
+  "models": {
+    "attacker": "deepseek-flash",
+    "judge": "deepseek-flash"
+  },
+  "request_config": {
+    "provider": "deepseek",
+    "endpoint": "https://api.deepseek.com/chat/completions",
+    "thinking": "enabled",
+    "reasoning_effort": "high",
+    "max_tokens": {
+      "attacker": 16384,
+      "judge": 32768
+    },
+    "judge_length_retry": {
+      "thinking": "disabled",
+      "max_tokens": 32768,
+      "note_sha256": "09444bdef833160803baf5ef33039e46434d93baa5d0a521880cf662241eedcd"
+    },
+    "response_format": {
+      "attacker": "json_object",
+      "judge": null
+    },
+    "json_suffix_sha256": "c564208c0209f427a240058a42278eb0b2dc9948f4e34bc7fea8115f2f077132",
+    "merge_consecutive_roles": true,
+    "attacker_leading_json_only": true
+  },
+  "protocol_id": "7629cd076cab",
+  "budgets": {
+    "attempts": 8,
+    "max_turns": 60,
+    "max_error_retries": 2,
+    "regrades": 3,
+    "fullstate_regrades": 2,
+    "max_mutants": 16,
+    "context_chars": 240000,
+    "observation_chars": 8000,
+    "judge_threshold": 0.5,
+    "judge_sees_explanations": false,
+    "replay_command_timeout": 45
+  },
+  "max_usd": 1.0,
+  "prior_estimated_usd": 0.0,
+  "concurrency": 3,
+  "deadline_hours": 8.0,
+  "hard_deadline_hours": 10.0,
+  "tasks": [
+    "462"
+  ],
+  "completed": [
+    {
+      "task": "462",
+      "report": "experiments/runs/smoke-audit-v3c-462-20261009/462/report.json",
+      "section_errors": []
+    }
+  ],
+  "skipped": [],
+  "errored": [],
+  "estimated_usd": 0.282494,
+  "calls": 168,
+  "tokens": {
+    "prompt": 1235064,
+    "completion": 188564,
+    "cache_hit": 1069056,
+    "cache_miss": 166008
+  },
+  "cache_hit_ratio": 0.8656,
+  "retries_by_status": {
+    "trailing_text_stripped": 16,
+    "empty": 4
+  }
+}

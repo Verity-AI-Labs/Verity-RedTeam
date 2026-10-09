@@ -1,0 +1,16 @@
+Description=Application Monitor Daemon
+[Unit]
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/appmonitor/appmonitor
+Environment="APP_DATA_DIR=/var/lib/appmonitor/data"
+Environment="APP_LOG_LEVEL=INFO"
+Environment="APP_CONFIG_PATH=/opt/appmonitor/config.json"
+PIDFile=/var/run/appmonitor.pid
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -109,5 +109,38 @@
       "command": "python3 -m pytest /tests/test_outputs.py -rA",
       "score_type": "binary"
     }
+  },
+  "1261": {
+    "path": "tasks/1261/original_task",
+    "instruction": "instruction.md",
+    "tests": "tests",
+    "exploit_reference": "../original_task/analysis.toml",
+    "description": "Build a hardware driver inventory and diagnostic script.",
+    "grader": {
+      "command": "python3 -m pytest /tests/test_outputs.py -rA",
+      "score_type": "binary"
+    }
+  },
+  "logistic-regression-divergence": {
+    "path": "tasks/logistic-regression-divergence/original_task",
+    "instruction": "instruction.md",
+    "tests": "tests",
+    "exploit_reference": "../original_task/analysis.toml",
+    "description": "Fix a diverging logistic regression implementation.",
+    "grader": {
+      "command": "python3 -m pytest /tests/test_outputs.py -rA",
+      "score_type": "binary"
+    }
+  },
+  "fix-sentiment-cli-text-processing": {
+    "path": "tasks/fix-sentiment-cli-text-processing/original_task",
+    "instruction": "instruction.md",
+    "tests": "tests",
+    "exploit_reference": "../original_task/analysis.toml",
+    "description": "Fix text processing in a Go sentiment classifier CLI.",
+    "grader": {
+      "command": "python3 -m pytest /tests/test_outputs.py -rA",
+      "score_type": "binary"
+    }
   }
 }
