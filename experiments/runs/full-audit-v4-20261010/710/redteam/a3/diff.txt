@@ -1,0 +1,17 @@
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init
+C /tmp
+A /tmp/f
+A /tmp/f/f55.png
+A /tmp/f/f7.png
+A /tmp/f/f15.png
+A /tmp/f/f2.png
+A /tmp/f/f24.png
+A /tmp/f/f40.png
+A /tmp/f/f48.png
+C /home
+C /home/user
+C /home/user/output
+A /home/user/output/compilation.mp4
+A /home/user/process_video.sh

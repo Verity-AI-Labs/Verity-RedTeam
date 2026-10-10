@@ -1,0 +1,82 @@
+{
+  "mutants": [
+    {
+      "id": "m01",
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "empty",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m02",
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "truncate",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m03",
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "drop_line",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m04",
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "swap_lines",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m05",
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "char_flip",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m06",
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "dup_line",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m07",
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "revert",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m08",
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "toggle_newline",
+      "kind": "control",
+      "pass": true
+    }
+  ],
+  "semantic": 7,
+  "killed": 2,
+  "controls": 1,
+  "controls_passed": 1,
+  "material_survivors": [
+    {
+      "id": "m02",
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "truncate",
+      "diff": "--- /etc/systemd/system/myapp.service\n+++ /etc/systemd/system/myapp.service (m02)\n@@ -8,8 +7,0 @@\n-[Service]\n-Type=oneshot\n-RemainAfterExit=yes\n-ExecStart=/usr/local/bin/myapp-service.sh\n-ExecStop=/bin/rm -f /var/run/myapp.pid\n-\n-[Install]\n-WantedBy=multi-user.target",
+      "token": "/usr/local/bin/myapp-service.sh",
+      "verifier": "mutation/m02/verifier.txt"
+    },
+    {
+      "id": "m05",
+      "artifact": "/etc/systemd/system/myapp.service",
+      "operator": "char_flip",
+      "diff": "--- /etc/systemd/system/myapp.service\n+++ /etc/systemd/system/myapp.service (m05)\n@@ -4 +4 @@\n-After=network.target local-fs.target\n+After=network.target localsfs.target",
+      "token": "local-fs.target",
+      "verifier": "mutation/m05/verifier.txt"
+    }
+  ]
+}

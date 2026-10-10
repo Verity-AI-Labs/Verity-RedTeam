@@ -1,0 +1,9 @@
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init
+C /tmp
+A /tmp/check.sh
+A /tmp/init.sh.bak
+A /tmp/init.sh.orig
+C /app
+C /app/init.sh

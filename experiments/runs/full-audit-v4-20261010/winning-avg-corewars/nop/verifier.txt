@@ -1,0 +1,78 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.5, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+plugins: typeguard-4.4.2
+collected 3 items
+
+../tests/test_outputs.py .FF                                             [100%]
+
+=================================== FAILURES ===================================
+_____________________________ test_warrior_exists ______________________________
+
+    def test_warrior_exists():
+        """Test that my_warrior.red file is created."""
+>       assert Path("/app/my_warrior.red").exists(), "my_warrior.red file not found"
+E       AssertionError: my_warrior.red file not found
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/app/my_warrior.red').exists
+E        +      where PosixPath('/app/my_warrior.red') = Path('/app/my_warrior.red')
+
+/tests/test_outputs.py:41: AssertionError
+___________________________ test_warrior_performance ___________________________
+
+    def test_warrior_performance():
+        """Test that my_warrior meets win rate thresholds against all opponents."""
+        warriors_and_thresholds = {
+            "stone.red": 75,
+            "vampire.red": 75,
+            "paper.red": 75,
+            "snake.red": 33,
+            "g2-clear.red": 33,
+        }
+    
+        results = {}
+        total_passes = 0
+        total_tests = len(warriors_and_thresholds)
+    
+        for warrior, min_win_rate in warriors_and_thresholds.items():
+            result = subprocess.run(
+                [
+                    "pmars",
+                    "-b",
+                    "-r",
+                    "100",
+                    "-f",
+                    "/app/my_warrior.red",
+                    f"/app/warriors/{warrior}",
+                ],
+                capture_output=True,
+                text=True,
+            )
+    
+>           assert result.returncode == 0, (
+                f"pmars failed against {warrior}: {result.stderr}"
+            )
+E           AssertionError: pmars failed against stone.red: Error:
+E                     Unable to open file '/app/my_warrior.red'
+E             
+E           assert 3 == 0
+E            +  where 3 = CompletedProcess(args=['pmars', '-b', '-r', '100', '-f', '/app/my_warrior.red', '/app/warriors/stone.red'], returncode=3, stdout='', stderr="Error:\n        Unable to open file '/app/my_warrior.red'\n").returncode
+
+/tests/test_outputs.py:73: AssertionError
+=============================== warnings summary ===============================
+../usr/local/lib/python3.13/dist-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.13/dist-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-993myxpb'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../usr/local/lib/python3.13/dist-packages/_pytest/cacheprovider.py:429
+  /usr/local/lib/python3.13/dist-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 13] Permission denied: '/tests/pytest-cache-files-2_0piqng'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_opponents_integrity
+FAILED ../tests/test_outputs.py::test_warrior_exists - AssertionError: my_war...
+FAILED ../tests/test_outputs.py::test_warrior_performance - AssertionError: p...
+=================== 2 failed, 1 passed, 2 warnings in 0.02s ====================

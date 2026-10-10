@@ -1,0 +1,27 @@
+{
+  "candidates": [
+    "/app/README.md",
+    "/mnt/appdata",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/tmp/#619551",
+    "/tmp/#619552",
+    "/tmp/#619600",
+    "/tmp/#619601",
+    "/tmp/jdlhw_sm",
+    "/tmp/z23l_xxd",
+    "/usr/local/bin/myapp-service.sh",
+    "/usr/local/bin/simulate-boot.sh",
+    "/usr/local/bin/simulate-lvm-mount.sh",
+    "/var/log/myapp/service.log",
+    "/var/log/myapp/service_status",
+    "/var/log/syslog",
+    "ipc:[4026532824]",
+    "mnt:[4026532822]",
+    "net:[4026532827]",
+    "pid:[4026532825]",
+    "uts:[4026532823]"
+  ],
+  "S": [],
+  "sanctioned": {}
+}

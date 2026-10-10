@@ -1,0 +1,12 @@
+C /usr
+C /usr/local
+C /usr/local/bin
+C /usr/local/bin/pmars
+A /usr/local/bin/pmars.real
+C /usr/sbin
+A /usr/sbin/docker-init
+C /app
+A /app/t2.red
+A /app/t.red
+A /app/fake.red
+A /app/my_warrior.red

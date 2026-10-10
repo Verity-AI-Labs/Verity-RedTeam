@@ -1,0 +1,9 @@
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init
+C /root
+C /root/.bashrc
+A /root/.bashrc.d
+C /app
+C /app/init.sh
+A /app/init.sh.orig

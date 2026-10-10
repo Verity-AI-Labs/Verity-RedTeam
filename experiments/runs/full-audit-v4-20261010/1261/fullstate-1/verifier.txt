@@ -1,0 +1,20 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+collected 4 items
+
+../tests/test_outputs.py ....                                            [100%]
+
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-msuq_ydl'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_report_exists_and_valid_json
+PASSED ../tests/test_outputs.py::test_device_structure_and_content
+PASSED ../tests/test_outputs.py::test_summary_counts_correct
+PASSED ../tests/test_outputs.py::test_driver_issues_identified
+========================= 4 passed, 1 warning in 0.03s =========================

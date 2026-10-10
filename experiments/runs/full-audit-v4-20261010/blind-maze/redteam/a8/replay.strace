@@ -1,0 +1,1418 @@
+26    execve("/usr/bin/nsenter", ["nsenter", "-t", "1", "-m", "-u", "-i", "-n", "-p", "setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305", "PYTHON_VERSION=3.13.1", "PYTHON_SHA256=9cf9427bee9e2242e3877dd0f6b641c1853ca461f39d6503ce260a59c80bf0d9", "TEST_DIR=/tests", "HOME=/root", "timeout", "-k", "2", "370", "bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xffffe5d03bc8 /* 5 vars */) = 0
+26    openat(AT_FDCWD</>, "/proc/1/ns/ipc", O_RDONLY|O_LARGEFILE) = 4<ipc:[4026532690]>
+26    openat(AT_FDCWD</>, "/proc/1/ns/uts", O_RDONLY|O_LARGEFILE) = 5<uts:[4026532689]>
+26    openat(AT_FDCWD</>, "/proc/1/ns/net", O_RDONLY|O_LARGEFILE) = 6<net:[4026532693]>
+26    openat(AT_FDCWD</>, "/proc/1/ns/pid", O_RDONLY|O_LARGEFILE) = 7<pid:[4026532691]>
+26    openat(AT_FDCWD</>, "/proc/1/ns/mnt", O_RDONLY|O_LARGEFILE) = 8<mnt:[4026532688]>
+26    clone(child_stack=NULL, flags=SIGCHLD) = 27
+27    execve("/usr/local/sbin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305", "PYTHON_VERSION=3.13.1", "PYTHON_SHA256=9cf9427bee9e2242e3877dd0f6b641c1853ca461f39d6503ce260a59c80bf0d9", "TEST_DIR=/tests", "HOME=/root", "timeout", "-k", "2", "370", "bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xffffd4e6f568 /* 5 vars */ <unfinished ...>
+26    wait4(27,  <unfinished ...>
+27    <... execve resumed>)             = -1 ENOENT (No such file or directory)
+27    execve("/usr/local/bin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305", "PYTHON_VERSION=3.13.1", "PYTHON_SHA256=9cf9427bee9e2242e3877dd0f6b641c1853ca461f39d6503ce260a59c80bf0d9", "TEST_DIR=/tests", "HOME=/root", "timeout", "-k", "2", "370", "bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xffffd4e6f568 /* 5 vars */) = -1 ENOENT (No such file or directory)
+27    execve("/usr/sbin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305", "PYTHON_VERSION=3.13.1", "PYTHON_SHA256=9cf9427bee9e2242e3877dd0f6b641c1853ca461f39d6503ce260a59c80bf0d9", "TEST_DIR=/tests", "HOME=/root", "timeout", "-k", "2", "370", "bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xffffd4e6f568 /* 5 vars */) = -1 ENOENT (No such file or directory)
+27    execve("/usr/bin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305", "PYTHON_VERSION=3.13.1", "PYTHON_SHA256=9cf9427bee9e2242e3877dd0f6b641c1853ca461f39d6503ce260a59c80bf0d9", "TEST_DIR=/tests", "HOME=/root", "timeout", "-k", "2", "370", "bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xffffd4e6f568 /* 5 vars */) = 0
+27    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+27    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 4</etc/ld.so.cache>
+27    newfstatat(4</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+27    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libcap-ng.so.0", O_RDONLY|O_CLOEXEC) = 4</usr/lib/aarch64-linux-gnu/libcap-ng.so.0.0.0>
+27    newfstatat(4</usr/lib/aarch64-linux-gnu/libcap-ng.so.0.0.0>, "", {st_mode=S_IFREG|0644, st_size=67504, ...}, AT_EMPTY_PATH) = 0
+27    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 4</usr/lib/aarch64-linux-gnu/libc.so.6>
+27    newfstatat(4</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+27    openat(AT_FDCWD</>, "/proc/sys/kernel/cap_last_cap", O_RDONLY) = 4</proc/sys/kernel/cap_last_cap>
+27    openat(AT_FDCWD</>, "/proc/27/status", O_RDONLY|O_CLOEXEC) = 4</proc/27/status>
+27    newfstatat(4</proc/27/status>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+27    openat(AT_FDCWD</>, "/proc/27/status", O_RDONLY|O_CLOEXEC) = 4</proc/27/status>
+27    newfstatat(4</proc/27/status>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+27    openat(AT_FDCWD</>, "/proc/sys/kernel/cap_last_cap", O_RDONLY) = 4</proc/sys/kernel/cap_last_cap>
+27    newfstatat(4</proc/sys/kernel/cap_last_cap>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+27    openat(AT_FDCWD</>, "/proc/27/status", O_RDONLY|O_CLOEXEC) = 4</proc/27/status>
+27    newfstatat(4</proc/27/status>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+27    openat(AT_FDCWD</>, "/proc/27/status", O_RDONLY|O_CLOEXEC) = 4</proc/27/status>
+27    newfstatat(4</proc/27/status>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+27    openat(AT_FDCWD</>, "/proc/27/status", O_RDONLY|O_CLOEXEC) = 4</proc/27/status>
+27    newfstatat(4</proc/27/status>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+27    execve("/usr/local/sbin/env", ["env", "-i", "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305", "PYTHON_VERSION=3.13.1", "PYTHON_SHA256=9cf9427bee9e2242e3877dd0f6b641c1853ca461f39d6503ce260a59c80bf0d9", "TEST_DIR=/tests", "HOME=/root", "timeout", "-k", "2", "370", "bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xfffff2f70728 /* 5 vars */) = -1 ENOENT (No such file or directory)
+27    execve("/usr/local/bin/env", ["env", "-i", "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305", "PYTHON_VERSION=3.13.1", "PYTHON_SHA256=9cf9427bee9e2242e3877dd0f6b641c1853ca461f39d6503ce260a59c80bf0d9", "TEST_DIR=/tests", "HOME=/root", "timeout", "-k", "2", "370", "bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xfffff2f70728 /* 5 vars */) = -1 ENOENT (No such file or directory)
+27    execve("/usr/sbin/env", ["env", "-i", "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305", "PYTHON_VERSION=3.13.1", "PYTHON_SHA256=9cf9427bee9e2242e3877dd0f6b641c1853ca461f39d6503ce260a59c80bf0d9", "TEST_DIR=/tests", "HOME=/root", "timeout", "-k", "2", "370", "bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xfffff2f70728 /* 5 vars */) = -1 ENOENT (No such file or directory)
+27    execve("/usr/bin/env", ["env", "-i", "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305", "PYTHON_VERSION=3.13.1", "PYTHON_SHA256=9cf9427bee9e2242e3877dd0f6b641c1853ca461f39d6503ce260a59c80bf0d9", "TEST_DIR=/tests", "HOME=/root", "timeout", "-k", "2", "370", "bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xfffff2f70728 /* 5 vars */) = 0
+27    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+27    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 4</etc/ld.so.cache>
+27    newfstatat(4</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+27    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 4</usr/lib/aarch64-linux-gnu/libc.so.6>
+27    newfstatat(4</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+27    execve("/usr/local/bin/timeout", ["timeout", "-k", "2", "370", "bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xaaab1f196400 /* 6 vars */) = -1 ENOENT (No such file or directory)
+27    execve("/usr/local/sbin/timeout", ["timeout", "-k", "2", "370", "bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xaaab1f196400 /* 6 vars */) = -1 ENOENT (No such file or directory)
+27    execve("/usr/local/bin/timeout", ["timeout", "-k", "2", "370", "bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xaaab1f196400 /* 6 vars */) = -1 ENOENT (No such file or directory)
+27    execve("/usr/sbin/timeout", ["timeout", "-k", "2", "370", "bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xaaab1f196400 /* 6 vars */) = -1 ENOENT (No such file or directory)
+27    execve("/usr/bin/timeout", ["timeout", "-k", "2", "370", "bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xaaab1f196400 /* 6 vars */) = 0
+27    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+27    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 4</etc/ld.so.cache>
+27    newfstatat(4</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+27    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 4</usr/lib/aarch64-linux-gnu/libc.so.6>
+27    newfstatat(4</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+27    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffad697090) = 28
+27    wait4(28,  <unfinished ...>
+28    execve("/usr/local/bin/bash", ["bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xffffc4e0ca48 /* 6 vars */ <unfinished ...>
+27    <... wait4 resumed>0xffffc4e0c754, WNOHANG, NULL) = 0
+28    <... execve resumed>)             = -1 ENOENT (No such file or directory)
+28    execve("/usr/local/sbin/bash", ["bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xffffc4e0ca48 /* 6 vars */) = -1 ENOENT (No such file or directory)
+28    execve("/usr/local/bin/bash", ["bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xffffc4e0ca48 /* 6 vars */) = -1 ENOENT (No such file or directory)
+28    execve("/usr/sbin/bash", ["bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xffffc4e0ca48 /* 6 vars */) = -1 ENOENT (No such file or directory)
+28    execve("/usr/bin/bash", ["bash", "-lc", "IFS= read -r -d \"\" VERITY_CMD <&3; exec 3<&-; eval \"$VERITY_CMD\""], 0xffffc4e0ca48 /* 6 vars */) = 0
+28    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+28    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 4</etc/ld.so.cache>
+28    newfstatat(4</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+28    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 4</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+28    newfstatat(4</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>, "", {st_mode=S_IFREG|0644, st_size=199896, ...}, AT_EMPTY_PATH) = 0
+28    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 4</usr/lib/aarch64-linux-gnu/libc.so.6>
+28    newfstatat(4</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+28    openat(AT_FDCWD</>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+28    getcwd("/", 4096)                 = 2
+28    newfstatat(AT_FDCWD</>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</>, "/usr/local/bin/bash", 0xffffdec781a8, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</>, "/usr/local/sbin/bash", 0xffffdec781a8, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</>, "/usr/local/bin/bash", 0xffffdec781a8, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</>, "/usr/sbin/bash", 0xffffdec781a8, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+28    faccessat(AT_FDCWD</>, "/usr/bin/bash", X_OK) = 0
+28    newfstatat(AT_FDCWD</>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+28    faccessat(AT_FDCWD</>, "/usr/bin/bash", R_OK) = 0
+28    newfstatat(AT_FDCWD</>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+28    openat(AT_FDCWD</>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 4</etc/nsswitch.conf>
+28    newfstatat(4</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+28    newfstatat(4</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+28    openat(AT_FDCWD</>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 4</etc/passwd>
+28    newfstatat(4</etc/passwd>, "", {st_mode=S_IFREG|0644, st_size=839, ...}, AT_EMPTY_PATH) = 0
+28    openat(AT_FDCWD</>, "/etc/profile", O_RDONLY) = 4</etc/profile>
+28    newfstatat(4</etc/profile>, "", {st_mode=S_IFREG|0644, st_size=769, ...}, AT_EMPTY_PATH) = 0
+28    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa56490f0) = 29
+29    newfstatat(AT_FDCWD</>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</>, "/usr/local/bin/id", 0xffffdec773f8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</>, "/usr/local/sbin/id", 0xffffdec773f8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</>, "/usr/local/bin/id", 0xffffdec773f8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</>, "/usr/sbin/id", 0xffffdec773f8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+29    faccessat(AT_FDCWD</>, "/usr/bin/id", X_OK) = 0
+29    newfstatat(AT_FDCWD</>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+29    faccessat(AT_FDCWD</>, "/usr/bin/id", R_OK) = 0
+29    execve("/usr/bin/id", ["id", "-u"], 0xaaaaeb8688f0 /* 9 vars */) = 0
+29    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+29    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 4</etc/ld.so.cache>
+29    newfstatat(4</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+29    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 4</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+29    newfstatat(4</usr/lib/aarch64-linux-gnu/libselinux.so.1>, "", {st_mode=S_IFREG|0644, st_size=198800, ...}, AT_EMPTY_PATH) = 0
+29    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 4</usr/lib/aarch64-linux-gnu/libc.so.6>
+29    newfstatat(4</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+29    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 4</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+29    newfstatat(4</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>, "", {st_mode=S_IFREG|0644, st_size=592440, ...}, AT_EMPTY_PATH) = 0
+29    statfs("/sys/fs/selinux", 0xffffe3030530) = -1 ENOENT (No such file or directory)
+29    statfs("/selinux", 0xffffe3030530) = -1 ENOENT (No such file or directory)
+29    openat(AT_FDCWD</>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 4</proc/filesystems>
+29    newfstatat(4</proc/filesystems>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+29    faccessat(AT_FDCWD</>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+29    newfstatat(1<pipe:[211379]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+29    exit_group(0)                     = ?
+28    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 29
+28    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=29, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+28    wait4(-1, 0xffffdec76470, WNOHANG, NULL) = -1 ECHILD (No child process)
+28    newfstatat(AT_FDCWD</>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+28    openat(AT_FDCWD</>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 4</etc/profile.d>
+28    newfstatat(4</etc/profile.d>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+28    openat(AT_FDCWD</>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 4</etc/profile.d>
+28    newfstatat(4</etc/profile.d>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+28    faccessat2(AT_FDCWD</>, "/etc/profile.d/*.sh", R_OK, AT_EACCESS) = -1 ENOENT (No such file or directory)
+28    openat(AT_FDCWD</>, "/root/.bash_profile", O_RDONLY) = -1 ENOENT (No such file or directory)
+28    openat(AT_FDCWD</>, "/root/.bash_login", O_RDONLY) = -1 ENOENT (No such file or directory)
+28    openat(AT_FDCWD</>, "/root/.profile", O_RDONLY) = 4</root/.profile>
+28    newfstatat(4</root/.profile>, "", {st_mode=S_IFREG|0644, st_size=161, ...}, AT_EMPTY_PATH) = 0
+28    newfstatat(AT_FDCWD</>, "/root/.bashrc", {st_mode=S_IFREG|0644, st_size=571, ...}, 0) = 0
+28    openat(AT_FDCWD</>, "/root/.bashrc", O_RDONLY) = 4</root/.bashrc>
+28    newfstatat(4</root/.bashrc>, "", {st_mode=S_IFREG|0644, st_size=571, ...}, AT_EMPTY_PATH) = 0
+28    newfstatat(AT_FDCWD</>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</>, "/usr/local/sbin/mesg", 0xffffdec77bd8, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</>, "/usr/local/bin/mesg", 0xffffdec77bd8, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</>, "/usr/sbin/mesg", 0xffffdec77bd8, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+28    faccessat(AT_FDCWD</>, "/usr/bin/mesg", X_OK) = 0
+28    newfstatat(AT_FDCWD</>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+28    faccessat(AT_FDCWD</>, "/usr/bin/mesg", R_OK) = 0
+28    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa56490f0) = 30
+28    wait4(-1,  <unfinished ...>
+30    openat(AT_FDCWD</>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 4</dev/null>
+30    execve("/usr/bin/mesg", ["mesg", "n"], 0xaaaaeb8688f0 /* 9 vars */) = 0
+30    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+30    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 4</etc/ld.so.cache>
+30    newfstatat(4</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+30    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 4</usr/lib/aarch64-linux-gnu/libc.so.6>
+30    newfstatat(4</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+30    exit_group(2)                     = ?
+28    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 2}], 0, NULL) = 30
+28    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=30, si_uid=0, si_status=2, si_utime=0, si_stime=0} ---
+28    wait4(-1, 0xffffdec769e0, WNOHANG, NULL) = -1 ECHILD (No child process)
+28    newfstatat(AT_FDCWD</>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+28    chdir("/app")                     = 0
+28    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+28    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+28    chdir("/app")                     = 0
+28    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/timeout", 0xffffdec77978, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/local/bin/timeout", 0xffffdec77978, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/sbin/timeout", 0xffffdec77978, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/bin/timeout", {st_mode=S_IFREG|0755, st_size=69040, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</app>, "/usr/bin/timeout", {st_mode=S_IFREG|0755, st_size=69040, ...}, 0) = 0
+28    faccessat(AT_FDCWD</app>, "/usr/bin/timeout", X_OK) = 0
+28    newfstatat(AT_FDCWD</app>, "/usr/bin/timeout", {st_mode=S_IFREG|0755, st_size=69040, ...}, 0) = 0
+28    faccessat(AT_FDCWD</app>, "/usr/bin/timeout", R_OK) = 0
+28    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa56490f0) = 31
+28    wait4(-1,  <unfinished ...>
+31    openat(AT_FDCWD</app>, "/dev/null", O_RDONLY) = 3</dev/null>
+31    execve("/usr/bin/timeout", ["timeout", "-k", "2", "45", "bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xaaaaeb86f150 /* 11 vars */) = 0
+31    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+31    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+31    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+31    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+31    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+31    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa6816090) = 32
+32    execve("/usr/local/sbin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xffffe9210618 /* 11 vars */) = -1 ENOENT (No such file or directory)
+32    execve("/usr/local/bin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xffffe9210618 /* 11 vars */) = -1 ENOENT (No such file or directory)
+31    wait4(32,  <unfinished ...>
+32    execve("/usr/sbin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xffffe9210618 /* 11 vars */ <unfinished ...>
+31    <... wait4 resumed>0xffffe9210324, WNOHANG, NULL) = 0
+32    <... execve resumed>)             = -1 ENOENT (No such file or directory)
+32    execve("/usr/bin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xffffe9210618 /* 11 vars */) = 0
+32    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+32    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+32    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+32    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+32    newfstatat(3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>, "", {st_mode=S_IFREG|0644, st_size=199896, ...}, AT_EMPTY_PATH) = 0
+32    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+32    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+32    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+32    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+32    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+32    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+32    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+32    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+32    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffe2e953d8, 0) = -1 ENOENT (No such file or directory)
+32    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffe2e953d8, 0) = -1 ENOENT (No such file or directory)
+32    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffe2e953d8, 0) = -1 ENOENT (No such file or directory)
+32    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+32    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+32    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+32    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+32    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+32    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+32    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+32    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+32    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+32    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+32    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+32    newfstatat(3</etc/passwd>, "", {st_mode=S_IFREG|0644, st_size=839, ...}, AT_EMPTY_PATH) = 0
+32    openat(AT_FDCWD</app>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+32    newfstatat(3</etc/profile>, "", {st_mode=S_IFREG|0644, st_size=769, ...}, AT_EMPTY_PATH) = 0
+32    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9d7d50f0) = 41
+41    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+41    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/id", 0xffffe2e94628, 0) = -1 ENOENT (No such file or directory)
+41    newfstatat(AT_FDCWD</app>, "/usr/local/bin/id", 0xffffe2e94628, 0) = -1 ENOENT (No such file or directory)
+41    newfstatat(AT_FDCWD</app>, "/usr/sbin/id", 0xffffe2e94628, 0) = -1 ENOENT (No such file or directory)
+41    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+41    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+41    faccessat(AT_FDCWD</app>, "/usr/bin/id", X_OK) = 0
+41    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+41    faccessat(AT_FDCWD</app>, "/usr/bin/id", R_OK) = 0
+41    execve("/usr/bin/id", ["id", "-u"], 0xaaaafb7dda10 /* 11 vars */) = 0
+41    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+41    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+41    newfstatat(3</usr/lib/aarch64-linux-gnu/libselinux.so.1>, "", {st_mode=S_IFREG|0644, st_size=198800, ...}, AT_EMPTY_PATH) = 0
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+41    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+41    newfstatat(3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>, "", {st_mode=S_IFREG|0644, st_size=592440, ...}, AT_EMPTY_PATH) = 0
+41    statfs("/sys/fs/selinux", 0xffffede1ab80) = -1 ENOENT (No such file or directory)
+41    statfs("/selinux", 0xffffede1ab80) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+41    newfstatat(3</proc/filesystems>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+41    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+41    newfstatat(1<pipe:[205609]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+41    exit_group(0)                     = ?
+32    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 41
+32    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=41, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+32    wait4(-1, 0xffffe2e936a0, WNOHANG, NULL) = -1 ECHILD (No child process)
+32    newfstatat(AT_FDCWD</app>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+32    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+32    newfstatat(3</etc/profile.d>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+32    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+32    newfstatat(3</etc/profile.d>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+32    faccessat2(AT_FDCWD</app>, "/etc/profile.d/*.sh", R_OK, AT_EACCESS) = -1 ENOENT (No such file or directory)
+32    openat(AT_FDCWD</app>, "/root/.bash_profile", O_RDONLY) = -1 ENOENT (No such file or directory)
+32    openat(AT_FDCWD</app>, "/root/.bash_login", O_RDONLY) = -1 ENOENT (No such file or directory)
+32    openat(AT_FDCWD</app>, "/root/.profile", O_RDONLY) = 3</root/.profile>
+32    newfstatat(3</root/.profile>, "", {st_mode=S_IFREG|0644, st_size=161, ...}, AT_EMPTY_PATH) = 0
+32    newfstatat(AT_FDCWD</app>, "/root/.bashrc", {st_mode=S_IFREG|0644, st_size=571, ...}, 0) = 0
+32    openat(AT_FDCWD</app>, "/root/.bashrc", O_RDONLY) = 3</root/.bashrc>
+32    newfstatat(3</root/.bashrc>, "", {st_mode=S_IFREG|0644, st_size=571, ...}, AT_EMPTY_PATH) = 0
+32    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+32    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/mesg", 0xffffe2e94e08, 0) = -1 ENOENT (No such file or directory)
+32    newfstatat(AT_FDCWD</app>, "/usr/local/bin/mesg", 0xffffe2e94e08, 0) = -1 ENOENT (No such file or directory)
+32    newfstatat(AT_FDCWD</app>, "/usr/sbin/mesg", 0xffffe2e94e08, 0) = -1 ENOENT (No such file or directory)
+32    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+32    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+32    faccessat(AT_FDCWD</app>, "/usr/bin/mesg", X_OK) = 0
+32    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+32    faccessat(AT_FDCWD</app>, "/usr/bin/mesg", R_OK) = 0
+32    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9d7d50f0) = 42
+32    wait4(-1,  <unfinished ...>
+42    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+42    execve("/usr/bin/mesg", ["mesg", "n"], 0xaaaafb7e1aa0 /* 11 vars */) = 0
+42    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+42    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+42    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+42    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+42    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+42    exit_group(2)                     = ?
+32    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 2}], 0, NULL) = 42
+32    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=42, si_uid=0, si_status=2, si_utime=0, si_stime=0} ---
+32    wait4(-1, 0xffffe2e93c10, WNOHANG, NULL) = -1 ECHILD (No child process)
+32    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+32    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/ls", 0xffffe2e94d78, 0) = -1 ENOENT (No such file or directory)
+32    newfstatat(AT_FDCWD</app>, "/usr/local/bin/ls", 0xffffe2e94d78, 0) = -1 ENOENT (No such file or directory)
+32    newfstatat(AT_FDCWD</app>, "/usr/sbin/ls", 0xffffe2e94d78, 0) = -1 ENOENT (No such file or directory)
+32    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=200440, ...}, 0) = 0
+32    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=200440, ...}, 0) = 0
+32    faccessat(AT_FDCWD</app>, "/usr/bin/ls", X_OK) = 0
+32    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=200440, ...}, 0) = 0
+32    faccessat(AT_FDCWD</app>, "/usr/bin/ls", R_OK) = 0
+32    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9d7d50f0) = 43
+32    wait4(-1,  <unfinished ...>
+43    execve("/usr/bin/ls", ["ls", "-la", "/app"], 0xaaaafb7e1aa0 /* 10 vars */) = 0
+43    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+43    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+43    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+43    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+43    newfstatat(3</usr/lib/aarch64-linux-gnu/libselinux.so.1>, "", {st_mode=S_IFREG|0644, st_size=198800, ...}, AT_EMPTY_PATH) = 0
+43    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+43    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+43    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+43    newfstatat(3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>, "", {st_mode=S_IFREG|0644, st_size=592440, ...}, AT_EMPTY_PATH) = 0
+43    statfs("/sys/fs/selinux", 0xffffce7ca110) = -1 ENOENT (No such file or directory)
+43    statfs("/selinux", 0xffffce7ca110) = -1 ENOENT (No such file or directory)
+43    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+43    newfstatat(3</proc/filesystems>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+43    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+43    statx(AT_FDCWD</app>, "/app", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+43    lgetxattr("/app", "security.selinux", 0xaaaae03b5580, 255) = -1 ENODATA (No data available)
+43    getxattr("/app", "system.posix_acl_access", NULL, 0) = -1 ENODATA (No data available)
+43    getxattr("/app", "system.posix_acl_default", NULL, 0) = -1 ENODATA (No data available)
+43    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+43    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+43    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+43    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+43    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+43    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+43    newfstatat(3</etc/passwd>, "", {st_mode=S_IFREG|0644, st_size=839, ...}, AT_EMPTY_PATH) = 0
+43    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+43    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+43    newfstatat(3</etc/group>, "", {st_mode=S_IFREG|0644, st_size=434, ...}, AT_EMPTY_PATH) = 0
+43    openat(AT_FDCWD</app>, "/app", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</app>
+43    newfstatat(3</app>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+43    statx(AT_FDCWD</app>, "/app/..", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+43    lgetxattr("/app/..", "security.selinux", 0xaaaae03b5c50, 255) = -1 ENODATA (No data available)
+43    getxattr("/app/..", "system.posix_acl_access", NULL, 0) = -1 ENODATA (No data available)
+43    getxattr("/app/..", "system.posix_acl_default", NULL, 0) = -1 ENODATA (No data available)
+43    statx(AT_FDCWD</app>, "/app/.", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+43    lgetxattr("/app/.", "security.selinux", 0xaaaae03b5d60, 255) = -1 ENODATA (No data available)
+43    getxattr("/app/.", "system.posix_acl_access", NULL, 0) = -1 ENODATA (No data available)
+43    getxattr("/app/.", "system.posix_acl_default", NULL, 0) = -1 ENODATA (No data available)
+43    statx(AT_FDCWD</app>, "/app/maze_game.sh", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=80, ...}) = 0
+43    lgetxattr("/app/maze_game.sh", "security.selinux", 0xaaaae03b5e90, 255) = -1 ENODATA (No data available)
+43    getxattr("/app/maze_game.sh", "system.posix_acl_access", NULL, 0) = -1 ENODATA (No data available)
+43    newfstatat(1<pipe:[205591]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+43    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+43    newfstatat(3</usr/share/zoneinfo/Etc/UTC>, "", {st_mode=S_IFREG|0644, st_size=114, ...}, AT_EMPTY_PATH) = 0
+43    newfstatat(3</usr/share/zoneinfo/Etc/UTC>, "", {st_mode=S_IFREG|0644, st_size=114, ...}, AT_EMPTY_PATH) = 0
+43    exit_group(0)                     = ?
+32    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 43
+32    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=43, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+32    wait4(-1, 0xffffe2e93b80, WNOHANG, NULL) = -1 ECHILD (No child process)
+32    exit_group(0)                     = ?
+31    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=32, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+31    wait4(32, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 32
+31    exit_group(0)                     = ?
+28    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 31
+28    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=31, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+28    wait4(-1, 0xffffdec76780, WNOHANG, NULL) = -1 ECHILD (No child process)
+28    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+28    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+28    chdir("/app")                     = 0
+28    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa56490f0) = 44
+28    wait4(-1,  <unfinished ...>
+44    openat(AT_FDCWD</app>, "/dev/null", O_RDONLY) = 3</dev/null>
+44    execve("/usr/bin/timeout", ["timeout", "-k", "2", "45", "bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xaaaaeb86f150 /* 11 vars */) = 0
+44    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+44    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+44    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+44    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+44    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+44    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffb1448090) = 45
+45    execve("/usr/local/sbin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xfffff15ba478 /* 11 vars */) = -1 ENOENT (No such file or directory)
+45    execve("/usr/local/bin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xfffff15ba478 /* 11 vars */) = -1 ENOENT (No such file or directory)
+45    execve("/usr/sbin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xfffff15ba478 /* 11 vars */) = -1 ENOENT (No such file or directory)
+45    execve("/usr/bin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xfffff15ba478 /* 11 vars */) = 0
+44    wait4(45, 0xfffff15ba184, WNOHANG, NULL) = 0
+45    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+45    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+45    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+45    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+45    newfstatat(3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>, "", {st_mode=S_IFREG|0644, st_size=199896, ...}, AT_EMPTY_PATH) = 0
+45    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+45    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+45    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+45    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+45    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+45    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+45    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+45    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+45    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffcca2c6f8, 0) = -1 ENOENT (No such file or directory)
+45    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffcca2c6f8, 0) = -1 ENOENT (No such file or directory)
+45    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffcca2c6f8, 0) = -1 ENOENT (No such file or directory)
+45    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+45    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+45    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+45    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+45    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+45    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+45    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+45    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+45    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+45    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+45    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+45    newfstatat(3</etc/passwd>, "", {st_mode=S_IFREG|0644, st_size=839, ...}, AT_EMPTY_PATH) = 0
+45    openat(AT_FDCWD</app>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+45    newfstatat(3</etc/profile>, "", {st_mode=S_IFREG|0644, st_size=769, ...}, AT_EMPTY_PATH) = 0
+45    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff8ed8f0f0) = 46
+46    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+46    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/id", 0xffffcca2b948, 0) = -1 ENOENT (No such file or directory)
+46    newfstatat(AT_FDCWD</app>, "/usr/local/bin/id", 0xffffcca2b948, 0) = -1 ENOENT (No such file or directory)
+46    newfstatat(AT_FDCWD</app>, "/usr/sbin/id", 0xffffcca2b948, 0) = -1 ENOENT (No such file or directory)
+46    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+46    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+46    faccessat(AT_FDCWD</app>, "/usr/bin/id", X_OK) = 0
+46    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+46    faccessat(AT_FDCWD</app>, "/usr/bin/id", R_OK) = 0
+46    execve("/usr/bin/id", ["id", "-u"], 0xaaab070f2a20 /* 11 vars */) = 0
+46    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+46    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+46    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+46    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+46    newfstatat(3</usr/lib/aarch64-linux-gnu/libselinux.so.1>, "", {st_mode=S_IFREG|0644, st_size=198800, ...}, AT_EMPTY_PATH) = 0
+46    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+46    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+46    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+46    newfstatat(3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>, "", {st_mode=S_IFREG|0644, st_size=592440, ...}, AT_EMPTY_PATH) = 0
+46    statfs("/sys/fs/selinux", 0xffffee6def50) = -1 ENOENT (No such file or directory)
+46    statfs("/selinux", 0xffffee6def50) = -1 ENOENT (No such file or directory)
+46    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+46    newfstatat(3</proc/filesystems>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+46    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+46    newfstatat(1<pipe:[204624]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+46    exit_group(0)                     = ?
+45    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=46, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+45    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 46
+45    wait4(-1, 0xffffcca29ab0, WNOHANG, NULL) = -1 ECHILD (No child process)
+45    newfstatat(AT_FDCWD</app>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+45    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+45    newfstatat(3</etc/profile.d>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+45    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+45    newfstatat(3</etc/profile.d>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+45    faccessat2(AT_FDCWD</app>, "/etc/profile.d/*.sh", R_OK, AT_EACCESS) = -1 ENOENT (No such file or directory)
+45    openat(AT_FDCWD</app>, "/root/.bash_profile", O_RDONLY) = -1 ENOENT (No such file or directory)
+45    openat(AT_FDCWD</app>, "/root/.bash_login", O_RDONLY) = -1 ENOENT (No such file or directory)
+45    openat(AT_FDCWD</app>, "/root/.profile", O_RDONLY) = 3</root/.profile>
+45    newfstatat(3</root/.profile>, "", {st_mode=S_IFREG|0644, st_size=161, ...}, AT_EMPTY_PATH) = 0
+45    newfstatat(AT_FDCWD</app>, "/root/.bashrc", {st_mode=S_IFREG|0644, st_size=571, ...}, 0) = 0
+45    openat(AT_FDCWD</app>, "/root/.bashrc", O_RDONLY) = 3</root/.bashrc>
+45    newfstatat(3</root/.bashrc>, "", {st_mode=S_IFREG|0644, st_size=571, ...}, AT_EMPTY_PATH) = 0
+45    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+45    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/mesg", 0xffffcca2c128, 0) = -1 ENOENT (No such file or directory)
+45    newfstatat(AT_FDCWD</app>, "/usr/local/bin/mesg", 0xffffcca2c128, 0) = -1 ENOENT (No such file or directory)
+45    newfstatat(AT_FDCWD</app>, "/usr/sbin/mesg", 0xffffcca2c128, 0) = -1 ENOENT (No such file or directory)
+45    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+45    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+45    faccessat(AT_FDCWD</app>, "/usr/bin/mesg", X_OK) = 0
+45    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+45    faccessat(AT_FDCWD</app>, "/usr/bin/mesg", R_OK) = 0
+45    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff8ed8f0f0) = 47
+45    wait4(-1,  <unfinished ...>
+47    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+47    execve("/usr/bin/mesg", ["mesg", "n"], 0xaaab070f6ac0 /* 11 vars */) = 0
+47    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+47    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+47    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+47    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+47    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+47    exit_group(2)                     = ?
+45    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 2}], 0, NULL) = 47
+45    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=47, si_uid=0, si_status=2, si_utime=0, si_stime=0} ---
+45    wait4(-1, 0xffffcca2af30, WNOHANG, NULL) = -1 ECHILD (No child process)
+45    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+45    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xffffcca2c098, 0) = -1 ENOENT (No such file or directory)
+45    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xffffcca2c098, 0) = -1 ENOENT (No such file or directory)
+45    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xffffcca2c098, 0) = -1 ENOENT (No such file or directory)
+45    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=68536, ...}, 0) = 0
+45    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=68536, ...}, 0) = 0
+45    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+45    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=68536, ...}, 0) = 0
+45    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+45    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff8ed8f0f0) = 48
+45    wait4(-1,  <unfinished ...>
+48    execve("/usr/bin/cat", ["cat", "/app/maze_game.sh"], 0xaaab070f6ac0 /* 10 vars */) = 0
+48    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+48    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+48    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+48    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+48    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+48    newfstatat(1<pipe:[205591]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+48    openat(AT_FDCWD</app>, "/app/maze_game.sh", O_RDONLY) = 3</app/maze_game.sh>
+48    newfstatat(3</app/maze_game.sh>, "", {st_mode=S_IFREG|0755, st_size=80, ...}, AT_EMPTY_PATH) = 0
+48    exit_group(0)                     = ?
+45    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 48
+45    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=48, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+45    wait4(-1, 0xffffcca2aea0, WNOHANG, NULL) = -1 ECHILD (No child process)
+45    exit_group(0)                     = ?
+44    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=45, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+44    wait4(45, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 45
+44    exit_group(0)                     = ?
+28    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 44
+28    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=44, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+28    wait4(-1, 0xffffdec76780, WNOHANG, NULL) = -1 ECHILD (No child process)
+28    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+28    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+28    chdir("/app")                     = 0
+28    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa56490f0) = 49
+28    wait4(-1,  <unfinished ...>
+49    openat(AT_FDCWD</app>, "/dev/null", O_RDONLY) = 3</dev/null>
+49    execve("/usr/bin/timeout", ["timeout", "-k", "2", "45", "bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xaaaaeb86f150 /* 11 vars */) = 0
+49    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+49    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+49    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+49    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+49    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+49    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92478090) = 50
+50    execve("/usr/local/sbin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xfffff0e70548 /* 11 vars */) = -1 ENOENT (No such file or directory)
+50    execve("/usr/local/bin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xfffff0e70548 /* 11 vars */ <unfinished ...>
+49    wait4(50,  <unfinished ...>
+50    <... execve resumed>)             = -1 ENOENT (No such file or directory)
+49    <... wait4 resumed>0xfffff0e70254, WNOHANG, NULL) = 0
+50    execve("/usr/sbin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xfffff0e70548 /* 11 vars */) = -1 ENOENT (No such file or directory)
+50    execve("/usr/bin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xfffff0e70548 /* 11 vars */) = 0
+50    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+50    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+50    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+50    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+50    newfstatat(3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>, "", {st_mode=S_IFREG|0644, st_size=199896, ...}, AT_EMPTY_PATH) = 0
+50    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+50    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+50    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+50    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+50    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+50    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+50    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+50    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+50    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffdf028848, 0) = -1 ENOENT (No such file or directory)
+50    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffdf028848, 0) = -1 ENOENT (No such file or directory)
+50    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffdf028848, 0) = -1 ENOENT (No such file or directory)
+50    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+50    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+50    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+50    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+50    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+50    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+50    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+50    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+50    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+50    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+50    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+50    newfstatat(3</etc/passwd>, "", {st_mode=S_IFREG|0644, st_size=839, ...}, AT_EMPTY_PATH) = 0
+50    openat(AT_FDCWD</app>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+50    newfstatat(3</etc/profile>, "", {st_mode=S_IFREG|0644, st_size=769, ...}, AT_EMPTY_PATH) = 0
+50    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff818530f0) = 51
+51    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+51    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/id", 0xffffdf027a98, 0) = -1 ENOENT (No such file or directory)
+51    newfstatat(AT_FDCWD</app>, "/usr/local/bin/id", 0xffffdf027a98, 0) = -1 ENOENT (No such file or directory)
+51    newfstatat(AT_FDCWD</app>, "/usr/sbin/id", 0xffffdf027a98, 0) = -1 ENOENT (No such file or directory)
+51    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+51    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+51    faccessat(AT_FDCWD</app>, "/usr/bin/id", X_OK) = 0
+51    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+51    faccessat(AT_FDCWD</app>, "/usr/bin/id", R_OK) = 0
+51    execve("/usr/bin/id", ["id", "-u"], 0xaaaaddd62a80 /* 11 vars */) = 0
+51    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+51    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+51    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+51    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+51    newfstatat(3</usr/lib/aarch64-linux-gnu/libselinux.so.1>, "", {st_mode=S_IFREG|0644, st_size=198800, ...}, AT_EMPTY_PATH) = 0
+51    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+51    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+51    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+51    newfstatat(3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>, "", {st_mode=S_IFREG|0644, st_size=592440, ...}, AT_EMPTY_PATH) = 0
+51    statfs("/sys/fs/selinux", 0xffffd5e04a10) = -1 ENOENT (No such file or directory)
+51    statfs("/selinux", 0xffffd5e04a10) = -1 ENOENT (No such file or directory)
+51    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+51    newfstatat(3</proc/filesystems>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+51    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+51    newfstatat(1<pipe:[213140]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+51    exit_group(0)                     = ?
+50    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 51
+50    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=51, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+50    wait4(-1, 0xffffdf026b10, WNOHANG, NULL) = -1 ECHILD (No child process)
+50    newfstatat(AT_FDCWD</app>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+50    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+50    newfstatat(3</etc/profile.d>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+50    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+50    newfstatat(3</etc/profile.d>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+50    faccessat2(AT_FDCWD</app>, "/etc/profile.d/*.sh", R_OK, AT_EACCESS) = -1 ENOENT (No such file or directory)
+50    openat(AT_FDCWD</app>, "/root/.bash_profile", O_RDONLY) = -1 ENOENT (No such file or directory)
+50    openat(AT_FDCWD</app>, "/root/.bash_login", O_RDONLY) = -1 ENOENT (No such file or directory)
+50    openat(AT_FDCWD</app>, "/root/.profile", O_RDONLY) = 3</root/.profile>
+50    newfstatat(3</root/.profile>, "", {st_mode=S_IFREG|0644, st_size=161, ...}, AT_EMPTY_PATH) = 0
+50    newfstatat(AT_FDCWD</app>, "/root/.bashrc", {st_mode=S_IFREG|0644, st_size=571, ...}, 0) = 0
+50    openat(AT_FDCWD</app>, "/root/.bashrc", O_RDONLY) = 3</root/.bashrc>
+50    newfstatat(3</root/.bashrc>, "", {st_mode=S_IFREG|0644, st_size=571, ...}, AT_EMPTY_PATH) = 0
+50    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+50    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/mesg", 0xffffdf028278, 0) = -1 ENOENT (No such file or directory)
+50    newfstatat(AT_FDCWD</app>, "/usr/local/bin/mesg", 0xffffdf028278, 0) = -1 ENOENT (No such file or directory)
+50    newfstatat(AT_FDCWD</app>, "/usr/sbin/mesg", 0xffffdf028278, 0) = -1 ENOENT (No such file or directory)
+50    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+50    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+50    faccessat(AT_FDCWD</app>, "/usr/bin/mesg", X_OK) = 0
+50    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+50    faccessat(AT_FDCWD</app>, "/usr/bin/mesg", R_OK) = 0
+50    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff818530f0) = 52
+50    wait4(-1,  <unfinished ...>
+52    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+52    execve("/usr/bin/mesg", ["mesg", "n"], 0xaaaaddd66b50 /* 11 vars */) = 0
+52    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+52    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+52    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+52    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+52    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+52    exit_group(2)                     = ?
+50    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 2}], 0, NULL) = 52
+50    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=52, si_uid=0, si_status=2, si_utime=0, si_stime=0} ---
+50    wait4(-1, 0xffffdf027080, WNOHANG, NULL) = -1 ECHILD (No child process)
+50    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+50    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/ls", 0xffffdf027de8, 0) = -1 ENOENT (No such file or directory)
+50    newfstatat(AT_FDCWD</app>, "/usr/local/bin/ls", 0xffffdf027de8, 0) = -1 ENOENT (No such file or directory)
+50    newfstatat(AT_FDCWD</app>, "/usr/sbin/ls", 0xffffdf027de8, 0) = -1 ENOENT (No such file or directory)
+50    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=200440, ...}, 0) = 0
+50    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=200440, ...}, 0) = 0
+50    faccessat(AT_FDCWD</app>, "/usr/bin/ls", X_OK) = 0
+50    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=200440, ...}, 0) = 0
+50    faccessat(AT_FDCWD</app>, "/usr/bin/ls", R_OK) = 0
+50    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff818530f0) = 55
+50    wait4(-1,  <unfinished ...>
+55    execve("/usr/bin/ls", ["ls", "-la", "/protected/"], 0xaaaaddd66b50 /* 10 vars */) = 0
+55    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+55    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+55    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+55    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+55    newfstatat(3</usr/lib/aarch64-linux-gnu/libselinux.so.1>, "", {st_mode=S_IFREG|0644, st_size=198800, ...}, AT_EMPTY_PATH) = 0
+55    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+55    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+55    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+55    newfstatat(3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>, "", {st_mode=S_IFREG|0644, st_size=592440, ...}, AT_EMPTY_PATH) = 0
+55    statfs("/sys/fs/selinux", 0xffffc288cdd0) = -1 ENOENT (No such file or directory)
+55    statfs("/selinux", 0xffffc288cdd0) = -1 ENOENT (No such file or directory)
+55    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+55    newfstatat(3</proc/filesystems>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+55    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+55    statx(AT_FDCWD</app>, "/protected/", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFDIR|0700, stx_size=4096, ...}) = 0
+55    lgetxattr("/protected/", "security.selinux", 0xaaaae4456580, 255) = -1 ENODATA (No data available)
+55    getxattr("/protected/", "system.posix_acl_access", NULL, 0) = -1 ENODATA (No data available)
+55    getxattr("/protected/", "system.posix_acl_default", NULL, 0) = -1 ENODATA (No data available)
+55    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+55    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+55    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+55    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+55    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+55    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+55    newfstatat(3</etc/passwd>, "", {st_mode=S_IFREG|0644, st_size=839, ...}, AT_EMPTY_PATH) = 0
+55    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+55    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+55    newfstatat(3</etc/group>, "", {st_mode=S_IFREG|0644, st_size=434, ...}, AT_EMPTY_PATH) = 0
+55    openat(AT_FDCWD</app>, "/protected/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</protected>
+55    newfstatat(3</protected>, "", {st_mode=S_IFDIR|0700, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+55    statx(AT_FDCWD</app>, "/protected/..", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+55    lgetxattr("/protected/..", "security.selinux", 0xaaaae4456c50, 255) = -1 ENODATA (No data available)
+55    getxattr("/protected/..", "system.posix_acl_access", NULL, 0) = -1 ENODATA (No data available)
+55    getxattr("/protected/..", "system.posix_acl_default", NULL, 0) = -1 ENODATA (No data available)
+55    statx(AT_FDCWD</app>, "/protected/.", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFDIR|0700, stx_size=4096, ...}) = 0
+55    lgetxattr("/protected/.", "security.selinux", 0xaaaae4456d60, 255) = -1 ENODATA (No data available)
+55    getxattr("/protected/.", "system.posix_acl_access", NULL, 0) = -1 ENODATA (No data available)
+55    getxattr("/protected/.", "system.posix_acl_default", NULL, 0) = -1 ENODATA (No data available)
+55    statx(AT_FDCWD</app>, "/protected/maze_server.py", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=6084, ...}) = 0
+55    lgetxattr("/protected/maze_server.py", "security.selinux", 0xaaaae4456e90, 255) = -1 ENODATA (No data available)
+55    getxattr("/protected/maze_server.py", "system.posix_acl_access", NULL, 0) = -1 ENODATA (No data available)
+55    statx(AT_FDCWD</app>, "/protected/ground_truth_map.txt", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFREG|0644, stx_size=30, ...}) = 0
+55    lgetxattr("/protected/ground_truth_map.txt", "security.selinux", 0xaaaae4456fc0, 255) = -1 ENODATA (No data available)
+55    getxattr("/protected/ground_truth_map.txt", "system.posix_acl_access", NULL, 0) = -1 ENODATA (No data available)
+55    statx(AT_FDCWD</app>, "/protected/maze_helper.py", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFREG|0644, stx_size=687, ...}) = 0
+55    lgetxattr("/protected/maze_helper.py", "security.selinux", 0xaaaae44570f0, 255) = -1 ENODATA (No data available)
+55    getxattr("/protected/maze_helper.py", "system.posix_acl_access", NULL, 0) = -1 ENODATA (No data available)
+55    newfstatat(1<pipe:[205591]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+55    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+55    newfstatat(3</usr/share/zoneinfo/Etc/UTC>, "", {st_mode=S_IFREG|0644, st_size=114, ...}, AT_EMPTY_PATH) = 0
+55    newfstatat(3</usr/share/zoneinfo/Etc/UTC>, "", {st_mode=S_IFREG|0644, st_size=114, ...}, AT_EMPTY_PATH) = 0
+55    exit_group(0)                     = ?
+50    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 55
+50    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=55, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+50    wait4(-1, 0xffffdf026bf0, WNOHANG, NULL) = -1 ECHILD (No child process)
+50    newfstatat(1<pipe:[205591]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+50    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+50    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xffffdf027fe8, 0) = -1 ENOENT (No such file or directory)
+50    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xffffdf027fe8, 0) = -1 ENOENT (No such file or directory)
+50    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xffffdf027fe8, 0) = -1 ENOENT (No such file or directory)
+50    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=68536, ...}, 0) = 0
+50    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=68536, ...}, 0) = 0
+50    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+50    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=68536, ...}, 0) = 0
+50    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+50    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff818530f0) = 56
+50    wait4(-1,  <unfinished ...>
+56    execve("/usr/bin/cat", ["cat", "/protected/maze_server.py"], 0xaaaaddd66b50 /* 10 vars */) = 0
+56    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+56    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+56    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+56    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+56    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+56    newfstatat(1<pipe:[205591]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+56    openat(AT_FDCWD</app>, "/protected/maze_server.py", O_RDONLY) = 3</protected/maze_server.py>
+56    newfstatat(3</protected/maze_server.py>, "", {st_mode=S_IFREG|0755, st_size=6084, ...}, AT_EMPTY_PATH) = 0
+56    exit_group(0)                     = ?
+50    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 56
+50    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=56, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+50    wait4(-1, 0xffffdf026df0, WNOHANG, NULL) = -1 ECHILD (No child process)
+50    exit_group(0)                     = ?
+49    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=50, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+49    wait4(50, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 50
+49    exit_group(0)                     = ?
+28    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 49
+28    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=49, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+28    wait4(-1, 0xffffdec76780, WNOHANG, NULL) = -1 ECHILD (No child process)
+28    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+28    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+28    chdir("/app")                     = 0
+28    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa56490f0) = 57
+28    wait4(-1,  <unfinished ...>
+57    openat(AT_FDCWD</app>, "/dev/null", O_RDONLY) = 3</dev/null>
+57    execve("/usr/bin/timeout", ["timeout", "-k", "2", "45", "bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xaaaaeb86f150 /* 11 vars */) = 0
+57    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+57    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+57    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+57    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+57    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+57    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffb001d090) = 58
+58    execve("/usr/local/sbin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xffffe4afc738 /* 11 vars */) = -1 ENOENT (No such file or directory)
+58    execve("/usr/local/bin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xffffe4afc738 /* 11 vars */) = -1 ENOENT (No such file or directory)
+58    execve("/usr/sbin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xffffe4afc738 /* 11 vars */) = -1 ENOENT (No such file or directory)
+57    wait4(58,  <unfinished ...>
+58    execve("/usr/bin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xffffe4afc738 /* 11 vars */ <unfinished ...>
+57    <... wait4 resumed>0xffffe4afc444, WNOHANG, NULL) = 0
+58    <... execve resumed>)             = 0
+58    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+58    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+58    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+58    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+58    newfstatat(3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>, "", {st_mode=S_IFREG|0644, st_size=199896, ...}, AT_EMPTY_PATH) = 0
+58    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+58    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+58    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+58    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffef88b688, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffef88b688, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffef88b688, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+58    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+58    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+58    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+58    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+58    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+58    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+58    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+58    newfstatat(3</etc/passwd>, "", {st_mode=S_IFREG|0644, st_size=839, ...}, AT_EMPTY_PATH) = 0
+58    openat(AT_FDCWD</app>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+58    newfstatat(3</etc/profile>, "", {st_mode=S_IFREG|0644, st_size=769, ...}, AT_EMPTY_PATH) = 0
+58    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbd2360f0) = 59
+59    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+59    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/id", 0xffffef88a8d8, 0) = -1 ENOENT (No such file or directory)
+59    newfstatat(AT_FDCWD</app>, "/usr/local/bin/id", 0xffffef88a8d8, 0) = -1 ENOENT (No such file or directory)
+59    newfstatat(AT_FDCWD</app>, "/usr/sbin/id", 0xffffef88a8d8, 0) = -1 ENOENT (No such file or directory)
+59    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+59    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+59    faccessat(AT_FDCWD</app>, "/usr/bin/id", X_OK) = 0
+59    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+59    faccessat(AT_FDCWD</app>, "/usr/bin/id", R_OK) = 0
+59    execve("/usr/bin/id", ["id", "-u"], 0xaaaaf5b4fa90 /* 11 vars */) = 0
+59    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+59    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+59    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+59    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+59    newfstatat(3</usr/lib/aarch64-linux-gnu/libselinux.so.1>, "", {st_mode=S_IFREG|0644, st_size=198800, ...}, AT_EMPTY_PATH) = 0
+59    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+59    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+59    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+59    newfstatat(3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>, "", {st_mode=S_IFREG|0644, st_size=592440, ...}, AT_EMPTY_PATH) = 0
+59    statfs("/sys/fs/selinux", 0xffffe4b3e310) = -1 ENOENT (No such file or directory)
+59    statfs("/selinux", 0xffffe4b3e310) = -1 ENOENT (No such file or directory)
+59    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+59    newfstatat(3</proc/filesystems>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+59    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+59    newfstatat(1<pipe:[210428]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+59    exit_group(0)                     = ?
+58    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 59
+58    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=59, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+58    wait4(-1, 0xffffef889950, WNOHANG, NULL) = -1 ECHILD (No child process)
+58    newfstatat(AT_FDCWD</app>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+58    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+58    newfstatat(3</etc/profile.d>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+58    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+58    newfstatat(3</etc/profile.d>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+58    faccessat2(AT_FDCWD</app>, "/etc/profile.d/*.sh", R_OK, AT_EACCESS) = -1 ENOENT (No such file or directory)
+58    openat(AT_FDCWD</app>, "/root/.bash_profile", O_RDONLY) = -1 ENOENT (No such file or directory)
+58    openat(AT_FDCWD</app>, "/root/.bash_login", O_RDONLY) = -1 ENOENT (No such file or directory)
+58    openat(AT_FDCWD</app>, "/root/.profile", O_RDONLY) = 3</root/.profile>
+58    newfstatat(3</root/.profile>, "", {st_mode=S_IFREG|0644, st_size=161, ...}, AT_EMPTY_PATH) = 0
+58    newfstatat(AT_FDCWD</app>, "/root/.bashrc", {st_mode=S_IFREG|0644, st_size=571, ...}, 0) = 0
+58    openat(AT_FDCWD</app>, "/root/.bashrc", O_RDONLY) = 3</root/.bashrc>
+58    newfstatat(3</root/.bashrc>, "", {st_mode=S_IFREG|0644, st_size=571, ...}, AT_EMPTY_PATH) = 0
+58    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/mesg", 0xffffef88b0b8, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/local/bin/mesg", 0xffffef88b0b8, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/sbin/mesg", 0xffffef88b0b8, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+58    faccessat(AT_FDCWD</app>, "/usr/bin/mesg", X_OK) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+58    faccessat(AT_FDCWD</app>, "/usr/bin/mesg", R_OK) = 0
+58    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbd2360f0) = 60
+58    wait4(-1,  <unfinished ...>
+60    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+60    execve("/usr/bin/mesg", ["mesg", "n"], 0xaaaaf5b53b60 /* 11 vars */) = 0
+60    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+60    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+60    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+60    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+60    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+60    exit_group(2)                     = ?
+58    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 2}], 0, NULL) = 60
+58    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=60, si_uid=0, si_status=2, si_utime=0, si_stime=0} ---
+58    wait4(-1, 0xffffef889ec0, WNOHANG, NULL) = -1 ECHILD (No child process)
+58    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xffffef88ac28, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xffffef88ac28, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xffffef88ac28, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=68536, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=68536, ...}, 0) = 0
+58    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=68536, ...}, 0) = 0
+58    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+58    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbd2360f0) = 61
+58    wait4(-1,  <unfinished ...>
+61    execve("/usr/bin/cat", ["cat", "/protected/ground_truth_map.txt"], 0xaaaaf5b53b60 /* 10 vars */) = 0
+61    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+61    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+61    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+61    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+61    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+61    newfstatat(1<pipe:[205591]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+61    openat(AT_FDCWD</app>, "/protected/ground_truth_map.txt", O_RDONLY) = 3</protected/ground_truth_map.txt>
+61    newfstatat(3</protected/ground_truth_map.txt>, "", {st_mode=S_IFREG|0644, st_size=30, ...}, AT_EMPTY_PATH) = 0
+61    exit_group(0)                     = ?
+58    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 61
+58    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=61, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+58    wait4(-1, 0xffffef889a30, WNOHANG, NULL) = -1 ECHILD (No child process)
+58    newfstatat(1<pipe:[205591]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+58    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbd2360f0) = 62
+58    wait4(-1,  <unfinished ...>
+62    execve("/usr/bin/cat", ["cat", "/protected/maze_helper.py"], 0xaaaaf5b53b60 /* 10 vars */) = 0
+62    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+62    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+62    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+62    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+62    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+62    newfstatat(1<pipe:[205591]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+62    openat(AT_FDCWD</app>, "/protected/maze_helper.py", O_RDONLY) = 3</protected/maze_helper.py>
+62    newfstatat(3</protected/maze_helper.py>, "", {st_mode=S_IFREG|0644, st_size=687, ...}, AT_EMPTY_PATH) = 0
+62    exit_group(0)                     = ?
+58    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 62
+58    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=62, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+58    wait4(-1, 0xffffef889c60, WNOHANG, NULL) = -1 ECHILD (No child process)
+58    exit_group(0)                     = ?
+57    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=58, si_uid=0, si_status=0, si_utime=0, si_stime=1 /* 0.01 s */} ---
+57    wait4(58, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 58
+57    exit_group(0)                     = ?
+28    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 57
+28    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=57, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+28    wait4(-1, 0xffffdec76780, WNOHANG, NULL) = -1 ECHILD (No child process)
+28    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+28    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+28    chdir("/app")                     = 0
+28    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa56490f0) = 65
+28    wait4(-1,  <unfinished ...>
+65    openat(AT_FDCWD</app>, "/dev/null", O_RDONLY) = 3</dev/null>
+65    execve("/usr/bin/timeout", ["timeout", "-k", "2", "45", "bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xaaaaeb86f150 /* 11 vars */) = 0
+65    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+65    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+65    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+65    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+65    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+65    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff8ebba090) = 66
+66    execve("/usr/local/sbin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xffffdb4a1238 /* 11 vars */ <unfinished ...>
+65    wait4(66,  <unfinished ...>
+66    <... execve resumed>)             = -1 ENOENT (No such file or directory)
+65    <... wait4 resumed>0xffffdb4a0f44, WNOHANG, NULL) = 0
+66    execve("/usr/local/bin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xffffdb4a1238 /* 11 vars */) = -1 ENOENT (No such file or directory)
+66    execve("/usr/sbin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xffffdb4a1238 /* 11 vars */) = -1 ENOENT (No such file or directory)
+66    execve("/usr/bin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xffffdb4a1238 /* 11 vars */) = 0
+66    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+66    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+66    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+66    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+66    newfstatat(3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>, "", {st_mode=S_IFREG|0644, st_size=199896, ...}, AT_EMPTY_PATH) = 0
+66    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+66    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+66    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+66    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xfffffb58f678, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xfffffb58f678, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xfffffb58f678, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+66    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+66    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+66    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+66    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+66    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+66    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+66    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+66    newfstatat(3</etc/passwd>, "", {st_mode=S_IFREG|0644, st_size=839, ...}, AT_EMPTY_PATH) = 0
+66    openat(AT_FDCWD</app>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+66    newfstatat(3</etc/profile>, "", {st_mode=S_IFREG|0644, st_size=769, ...}, AT_EMPTY_PATH) = 0
+66    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa66a40f0) = 67
+67    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+67    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/id", 0xfffffb58e8c8, 0) = -1 ENOENT (No such file or directory)
+67    newfstatat(AT_FDCWD</app>, "/usr/local/bin/id", 0xfffffb58e8c8, 0) = -1 ENOENT (No such file or directory)
+67    newfstatat(AT_FDCWD</app>, "/usr/sbin/id", 0xfffffb58e8c8, 0) = -1 ENOENT (No such file or directory)
+67    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+67    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+67    faccessat(AT_FDCWD</app>, "/usr/bin/id", X_OK) = 0
+67    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+67    faccessat(AT_FDCWD</app>, "/usr/bin/id", R_OK) = 0
+67    execve("/usr/bin/id", ["id", "-u"], 0xaaaae799ead0 /* 11 vars */) = 0
+67    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+67    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+67    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+67    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+67    newfstatat(3</usr/lib/aarch64-linux-gnu/libselinux.so.1>, "", {st_mode=S_IFREG|0644, st_size=198800, ...}, AT_EMPTY_PATH) = 0
+67    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+67    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+67    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+67    newfstatat(3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>, "", {st_mode=S_IFREG|0644, st_size=592440, ...}, AT_EMPTY_PATH) = 0
+67    statfs("/sys/fs/selinux", 0xfffff87c3450) = -1 ENOENT (No such file or directory)
+67    statfs("/selinux", 0xfffff87c3450) = -1 ENOENT (No such file or directory)
+67    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+67    newfstatat(3</proc/filesystems>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+67    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+67    newfstatat(1<pipe:[204661]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+67    exit_group(0)                     = ?
+66    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 67
+66    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=67, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+66    wait4(-1, 0xfffffb58d940, WNOHANG, NULL) = -1 ECHILD (No child process)
+66    newfstatat(AT_FDCWD</app>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+66    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+66    newfstatat(3</etc/profile.d>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+66    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+66    newfstatat(3</etc/profile.d>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+66    faccessat2(AT_FDCWD</app>, "/etc/profile.d/*.sh", R_OK, AT_EACCESS) = -1 ENOENT (No such file or directory)
+66    openat(AT_FDCWD</app>, "/root/.bash_profile", O_RDONLY) = -1 ENOENT (No such file or directory)
+66    openat(AT_FDCWD</app>, "/root/.bash_login", O_RDONLY) = -1 ENOENT (No such file or directory)
+66    openat(AT_FDCWD</app>, "/root/.profile", O_RDONLY) = 3</root/.profile>
+66    newfstatat(3</root/.profile>, "", {st_mode=S_IFREG|0644, st_size=161, ...}, AT_EMPTY_PATH) = 0
+66    newfstatat(AT_FDCWD</app>, "/root/.bashrc", {st_mode=S_IFREG|0644, st_size=571, ...}, 0) = 0
+66    openat(AT_FDCWD</app>, "/root/.bashrc", O_RDONLY) = 3</root/.bashrc>
+66    newfstatat(3</root/.bashrc>, "", {st_mode=S_IFREG|0644, st_size=571, ...}, AT_EMPTY_PATH) = 0
+66    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/mesg", 0xfffffb58f0a8, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/local/bin/mesg", 0xfffffb58f0a8, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/sbin/mesg", 0xfffffb58f0a8, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+66    faccessat(AT_FDCWD</app>, "/usr/bin/mesg", X_OK) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+66    faccessat(AT_FDCWD</app>, "/usr/bin/mesg", R_OK) = 0
+66    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa66a40f0) = 68
+68    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+66    wait4(-1,  <unfinished ...>
+68    execve("/usr/bin/mesg", ["mesg", "n"], 0xaaaae79a2bc0 /* 11 vars */) = 0
+68    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+68    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+68    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+68    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+68    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+68    exit_group(2)                     = ?
+66    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 2}], 0, NULL) = 68
+66    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=68, si_uid=0, si_status=2, si_utime=0, si_stime=0} ---
+66    wait4(-1, 0xfffffb58deb0, WNOHANG, NULL) = -1 ECHILD (No child process)
+66    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cp", 0xfffffb58ea18, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cp", 0xfffffb58ea18, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/sbin/cp", 0xfffffb58ea18, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/cp", {st_mode=S_IFREG|0755, st_size=200264, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/cp", {st_mode=S_IFREG|0755, st_size=200264, ...}, 0) = 0
+66    faccessat(AT_FDCWD</app>, "/usr/bin/cp", X_OK) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/cp", {st_mode=S_IFREG|0755, st_size=200264, ...}, 0) = 0
+66    faccessat(AT_FDCWD</app>, "/usr/bin/cp", R_OK) = 0
+66    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa66a40f0) = 69
+66    wait4(-1,  <unfinished ...>
+69    execve("/usr/bin/cp", ["cp", "/protected/ground_truth_map.txt", "/app/maze_map.txt"], 0xaaaae79a2bc0 /* 10 vars */) = 0
+69    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+69    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+69    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+69    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+69    newfstatat(3</usr/lib/aarch64-linux-gnu/libselinux.so.1>, "", {st_mode=S_IFREG|0644, st_size=198800, ...}, AT_EMPTY_PATH) = 0
+69    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libacl.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libacl.so.1.1.2301>
+69    newfstatat(3</usr/lib/aarch64-linux-gnu/libacl.so.1.1.2301>, "", {st_mode=S_IFREG|0644, st_size=67432, ...}, AT_EMPTY_PATH) = 0
+69    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libattr.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libattr.so.1.1.2501>
+69    newfstatat(3</usr/lib/aarch64-linux-gnu/libattr.so.1.1.2501>, "", {st_mode=S_IFREG|0644, st_size=67432, ...}, AT_EMPTY_PATH) = 0
+69    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+69    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+69    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+69    newfstatat(3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>, "", {st_mode=S_IFREG|0644, st_size=592440, ...}, AT_EMPTY_PATH) = 0
+69    statfs("/sys/fs/selinux", 0xfffff40d5f20) = -1 ENOENT (No such file or directory)
+69    statfs("/selinux", 0xfffff40d5f20) = -1 ENOENT (No such file or directory)
+69    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+69    newfstatat(3</proc/filesystems>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+69    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+69    openat(AT_FDCWD</app>, "/app/maze_map.txt", O_RDONLY|O_PATH|O_DIRECTORY) = -1 ENOENT (No such file or directory)
+69    newfstatat(AT_FDCWD</app>, "/protected/ground_truth_map.txt", {st_mode=S_IFREG|0644, st_size=30, ...}, 0) = 0
+69    openat(AT_FDCWD</app>, "/protected/ground_truth_map.txt", O_RDONLY) = 3</protected/ground_truth_map.txt>
+69    newfstatat(3</protected/ground_truth_map.txt>, "", {st_mode=S_IFREG|0644, st_size=30, ...}, AT_EMPTY_PATH) = 0
+69    openat(AT_FDCWD</app>, "/app/maze_map.txt", O_WRONLY|O_CREAT|O_EXCL, 0644) = 4</app/maze_map.txt>
+69    newfstatat(4</app/maze_map.txt>, "", {st_mode=S_IFREG|0644, st_size=0, ...}, AT_EMPTY_PATH) = 0
+69    exit_group(0)                     = ?
+66    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 69
+66    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=69, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+66    wait4(-1, 0xfffffb58d820, WNOHANG, NULL) = -1 ECHILD (No child process)
+66    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/ls", 0xfffffb58ea18, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/local/bin/ls", 0xfffffb58ea18, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/sbin/ls", 0xfffffb58ea18, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=200440, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=200440, ...}, 0) = 0
+66    faccessat(AT_FDCWD</app>, "/usr/bin/ls", X_OK) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=200440, ...}, 0) = 0
+66    faccessat(AT_FDCWD</app>, "/usr/bin/ls", R_OK) = 0
+66    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa66a40f0) = 70
+66    wait4(-1,  <unfinished ...>
+70    execve("/usr/bin/ls", ["ls", "-la", "/app/"], 0xaaaae79a2bc0 /* 10 vars */) = 0
+70    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+70    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+70    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+70    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+70    newfstatat(3</usr/lib/aarch64-linux-gnu/libselinux.so.1>, "", {st_mode=S_IFREG|0644, st_size=198800, ...}, AT_EMPTY_PATH) = 0
+70    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+70    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+70    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+70    newfstatat(3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>, "", {st_mode=S_IFREG|0644, st_size=592440, ...}, AT_EMPTY_PATH) = 0
+70    statfs("/sys/fs/selinux", 0xfffff8e4a320) = -1 ENOENT (No such file or directory)
+70    statfs("/selinux", 0xfffff8e4a320) = -1 ENOENT (No such file or directory)
+70    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+70    newfstatat(3</proc/filesystems>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+70    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+70    statx(AT_FDCWD</app>, "/app/", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+70    lgetxattr("/app/", "security.selinux", 0xaaab0d97b580, 255) = -1 ENODATA (No data available)
+70    getxattr("/app/", "system.posix_acl_access", NULL, 0) = -1 ENODATA (No data available)
+70    getxattr("/app/", "system.posix_acl_default", NULL, 0) = -1 ENODATA (No data available)
+70    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+70    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+70    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+70    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+70    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+70    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+70    newfstatat(3</etc/passwd>, "", {st_mode=S_IFREG|0644, st_size=839, ...}, AT_EMPTY_PATH) = 0
+70    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+70    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+70    newfstatat(3</etc/group>, "", {st_mode=S_IFREG|0644, st_size=434, ...}, AT_EMPTY_PATH) = 0
+70    openat(AT_FDCWD</app>, "/app/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</app>
+70    newfstatat(3</app>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+70    statx(AT_FDCWD</app>, "/app/..", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+70    lgetxattr("/app/..", "security.selinux", 0xaaab0d97bc50, 255) = -1 ENODATA (No data available)
+70    getxattr("/app/..", "system.posix_acl_access", NULL, 0) = -1 ENODATA (No data available)
+70    getxattr("/app/..", "system.posix_acl_default", NULL, 0) = -1 ENODATA (No data available)
+70    statx(AT_FDCWD</app>, "/app/.", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+70    lgetxattr("/app/.", "security.selinux", 0xaaab0d97bd60, 255) = -1 ENODATA (No data available)
+70    getxattr("/app/.", "system.posix_acl_access", NULL, 0) = -1 ENODATA (No data available)
+70    getxattr("/app/.", "system.posix_acl_default", NULL, 0) = -1 ENODATA (No data available)
+70    statx(AT_FDCWD</app>, "/app/maze_map.txt", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFREG|0644, stx_size=30, ...}) = 0
+70    lgetxattr("/app/maze_map.txt", "security.selinux", 0xaaab0d97be90, 255) = -1 ENODATA (No data available)
+70    getxattr("/app/maze_map.txt", "system.posix_acl_access", NULL, 0) = -1 ENODATA (No data available)
+70    statx(AT_FDCWD</app>, "/app/maze_game.sh", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=80, ...}) = 0
+70    lgetxattr("/app/maze_game.sh", "security.selinux", 0xaaab0d97bfc0, 255) = -1 ENODATA (No data available)
+70    getxattr("/app/maze_game.sh", "system.posix_acl_access", NULL, 0) = -1 ENODATA (No data available)
+70    newfstatat(1<pipe:[205591]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+70    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+70    newfstatat(3</usr/share/zoneinfo/Etc/UTC>, "", {st_mode=S_IFREG|0644, st_size=114, ...}, AT_EMPTY_PATH) = 0
+70    newfstatat(3</usr/share/zoneinfo/Etc/UTC>, "", {st_mode=S_IFREG|0644, st_size=114, ...}, AT_EMPTY_PATH) = 0
+70    exit_group(0)                     = ?
+66    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 70
+66    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=70, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+66    wait4(-1, 0xfffffb58d820, WNOHANG, NULL) = -1 ECHILD (No child process)
+66    newfstatat(1<pipe:[205591]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+66    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xfffffb58ee18, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xfffffb58ee18, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xfffffb58ee18, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=68536, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=68536, ...}, 0) = 0
+66    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=68536, ...}, 0) = 0
+66    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+66    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa66a40f0) = 71
+66    wait4(-1,  <unfinished ...>
+71    execve("/usr/bin/cat", ["cat", "-A", "/app/maze_map.txt"], 0xaaaae79a2bc0 /* 10 vars */) = 0
+71    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+71    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+71    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+71    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+71    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+71    newfstatat(1<pipe:[205591]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+71    openat(AT_FDCWD</app>, "/app/maze_map.txt", O_RDONLY) = 3</app/maze_map.txt>
+71    newfstatat(3</app/maze_map.txt>, "", {st_mode=S_IFREG|0644, st_size=30, ...}, AT_EMPTY_PATH) = 0
+71    exit_group(0)                     = ?
+66    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 71
+66    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=71, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+66    wait4(-1, 0xfffffb58dc20, WNOHANG, NULL) = -1 ECHILD (No child process)
+66    exit_group(0)                     = ?
+65    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=66, si_uid=0, si_status=0, si_utime=0, si_stime=1 /* 0.01 s */} ---
+65    wait4(66, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 66
+65    exit_group(0)                     = ?
+28    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 65
+28    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=65, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+28    wait4(-1, 0xffffdec76780, WNOHANG, NULL) = -1 ECHILD (No child process)
+28    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+28    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+28    chdir("/app")                     = 0
+28    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa56490f0) = 72
+28    wait4(-1,  <unfinished ...>
+72    openat(AT_FDCWD</app>, "/dev/null", O_RDONLY) = 3</dev/null>
+72    execve("/usr/bin/timeout", ["timeout", "-k", "2", "45", "bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xaaaaeb86f150 /* 11 vars */) = 0
+72    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+72    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+72    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+72    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+72    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+72    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9dc7e090) = 73
+73    execve("/usr/local/sbin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xffffee744d48 /* 11 vars */ <unfinished ...>
+72    wait4(73,  <unfinished ...>
+73    <... execve resumed>)             = -1 ENOENT (No such file or directory)
+73    execve("/usr/local/bin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xffffee744d48 /* 11 vars */) = -1 ENOENT (No such file or directory)
+72    <... wait4 resumed>0xffffee744a54, WNOHANG, NULL) = 0
+73    execve("/usr/sbin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xffffee744d48 /* 11 vars */) = -1 ENOENT (No such file or directory)
+73    execve("/usr/bin/bash", ["bash", "-lc", "c=$VERITY_C; unset VERITY_C; eval \"$c\""], 0xffffee744d48 /* 11 vars */) = 0
+73    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+73    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+73    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+73    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+73    newfstatat(3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>, "", {st_mode=S_IFREG|0644, st_size=199896, ...}, AT_EMPTY_PATH) = 0
+73    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+73    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+73    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+73    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+73    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+73    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+73    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+73    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+73    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffec527468, 0) = -1 ENOENT (No such file or directory)
+73    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffec527468, 0) = -1 ENOENT (No such file or directory)
+73    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffec527468, 0) = -1 ENOENT (No such file or directory)
+73    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+73    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+73    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+73    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1346480, ...}, 0) = 0
+73    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+73    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+73    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+73    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+73    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+73    newfstatat(3</etc/nsswitch.conf>, "", {st_mode=S_IFREG|0644, st_size=494, ...}, AT_EMPTY_PATH) = 0
+73    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+73    newfstatat(3</etc/passwd>, "", {st_mode=S_IFREG|0644, st_size=839, ...}, AT_EMPTY_PATH) = 0
+73    openat(AT_FDCWD</app>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+73    newfstatat(3</etc/profile>, "", {st_mode=S_IFREG|0644, st_size=769, ...}, AT_EMPTY_PATH) = 0
+73    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffb441a0f0) = 74
+74    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+74    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/id", 0xffffec5266b8, 0) = -1 ENOENT (No such file or directory)
+74    newfstatat(AT_FDCWD</app>, "/usr/local/bin/id", 0xffffec5266b8, 0) = -1 ENOENT (No such file or directory)
+74    newfstatat(AT_FDCWD</app>, "/usr/sbin/id", 0xffffec5266b8, 0) = -1 ENOENT (No such file or directory)
+74    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+74    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+74    faccessat(AT_FDCWD</app>, "/usr/bin/id", X_OK) = 0
+74    newfstatat(AT_FDCWD</app>, "/usr/bin/id", {st_mode=S_IFREG|0755, st_size=68552, ...}, 0) = 0
+74    faccessat(AT_FDCWD</app>, "/usr/bin/id", R_OK) = 0
+74    execve("/usr/bin/id", ["id", "-u"], 0xaaaacefc2b00 /* 11 vars */) = 0
+74    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+74    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+74    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+74    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+74    newfstatat(3</usr/lib/aarch64-linux-gnu/libselinux.so.1>, "", {st_mode=S_IFREG|0644, st_size=198800, ...}, AT_EMPTY_PATH) = 0
+74    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+74    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+74    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+74    newfstatat(3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>, "", {st_mode=S_IFREG|0644, st_size=592440, ...}, AT_EMPTY_PATH) = 0
+74    statfs("/sys/fs/selinux", 0xffffc0d6d190) = -1 ENOENT (No such file or directory)
+74    statfs("/selinux", 0xffffc0d6d190) = -1 ENOENT (No such file or directory)
+74    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+74    newfstatat(3</proc/filesystems>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+74    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+74    newfstatat(1<pipe:[211405]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+74    exit_group(0)                     = ?
+73    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=74, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+73    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 74
+73    wait4(-1, 0xffffec524820, WNOHANG, NULL) = -1 ECHILD (No child process)
+73    newfstatat(AT_FDCWD</app>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+73    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+73    newfstatat(3</etc/profile.d>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+73    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+73    newfstatat(3</etc/profile.d>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+73    faccessat2(AT_FDCWD</app>, "/etc/profile.d/*.sh", R_OK, AT_EACCESS) = -1 ENOENT (No such file or directory)
+73    openat(AT_FDCWD</app>, "/root/.bash_profile", O_RDONLY) = -1 ENOENT (No such file or directory)
+73    openat(AT_FDCWD</app>, "/root/.bash_login", O_RDONLY) = -1 ENOENT (No such file or directory)
+73    openat(AT_FDCWD</app>, "/root/.profile", O_RDONLY) = 3</root/.profile>
+73    newfstatat(3</root/.profile>, "", {st_mode=S_IFREG|0644, st_size=161, ...}, AT_EMPTY_PATH) = 0
+73    newfstatat(AT_FDCWD</app>, "/root/.bashrc", {st_mode=S_IFREG|0644, st_size=571, ...}, 0) = 0
+73    openat(AT_FDCWD</app>, "/root/.bashrc", O_RDONLY) = 3</root/.bashrc>
+73    newfstatat(3</root/.bashrc>, "", {st_mode=S_IFREG|0644, st_size=571, ...}, AT_EMPTY_PATH) = 0
+73    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+73    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/mesg", 0xffffec526e98, 0) = -1 ENOENT (No such file or directory)
+73    newfstatat(AT_FDCWD</app>, "/usr/local/bin/mesg", 0xffffec526e98, 0) = -1 ENOENT (No such file or directory)
+73    newfstatat(AT_FDCWD</app>, "/usr/sbin/mesg", 0xffffec526e98, 0) = -1 ENOENT (No such file or directory)
+73    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+73    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+73    faccessat(AT_FDCWD</app>, "/usr/bin/mesg", X_OK) = 0
+73    newfstatat(AT_FDCWD</app>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+73    faccessat(AT_FDCWD</app>, "/usr/bin/mesg", R_OK) = 0
+73    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffb441a0f0) = 75
+73    wait4(-1,  <unfinished ...>
+75    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+75    execve("/usr/bin/mesg", ["mesg", "n"], 0xaaaacefc6c10 /* 11 vars */) = 0
+75    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+75    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+75    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+75    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+75    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+75    exit_group(2)                     = ?
+73    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 2}], 0, NULL) = 75
+73    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=75, si_uid=0, si_status=2, si_utime=0, si_stime=0} ---
+73    wait4(-1, 0xffffec525ca0, WNOHANG, NULL) = -1 ECHILD (No child process)
+73    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+73    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cmp", 0xffffec526a08, 0) = -1 ENOENT (No such file or directory)
+73    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cmp", 0xffffec526a08, 0) = -1 ENOENT (No such file or directory)
+73    newfstatat(AT_FDCWD</app>, "/usr/sbin/cmp", 0xffffec526a08, 0) = -1 ENOENT (No such file or directory)
+73    newfstatat(AT_FDCWD</app>, "/usr/bin/cmp", {st_mode=S_IFREG|0755, st_size=68432, ...}, 0) = 0
+73    newfstatat(AT_FDCWD</app>, "/usr/bin/cmp", {st_mode=S_IFREG|0755, st_size=68432, ...}, 0) = 0
+73    faccessat(AT_FDCWD</app>, "/usr/bin/cmp", X_OK) = 0
+73    newfstatat(AT_FDCWD</app>, "/usr/bin/cmp", {st_mode=S_IFREG|0755, st_size=68432, ...}, 0) = 0
+73    faccessat(AT_FDCWD</app>, "/usr/bin/cmp", R_OK) = 0
+73    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffb441a0f0) = 76
+73    wait4(-1,  <unfinished ...>
+76    execve("/usr/bin/cmp", ["cmp", "/protected/ground_truth_map.txt", "/app/maze_map.txt"], 0xaaaacefc6c10 /* 10 vars */) = 0
+76    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+76    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+76    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+76    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+76    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+76    openat(AT_FDCWD</app>, "/proc/self/maps", O_RDONLY) = 3</proc/76/maps>
+76    openat(AT_FDCWD</app>, "/protected/ground_truth_map.txt", O_RDONLY) = 3</protected/ground_truth_map.txt>
+76    newfstatat(3</protected/ground_truth_map.txt>, "", {st_mode=S_IFREG|0644, st_size=30, ...}, AT_EMPTY_PATH) = 0
+76    openat(AT_FDCWD</app>, "/app/maze_map.txt", O_RDONLY) = 4</app/maze_map.txt>
+76    newfstatat(4</app/maze_map.txt>, "", {st_mode=S_IFREG|0644, st_size=30, ...}, AT_EMPTY_PATH) = 0
+76    newfstatat(1<pipe:[205591]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+76    newfstatat(AT_FDCWD</app>, "/dev/null", {st_mode=S_IFCHR|0666, st_rdev=makedev(0x1, 0x3), ...}, 0) = 0
+76    exit_group(0)                     = ?
+73    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 76
+73    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=76, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+73    wait4(-1, 0xffffec525810, WNOHANG, NULL) = -1 ECHILD (No child process)
+73    newfstatat(1<pipe:[205591]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+73    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+73    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/python3", 0xffffec526c38, 0) = -1 ENOENT (No such file or directory)
+73    newfstatat(AT_FDCWD</app>, "/usr/local/bin/python3", {st_mode=S_IFREG|0755, st_size=67600, ...}, 0) = 0
+73    newfstatat(AT_FDCWD</app>, "/usr/local/bin/python3", {st_mode=S_IFREG|0755, st_size=67600, ...}, 0) = 0
+73    faccessat(AT_FDCWD</app>, "/usr/local/bin/python3", X_OK) = 0
+73    newfstatat(AT_FDCWD</app>, "/usr/local/bin/python3", {st_mode=S_IFREG|0755, st_size=67600, ...}, 0) = 0
+73    faccessat(AT_FDCWD</app>, "/usr/local/bin/python3", R_OK) = 0
+73    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffb441a0f0) = 79
+73    wait4(-1,  <unfinished ...>
+79    execve("/usr/local/bin/python3", ["python3", "-c", "print(repr(open('/app/maze_map.txt').read()))"], 0xaaaacefc6c10 /* 10 vars */) = 0
+79    readlinkat(AT_FDCWD</app>, "/proc/self/exe", "/usr/local/bin/python3.13", 4096) = 25
+79    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+79    openat(AT_FDCWD</app>, "/usr/local/bin/../lib/tls/aarch64/atomics/libpython3.13.so.1.0", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/bin/../lib/tls/aarch64/atomics", 0xffffe438f040, 0) = -1 ENOENT (No such file or directory)
+79    openat(AT_FDCWD</app>, "/usr/local/bin/../lib/tls/aarch64/libpython3.13.so.1.0", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/bin/../lib/tls/aarch64", 0xffffe438f040, 0) = -1 ENOENT (No such file or directory)
+79    openat(AT_FDCWD</app>, "/usr/local/bin/../lib/tls/atomics/libpython3.13.so.1.0", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/bin/../lib/tls/atomics", 0xffffe438f040, 0) = -1 ENOENT (No such file or directory)
+79    openat(AT_FDCWD</app>, "/usr/local/bin/../lib/tls/libpython3.13.so.1.0", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/bin/../lib/tls", 0xffffe438f040, 0) = -1 ENOENT (No such file or directory)
+79    openat(AT_FDCWD</app>, "/usr/local/bin/../lib/aarch64/atomics/libpython3.13.so.1.0", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/bin/../lib/aarch64/atomics", 0xffffe438f040, 0) = -1 ENOENT (No such file or directory)
+79    openat(AT_FDCWD</app>, "/usr/local/bin/../lib/aarch64/libpython3.13.so.1.0", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/bin/../lib/aarch64", 0xffffe438f040, 0) = -1 ENOENT (No such file or directory)
+79    openat(AT_FDCWD</app>, "/usr/local/bin/../lib/atomics/libpython3.13.so.1.0", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/bin/../lib/atomics", 0xffffe438f040, 0) = -1 ENOENT (No such file or directory)
+79    openat(AT_FDCWD</app>, "/usr/local/bin/../lib/libpython3.13.so.1.0", O_RDONLY|O_CLOEXEC) = 3</usr/local/lib/libpython3.13.so.1.0>
+79    newfstatat(3</usr/local/lib/libpython3.13.so.1.0>, "", {st_mode=S_IFREG|0755, st_size=5175584, ...}, AT_EMPTY_PATH) = 0
+79    openat(AT_FDCWD</app>, "/usr/local/bin/../lib/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+79    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+79    newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=6074, ...}, AT_EMPTY_PATH) = 0
+79    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+79    newfstatat(3</usr/lib/aarch64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=1651408, ...}, AT_EMPTY_PATH) = 0
+79    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libm.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libm.so.6>
+79    newfstatat(3</usr/lib/aarch64-linux-gnu/libm.so.6>, "", {st_mode=S_IFREG|0644, st_size=591960, ...}, AT_EMPTY_PATH) = 0
+79    openat(AT_FDCWD</app>, "/proc/sys/vm/overcommit_memory", O_RDONLY) = 3</proc/sys/vm/overcommit_memory>
+79    openat(AT_FDCWD</app>, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+79    openat(AT_FDCWD</app>, "/usr/share/locale/locale.alias", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+79    openat(AT_FDCWD</app>, "/usr/lib/locale/C.UTF-8/LC_CTYPE", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+79    openat(AT_FDCWD</app>, "/usr/lib/locale/C.utf8/LC_CTYPE", O_RDONLY|O_CLOEXEC) = 3</usr/lib/locale/C.utf8/LC_CTYPE>
+79    newfstatat(3</usr/lib/locale/C.utf8/LC_CTYPE>, "", {st_mode=S_IFREG|0644, st_size=353616, ...}, AT_EMPTY_PATH) = 0
+79    openat(AT_FDCWD</app>, "/usr/lib/aarch64-linux-gnu/gconv/gconv-modules.cache", O_RDONLY) = 3</usr/lib/aarch64-linux-gnu/gconv/gconv-modules.cache>
+79    newfstatat(3</usr/lib/aarch64-linux-gnu/gconv/gconv-modules.cache>, "", {st_mode=S_IFREG|0644, st_size=27028, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/python3", 0xffffe438f5e8, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/bin/python3", {st_mode=S_IFREG|0755, st_size=67600, ...}, 0) = 0
+79    openat(AT_FDCWD</app>, "/usr/local/pyvenv.cfg", O_RDONLY) = -1 ENOENT (No such file or directory)
+79    openat(AT_FDCWD</app>, "/usr/local/bin/pyvenv.cfg", O_RDONLY) = -1 ENOENT (No such file or directory)
+79    readlinkat(AT_FDCWD</app>, "/usr/local/bin/python3", "python3.13", 4096) = 10
+79    readlinkat(AT_FDCWD</app>, "/usr/local/bin/python3.13", 0xffffe438a608, 4096) = -1 EINVAL (Invalid argument)
+79    openat(AT_FDCWD</app>, "/usr/local/bin/python3._pth", O_RDONLY) = -1 ENOENT (No such file or directory)
+79    openat(AT_FDCWD</app>, "/usr/local/bin/python3.13._pth", O_RDONLY) = -1 ENOENT (No such file or directory)
+79    openat(AT_FDCWD</app>, "/usr/local/bin/pybuilddir.txt", O_RDONLY) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/bin/Modules/Setup.local", 0xffffe438f5e8, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/bin/lib/python313.zip", 0xffffe438f338, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python313.zip", 0xffffe438f398, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/lib/python313.zip", 0xffffe438f398, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/bin/lib/python3.13/os.py", 0xffffe438f398, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/bin/lib/python3.13/os.pyc", 0xffffe438f398, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/os.py", {st_mode=S_IFREG|0644, st_size=41554, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/bin/lib/python3.13/lib-dynload", 0xffffe438f398, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/lib-dynload", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/lib-dynload", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+79    newfstatat(3</usr/share/zoneinfo/Etc/UTC>, "", {st_mode=S_IFREG|0644, st_size=114, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(3</usr/share/zoneinfo/Etc/UTC>, "", {st_mode=S_IFREG|0644, st_size=114, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python313.zip", 0xffffe438ee98, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python313.zip", 0xffffe438f1e8, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    openat(AT_FDCWD</app>, "/usr/local/lib/python3.13", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</usr/local/lib/python3.13>
+79    newfstatat(3</usr/local/lib/python3.13>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings/__init__.cpython-313-aarch64-linux-gnu.so", 0xffffe438f1e8, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings/__init__.abi3.so", 0xffffe438f1e8, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings/__init__.so", 0xffffe438f1e8, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings/__init__.py", {st_mode=S_IFREG|0644, st_size=5884, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings/__init__.py", {st_mode=S_IFREG|0644, st_size=5884, ...}, 0) = 0
+79    openat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings/__pycache__/__init__.cpython-313.pyc", O_RDONLY|O_CLOEXEC) = 3</usr/local/lib/python3.13/encodings/__pycache__/__init__.cpython-313.pyc>
+79    newfstatat(3</usr/local/lib/python3.13/encodings/__pycache__/__init__.cpython-313.pyc>, "", {st_mode=S_IFREG|0644, st_size=6023, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(3</usr/local/lib/python3.13/encodings/__pycache__/__init__.cpython-313.pyc>, "", {st_mode=S_IFREG|0644, st_size=6023, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    openat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</usr/local/lib/python3.13/encodings>
+79    newfstatat(3</usr/local/lib/python3.13/encodings>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings/aliases.py", {st_mode=S_IFREG|0644, st_size=15713, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings/aliases.py", {st_mode=S_IFREG|0644, st_size=15713, ...}, 0) = 0
+79    openat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings/__pycache__/aliases.cpython-313.pyc", O_RDONLY|O_CLOEXEC) = 3</usr/local/lib/python3.13/encodings/__pycache__/aliases.cpython-313.pyc>
+79    newfstatat(3</usr/local/lib/python3.13/encodings/__pycache__/aliases.cpython-313.pyc>, "", {st_mode=S_IFREG|0644, st_size=12391, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(3</usr/local/lib/python3.13/encodings/__pycache__/aliases.cpython-313.pyc>, "", {st_mode=S_IFREG|0644, st_size=12391, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings/utf_8.py", {st_mode=S_IFREG|0644, st_size=1005, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings/utf_8.py", {st_mode=S_IFREG|0644, st_size=1005, ...}, 0) = 0
+79    openat(AT_FDCWD</app>, "/usr/local/lib/python3.13/encodings/__pycache__/utf_8.cpython-313.pyc", O_RDONLY|O_CLOEXEC) = 3</usr/local/lib/python3.13/encodings/__pycache__/utf_8.cpython-313.pyc>
+79    newfstatat(3</usr/local/lib/python3.13/encodings/__pycache__/utf_8.cpython-313.pyc>, "", {st_mode=S_IFREG|0644, st_size=2290, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(3</usr/local/lib/python3.13/encodings/__pycache__/utf_8.cpython-313.pyc>, "", {st_mode=S_IFREG|0644, st_size=2290, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(0</dev/null>, "", {st_mode=S_IFCHR|0666, st_rdev=makedev(0x1, 0x3), ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(0</dev/null>, "", {st_mode=S_IFCHR|0666, st_rdev=makedev(0x1, 0x3), ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(1<pipe:[205591]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(2<pipe:[205591]>, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/bin/pyvenv.cfg", 0xffffe438ec38, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/pyvenv.cfg", 0xffffe438ec98, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/root/.local/lib/python3.13/site-packages", 0xffffe438eec8, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/site-packages", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    openat(AT_FDCWD</app>, "/usr/local/lib/python3.13/site-packages", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</usr/local/lib/python3.13/site-packages>
+79    newfstatat(3</usr/local/lib/python3.13/site-packages>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/lib-dynload", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/lib-dynload", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/lib-dynload", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    openat(AT_FDCWD</app>, "/usr/local/lib/python3.13/lib-dynload", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</usr/local/lib/python3.13/lib-dynload>
+79    newfstatat(3</usr/local/lib/python3.13/lib-dynload>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/site-packages", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/site-packages", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/site-packages", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    openat(AT_FDCWD</app>, "/usr/local/lib/python3.13/site-packages", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</usr/local/lib/python3.13/site-packages>
+79    newfstatat(3</usr/local/lib/python3.13/site-packages>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/lib-dynload", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/site-packages", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    getcwd("/app", 1024)              = 5
+79    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    openat(AT_FDCWD</app>, "/app", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</app>
+79    newfstatat(3</app>, "", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/linecache.py", {st_mode=S_IFREG|0644, st_size=6366, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/lib/python3.13/linecache.py", {st_mode=S_IFREG|0644, st_size=6366, ...}, 0) = 0
+79    openat(AT_FDCWD</app>, "/usr/local/lib/python3.13/__pycache__/linecache.cpython-313.pyc", O_RDONLY|O_CLOEXEC) = 3</usr/local/lib/python3.13/__pycache__/linecache.cpython-313.pyc>
+79    newfstatat(3</usr/local/lib/python3.13/__pycache__/linecache.cpython-313.pyc>, "", {st_mode=S_IFREG|0644, st_size=7152, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(3</usr/local/lib/python3.13/__pycache__/linecache.cpython-313.pyc>, "", {st_mode=S_IFREG|0644, st_size=7152, ...}, AT_EMPTY_PATH) = 0
+79    openat(AT_FDCWD</app>, "/app/maze_map.txt", O_RDONLY|O_CLOEXEC) = 3</app/maze_map.txt>
+79    newfstatat(3</app/maze_map.txt>, "", {st_mode=S_IFREG|0644, st_size=30, ...}, AT_EMPTY_PATH) = 0
+79    newfstatat(3</app/maze_map.txt>, "", {st_mode=S_IFREG|0644, st_size=30, ...}, AT_EMPTY_PATH) = 0
+79    exit_group(0)                     = ?
+73    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 79
+73    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=79, si_uid=0, si_status=0, si_utime=1 /* 0.01 s */, si_stime=1 /* 0.01 s */} ---
+73    wait4(-1, 0xffffec525a40, WNOHANG, NULL) = -1 ECHILD (No child process)
+73    exit_group(0)                     = ?
+72    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=73, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+72    wait4(73, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 73
+72    exit_group(0)                     = ?
+28    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 72
+28    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=72, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+28    wait4(-1, 0xffffdec76780, WNOHANG, NULL) = -1 ECHILD (No child process)
+28    exit_group(0)                     = ?
+27    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=28, si_uid=0, si_status=0, si_utime=0, si_stime=1 /* 0.01 s */} ---
+27    wait4(28, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 28
+27    exit_group(0)                     = ?
+26    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WSTOPPED, NULL) = 27
+26    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=27, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+26    exit_group(0)                     = ?

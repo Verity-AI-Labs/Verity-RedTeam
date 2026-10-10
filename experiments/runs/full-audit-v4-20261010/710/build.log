@@ -1,0 +1,46 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.96kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/ubuntu:24.04
+#2 DONE 0.9s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/7] FROM docker.io/library/ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55
+#4 resolve docker.io/library/ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55 0.0s done
+#4 DONE 0.0s
+
+#5 [3/7] RUN apt-get update && apt-get install -y     ffmpeg     && rm -rf /var/lib/apt/lists/*
+#5 CACHED
+
+#6 [4/7] RUN mkdir -p /home/user/source /home/user/output
+#6 CACHED
+
+#7 [5/7] RUN ffmpeg -f lavfi -i testsrc2=size=640x480:rate=30:duration=60     -f lavfi -i sine=frequency=440:duration=60     -c:v libx264 -preset ultrafast -pix_fmt yuv420p     -c:a aac -b:a 128k     -t 60     /home/user/source/sample_video.mp4
+#7 CACHED
+
+#8 [2/7] WORKDIR /app
+#8 CACHED
+
+#9 [6/7] WORKDIR /home/user
+#9 CACHED
+
+#10 [7/7] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#10 CACHED
+
+#11 exporting to image
+#11 exporting layers done
+#11 exporting manifest sha256:ed176c2a5283d21eba8180c7b500fac53a895406394535573788e39d19d520d3 done
+#11 exporting config sha256:730cd075f3e396d710cdec579545ff1fc52baddc42ad5a00e4d3ffc062254a51 done
+#11 exporting attestation manifest sha256:5cb6f8b3793cd00b99d354113ac88c3ed59a65ede1aa19d6021466399e078f80 done
+#11 exporting manifest list sha256:190fdd64eb2ecbb3dec349477371b11d0a0d51982ae9036120da8bd7c45cd059 done
+#11 naming to docker.io/library/verity-710:local done
+#11 unpacking to docker.io/library/verity-710:local done
+#11 DONE 0.1s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/uyfri57s4q5xa7z7go736o0ir

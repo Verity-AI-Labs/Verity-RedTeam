@@ -1,0 +1,16 @@
+C /root
+C /root/.bash_profile
+A /root/.bash_profile.orig
+A /root/.bashrc.orig
+C /tmp
+A /tmp/bp_test
+A /tmp/harness.sh
+A /tmp/hometest
+A /tmp/hometest/.bash_profile
+A /tmp/hometest/.profile
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init
+C /etc
+C /etc/profile.d
+A /etc/profile.d/zz-custom-tools.sh

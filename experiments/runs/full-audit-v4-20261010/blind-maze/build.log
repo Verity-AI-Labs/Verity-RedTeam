@@ -1,0 +1,59 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.24kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for ghcr.io/laude-institute/t-bench/python-3-13:20250620
+#2 DONE 0.4s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [ 1/10] FROM ghcr.io/laude-institute/t-bench/python-3-13:20250620@sha256:236734f0cafcce942ca09316d57236c2273a2b5411e116454a22cf6d718d95f5
+#4 resolve ghcr.io/laude-institute/t-bench/python-3-13:20250620@sha256:236734f0cafcce942ca09316d57236c2273a2b5411e116454a22cf6d718d95f5 done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 199B done
+#5 DONE 0.0s
+
+#6 [ 8/10] COPY ./maze_game.sh /app/maze_game.sh
+#6 CACHED
+
+#7 [ 3/10] WORKDIR /app
+#7 CACHED
+
+#8 [ 6/10] COPY ./protected/ground_truth_map.txt /protected/ground_truth_map.txt
+#8 CACHED
+
+#9 [ 2/10] RUN mkdir -p /protected &&     chmod 700 /protected
+#9 CACHED
+
+#10 [ 4/10] COPY ./protected/maze_server.py /protected/maze_server.py
+#10 CACHED
+
+#11 [ 5/10] COPY ./protected/maze_helper.py /protected/maze_helper.py
+#11 CACHED
+
+#12 [ 7/10] RUN chmod +x /protected/maze_server.py
+#12 CACHED
+
+#13 [ 9/10] RUN chmod +x /app/maze_game.sh
+#13 CACHED
+
+#14 [10/10] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#14 CACHED
+
+#15 exporting to image
+#15 exporting layers done
+#15 exporting manifest sha256:6e8c6e770e5408a435a1b2fc9215fdaa0202d745c507f566caee656dc64af019 done
+#15 exporting config sha256:2af051768ff2461f270ff7329adce40fbf4b75077078da6718f576996fc30192 done
+#15 exporting attestation manifest sha256:01a4b35dff87de0412783e9e8a863f34f057a4118ff94b9cf9c9e089378db55b done
+#15 exporting manifest list sha256:597c93d304933295ab64585ed8fd5d1dffa0e5316275e1083c4105529a02b96e done
+#15 naming to docker.io/library/verity-blind-maze:local done
+#15 unpacking to docker.io/library/verity-blind-maze:local 0.0s done
+#15 DONE 0.1s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/7udqz99xsl1qkcdz5qhijf1f1

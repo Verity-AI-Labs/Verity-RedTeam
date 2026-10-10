@@ -1,0 +1,71 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.53kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/ubuntu:22.04
+#2 DONE 0.6s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [ 1/14] FROM docker.io/library/ubuntu:22.04@sha256:5ec03bb3441e8b0bf3b4f9cd4629a1ae763010dc3035bb8da3ae6cf026486401
+#4 resolve docker.io/library/ubuntu:22.04@sha256:5ec03bb3441e8b0bf3b4f9cd4629a1ae763010dc3035bb8da3ae6cf026486401 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 128.67kB done
+#5 DONE 0.0s
+
+#6 [ 7/14] RUN python -m pip install --upgrade pip
+#6 CACHED
+
+#7 [10/14] RUN python -m pip install --no-cache-dir pandas scikit-learn
+#7 CACHED
+
+#8 [ 5/14] RUN apt-get update && apt-get install -y     curl     && add-apt-repository ppa:deadsnakes/ppa     && apt-get update     && apt-get install -y     python3.11     python3.11-venv     python3.11-dev     python3-pip     wget     tmux     asciinema     && apt-get clean
+#8 CACHED
+
+#9 [13/14] RUN mkdir -p /log
+#9 CACHED
+
+#10 [ 6/14] RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1     && update-alternatives --set python3 /usr/bin/python3.11     && ln -s /usr/bin/python3 /usr/bin/python
+#10 CACHED
+
+#11 [ 9/14] RUN python -m pip install pytest==8.4.1
+#11 CACHED
+
+#12 [11/14] WORKDIR /workdir
+#12 CACHED
+
+#13 [12/14] COPY data /workdir/data
+#13 CACHED
+
+#14 [ 3/14] RUN apt-get update && apt-get install -y software-properties-common curl sudo
+#14 CACHED
+
+#15 [ 8/14] RUN python -m pip install uv
+#15 CACHED
+
+#16 [ 4/14] RUN add-apt-repository ppa:deadsnakes/ppa
+#16 CACHED
+
+#17 [ 2/14] RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && apt-get clean
+#17 CACHED
+
+#18 [14/14] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#18 CACHED
+
+#19 exporting to image
+#19 exporting layers done
+#19 exporting manifest sha256:21d82814898788ccee0dc85d9b4836b2f3bd825a601799b1752ab7267874745e done
+#19 exporting config sha256:1d0bc231f92b67bc80c0a3476241591a511f05d75bb6590c1988e24687009399 done
+#19 exporting attestation manifest sha256:fef1ce29f214408fe91f902520eca63adac0f005ddc47eafbaf7331c61b00a14 done
+#19 exporting manifest list sha256:936c5cce69d127a6953358ae2fa43a3fe7f9502a435c3117cd1e3db246f7443b done
+#19 naming to docker.io/library/verity-titanic-female-survival-prediction:local done
+#19 unpacking to docker.io/library/verity-titanic-female-survival-prediction:local 0.0s done
+#19 DONE 0.1s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/5qiaw1q9zw6xdaivuk2qv2ym7

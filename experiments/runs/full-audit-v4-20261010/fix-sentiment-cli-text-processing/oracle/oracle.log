@@ -1,0 +1,3 @@
+sh: can't open /tmp/v.strace: no such file
+1
+VERITY-CGROUP=1

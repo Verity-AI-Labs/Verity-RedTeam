@@ -1,0 +1,30 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.1, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+collected 0 items / 1 error
+
+==================================== ERRORS ====================================
+_______________________ ERROR collecting test_outputs.py _______________________
+/tests/test_outputs.py:11: in <module>
+    trainer.run()
+logreg.py:120: in run
+    theta = self.logistic_regression(X, Y)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+logreg.py:61: in logistic_regression
+    if self.diff < self.cfnvergence_criterion:
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'LogisticRegression' object has no attribute 'cfnvergence_criterion'. Did you mean: 'convergence_criterion'?
+=============================== warnings summary ===============================
+../usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-2qgh3kca'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:429
+  /usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 13] Permission denied: '/tests/pytest-cache-files-cnjqwojd'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR ../tests/test_outputs.py - AttributeError: 'LogisticRegression' object ...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+========================= 2 warnings, 1 error in 0.48s =========================

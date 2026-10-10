@@ -1,0 +1,130 @@
+{
+  "mutants": [
+    {
+      "id": "m01",
+      "artifact": "/etc/systemd/system/appmonitor.service",
+      "operator": "empty",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m02",
+      "artifact": "/etc/systemd/system/appmonitor.service",
+      "operator": "truncate",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m03",
+      "artifact": "/etc/systemd/system/appmonitor.service",
+      "operator": "drop_line",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m04",
+      "artifact": "/etc/systemd/system/appmonitor.service",
+      "operator": "swap_lines",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m05",
+      "artifact": "/etc/systemd/system/appmonitor.service",
+      "operator": "char_flip",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m06",
+      "artifact": "/etc/systemd/system/appmonitor.service",
+      "operator": "dup_line",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m07",
+      "artifact": "/etc/systemd/system/appmonitor.service",
+      "operator": "toggle_newline",
+      "kind": "control",
+      "pass": true
+    },
+    {
+      "id": "m08",
+      "artifact": "/run/appmonitor.pid",
+      "operator": "empty",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m09",
+      "artifact": "/run/appmonitor.pid",
+      "operator": "char_flip",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m10",
+      "artifact": "/run/appmonitor.pid",
+      "operator": "dup_line",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m11",
+      "artifact": "/run/appmonitor.pid",
+      "operator": "toggle_newline",
+      "kind": "control",
+      "pass": true
+    },
+    {
+      "id": "m12",
+      "artifact": "/var/log/appmonitor/status.log",
+      "operator": "empty",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m13",
+      "artifact": "/var/log/appmonitor/status.log",
+      "operator": "truncate",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m14",
+      "artifact": "/var/log/appmonitor/status.log",
+      "operator": "drop_line",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m15",
+      "artifact": "/var/log/appmonitor/status.log",
+      "operator": "swap_lines",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m16",
+      "artifact": "/var/log/appmonitor/status.log",
+      "operator": "char_flip",
+      "kind": "semantic",
+      "pass": true
+    }
+  ],
+  "semantic": 14,
+  "killed": 3,
+  "controls": 2,
+  "controls_passed": 2,
+  "material_survivors": [
+    {
+      "id": "m05",
+      "artifact": "/etc/systemd/system/appmonitor.service",
+      "operator": "char_flip",
+      "diff": "--- /etc/systemd/system/appmonitor.service\n+++ /etc/systemd/system/appmonitor.service (m05)\n@@ -8 +8 @@\n-Environment=\"APP_DATA_DIR=/var/lib/appmonitor/data\"\n+Environment=\"APP_DATA_DIR=/var/lib/appmonitor/data1",
+      "token": "/var/lib/appmonitor/data",
+      "verifier": "mutation/m05/verifier.txt"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+[Unit]
+Description=MyApp Application Service
+# BUG: This configuration has a race condition!
+# The service may start before the LVM volume is mounted
+X-RequiresMountsFor=/mnt/appdata
+# After=network.target is not sufficient for mount dependencies
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/myapp-service.sh
+ExecStop=/bin/rm -f /var/run/myapp.pid
+
+[Install]
+WantedBy=multi-user.target

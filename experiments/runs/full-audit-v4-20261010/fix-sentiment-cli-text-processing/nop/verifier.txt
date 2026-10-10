@@ -1,0 +1,75 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+collected 14 items
+
+../tests/test_outputs.py .......F..F...                                  [100%]
+
+=================================== FAILURES ===================================
+______________________ test_negative_punctuation_handling ______________________
+
+    def test_negative_punctuation_handling():
+        """CRITICAL: Test that negative words with punctuation are correctly recognized.
+        If punctuation is not stripped, 'terrible!' won't match 'terrible' in vocab,
+        causing wrong prediction (1 instead of 0)."""
+        test_input = '/tmp/neg_punct_test.txt'
+        with open(test_input, 'w') as f:
+            f.write('Terrible! Awful! Horrible!')
+        result = subprocess.run(['/app/sentiment_cli', '/app/weights.json', test_input],
+                              capture_output=True, text=True, cwd='/app')
+        assert result.returncode == 0, f"Binary failed: {result.stderr}"
+        prediction = result.stdout.strip()
+>       assert prediction == '0', f"Negative words with punctuation should still produce 0, got: {prediction}"
+E       AssertionError: Negative words with punctuation should still produce 0, got: 1
+E       assert '1' == '0'
+E         
+E         - 0
+E         + 1
+
+/tests/test_outputs.py:93: AssertionError
+__________________ test_single_negative_word_with_punctuation __________________
+
+    def test_single_negative_word_with_punctuation():
+        """Test single negative word with punctuation - should produce 0"""
+        test_input = '/tmp/single_neg_punct.txt'
+        with open(test_input, 'w') as f:
+            f.write('terrible.')
+        result = subprocess.run(['/app/sentiment_cli', '/app/weights.json', test_input],
+                              capture_output=True, text=True, cwd='/app')
+        assert result.returncode == 0, f"Binary failed: {result.stderr}"
+        prediction = result.stdout.strip()
+>       assert prediction == '0', f"Single negative word with punctuation should produce 0, got: {prediction}"
+E       AssertionError: Single negative word with punctuation should produce 0, got: 1
+E       assert '1' == '0'
+E         
+E         - 0
+E         + 1
+
+/tests/test_outputs.py:126: AssertionError
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-prwhyd7a'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:429
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 13] Permission denied: '/tests/pytest-cache-files-d4gvuuer'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_binary_runs
+PASSED ../tests/test_outputs.py::test_stdout_output
+PASSED ../tests/test_outputs.py::test_prediction_file_output
+PASSED ../tests/test_outputs.py::test_both_outputs_match
+PASSED ../tests/test_outputs.py::test_positive_sentiment_prediction
+PASSED ../tests/test_outputs.py::test_negative_sentiment_prediction
+PASSED ../tests/test_outputs.py::test_default_input_positive
+PASSED ../tests/test_outputs.py::test_positive_punctuation_handling
+PASSED ../tests/test_outputs.py::test_mixed_case_handling
+PASSED ../tests/test_outputs.py::test_empty_input
+PASSED ../tests/test_outputs.py::test_sentence_with_period
+PASSED ../tests/test_outputs.py::test_multiline_input
+FAILED ../tests/test_outputs.py::test_negative_punctuation_handling - Asserti...
+FAILED ../tests/test_outputs.py::test_single_negative_word_with_punctuation
+=================== 2 failed, 12 passed, 2 warnings in 1.44s ===================

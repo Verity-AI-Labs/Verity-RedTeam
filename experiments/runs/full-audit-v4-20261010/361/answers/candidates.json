@@ -1,0 +1,32 @@
+{
+  "candidates": [
+    "//user",
+    "/app/README.md",
+    "/app/setup_env.sh",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/tmp/#619601",
+    "/tmp/#619602",
+    "/tmp/#619618",
+    "/tmp/#619619",
+    "/tmp/cp_ujqqj",
+    "/tmp/zrd2s82x",
+    "/workspace",
+    "/workspace/config/aliases.sh",
+    "/workspace/config/paths.sh",
+    "/workspace/config/secrets.sh",
+    "/workspace/project",
+    "/workspace/scripts",
+    "/workspace/scripts/buildhelper",
+    "/workspace/secrets/.credentials",
+    "/workspace/tools/bin",
+    "/workspace/tools/bin/devtool",
+    "ipc:[4026532958]",
+    "mnt:[4026532956]",
+    "net:[4026532961]",
+    "pid:[4026532959]",
+    "uts:[4026532957]"
+  ],
+  "S": [],
+  "sanctioned": {}
+}

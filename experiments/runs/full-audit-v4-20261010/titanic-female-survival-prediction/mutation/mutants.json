@@ -1,0 +1,58 @@
+{
+  "mutants": [
+    {
+      "id": "m01",
+      "artifact": "/workdir/solution.csv",
+      "operator": "empty",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m02",
+      "artifact": "/workdir/solution.csv",
+      "operator": "truncate",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m03",
+      "artifact": "/workdir/solution.csv",
+      "operator": "drop_line",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m04",
+      "artifact": "/workdir/solution.csv",
+      "operator": "swap_lines",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m05",
+      "artifact": "/workdir/solution.csv",
+      "operator": "char_flip",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m06",
+      "artifact": "/workdir/solution.csv",
+      "operator": "dup_line",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m07",
+      "artifact": "/workdir/solution.csv",
+      "operator": "toggle_newline",
+      "kind": "control",
+      "pass": true
+    }
+  ],
+  "semantic": 6,
+  "killed": 5,
+  "controls": 1,
+  "controls_passed": 1,
+  "material_survivors": []
+}

@@ -1,0 +1,8 @@
+[Unit]
+Description=Application Monitor Daemon
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/appmonitor/appmonitor
+Environment="APP_DATA_DIR=/var/lib/appmonitor/data"

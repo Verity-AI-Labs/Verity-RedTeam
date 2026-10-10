@@ -1,0 +1,37 @@
+{
+  "mutants": [
+    {
+      "id": "m01",
+      "artifact": "/app/prediction.txt",
+      "operator": "empty",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m02",
+      "artifact": "/app/prediction.txt",
+      "operator": "char_flip",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m03",
+      "artifact": "/app/prediction.txt",
+      "operator": "dup_line",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m04",
+      "artifact": "/app/prediction.txt",
+      "operator": "toggle_newline",
+      "kind": "control",
+      "pass": true
+    }
+  ],
+  "semantic": 3,
+  "killed": 0,
+  "controls": 1,
+  "controls_passed": 1,
+  "material_survivors": []
+}

@@ -1,0 +1,11 @@
+# .bash_profile - Login shell configuration
+
+# NOTE: This file is missing the important step of sourcing .bashrc!
+export EDITOR=vim
+
+# Some basic settings for login shells
+
+# Source .bashrc if it exists (fix for login shells)
+if [ -f "$HOME/.bashrc" ]; then
+    . "$HOME/.bashrc"
+fi

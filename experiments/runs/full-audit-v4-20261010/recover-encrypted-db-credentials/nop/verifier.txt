@@ -1,0 +1,396 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+collected 30 items
+
+../tests/test_outputs.py FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF                  [100%]
+
+=================================== FAILURES ===================================
+_________________ TestRecoveredKeysFileExists.test_file_exists _________________
+
+self = <test_outputs.TestRecoveredKeysFileExists object at 0x7ffffe9ff6b0>
+
+    def test_file_exists(self):
+        """Verify recovered_keys.txt exists in /db directory."""
+>       assert os.path.exists(RECOVERED_FILE), \
+            f"recovered_keys.txt not found at {RECOVERED_FILE}"
+E       AssertionError: recovered_keys.txt not found at /db/recovered_keys.txt
+E       assert False
+E        +  where False = <function exists at 0x7fffff40f560>('/db/recovered_keys.txt')
+E        +    where <function exists at 0x7fffff40f560> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+/tests/test_outputs.py:33: AssertionError
+_______________ TestRecoveredKeysFileExists.test_file_not_empty ________________
+
+self = <test_outputs.TestRecoveredKeysFileExists object at 0x7ffffe707da0>
+
+    def test_file_not_empty(self):
+        """Verify the file is not empty."""
+>       assert os.path.exists(RECOVERED_FILE), "File does not exist"
+E       AssertionError: File does not exist
+E       assert False
+E        +  where False = <function exists at 0x7fffff40f560>('/db/recovered_keys.txt')
+E        +    where <function exists at 0x7fffff40f560> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+/tests/test_outputs.py:38: AssertionError
+_________ TestRecoveredKeysFileExists.test_file_has_correct_line_count _________
+
+self = <test_outputs.TestRecoveredKeysFileExists object at 0x7ffffe707d40>
+
+    def test_file_has_correct_line_count(self):
+        """Verify the file has exactly 3 keys."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:45: FileNotFoundError
+_________________ TestKeyFormat.test_all_keys_exactly_32_chars _________________
+
+self = <test_outputs.TestKeyFormat object at 0x7ffffe707260>
+
+    def test_all_keys_exactly_32_chars(self):
+        """Each key must be exactly 32 characters."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:56: FileNotFoundError
+________________ TestKeyFormat.test_all_keys_start_with_aes256 _________________
+
+self = <test_outputs.TestKeyFormat object at 0x7ffffe705700>
+
+    def test_all_keys_start_with_aes256(self):
+        """Each key must start with 'AES256'."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:65: FileNotFoundError
+__________________ TestKeyFormat.test_all_keys_end_with_hash ___________________
+
+self = <test_outputs.TestKeyFormat object at 0x7ffffe7070e0>
+
+    def test_all_keys_end_with_hash(self):
+        """Each key must end with 'HASH'."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:74: FileNotFoundError
+____________ TestKeyFormat.test_all_keys_uppercase_and_digits_only _____________
+
+self = <test_outputs.TestKeyFormat object at 0x7ffffe7063c0>
+
+    def test_all_keys_uppercase_and_digits_only(self):
+        """Each key must contain only uppercase letters and digits."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:83: FileNotFoundError
+_____________ TestKeyFormat.test_chars_after_prefix_contain_digit ______________
+
+self = <test_outputs.TestKeyFormat object at 0x7ffffe707680>
+
+    def test_chars_after_prefix_contain_digit(self):
+        """4 characters after 'AES256' must contain at least one digit."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:93: FileNotFoundError
+____________ TestKeyFormat.test_chars_before_suffix_contain_letter _____________
+
+self = <test_outputs.TestKeyFormat object at 0x7ffffe707fb0>
+
+    def test_chars_before_suffix_contain_letter(self):
+        """4 characters before 'HASH' must contain at least one letter."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:104: FileNotFoundError
+___________________ TestKeyCorrectness.test_exact_keys_match ___________________
+
+self = <test_outputs.TestKeyCorrectness object at 0x7ffffe704800>
+
+    def test_exact_keys_match(self):
+        """Verify the recovered keys match exactly the expected keys."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:119: FileNotFoundError
+________________ TestKeyCorrectness.test_no_decoy_keys_included ________________
+
+self = <test_outputs.TestKeyCorrectness object at 0x7ffffe7045c0>
+
+    def test_no_decoy_keys_included(self):
+        """Verify no decoy keys are included in the output."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:129: FileNotFoundError
+__________________ TestKeyCorrectness.test_first_key_correct ___________________
+
+self = <test_outputs.TestKeyCorrectness object at 0x7ffffeaaf5c0>
+
+    def test_first_key_correct(self):
+        """Verify the first key (alphabetically) is correct."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:138: FileNotFoundError
+__________________ TestKeyCorrectness.test_second_key_correct __________________
+
+self = <test_outputs.TestKeyCorrectness object at 0x7ffffe74ba70>
+
+    def test_second_key_correct(self):
+        """Verify the second key (alphabetically) is correct."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:147: FileNotFoundError
+__________________ TestKeyCorrectness.test_third_key_correct ___________________
+
+self = <test_outputs.TestKeyCorrectness object at 0x7ffffe74b860>
+
+    def test_third_key_correct(self):
+        """Verify the third key (alphabetically) is correct."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:156: FileNotFoundError
+_____________ TestOutputFormat.test_keys_are_sorted_alphabetically _____________
+
+self = <test_outputs.TestOutputFormat object at 0x7ffffe74b680>
+
+    def test_keys_are_sorted_alphabetically(self):
+        """Verify keys are sorted in ascending alphabetical order."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:169: FileNotFoundError
+_________________ TestOutputFormat.test_no_trailing_whitespace _________________
+
+self = <test_outputs.TestOutputFormat object at 0x7ffffe74b650>
+
+    def test_no_trailing_whitespace(self):
+        """Verify no lines have trailing whitespace."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:178: FileNotFoundError
+_____________________ TestOutputFormat.test_no_empty_lines _____________________
+
+self = <test_outputs.TestOutputFormat object at 0x7ffffe704980>
+
+    def test_no_empty_lines(self):
+        """Verify there are no empty lines in the file."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:194: FileNotFoundError
+___________________ TestOutputFormat.test_no_duplicate_keys ____________________
+
+self = <test_outputs.TestOutputFormat object at 0x7ffffe707230>
+
+    def test_no_duplicate_keys(self):
+        """Verify there are no duplicate keys."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:210: FileNotFoundError
+_____________________ TestEdgeCases.test_key_not_31_chars ______________________
+
+self = <test_outputs.TestEdgeCases object at 0x7ffffe707bf0>
+
+    def test_key_not_31_chars(self):
+        """Ensure no 31-character keys are included (off-by-one error)."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:223: FileNotFoundError
+_____________________ TestEdgeCases.test_key_not_33_chars ______________________
+
+self = <test_outputs.TestEdgeCases object at 0x7ffffe74b5f0>
+
+    def test_key_not_33_chars(self):
+        """Ensure no 33-character keys are included (off-by-one error)."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:232: FileNotFoundError
+_______________ TestEdgeCases.test_decoy_with_no_digit_excluded ________________
+
+self = <test_outputs.TestEdgeCases object at 0x7ffffe74b7d0>
+
+    def test_decoy_with_no_digit_excluded(self):
+        """Verify the decoy with no digit after AES256 is excluded."""
+        decoy = 'AES256ABCDEFGHIJ1KLMNOPQR5STUHASH'
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:242: FileNotFoundError
+_______________ TestEdgeCases.test_decoy_with_no_letter_excluded _______________
+
+self = <test_outputs.TestEdgeCases object at 0x7ffffe74b470>
+
+    def test_decoy_with_no_letter_excluded(self):
+        """Verify the decoy with no letter before HASH is excluded."""
+        decoy = 'AES2561234567890123456789012HASH'
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:251: FileNotFoundError
+___________________ TestEdgeCases.test_short_decoy_excluded ____________________
+
+self = <test_outputs.TestEdgeCases object at 0x7ffffe74b260>
+
+    def test_short_decoy_excluded(self):
+        """Verify the short (31 char) decoy is excluded."""
+        decoy = 'AES2561A2BCDEF3GHIJ4KLM5NOAHASH'
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:260: FileNotFoundError
+_____________________ TestEdgeCases.test_no_lowercase_keys _____________________
+
+self = <test_outputs.TestEdgeCases object at 0x7ffffe74b080>
+
+    def test_no_lowercase_keys(self):
+        """Verify no keys contain lowercase letters."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:268: FileNotFoundError
+___________________ TestEdgeCases.test_no_special_characters ___________________
+
+self = <test_outputs.TestEdgeCases object at 0x7ffffe74aed0>
+
+    def test_no_special_characters(self):
+        """Verify no keys contain special characters."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:277: FileNotFoundError
+__________________ TestValidationLogic.test_prefix_validation __________________
+
+self = <test_outputs.TestValidationLogic object at 0x7ffffe74ae70>
+
+    def test_prefix_validation(self):
+        """Test that only keys with AES256 prefix are accepted."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:290: FileNotFoundError
+__________________ TestValidationLogic.test_suffix_validation __________________
+
+self = <test_outputs.TestValidationLogic object at 0x7ffffe4f0650>
+
+    def test_suffix_validation(self):
+        """Test that only keys with HASH suffix are accepted."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:300: FileNotFoundError
+______________ TestValidationLogic.test_middle_section_validation ______________
+
+self = <test_outputs.TestValidationLogic object at 0x7ffffe4f0950>
+
+    def test_middle_section_validation(self):
+        """Test the middle section of each key."""
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:310: FileNotFoundError
+__________ TestComparisonWithExpectedFile.test_matches_expected_file ___________
+
+self = <test_outputs.TestComparisonWithExpectedFile object at 0x7ffffe4f0740>
+
+    def test_matches_expected_file(self):
+        """Verify recovered keys match the expected keys file."""
+        if not os.path.exists(EXPECTED_KEYS_FILE):
+            pytest.skip(f"Expected keys file not found at {EXPECTED_KEYS_FILE}")
+    
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:330: FileNotFoundError
+________ TestComparisonWithExpectedFile.test_key_count_matches_expected ________
+
+self = <test_outputs.TestComparisonWithExpectedFile object at 0x7ffffe4f0530>
+
+    def test_key_count_matches_expected(self):
+        """Verify the count of recovered keys matches expected."""
+        if not os.path.exists(EXPECTED_KEYS_FILE):
+            pytest.skip(f"Expected keys file not found at {EXPECTED_KEYS_FILE}")
+    
+>       with open(RECOVERED_FILE, 'r') as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/db/recovered_keys.txt'
+
+/tests/test_outputs.py:344: FileNotFoundError
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-4cygu1ra'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:429
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 13] Permission denied: '/tests/pytest-cache-files-ewnimxlx'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../tests/test_outputs.py::TestRecoveredKeysFileExists::test_file_exists
+FAILED ../tests/test_outputs.py::TestRecoveredKeysFileExists::test_file_not_empty
+FAILED ../tests/test_outputs.py::TestRecoveredKeysFileExists::test_file_has_correct_line_count
+FAILED ../tests/test_outputs.py::TestKeyFormat::test_all_keys_exactly_32_chars
+FAILED ../tests/test_outputs.py::TestKeyFormat::test_all_keys_start_with_aes256
+FAILED ../tests/test_outputs.py::TestKeyFormat::test_all_keys_end_with_hash
+FAILED ../tests/test_outputs.py::TestKeyFormat::test_all_keys_uppercase_and_digits_only
+FAILED ../tests/test_outputs.py::TestKeyFormat::test_chars_after_prefix_contain_digit
+FAILED ../tests/test_outputs.py::TestKeyFormat::test_chars_before_suffix_contain_letter
+FAILED ../tests/test_outputs.py::TestKeyCorrectness::test_exact_keys_match - ...
+FAILED ../tests/test_outputs.py::TestKeyCorrectness::test_no_decoy_keys_included
+FAILED ../tests/test_outputs.py::TestKeyCorrectness::test_first_key_correct
+FAILED ../tests/test_outputs.py::TestKeyCorrectness::test_second_key_correct
+FAILED ../tests/test_outputs.py::TestKeyCorrectness::test_third_key_correct
+FAILED ../tests/test_outputs.py::TestOutputFormat::test_keys_are_sorted_alphabetically
+FAILED ../tests/test_outputs.py::TestOutputFormat::test_no_trailing_whitespace
+FAILED ../tests/test_outputs.py::TestOutputFormat::test_no_empty_lines - File...
+FAILED ../tests/test_outputs.py::TestOutputFormat::test_no_duplicate_keys - F...
+FAILED ../tests/test_outputs.py::TestEdgeCases::test_key_not_31_chars - FileN...
+FAILED ../tests/test_outputs.py::TestEdgeCases::test_key_not_33_chars - FileN...
+FAILED ../tests/test_outputs.py::TestEdgeCases::test_decoy_with_no_digit_excluded
+FAILED ../tests/test_outputs.py::TestEdgeCases::test_decoy_with_no_letter_excluded
+FAILED ../tests/test_outputs.py::TestEdgeCases::test_short_decoy_excluded - F...
+FAILED ../tests/test_outputs.py::TestEdgeCases::test_no_lowercase_keys - File...
+FAILED ../tests/test_outputs.py::TestEdgeCases::test_no_special_characters - ...
+FAILED ../tests/test_outputs.py::TestValidationLogic::test_prefix_validation
+FAILED ../tests/test_outputs.py::TestValidationLogic::test_suffix_validation
+FAILED ../tests/test_outputs.py::TestValidationLogic::test_middle_section_validation
+FAILED ../tests/test_outputs.py::TestComparisonWithExpectedFile::test_matches_expected_file
+FAILED ../tests/test_outputs.py::TestComparisonWithExpectedFile::test_key_count_matches_expected
+======================== 30 failed, 2 warnings in 0.98s ========================

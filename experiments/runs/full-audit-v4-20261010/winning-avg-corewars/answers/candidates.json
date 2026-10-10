@@ -1,0 +1,29 @@
+{
+  "candidates": [
+    "/app/warriors/g2-clear.red",
+    "/app/warriors/paper.red",
+    "/app/warriors/snake.red",
+    "/app/warriors/stone.red",
+    "/app/warriors/vampire.red",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/tmp/#271395",
+    "/tmp/#271399",
+    "/tmp/#271405",
+    "/tmp/#271406",
+    "/tmp/1me94ry3",
+    "/tmp/u023xgr6",
+    "ipc:[4026532556]",
+    "ipc:[4026532958]",
+    "mnt:[4026532554]",
+    "mnt:[4026532956]",
+    "net:[4026532559]",
+    "net:[4026532961]",
+    "pid:[4026532557]",
+    "pid:[4026532959]",
+    "uts:[4026532555]",
+    "uts:[4026532957]"
+  ],
+  "S": [],
+  "sanctioned": {}
+}

@@ -1,0 +1,6 @@
+C /etc
+C /etc/profile.d
+A /etc/profile.d/99-custom-dev.sh
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init

@@ -1,0 +1,11 @@
+[Unit]
+Description=AppMonitor monitoring daemon
+
+[Service]
+Environment=APP_DATA_DIR=/var/lib/appmonitor/data
+Environment=APP_LOG_LEVEL=INFO
+Environment=APP_CONFIG_PATH=/opt/appmonitor/config.json
+ExecStart=/opt/appmonitor/appmonitor
+
+[Install]
+WantedBy=multi-user.target

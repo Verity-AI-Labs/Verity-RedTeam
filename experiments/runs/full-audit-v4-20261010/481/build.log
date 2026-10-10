@@ -1,0 +1,52 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 4.23kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/ubuntu:24.04
+#2 DONE 0.7s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/9] FROM docker.io/library/ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55
+#4 resolve docker.io/library/ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55 0.0s done
+#4 DONE 0.0s
+
+#5 [3/9] RUN mkdir -p /opt/custom-tools/bin &&     echo '#!/bin/bash' > /opt/custom-tools/bin/devtool &&     echo 'echo "DevTool v1.0 - Custom development utility"' >> /opt/custom-tools/bin/devtool &&     chmod +x /opt/custom-tools/bin/devtool
+#5 CACHED
+
+#6 [4/9] RUN echo '# .bashrc - User shell customizations' > /root/.bashrc &&     echo '' >> /root/.bashrc &&     echo '# Environment variables' >> /root/.bashrc &&     echo 'export DEV_MODE=development' >> /root/.bashrc &&     echo '' >> /root/.bashrc &&     echo '# PATH modifications' >> /root/.bashrc &&     echo 'export PATH="/opt/custom-tools/bin:$PATH"' >> /root/.bashrc &&     echo '' >> /root/.bashrc &&     echo '# Custom prompt' >> /root/.bashrc &&     echo 'export PS1="[\u@\h \W]\$ "' >> /root/.bashrc &&     echo '' >> /root/.bashrc &&     echo '# Source bash_aliases if it exists' >> /root/.bashrc &&     echo 'if [ -f ~/.bash_aliases ]; then' >> /root/.bashrc &&     echo '    . ~/.bash_aliases' >> /root/.bashrc &&     echo 'fi' >> /root/.bashrc
+#6 CACHED
+
+#7 [6/9] RUN echo '# .bash_profile - Login shell configuration' > /root/.bash_profile &&     echo '' >> /root/.bash_profile &&     echo '# Some basic settings for login shells' >> /root/.bash_profile &&     echo 'export EDITOR=vim' >> /root/.bash_profile &&     echo '' >> /root/.bash_profile &&     echo '# NOTE: This file is missing the important step of sourcing .bashrc!' >> /root/.bash_profile &&     echo '# As a result, aliases and environment variables from .bashrc are not loaded'
+#7 CACHED
+
+#8 [2/9] WORKDIR /app
+#8 CACHED
+
+#9 [5/9] RUN echo '# Custom aliases for development' > /root/.bash_aliases &&     echo 'alias glog="git log --oneline --graph --decorate"' >> /root/.bash_aliases &&     echo 'alias dps="docker ps --format \"table {{.Names}}\t{{.Status}}\t{{.Ports}}\""' >> /root/.bash_aliases &&     echo 'alias ll="ls -la"' >> /root/.bash_aliases
+#9 CACHED
+
+#10 [7/9] RUN echo '# ~/.profile: executed by the command interpreter for login shells.' > /root/.profile &&     echo '' >> /root/.profile &&     echo '# if running bash' >> /root/.profile &&     echo 'if [ -n "$BASH_VERSION" ]; then' >> /root/.profile &&     echo '    # include .bashrc if it exists' >> /root/.profile &&     echo '    if [ -f "$HOME/.bashrc" ]; then' >> /root/.profile &&     echo '        . "$HOME/.bashrc"' >> /root/.profile &&     echo '    fi' >> /root/.profile &&     echo 'fi' >> /root/.profile
+#10 CACHED
+
+#11 [8/9] WORKDIR /app
+#11 CACHED
+
+#12 [9/9] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#12 CACHED
+
+#13 exporting to image
+#13 exporting layers done
+#13 exporting manifest sha256:a15f166ef0d3e1ad0f97baa3c3d064a88fa493015b3b21a31707cb9e5f09acad done
+#13 exporting config sha256:21a1d459e825b6d8e93a8b75c85ae135ce366458e4666315b8b132f720cb3ca1 done
+#13 exporting attestation manifest sha256:31d29689b6b8869bf48b53b8b0c6219923ea0b02e5736af0dabcdca2dc6af927 done
+#13 exporting manifest list sha256:6a31cac5bb642611e1fb43c4372eb68a6b4a9c871d25f0f3cc99a23752bc3386 done
+#13 naming to docker.io/library/verity-481:local done
+#13 unpacking to docker.io/library/verity-481:local done
+#13 DONE 0.1s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/wy7nbcm52wor13tn0qzktkoy9

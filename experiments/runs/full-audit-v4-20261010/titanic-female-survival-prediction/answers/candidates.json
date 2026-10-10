@@ -1,0 +1,27 @@
+{
+  "candidates": [
+    "/logs/verifier/reward.txt",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/tmp/#271483",
+    "/tmp/#271489",
+    "/tmp/#271510",
+    "/tmp/#271515",
+    "/tmp/8d48mopz",
+    "/tmp/xzsd8y07",
+    "/workdir/data/ground_truth_female.csv",
+    "/workdir/data/train_split.csv",
+    "/workdir/data/validation_female.csv",
+    "ipc:[4026532824]",
+    "mnt:[4026532822]",
+    "net:[4026532827]",
+    "pid:[4026532825]",
+    "uts:[4026532823]"
+  ],
+  "S": [
+    "/workdir/data/ground_truth_female.csv"
+  ],
+  "sanctioned": {
+    "/workdir/data/ground_truth_female.csv": []
+  }
+}

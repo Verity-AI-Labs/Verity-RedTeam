@@ -1,0 +1,27 @@
+{
+  "devices": [
+    {
+      "class": "network",
+      "product": "82574L Gigabit Network Connection",
+      "vendor": "Intel Corporation",
+      "driver": "e1000e",
+      "driver_version": "3.8.7-k",
+      "status": "ok"
+    },
+    {
+      "class": "network",
+      "product": "AR9285 Wireless Network Adapter",
+      "vendor": "Qualcomm Atheros",
+      "driver": "none",
+      "driver_version": "unknown",
+      "status": "no_driver"
+    },
+    {
+      "class": "storage",
+      "product": "82801HM/HEM (ICH8M/ICH8M-E) SATA Controller [AHCI mode]",
+      "vendor": "Intel Corporation",
+      "driver": "ahci",
+      "driver_version": "3.0",
+      "status": "ok"
+    },
+    {

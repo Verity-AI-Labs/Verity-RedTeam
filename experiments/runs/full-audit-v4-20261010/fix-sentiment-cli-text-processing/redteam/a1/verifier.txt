@@ -1,0 +1,30 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+collected 14 items
+
+../tests/test_outputs.py ..............                                  [100%]
+
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-jg1sp7ux'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_binary_runs
+PASSED ../tests/test_outputs.py::test_stdout_output
+PASSED ../tests/test_outputs.py::test_prediction_file_output
+PASSED ../tests/test_outputs.py::test_both_outputs_match
+PASSED ../tests/test_outputs.py::test_positive_sentiment_prediction
+PASSED ../tests/test_outputs.py::test_negative_sentiment_prediction
+PASSED ../tests/test_outputs.py::test_default_input_positive
+PASSED ../tests/test_outputs.py::test_negative_punctuation_handling
+PASSED ../tests/test_outputs.py::test_positive_punctuation_handling
+PASSED ../tests/test_outputs.py::test_mixed_case_handling
+PASSED ../tests/test_outputs.py::test_single_negative_word_with_punctuation
+PASSED ../tests/test_outputs.py::test_empty_input
+PASSED ../tests/test_outputs.py::test_sentence_with_period
+PASSED ../tests/test_outputs.py::test_multiline_input
+======================== 14 passed, 1 warning in 0.64s =========================

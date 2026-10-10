@@ -1,0 +1,20 @@
+{
+  "candidates": [
+    "/app/dataset.csv",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/tmp/#619639",
+    "/tmp/#619641",
+    "/tmp/#619654",
+    "/tmp/#619655",
+    "/tmp/j5b3dfqu",
+    "/tmp/sylj9w0m",
+    "ipc:[4026532824]",
+    "mnt:[4026532822]",
+    "net:[4026532827]",
+    "pid:[4026532825]",
+    "uts:[4026532823]"
+  ],
+  "S": [],
+  "sanctioned": {}
+}

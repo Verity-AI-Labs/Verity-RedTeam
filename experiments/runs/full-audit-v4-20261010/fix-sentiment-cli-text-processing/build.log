@@ -1,0 +1,56 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 733B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for skylensage-registry.cn-hangzhou.cr.aliyuncs.com/instances/1124:t-bench-ubuntu-24-04
+#2 DONE 2.8s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/8] FROM skylensage-registry.cn-hangzhou.cr.aliyuncs.com/instances/1124:t-bench-ubuntu-24-04@sha256:8f1842fa67bef3818a97d89bc1dbcdc70898c73a533b92867bda39898c19f4fc
+#4 resolve skylensage-registry.cn-hangzhou.cr.aliyuncs.com/instances/1124:t-bench-ubuntu-24-04@sha256:8f1842fa67bef3818a97d89bc1dbcdc70898c73a533b92867bda39898c19f4fc done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 4.73kB done
+#5 DONE 0.0s
+
+#6 [4/8] COPY weights.json /app/weights.json
+#6 CACHED
+
+#7 [5/8] COPY input.txt /app/input.txt
+#7 CACHED
+
+#8 [6/8] COPY main.go /app/main.go
+#8 CACHED
+
+#9 [7/8] RUN go build -o sentiment_cli main.go
+#9 CACHED
+
+#10 [2/8] RUN apt-get update && apt-get install -y golang-go &&     rm -rf /var/lib/apt/lists/*
+#10 CACHED
+
+#11 [3/8] WORKDIR /app
+#11 CACHED
+
+#12 [8/8] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#12 CACHED
+
+#13 exporting to image
+#13 exporting layers done
+#13 exporting manifest sha256:291df83a6385f62d34e22f2ba81a354d7f23e68f059a62db9610150d60aae262 done
+#13 exporting config sha256:b482c52a82e09ec1c101347724ec5e085cc97056f6c12a8ecc35028cd0db27ee done
+#13 exporting attestation manifest sha256:cff37181440c9ccb46520dec931fc897d8bbd8eafa904ac6cdee846fa07a579c done
+#13 exporting manifest list sha256:e68baad554cb83260f7f21d1703c2d087ea6aea95b3279bfe3690f4da6b57323 done
+#13 naming to docker.io/library/verity-fix-sentiment-cli-text-processing:local done
+#13 unpacking to docker.io/library/verity-fix-sentiment-cli-text-processing:local done
+#13 DONE 0.0s
+
+ [33m1 warning found (use docker --debug to expand):
+[0m - InvalidBaseImagePlatform: Base image skylensage-registry.cn-hangzhou.cr.aliyuncs.com/instances/1124:t-bench-ubuntu-24-04 was pulled with platform "linux/amd64", expected "linux/arm64" for current build (line 1)
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/xwibevcxczxjsvbsfj9oay9fw

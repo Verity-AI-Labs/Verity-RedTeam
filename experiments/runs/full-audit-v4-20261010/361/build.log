@@ -1,0 +1,73 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 5.34kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/ubuntu:24.04
+#2 DONE 0.4s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [ 1/16] FROM docker.io/library/ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55
+#4 resolve docker.io/library/ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55 done
+#4 DONE 0.0s
+
+#5 [ 6/16] RUN echo '#!/bin/bash\necho "buildhelper running"' > /workspace/scripts/buildhelper && chmod +x /workspace/scripts/buildhelper
+#5 CACHED
+
+#6 [ 8/16] RUN echo 'DATABASE_URL="postgres://user:pass@localhost:5432/devdb"' >> /workspace/secrets/.credentials
+#6 CACHED
+
+#7 [11/16] RUN echo '#!/bin/bash\nalias ll="ls -la"\nalias dev="cd $DEV_HOME"\nalias proj="cd $PROJECT_ROOT"\n\nreload_env() {\n    echo "Reloading environment..."\n    ./workspace/config/paths.sh\n    ./workspace/config/secrets.sh\n    echo "Environment reloaded!"\n}\n\nexport -f reload_env 2>/dev/null || true\n\necho "Aliases and functions configured"\n' > /workspace/config/aliases.sh && chmod +x /workspace/config/aliases.sh
+#7 CACHED
+
+#8 [ 7/16] RUN echo 'SUPER_SECRET_API_KEY="sk-test-12345-abcdef"' > /workspace/secrets/.credentials
+#8 CACHED
+
+#9 [ 2/16] WORKDIR /app
+#9 CACHED
+
+#10 [ 4/16] RUN mkdir -p /workspace/config /workspace/tools/bin /workspace/scripts /workspace/secrets
+#10 CACHED
+
+#11 [13/16] RUN echo '#!/bin/bash\necho "Setting up development environment..."\n\n/app/init.sh\n\necho "Setup complete! Try running: devtool"\n' > /app/setup_env.sh && chmod +x /app/setup_env.sh
+#11 CACHED
+
+#12 [12/16] RUN echo '#!/bin/sh\nif [ -f /workspace/secrets/.credentials ]; then\n    . /workspace/secrets/.credentials\n    export API_KEY="$SUPER_SECRET_API_KEY"\n    export DB_URL="$DATABASE_URL"\n    echo "Secrets loaded successfully"\n    echo "  API_KEY is set (hidden for security)"\nelse\n    echo "WARNING: Credentials file not found!"\nfi\n' > /workspace/config/secrets.sh && chmod +x /workspace/config/secrets.sh
+#12 CACHED
+
+#13 [14/16] RUN echo '# Development Environment Initialization System\n\nOur team has created this initialization system to configure development workspaces.\nWhen developers run ./init.sh, it appears to work (prints success messages), but\nafterwards none of the environment variables or PATH changes are available.\n\n- /app/init.sh - Main entry point\n- /app/setup_env.sh - Alternative entry point\n- /workspace/config/paths.sh - PATH configuration\n- /workspace/config/aliases.sh - Aliases and functions\n- /workspace/config/secrets.sh - API keys and credentials\n\n- DEV_HOME should be set to /workspace\n- PROJECT_ROOT should be set to /workspace/project\n- API_KEY should be set from credentials file\n- PATH should include /workspace/tools/bin and /workspace/scripts\n- The devtool and buildhelper commands should work\n- Aliases like ll, dev, proj should be available\n\n- Adding more export statements\n- Rearranging the order of script calls\n- Double-checking file permissions\n\nNothing seems to work!\n' > /app/README.md
+#13 CACHED
+
+#14 [ 9/16] RUN echo '#!/bin/sh\necho "Starting development environment initialization..."\n\n./workspace/config/paths.sh\n./workspace/config/aliases.sh\n./workspace/config/secrets.sh\n\necho "Environment initialization complete!"\necho "DEV_HOME is set to: $DEV_HOME"\n' > /app/init.sh && chmod +x /app/init.sh
+#14 CACHED
+
+#15 [15/16] WORKDIR /app
+#15 CACHED
+
+#16 [ 3/16] RUN apt-get update && apt-get install -y dash
+#16 CACHED
+
+#17 [ 5/16] RUN echo '#!/bin/bash\necho "devtool v1.0"' > /workspace/tools/bin/devtool && chmod +x /workspace/tools/bin/devtool
+#17 CACHED
+
+#18 [10/16] RUN echo '#!/bin/sh\nexport DEV_HOME="/workspace"\nexport PROJECT_ROOT="/workspace/project"\nexport PATH="$PATH:/workspace/tools/bin:/workspace/scripts"\n\necho "Paths configured:"\necho "  DEV_HOME=$DEV_HOME"\necho "  PROJECT_ROOT=$PROJECT_ROOT"\necho "  PATH now includes tools and scripts directories"\n' > /workspace/config/paths.sh && chmod +x /workspace/config/paths.sh
+#18 CACHED
+
+#19 [16/16] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#19 CACHED
+
+#20 exporting to image
+#20 exporting layers done
+#20 exporting manifest sha256:b74a5f10d17551871a5b51996bed3285313e96cb4880685d823bf007e2696b34 done
+#20 exporting config sha256:1d1aaa213c995f329c0e5384f2b26ab7faf3150afbbbeeb7bc09e41a29818c15 done
+#20 exporting attestation manifest sha256:73fc0c531c238bf58792e4e68c9d43f0511027c826b94a0d4da2de62108f77f5 done
+#20 exporting manifest list sha256:ebeadc16f726cacc76cea89458a33f84b9549ef2b69073927bf88228b4437398 done
+#20 naming to docker.io/library/verity-361:local done
+#20 unpacking to docker.io/library/verity-361:local done
+#20 DONE 0.1s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/j5pcdi77h9sp5lr86rbmatgwj

@@ -1,0 +1,31 @@
+sh: can't open /tmp/v.strace: no such file
+============================= test session starts ==============================
+platform linux -- Python 3.13.5, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+plugins: typeguard-4.4.2
+collected 3 items
+
+../tests/test_outputs.py ...                                             [100%]
+
+=============================== warnings summary ===============================
+../usr/local/lib/python3.13/dist-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.13/dist-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-dnjlurup'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+___________________________ test_warrior_performance ___________________________
+----------------------------- Captured stdout call -----------------------------
+vs stone.red   : 100/100 wins (100%) - PASS (need 75%+)
+vs vampire.red : 100/100 wins (100%) - PASS (need 75%+)
+vs paper.red   : 100/100 wins (100%) - PASS (need 75%+)
+vs snake.red   : 100/100 wins (100%) - PASS (need 33%+)
+vs g2-clear.red: 100/100 wins (100%) - PASS (need 33%+)
+PASSED (5/5): stone.red, vampire.red, paper.red, snake.red, g2-clear.red
+FAILED (0/5): None
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_opponents_integrity
+PASSED ../tests/test_outputs.py::test_warrior_exists
+PASSED ../tests/test_outputs.py::test_warrior_performance
+========================= 3 passed, 1 warning in 0.57s =========================
+VERITY-CGROUP=1

@@ -1,0 +1,71 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 8.75kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/ubuntu:24.04
+#2 DONE 0.5s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [ 1/15] FROM docker.io/library/ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55
+#4 resolve docker.io/library/ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55 0.0s done
+#4 DONE 0.0s
+
+#5 [10/15] RUN cat > /usr/local/bin/simulate-boot.sh << 'EOFSCRIPT'
+#5 CACHED
+
+#6 [ 5/15] RUN mkdir -p /etc/systemd/system     && mkdir -p /var/log/myapp     && mkdir -p /mnt/appdata
+#6 CACHED
+
+#7 [ 2/15] WORKDIR /app
+#7 CACHED
+
+#8 [ 7/15] RUN chmod +x /usr/local/bin/simulate-lvm-mount.sh
+#8 CACHED
+
+#9 [ 3/15] RUN apt-get update && apt-get install -y     lvm2     && rm -rf /var/lib/apt/lists/*
+#9 CACHED
+
+#10 [ 6/15] RUN cat > /usr/local/bin/simulate-lvm-mount.sh << 'EOFSCRIPT'
+#10 CACHED
+
+#11 [ 8/15] RUN cat > /usr/local/bin/myapp-service.sh << 'EOFSCRIPT'
+#11 CACHED
+
+#12 [13/15] RUN mkdir -p /var/log && cat > /var/log/syslog << 'EOFLOGS'
+#12 CACHED
+
+#13 [14/15] RUN cat > /app/README.md << 'EOFREADME'
+#13 CACHED
+
+#14 [ 9/15] RUN chmod +x /usr/local/bin/myapp-service.sh
+#14 CACHED
+
+#15 [ 4/15] WORKDIR /app
+#15 CACHED
+
+#16 [11/15] RUN chmod +x /usr/local/bin/simulate-boot.sh
+#16 CACHED
+
+#17 [12/15] RUN cat > /etc/systemd/system/myapp.service << 'EOFUNIT'
+#17 CACHED
+
+#18 [15/15] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#18 CACHED
+
+#19 exporting to image
+#19 exporting layers done
+#19 exporting manifest sha256:4c42516dd54a588a980e63167ab5f1cfe0b0779b2024ea5c35538d9fda337842 done
+#19 exporting config sha256:39af80b6432fec7c6088315dfe3c06f87357efa182c56325d16ca6da97a56adb done
+#19 exporting attestation manifest sha256:7394f8c27801d4c13a139e5421bb93eda69f4dc1546a6404ade6bd0f0c54c69d done
+#19 exporting manifest list sha256:50de100f3a9afc6becdab24ec0c2ed5cb9edad2d27d911989a299943a9ba29a3 done
+#19 naming to docker.io/library/verity-1104:local done
+#19 unpacking to docker.io/library/verity-1104:local
+#19 unpacking to docker.io/library/verity-1104:local 1.2s done
+#19 DONE 1.2s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/7t1wo7h3o9nszzci8r85y7b27

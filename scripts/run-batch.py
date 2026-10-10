@@ -189,7 +189,8 @@ def main(argv=None, docker=runner.docker, audit_fn=audit.audit, post=None, sleep
 
         def progress(rec):
             with lock:
-                print(f"[{task}] {rec['id']} turns={rec['turns']} label={rec['label']} "
+                median = (rec.get("judge") or {}).get("suspicion_score")
+                print(f"[{task}] {rec['id']} turns={rec['turns']} label={rec['label']} judge_median={median} "
                       f"cost=${client.stats()['estimated_usd']:.4f} elapsed={time.monotonic() - t0:.0f}s", flush=True)
 
         path = out / task / "report.json"
@@ -204,7 +205,9 @@ def main(argv=None, docker=runner.docker, audit_fn=audit.audit, post=None, sleep
                                "report": str(path) if path.exists() else None}
         finally:
             deepseek.set_task(None)
-        return "completed", {"task": task, "report": str(path), "section_errors": section_errors(path)}
+        hk = (_read(path) or {}).get("hackability") or {}
+        return "completed", {"task": task, "report": str(path), "section_errors": section_errors(path),
+                             "hackability": hk.get("value"), "hackability_basis": hk.get("basis")}
 
     status, code = "complete", 0
     with ThreadPoolExecutor(args.concurrency) as pool:
@@ -213,7 +216,8 @@ def main(argv=None, docker=runner.docker, audit_fn=audit.audit, post=None, sleep
             for future in as_completed(futures):
                 kind, entry = future.result()
                 manifest[kind].append(entry)
-                print(f"[{entry['task']}] {kind}: {entry.get('reason') or entry.get('report')}", flush=True)
+                shown = f" hackability={entry['hackability']}" if entry.get("hackability") else ""
+                print(f"[{entry['task']}] {kind}: {entry.get('reason') or entry.get('report')}{shown}", flush=True)
         except KeyboardInterrupt:
             client.abort("interrupted")
             print("Interrupted: in-flight tasks stop at their next model call and write report.json.", flush=True)

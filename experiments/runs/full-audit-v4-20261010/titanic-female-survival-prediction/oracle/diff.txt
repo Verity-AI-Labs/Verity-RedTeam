@@ -1,0 +1,12 @@
+A /solution
+A /solution/solve.sh
+C /usr
+C /usr/lib
+C /usr/lib/python3
+C /usr/lib/python3/dist-packages
+C /usr/lib/python3/dist-packages/__pycache__
+A /usr/lib/python3/dist-packages/__pycache__/six.cpython-311.pyc
+C /usr/sbin
+A /usr/sbin/docker-init
+C /workdir
+A /workdir/solution.csv

@@ -1,0 +1,16 @@
+{
+  "Env": [
+    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  ],
+  "Cmd": [
+    "/bin/bash"
+  ],
+  "WorkingDir": "/app",
+  "Labels": {
+    "com.docker.compose.project": "base-images",
+    "com.docker.compose.service": "ubuntu-24-04",
+    "com.docker.compose.version": "2.35.1",
+    "org.opencontainers.image.ref.name": "ubuntu",
+    "org.opencontainers.image.version": "24.04"
+  }
+}

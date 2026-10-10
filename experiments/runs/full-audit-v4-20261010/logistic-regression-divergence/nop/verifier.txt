@@ -1,0 +1,50 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.1, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+collected 5 items
+
+../tests/test_outputs.py .FF..                                           [100%]
+
+=================================== FAILURES ===================================
+_______________________________ test_difference ________________________________
+
+    def test_difference():
+        """
+        Check the model didn't try to stop early
+        """
+>       assert trainer.get_diff() <= 1e-15
+E       assert np.float64(4.408633161624646e-06) <= 1e-15
+E        +  where np.float64(4.408633161624646e-06) = get_diff()
+E        +    where get_diff = <logreg.LogisticRegression object at 0xffff95bce3c0>.get_diff
+
+/tests/test_outputs.py:26: AssertionError
+_______________________________ test_iterations ________________________________
+
+    def test_iterations():
+        """
+        Confirm that we actually converged, in another way
+        """
+>       assert trainer.get_iters() <= 100000
+E       assert 100001 <= 100000
+E        +  where 100001 = get_iters()
+E        +    where get_iters = <logreg.LogisticRegression object at 0xffff95bce3c0>.get_iters
+
+/tests/test_outputs.py:33: AssertionError
+=============================== warnings summary ===============================
+../usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:475
+  /usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/tests/pytest-cache-files-zrw7njqs'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:429
+  /usr/local/lib/python3.13/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 13] Permission denied: '/tests/pytest-cache-files-ujrddr9k'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_convergence_criterion_same
+PASSED ../tests/test_outputs.py::test_no_cheating
+PASSED ../tests/test_outputs.py::test_solution
+FAILED ../tests/test_outputs.py::test_difference - assert np.float64(4.408633...
+FAILED ../tests/test_outputs.py::test_iterations - assert 100001 <= 100000
+=================== 2 failed, 3 passed, 2 warnings in 1.29s ====================

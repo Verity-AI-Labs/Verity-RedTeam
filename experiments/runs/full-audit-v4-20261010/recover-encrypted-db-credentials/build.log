@@ -1,0 +1,57 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 930B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for skylensage-registry.cn-hangzhou.cr.aliyuncs.com/instances/1124:t-bench-ubuntu-24-04
+#2 DONE 3.4s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/8] FROM skylensage-registry.cn-hangzhou.cr.aliyuncs.com/instances/1124:t-bench-ubuntu-24-04@sha256:8f1842fa67bef3818a97d89bc1dbcdc70898c73a533b92867bda39898c19f4fc
+#4 resolve skylensage-registry.cn-hangzhou.cr.aliyuncs.com/instances/1124:t-bench-ubuntu-24-04@sha256:8f1842fa67bef3818a97d89bc1dbcdc70898c73a533b92867bda39898c19f4fc 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 5.59kB done
+#5 DONE 0.0s
+
+#6 [6/8] COPY setup.sh /tmp/setup.sh
+#6 CACHED
+
+#7 [7/8] RUN chmod +x /tmp/setup.sh && /tmp/setup.sh && rm /tmp/setup.sh
+#7 CACHED
+
+#8 [4/8] RUN mkdir -p /protected
+#8 CACHED
+
+#9 [5/8] COPY test_data /protected/test_data
+#9 CACHED
+
+#10 [3/8] WORKDIR /app
+#10 CACHED
+
+#11 [2/8] RUN apt-get update &&     apt-get install -y --no-install-recommends         binutils         bsdmainutils         grep         xxd         coreutils         python3         python3-pip         && rm -rf /var/lib/apt/lists/*
+#11 CACHED
+
+#12 [8/8] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#12 CACHED
+
+#13 exporting to image
+#13 exporting layers 0.0s done
+#13 exporting manifest sha256:d90718b7fe1b6f11bce5b35da11e0c056fd814b0d2050538269ba2897b039951 done
+#13 exporting config sha256:e20b6642cdb427d120f643a2235b58d9a728df16c18465bf6d5299cb8e3bf005
+#13 exporting config sha256:e20b6642cdb427d120f643a2235b58d9a728df16c18465bf6d5299cb8e3bf005 done
+#13 exporting attestation manifest sha256:d16b6c9a3142017caa0bb12e8eb573443fbe6eaa4be06a33ea8b86547d7d9781 0.0s done
+#13 exporting manifest list sha256:49e9d58418af593cbefd96a3cff43ad18c33eafd04abcd41a40671ba2b0cf415 0.0s done
+#13 naming to docker.io/library/verity-recover-encrypted-db-credentials:local done
+#13 unpacking to docker.io/library/verity-recover-encrypted-db-credentials:local 0.0s done
+#13 DONE 0.2s
+
+ [33m1 warning found (use docker --debug to expand):
+[0m - InvalidBaseImagePlatform: Base image skylensage-registry.cn-hangzhou.cr.aliyuncs.com/instances/1124:t-bench-ubuntu-24-04 was pulled with platform "linux/amd64", expected "linux/arm64" for current build (line 1)
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/vhucinbn99au6bd1kcl0lnf9p
