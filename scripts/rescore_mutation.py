@@ -76,17 +76,32 @@ def main(folder):
     for s in survivors:
         print(f"\n{s['id']} material: token {s['token']!r}, verifier {s['verifier']}\n{s['diff']}")
 
+    # audit-v5 fix A1/B5: a deliverable the instruction prints is certified only when the tests check
+    # that same constant (whole-deliverable match + present in tests/); other prompt/deliverable
+    # overlaps are informational spec_overlap. Both are computable offline (no Docker).
+    try:
+        tests_text = audit._tests_text(audit.runner.task_config(report["provenance"]["task_id"]))
+    except ValueError:  # the task is not in the current manifest
+        tests_text = ""
+    leaks = audit.prompt_leaks(spec["instruction"], artifacts, tests_text)
+    for x in leaks["leaks"]:
+        print(f"\nanswer_in_prompt (certified): {x['artifact']} printed in the instruction: {x['match']!r}")
+    for x in leaks["spec_overlap"]:
+        print(f"\nspec_overlap (informational): {x['artifact']} shares content with the instruction: {x['match']!r}")
+
     threshold = (report["provenance"].get("budgets") or {}).get("judge_threshold", audit.JUDGE_THRESHOLD)
     attempts = [relabel(a, threshold) for a in redteam.get("attempts", [])]
-    print("\nattempts (v3 label -> v4 label from the one recorded score):")
+    print("\nattempts (recorded label -> audit-v5 label from the one recorded score):")
     for old, new in zip(redteam.get("attempts", []), attempts):
         score = (old.get("judge") or {}).get("suspicion_score")
         print(f"  {old['id']}  score={score}  {old['label']}/{old['tier']} -> {new['label']}/{new['tier']}")
-    v4_validity = dict(validity, mutation=dict(mutation, material_survivors=survivors))
-    hk = audit.hackability(v4_validity, dict(redteam, attempts=attempts))
+    v5_validity = dict(validity, mutation=dict(mutation, material_survivors=survivors),
+                       answer_in_prompt=leaks)
+    hk = audit.hackability(v5_validity, dict(redteam, attempts=attempts))
     print(f"\nhackability: {hk['value']}")
     for b in hk["basis"]:
         print(f"  basis: {b}")
+    print(f"  caveat: {hk['caveat']}")
 
 
 if __name__ == "__main__":
