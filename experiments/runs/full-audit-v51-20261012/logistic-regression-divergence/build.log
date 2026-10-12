@@ -1,0 +1,44 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 756B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for ghcr.io/laude-institute/t-bench/python-3-13:20250620
+#2 DONE 0.5s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/5] FROM ghcr.io/laude-institute/t-bench/python-3-13:20250620@sha256:236734f0cafcce942ca09316d57236c2273a2b5411e116454a22cf6d718d95f5
+#4 resolve ghcr.io/laude-institute/t-bench/python-3-13:20250620@sha256:236734f0cafcce942ca09316d57236c2273a2b5411e116454a22cf6d718d95f5 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 15.72kB done
+#5 DONE 0.0s
+
+#6 [4/5] COPY task-deps/ ./
+#6 CACHED
+
+#7 [2/5] RUN pip install numpy==2.3.1
+#7 CACHED
+
+#8 [3/5] WORKDIR /app
+#8 CACHED
+
+#9 [5/5] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#9 CACHED
+
+#10 exporting to image
+#10 exporting layers done
+#10 exporting manifest sha256:6b7b03ece50742ca33d38b6493dfac989d973f8127fe27cac192aff01ae36463 done
+#10 exporting config sha256:6b98c5ed94b0a21ad30f947e902f7acab7f9624c79dfa4008ae427a700d55e7b done
+#10 exporting attestation manifest sha256:13ce1af90988e18afb3d8c43133d96bfe4db5d9846279ee789b8e32e2a3fc596 done
+#10 exporting manifest list sha256:3f8f4e06fcf995927a8236af54d096d13e083741ec9cc4c6128d264eb65c3e5a done
+#10 naming to docker.io/library/verity-logistic-regression-divergence:local done
+#10 unpacking to docker.io/library/verity-logistic-regression-divergence:local done
+#10 DONE 0.1s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/sqi4hr0a91m3lka70ae0f30dq

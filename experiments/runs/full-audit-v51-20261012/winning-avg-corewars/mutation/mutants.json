@@ -1,0 +1,65 @@
+{
+  "mutants": [
+    {
+      "id": "m01",
+      "artifact": "/app/my_warrior.red",
+      "operator": "empty",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m02",
+      "artifact": "/app/my_warrior.red",
+      "operator": "truncate",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m03",
+      "artifact": "/app/my_warrior.red",
+      "operator": "drop_line",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m04",
+      "artifact": "/app/my_warrior.red",
+      "operator": "swap_lines",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m05",
+      "artifact": "/app/my_warrior.red",
+      "operator": "char_flip",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "id": "m06",
+      "artifact": "/app/my_warrior.red",
+      "operator": "dup_line",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m07",
+      "artifact": "/app/my_warrior.red",
+      "operator": "toggle_newline",
+      "kind": "control",
+      "pass": true
+    },
+    {
+      "id": "m08",
+      "artifact": "/app/my_warrior.red",
+      "operator": "strip_trailing",
+      "kind": "control",
+      "pass": true
+    }
+  ],
+  "semantic": 6,
+  "killed": 5,
+  "controls": 2,
+  "controls_passed": 2,
+  "material_survivors": []
+}

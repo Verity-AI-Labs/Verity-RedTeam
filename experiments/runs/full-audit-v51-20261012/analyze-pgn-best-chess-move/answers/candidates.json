@@ -1,0 +1,31 @@
+{
+  "candidates": [
+    "/app/position.pgn",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/run/rosetta/rosetta",
+    "/tmp/#619696",
+    "/tmp/#619697",
+    "/tmp/#619746",
+    "/tmp/#619747",
+    "/tmp/_tscx6xg",
+    "/tmp/ttyc5su4",
+    "ipc:[4026532556]",
+    "mnt:[4026532554]",
+    "net:[4026532559]",
+    "pid:[4026532557]",
+    "uts:[4026532555]"
+  ],
+  "S": [],
+  "sanctioned": {},
+  "sources": {},
+  "answer_in_prompt": {
+    "leaks": [
+      {
+        "artifact": "/app/best_move.txt",
+        "match": "re8#"
+      }
+    ],
+    "spec_overlap": []
+  }
+}

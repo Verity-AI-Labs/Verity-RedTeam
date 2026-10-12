@@ -42,6 +42,8 @@ def parse(argv, today):
                         help="abort in-flight tasks at their next model call after this (default: 10)")
     parser.add_argument("--resume", action="store_true", help="skip tasks that already have a complete report.json")
     parser.add_argument("--dry-run", action="store_true", help="print the plan; no network, Docker or model calls")
+    parser.add_argument("--allow-dirty", action="store_true",
+                        help="run even if the git tree has changes outside experiments/runs/")
     args = parser.parse_args(argv)
     if len(set(args.tasks)) != len(args.tasks):
         parser.error("--tasks has duplicates (two threads would build and audit the same image)")
@@ -73,6 +75,12 @@ def expected_protocol(client):
             "judge": MODEL, "judge_digest": client.digest(MODEL)}
     return audit.protocol_id(mobj, audit.sha256(audit.ATTACK), audit.sha256(audit.JUDGE),
                              dict(audit.BUDGETS), client.request_config(), audit.sha256(audit.JUDGE_USER))
+
+
+def code_state():
+    """The code this run executes: git commit, dirty flag (ignoring experiments/runs/) and file hashes."""
+    return {**audit.git_state(), "code_sha256": {f"src/{name}": audit.sha256(ROOT / "src" / name)
+                                                 for name in ("audit.py", "deepseek.py", "runner.py")}}
 
 
 def plan(parser, args, protocol):
@@ -138,9 +146,17 @@ def main(argv=None, docker=runner.docker, audit_fn=audit.audit, post=None, sleep
                              **({"post": post} if post else {}))
     protocol = expected_protocol(client)
     todo, complete, stale = plan(parser, args, protocol)
+    source = code_state()
+    dirty = (f"git tree is dirty (changes outside experiments/runs/) at {source['git_commit']}: "
+             "the reports would not match any commit")
     if args.dry_run:
         dry_run(args, client, todo, complete, stale, protocol, launch)
+        print(f"Code: git_commit {source['git_commit']} git_dirty {source['git_dirty']}")
+        if source["git_dirty"]:
+            print(f"WARNING: {dirty}; a real run needs a commit or --allow-dirty.")
         return 0
+    if source["git_dirty"] and not args.allow_dirty:
+        parser.error(f"{dirty}; commit first or pass --allow-dirty")
     if not os.environ.get("DEEPSEEK_API_KEY"):
         parser.error("export DEEPSEEK_API_KEY first")
     out.mkdir(parents=True, exist_ok=True)
@@ -149,6 +165,7 @@ def main(argv=None, docker=runner.docker, audit_fn=audit.audit, post=None, sleep
         (out / name).rename(out / "superseded" / f"{name}-{stamp}")
     manifest = {"status": "running", "abort_reason": None, "run_date": client.run_date,
                 "launched_utc": launch.isoformat(), "finished_utc": None, "wall_seconds": None, "out": str(out),
+                **source, "allow_dirty": args.allow_dirty,
                 "models": MODELS, "request_config": client.request_config(), "protocol_id": protocol,
                 "budgets": audit.BUDGETS, "max_usd": args.max_usd, "prior_estimated_usd": round(client.spent, 6),
                 "concurrency": args.concurrency,

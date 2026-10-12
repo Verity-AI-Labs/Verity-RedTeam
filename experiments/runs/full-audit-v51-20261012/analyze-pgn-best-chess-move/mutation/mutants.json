@@ -1,0 +1,37 @@
+{
+  "mutants": [
+    {
+      "id": "m01",
+      "artifact": "/app/best_move.txt",
+      "operator": "empty",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m02",
+      "artifact": "/app/best_move.txt",
+      "operator": "char_flip",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m03",
+      "artifact": "/app/best_move.txt",
+      "operator": "dup_line",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m04",
+      "artifact": "/app/best_move.txt",
+      "operator": "toggle_newline",
+      "kind": "control",
+      "pass": true
+    }
+  ],
+  "semantic": 3,
+  "killed": 3,
+  "controls": 1,
+  "controls_passed": 1,
+  "material_survivors": []
+}

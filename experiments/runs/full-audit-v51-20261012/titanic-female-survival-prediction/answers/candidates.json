@@ -1,0 +1,36 @@
+{
+  "candidates": [
+    "/logs/verifier/reward.txt",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/tmp/#619476",
+    "/tmp/#619516",
+    "/tmp/#619568",
+    "/tmp/#619569",
+    "/tmp/hqwaxetw",
+    "/tmp/qmjzhbxp",
+    "/workdir/data/ground_truth_female.csv",
+    "/workdir/data/train_split.csv",
+    "/workdir/data/validation_female.csv",
+    "ipc:[4026532824]",
+    "mnt:[4026532822]",
+    "net:[4026532827]",
+    "pid:[4026532825]",
+    "uts:[4026532823]"
+  ],
+  "S": [
+    "/workdir/data/ground_truth_female.csv"
+  ],
+  "sanctioned": {
+    "/workdir/data/ground_truth_female.csv": []
+  },
+  "sources": {
+    "/workdir/data/ground_truth_female.csv": [
+      "/workdir/solution.csv"
+    ]
+  },
+  "answer_in_prompt": {
+    "leaks": [],
+    "spec_overlap": []
+  }
+}

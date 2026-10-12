@@ -1,0 +1,33 @@
+{
+  "candidates": [
+    "/opt/custom-tools/bin",
+    "/opt/custom-tools/bin/devtool",
+    "/root",
+    "/root/.bash_aliases",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/tmp/#619499",
+    "/tmp/#619502",
+    "/tmp/#619606",
+    "/tmp/#619607",
+    "/tmp/1ipn_kw6",
+    "/tmp/k775kaht",
+    "ipc:[4026532556]",
+    "ipc:[4026532690]",
+    "mnt:[4026532554]",
+    "mnt:[4026532688]",
+    "net:[4026532559]",
+    "net:[4026532693]",
+    "pid:[4026532557]",
+    "pid:[4026532691]",
+    "uts:[4026532555]",
+    "uts:[4026532689]"
+  ],
+  "S": [],
+  "sanctioned": {},
+  "sources": {},
+  "answer_in_prompt": {
+    "leaks": [],
+    "spec_overlap": []
+  }
+}

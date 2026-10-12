@@ -1,0 +1,9 @@
+C /etc
+C /etc/profile.d
+A /etc/profile.d/zz-devenv.sh
+C /etc/bash.bashrc
+C /root
+C /root/.bashrc
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init

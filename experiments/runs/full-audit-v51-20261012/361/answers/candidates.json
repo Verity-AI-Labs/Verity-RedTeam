@@ -1,0 +1,37 @@
+{
+  "candidates": [
+    "//user",
+    "/app/README.md",
+    "/app/setup_env.sh",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/tmp/#619605",
+    "/tmp/#619606",
+    "/tmp/#619619",
+    "/tmp/#619620",
+    "/tmp/2nq92in7",
+    "/tmp/t7_62ldf",
+    "/workspace",
+    "/workspace/config/aliases.sh",
+    "/workspace/config/paths.sh",
+    "/workspace/config/secrets.sh",
+    "/workspace/project",
+    "/workspace/scripts",
+    "/workspace/scripts/buildhelper",
+    "/workspace/secrets/.credentials",
+    "/workspace/tools/bin",
+    "/workspace/tools/bin/devtool",
+    "ipc:[4026532824]",
+    "mnt:[4026532822]",
+    "net:[4026532827]",
+    "pid:[4026532825]",
+    "uts:[4026532823]"
+  ],
+  "S": [],
+  "sanctioned": {},
+  "sources": {},
+  "answer_in_prompt": {
+    "leaks": [],
+    "spec_overlap": []
+  }
+}

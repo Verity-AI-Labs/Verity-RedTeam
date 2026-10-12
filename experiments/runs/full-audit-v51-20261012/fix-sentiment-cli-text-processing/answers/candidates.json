@@ -1,0 +1,36 @@
+{
+  "candidates": [
+    "/app/input.txt",
+    "/app/weights.json",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/run/rosetta/rosetta",
+    "/tmp/#619671",
+    "/tmp/#619672",
+    "/tmp/#620578",
+    "/tmp/#620588",
+    "/tmp/9rjkep81",
+    "/tmp/case_test.txt",
+    "/tmp/empty_test.txt",
+    "/tmp/m48i9emg",
+    "/tmp/multiline_test.txt",
+    "/tmp/neg_punct_test.txt",
+    "/tmp/negative_test.txt",
+    "/tmp/period_test.txt",
+    "/tmp/pos_punct_test.txt",
+    "/tmp/positive_test.txt",
+    "/tmp/single_neg_punct.txt",
+    "ipc:[4026532824]",
+    "mnt:[4026532822]",
+    "net:[4026532827]",
+    "pid:[4026532825]",
+    "uts:[4026532823]"
+  ],
+  "S": [],
+  "sanctioned": {},
+  "sources": {},
+  "answer_in_prompt": {
+    "leaks": [],
+    "spec_overlap": []
+  }
+}

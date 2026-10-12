@@ -1,0 +1,9 @@
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init
+A /solution
+A /solution/solve.sh
+C /tmp
+A /tmp/recover_keys.py
+C /db
+A /db/recovered_keys.txt

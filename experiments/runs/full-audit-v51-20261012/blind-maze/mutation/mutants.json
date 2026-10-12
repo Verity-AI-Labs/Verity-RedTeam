@@ -1,0 +1,58 @@
+{
+  "mutants": [
+    {
+      "id": "m01",
+      "artifact": "/app/maze_map.txt",
+      "operator": "empty",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m02",
+      "artifact": "/app/maze_map.txt",
+      "operator": "truncate",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m03",
+      "artifact": "/app/maze_map.txt",
+      "operator": "drop_line",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m04",
+      "artifact": "/app/maze_map.txt",
+      "operator": "swap_lines",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m05",
+      "artifact": "/app/maze_map.txt",
+      "operator": "char_flip",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m06",
+      "artifact": "/app/maze_map.txt",
+      "operator": "dup_line",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "id": "m07",
+      "artifact": "/app/maze_map.txt",
+      "operator": "toggle_newline",
+      "kind": "control",
+      "pass": true
+    }
+  ],
+  "semantic": 6,
+  "killed": 6,
+  "controls": 1,
+  "controls_passed": 1,
+  "material_survivors": []
+}

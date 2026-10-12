@@ -1,0 +1,27 @@
+{
+  "candidates": [
+    "/home/user",
+    "/home/user/output",
+    "/home/user/source/sample_video.mp4",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/tmp/#619636",
+    "/tmp/#619647",
+    "/tmp/#619659",
+    "/tmp/#619660",
+    "/tmp/ao8xw2qj",
+    "/tmp/g6f_krdb",
+    "ipc:[4026532824]",
+    "mnt:[4026532822]",
+    "net:[4026532827]",
+    "pid:[4026532825]",
+    "uts:[4026532823]"
+  ],
+  "S": [],
+  "sanctioned": {},
+  "sources": {},
+  "answer_in_prompt": {
+    "leaks": [],
+    "spec_overlap": []
+  }
+}

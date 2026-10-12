@@ -29,6 +29,7 @@ FORBIDDEN = {"temperature", "top_p", "frequency_penalty", "presence_penalty", "t
 spec = importlib.util.spec_from_file_location("run_batch", audit.ROOT / "scripts/run-batch.py")
 batch = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(batch)
+GIT_STATE = audit.git_state  # DriverTests patch it; the real one is tested with mocked git calls
 
 
 def ok(content=ACTION, finish="stop", usage=USAGE):
@@ -290,6 +291,10 @@ class DriverTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         self.dir = Path(temporary.name)
         self.out = self.dir / "run"
+        # the developer's working tree may be dirty; the dirty-tree guard has its own test
+        patcher = patch.object(audit, "git_state", lambda: {"git_commit": "c0ffee", "git_dirty": False})
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     def main(self, *argv, env=ENV, **kw):
         stdout = io.StringIO()
@@ -374,6 +379,52 @@ class DriverTests(unittest.TestCase):
             with redirect_stdout(io.StringIO()), patch("sys.stderr", io.StringIO()) as err, self.assertRaises(SystemExit):
                 self.main("--tasks", "462", "--resume")  # resuming would mix protocols in one folder
             self.assertIn("mix protocols", err.getvalue())
+
+    def test_e2_git_provenance_and_dirty_tree_guard(self):
+        def git(status):
+            def run(argv, **kw):
+                out = {"rev-parse": "abc123\n", "status": status}[argv[1]]
+                return SimpleNamespace(returncode=0, stdout=out, stderr="")
+            return run
+        runs_only = " D experiments/runs/old/report.json\n?? experiments/runs/new/\n"
+        for status, dirty in ((runs_only, False), (runs_only + " M src/audit.py\n", True), ("?? x.py\n", True),
+                              ('R  "a b.txt" -> experiments/runs/a b.txt\n', True), ("", False)):
+            with patch.object(audit.subprocess, "run", git(status)):
+                self.assertEqual(GIT_STATE(), {"git_commit": "abc123", "git_dirty": dirty}, status)
+        # the manifest records the commit, dirty flag and code hashes
+        calls = []
+        code, _ = self.main("--tasks", "462", post=FakePost(ok()), docker=tracer_docker, audit_fn=self.fake_audit(calls))
+        manifest = json.loads((self.out / "run_manifest.json").read_text())
+        self.assertEqual((code, manifest["git_commit"], manifest["git_dirty"], manifest["allow_dirty"]),
+                         (0, "c0ffee", False, False))
+        self.assertEqual(manifest["code_sha256"], {f"src/{n}": audit.sha256(audit.ROOT / "src" / n)
+                                                   for n in ("audit.py", "deepseek.py", "runner.py")})
+        # a dirty tree blocks a real run (before any API, Docker or file write) unless --allow-dirty
+        self.out = self.dir / "dirty"
+        with patch.object(audit, "git_state", lambda: {"git_commit": "c0ffee", "git_dirty": True}):
+            with redirect_stdout(io.StringIO()), patch("sys.stderr", io.StringIO()) as err, \
+                    self.assertRaises(SystemExit):
+                self.main("--tasks", "462", post=FakePost(), docker=tracer_docker,
+                          audit_fn=lambda *a, **k: self.fail("audit called"))
+            self.assertIn("--allow-dirty", err.getvalue())
+            self.assertFalse(self.out.exists())
+            code, out = self.main("--dry-run", env={}, post=FakePost(), audit_fn=lambda *a, **k: self.fail("audit"))
+            self.assertEqual((code, self.out.exists()), (0, False))
+            self.assertIn("WARNING: git tree is dirty", out)
+            code, _ = self.main("--tasks", "462", "--allow-dirty", post=FakePost(ok()), docker=tracer_docker,
+                                audit_fn=self.fake_audit([]))
+            manifest = json.loads((self.out / "run_manifest.json").read_text())
+            self.assertEqual((code, manifest["git_dirty"], manifest["allow_dirty"]), (0, True, True))
+        # the report's provenance carries both fields, and they stay out of protocol_id
+        task = runner.task_config("blind-maze")
+        ctx = {"task": task, "bud": dict(audit.BUDGETS), "models": dict(MODELS), "digests": {"attacker": "d", "judge": "d"},
+               "judge_sha": "j", "cg_runs": [], "wall": {}, "stamp": "s"}
+        provs = []
+        for state in ({"git_commit": "abc123", "git_dirty": False}, {"git_commit": "def456", "git_dirty": True}):
+            with patch.object(audit, "git_state", lambda: state):
+                provs.append(audit._provenance(dict(ctx)))
+        self.assertEqual([(p["git_commit"], p["git_dirty"]) for p in provs], [("abc123", False), ("def456", True)])
+        self.assertEqual(provs[0]["protocol_id"], provs[1]["protocol_id"])
 
     def test_preflight_abort_stops_before_docker(self):
         def docker(*args, **kwargs):

@@ -1,0 +1,6 @@
+sh: can't open /tmp/v.strace: no such file
+Recovered 3 valid keys to /db/recovered_keys.txt
+  - AES2561A2BCDEF3GHIJ4KLM5NOAPHASH
+  - AES2569MN0QRSTUV1WX2YZ3AB4CDHASH
+  - AES256X1Y2PQRSTVW3Z4ABCD5EFGHASH
+VERITY-CGROUP=1

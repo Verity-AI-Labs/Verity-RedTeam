@@ -1,0 +1,13 @@
+[Unit]
+Description=MyApp Application Service
+# RequiresMountsFor=/mnt/appdata
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/myapp-service.sh
+ExecStop=/bin/rm -f /var/run/myapp.pid
+
+[Install]
+WantedBy=multi-user.target

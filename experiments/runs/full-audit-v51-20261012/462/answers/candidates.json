@@ -1,0 +1,32 @@
+{
+  "candidates": [
+    "/opt/appmonitor/appmonitor",
+    "/opt/appmonitor/config.json",
+    "/opt/appmonitor/start.sh",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/run",
+    "/run/systemd",
+    "/tmp/#619449",
+    "/tmp/#619591",
+    "/tmp/#619612",
+    "/tmp/#619613",
+    "/tmp/ozto4snn",
+    "/tmp/u4x5vx3k",
+    "/usr",
+    "/usr/local",
+    "/var/lib/appmonitor/data",
+    "ipc:[4026532690]",
+    "mnt:[4026532688]",
+    "net:[4026532693]",
+    "pid:[4026532691]",
+    "uts:[4026532689]"
+  ],
+  "S": [],
+  "sanctioned": {},
+  "sources": {},
+  "answer_in_prompt": {
+    "leaks": [],
+    "spec_overlap": []
+  }
+}

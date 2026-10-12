@@ -1,0 +1,13 @@
+C /etc
+C /etc/profile.d
+A /etc/profile.d/zz-dev-env.sh
+C /etc/bash.bashrc
+C /tmp
+A /tmp/init.sh.orig
+C /root
+C /root/.bashrc
+C /usr
+C /usr/sbin
+A /usr/sbin/docker-init
+C /app
+C /app/init.sh
