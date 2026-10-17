@@ -31,7 +31,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from src import audit  # noqa: E402
+from verity import sandbox as audit  # noqa: E402
 
 
 def why_not(record, path_read, clobbered):

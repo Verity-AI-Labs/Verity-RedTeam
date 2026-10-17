@@ -1,0 +1,2 @@
+# Local auditor, Guard, Stockfish data generation, and dashboard. Python 3.11+.
+python-chess==1.999

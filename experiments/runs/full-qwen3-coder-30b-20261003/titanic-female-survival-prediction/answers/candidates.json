@@ -1,0 +1,20 @@
+{
+  "candidates": [
+    "/logs/verifier/reward.txt",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/tmp/#478060",
+    "/tmp/#478061",
+    "/tmp/#478312",
+    "/tmp/#478313",
+    "/tmp/bnwi4k8s",
+    "/tmp/qrb2jj38",
+    "ipc:[4026532491]",
+    "mnt:[4026532489]",
+    "net:[4026532494]",
+    "pid:[4026532492]",
+    "uts:[4026532490]"
+  ],
+  "S": [],
+  "sanctioned": {}
+}

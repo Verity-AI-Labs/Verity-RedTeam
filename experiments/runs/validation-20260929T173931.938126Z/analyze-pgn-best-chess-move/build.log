@@ -1,0 +1,52 @@
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 629B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for skylensage-registry.cn-hangzhou.cr.aliyuncs.com/instances/1124:t-bench-python-3-13
+#2 DONE 0.3s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 45B done
+#3 DONE 0.0s
+
+#4 [1/7] FROM skylensage-registry.cn-hangzhou.cr.aliyuncs.com/instances/1124:t-bench-python-3-13@sha256:18d34cc73a311cb821ad1168031c7ece07540c785eeb9ffa81e63c968c652daa
+#4 resolve skylensage-registry.cn-hangzhou.cr.aliyuncs.com/instances/1124:t-bench-python-3-13@sha256:18d34cc73a311cb821ad1168031c7ece07540c785eeb9ffa81e63c968c652daa 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 5.51kB done
+#5 DONE 0.0s
+
+#6 [3/7] WORKDIR /app
+#6 CACHED
+
+#7 [4/7] COPY position.pgn /app/position.pgn
+#7 CACHED
+
+#8 [5/7] RUN mkdir /protected
+#8 CACHED
+
+#9 [6/7] COPY test_data /protected/test_data
+#9 CACHED
+
+#10 [2/7] RUN pip install chess
+#10 CACHED
+
+#11 [7/7] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#11 CACHED
+
+#12 exporting to image
+#12 exporting layers done
+#12 exporting manifest sha256:be84c86aa3bdaf5402baf8b6ce31a7923eeb4f51415c4d82b3a40c1436cff9ca done
+#12 exporting config sha256:de00d50d8d2850db4daceea20c6e5e0d91cb9ab36b41e9fcde63f811b1b149c3 done
+#12 exporting attestation manifest sha256:c7ed4c250ec719539ae7e0af43e3c9908b3341b06b38716a70467fcd72c14171 0.0s done
+#12 exporting manifest list sha256:b9b2749f938ccfcbffac5986691eed55ae55c096704a8805b69e835798f18382
+#12 exporting manifest list sha256:b9b2749f938ccfcbffac5986691eed55ae55c096704a8805b69e835798f18382 done
+#12 naming to docker.io/library/verity-analyze-pgn-best-chess-move:local done
+#12 unpacking to docker.io/library/verity-analyze-pgn-best-chess-move:local done
+#12 DONE 0.1s
+
+ [33m1 warning found (use docker --debug to expand):
+[0m - InvalidBaseImagePlatform: Base image skylensage-registry.cn-hangzhou.cr.aliyuncs.com/instances/1124:t-bench-python-3-13 was pulled with platform "linux/amd64", expected "linux/arm64" for current build (line 1)

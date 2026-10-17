@@ -1,0 +1,12 @@
+{
+  "Env": [
+    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  ],
+  "Cmd": [
+    "/bin/bash"
+  ],
+  "WorkingDir": "/home/user",
+  "Labels": {
+    "org.opencontainers.image.version": "24.04"
+  }
+}

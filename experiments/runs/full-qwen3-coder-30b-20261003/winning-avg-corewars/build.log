@@ -1,0 +1,53 @@
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.06kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/debian:13.0-slim
+#2 DONE 0.6s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/8] FROM docker.io/library/debian:13.0-slim@sha256:c85a2732e97694ea77237c61304b3bb410e0e961dd6ee945997a06c788c545bb
+#4 resolve docker.io/library/debian:13.0-slim@sha256:c85a2732e97694ea77237c61304b3bb410e0e961dd6ee945997a06c788c545bb 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 7.74kB done
+#5 DONE 0.0s
+
+#6 [7/8] COPY warriors/ /app/warriors/
+#6 CACHED
+
+#7 [4/8] RUN apt-get update
+#7 CACHED
+
+#8 [5/8] WORKDIR /app
+#8 CACHED
+
+#9 [2/8] RUN apt-get update && apt-get install -y     tmux     asciinema     build-essential     libncurses-dev     ca-certificates     dpkg-dev     devscripts
+#9 CACHED
+
+#10 [3/8] RUN echo 'deb-src http://deb.debian.org/debian stable main' >> /etc/apt/sources.list.d/deb-src.list
+#10 CACHED
+
+#11 [6/8] RUN apt-get source pmars &&     cd /app/pmars-*/src &&     sed -i 's/-DXWINGRAPHX//g' Makefile &&     sed -i 's/^LIB *=.*/LIB = -lncurses/' Makefile &&     make clean && make &&     install -m 0755 pmars /usr/local/bin/pmars
+#11 CACHED
+
+#12 [8/8] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#12 CACHED
+
+#13 exporting to image
+#13 exporting layers
+#13 exporting layers done
+#13 exporting manifest sha256:290b6a33b80683158a58358723a2c6e2378643be0b24e6529d1bdc15be530e10 done
+#13 exporting config sha256:53b280166255658350f7221d0339659885b39a3a74b1c04ba7f72b508f950174 done
+#13 exporting attestation manifest sha256:4cb07fe628c25f1e4d39af1e60097f46d838553e165eced6d46606f869923b67 0.0s done
+#13 exporting manifest list sha256:0c0e8b4015120db45949f2aaeaf5b7ff47e05880b077a50910b4c16777c630b1 0.0s done
+#13 naming to docker.io/library/verity-winning-avg-corewars:local
+#13 naming to docker.io/library/verity-winning-avg-corewars:local done
+#13 unpacking to docker.io/library/verity-winning-avg-corewars:local done
+#13 DONE 0.1s

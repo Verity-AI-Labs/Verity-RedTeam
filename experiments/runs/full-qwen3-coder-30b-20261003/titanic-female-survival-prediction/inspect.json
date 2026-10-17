@@ -1,0 +1,13 @@
+{
+  "Env": [
+    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "DEBIAN_FRONTEND=noninteractive"
+  ],
+  "Cmd": [
+    "/bin/bash"
+  ],
+  "WorkingDir": "/workdir",
+  "Labels": {
+    "org.opencontainers.image.version": "22.04"
+  }
+}

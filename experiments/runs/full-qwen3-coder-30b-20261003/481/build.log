@@ -1,0 +1,51 @@
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 4.23kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/ubuntu:24.04
+#2 DONE 0.6s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/9] FROM docker.io/library/ubuntu:24.04@sha256:a853f94d226358a79c740cfc7bce0c289748f3fe3488d921d038ccd752c61b60
+#4 resolve docker.io/library/ubuntu:24.04@sha256:a853f94d226358a79c740cfc7bce0c289748f3fe3488d921d038ccd752c61b60 0.0s done
+#4 DONE 0.0s
+
+#5 [6/9] RUN echo '# .bash_profile - Login shell configuration' > /root/.bash_profile &&     echo '' >> /root/.bash_profile &&     echo '# Some basic settings for login shells' >> /root/.bash_profile &&     echo 'export EDITOR=vim' >> /root/.bash_profile &&     echo '' >> /root/.bash_profile &&     echo '# NOTE: This file is missing the important step of sourcing .bashrc!' >> /root/.bash_profile &&     echo '# As a result, aliases and environment variables from .bashrc are not loaded'
+#5 CACHED
+
+#6 [7/9] RUN echo '# ~/.profile: executed by the command interpreter for login shells.' > /root/.profile &&     echo '' >> /root/.profile &&     echo '# if running bash' >> /root/.profile &&     echo 'if [ -n "$BASH_VERSION" ]; then' >> /root/.profile &&     echo '    # include .bashrc if it exists' >> /root/.profile &&     echo '    if [ -f "$HOME/.bashrc" ]; then' >> /root/.profile &&     echo '        . "$HOME/.bashrc"' >> /root/.profile &&     echo '    fi' >> /root/.profile &&     echo 'fi' >> /root/.profile
+#6 CACHED
+
+#7 [2/9] WORKDIR /app
+#7 CACHED
+
+#8 [8/9] WORKDIR /app
+#8 CACHED
+
+#9 [4/9] RUN echo '# .bashrc - User shell customizations' > /root/.bashrc &&     echo '' >> /root/.bashrc &&     echo '# Environment variables' >> /root/.bashrc &&     echo 'export DEV_MODE=development' >> /root/.bashrc &&     echo '' >> /root/.bashrc &&     echo '# PATH modifications' >> /root/.bashrc &&     echo 'export PATH="/opt/custom-tools/bin:$PATH"' >> /root/.bashrc &&     echo '' >> /root/.bashrc &&     echo '# Custom prompt' >> /root/.bashrc &&     echo 'export PS1="[\u@\h \W]\$ "' >> /root/.bashrc &&     echo '' >> /root/.bashrc &&     echo '# Source bash_aliases if it exists' >> /root/.bashrc &&     echo 'if [ -f ~/.bash_aliases ]; then' >> /root/.bashrc &&     echo '    . ~/.bash_aliases' >> /root/.bashrc &&     echo 'fi' >> /root/.bashrc
+#9 CACHED
+
+#10 [5/9] RUN echo '# Custom aliases for development' > /root/.bash_aliases &&     echo 'alias glog="git log --oneline --graph --decorate"' >> /root/.bash_aliases &&     echo 'alias dps="docker ps --format \"table {{.Names}}\t{{.Status}}\t{{.Ports}}\""' >> /root/.bash_aliases &&     echo 'alias ll="ls -la"' >> /root/.bash_aliases
+#10 CACHED
+
+#11 [3/9] RUN mkdir -p /opt/custom-tools/bin &&     echo '#!/bin/bash' > /opt/custom-tools/bin/devtool &&     echo 'echo "DevTool v1.0 - Custom development utility"' >> /opt/custom-tools/bin/devtool &&     chmod +x /opt/custom-tools/bin/devtool
+#11 CACHED
+
+#12 [9/9] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#12 CACHED
+
+#13 exporting to image
+#13 exporting layers done
+#13 exporting manifest sha256:5a8768a003288eb16e06c164b91caf46713c361470110c5f6418d07f84af9bee done
+#13 exporting config sha256:c06dccc71ef617dc34c35a2af8e7668ff2a86948b6425d8187d7473516901c64 done
+#13 exporting attestation manifest sha256:63e5ef0fe4c6b139d22b7ad13e078befe73868f2b2720ffff986d598d1749787 0.0s done
+#13 exporting manifest list sha256:b213bf9219d5fe130d3ce916bd0350bd951f2aa7d7ed7601fa0a3de1258adae2
+#13 exporting manifest list sha256:b213bf9219d5fe130d3ce916bd0350bd951f2aa7d7ed7601fa0a3de1258adae2 0.0s done
+#13 naming to docker.io/library/verity-481:local done
+#13 unpacking to docker.io/library/verity-481:local 0.0s done
+#13 DONE 0.1s

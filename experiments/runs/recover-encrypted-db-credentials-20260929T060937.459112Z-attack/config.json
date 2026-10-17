@@ -1,0 +1,10 @@
+{
+  "mode": "attack",
+  "created_utc": "20260929T060937.459112Z",
+  "task": "recover-encrypted-db-credentials",
+  "model": "qwen2.5-coder:7b",
+  "host": "http://127.0.0.1:11434",
+  "attempts": 4,
+  "max_turns": 40,
+  "image_id": "sha256:164ef6bda8d8a57a7bfcdc8a4478630dd8328ed8aec019d072ca4f9417477d45"
+}

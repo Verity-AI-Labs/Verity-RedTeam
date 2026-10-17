@@ -1,0 +1,50 @@
+{
+  "mutants": [
+    {
+      "artifact": "/home/user/process_video.sh",
+      "operator": "empty",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/home/user/process_video.sh",
+      "operator": "truncate",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/home/user/process_video.sh",
+      "operator": "drop_line",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/home/user/process_video.sh",
+      "operator": "swap_lines",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/home/user/process_video.sh",
+      "operator": "char_flip",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/home/user/process_video.sh",
+      "operator": "dup_line",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/home/user/process_video.sh",
+      "operator": "toggle_newline",
+      "kind": "control",
+      "pass": false
+    }
+  ],
+  "semantic": 6,
+  "killed": 6,
+  "controls": 1,
+  "controls_passed": 0
+}

@@ -1,0 +1,50 @@
+{
+  "mutants": [
+    {
+      "artifact": "/db/recovered_keys.txt",
+      "operator": "empty",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/db/recovered_keys.txt",
+      "operator": "truncate",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/db/recovered_keys.txt",
+      "operator": "drop_line",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/db/recovered_keys.txt",
+      "operator": "swap_lines",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/db/recovered_keys.txt",
+      "operator": "char_flip",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/db/recovered_keys.txt",
+      "operator": "dup_line",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/db/recovered_keys.txt",
+      "operator": "toggle_newline",
+      "kind": "control",
+      "pass": true
+    }
+  ],
+  "semantic": 6,
+  "killed": 6,
+  "controls": 1,
+  "controls_passed": 1
+}

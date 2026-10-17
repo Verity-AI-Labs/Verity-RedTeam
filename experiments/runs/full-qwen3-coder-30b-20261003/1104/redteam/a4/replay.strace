@@ -1,0 +1,1546 @@
+16    execve("/usr/bin/nsenter", ["nsenter", "-t", "1", "-m", "-u", "-i", "-n", "-p", "setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xfffffe396888 /* 5 vars */) = 0
+16    openat(AT_FDCWD</>, "/proc/1/ns/ipc", O_RDONLY|O_LARGEFILE) = 3<ipc:[4026532491]>
+16    openat(AT_FDCWD</>, "/proc/1/ns/uts", O_RDONLY|O_LARGEFILE) = 4<uts:[4026532490]>
+16    openat(AT_FDCWD</>, "/proc/1/ns/net", O_RDONLY|O_LARGEFILE) = 5<net:[4026532595]>
+16    openat(AT_FDCWD</>, "/proc/1/ns/pid", O_RDONLY|O_LARGEFILE) = 6<pid:[4026532493]>
+16    openat(AT_FDCWD</>, "/proc/1/ns/mnt", O_RDONLY|O_LARGEFILE) = 7<mnt:[4026532489]>
+16    clone(child_stack=NULL, flags=SIGCHLD) = 17
+16    wait4(17,  <unfinished ...>
+17    execve("/usr/local/sbin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xffffcd038838 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/local/bin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xffffcd038838 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/sbin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xffffcd038838 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/bin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xffffcd038838 /* 5 vars */) = 0
+17    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+17    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+17    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libcap-ng.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libcap-ng.so.0.0.0>
+17    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+17    openat(AT_FDCWD</>, "/proc/sys/kernel/cap_last_cap", O_RDONLY) = 3</proc/sys/kernel/cap_last_cap>
+17    openat(AT_FDCWD</>, "/proc/17/status", O_RDONLY|O_CLOEXEC) = 3</proc/17/status>
+17    openat(AT_FDCWD</>, "/proc/17/status", O_RDONLY|O_CLOEXEC) = 3</proc/17/status>
+17    openat(AT_FDCWD</>, "/proc/sys/kernel/cap_last_cap", O_RDONLY) = 3</proc/sys/kernel/cap_last_cap>
+17    openat(AT_FDCWD</>, "/proc/17/status", O_RDONLY|O_CLOEXEC) = 3</proc/17/status>
+17    openat(AT_FDCWD</>, "/proc/17/status", O_RDONLY|O_CLOEXEC) = 3</proc/17/status>
+17    openat(AT_FDCWD</>, "/proc/17/status", O_RDONLY|O_CLOEXEC) = 3</proc/17/status>
+17    execve("/usr/local/sbin/env", ["env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xffffc324a078 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/local/bin/env", ["env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xffffc324a078 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/sbin/env", ["env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xffffc324a078 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/bin/env", ["env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xffffc324a078 /* 5 vars */) = 0
+17    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+17    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+17    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+17    execve("/usr/local/sbin/timeout", ["timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xaaaabb424400 /* 2 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/local/bin/timeout", ["timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xaaaabb424400 /* 2 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/sbin/timeout", ["timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xaaaabb424400 /* 2 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/bin/timeout", ["timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xaaaabb424400 /* 2 vars */) = 0
+17    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+17    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+17    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+17    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff818e3fd0) = 18
+17    wait4(18, 0xffffed7db880, WNOHANG, NULL) = 0
+18    execve("/usr/local/sbin/bash", ["bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xffffed7dbbe8 /* 2 vars */) = -1 ENOENT (No such file or directory)
+18    execve("/usr/local/bin/bash", ["bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xffffed7dbbe8 /* 2 vars */) = -1 ENOENT (No such file or directory)
+18    execve("/usr/sbin/bash", ["bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xffffed7dbbe8 /* 2 vars */) = -1 ENOENT (No such file or directory)
+18    execve("/usr/bin/bash", ["bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\n(cd /app || exit 97\nls -la /usr/local/bin/\n)\n(cd /app || exit 97\ncat /usr/local/bin/myapp-service.sh\n)\n(cd /app || exit 97\ncat /var/log/syslog | grep -i \"mount point.*not ready\" | head -5\n)\n(cd /app || exit 97\nsystemctl list-unit-files | grep mnt\n)\n(cd /app || exit 97\nwhich systemctl\n)\n(cd /app || exit 97\nls -la /etc/systemd/system/*mnt*\n)\n(cd /app || exit 97\nfind /etc/systemd -name \"*mnt*\" -o -name \"*appdata*\"\n)\n(cd /app || exit 97\nls -la /mnt/\n)\n(cd /app || exit 97\nls -la /mnt/appdata/\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncp /etc/systemd/system/myapp.service /tmp/original-myapp.service\n)\n(cd /app || exit 97\ncat > /etc/systemd/system/myapp.service << 'EOF'\n[Unit]\nDescription=MyApp Application Service\n# Fixed: Added proper mount dependencies to prevent race condition\nRequiresMountsFor=/mnt/appdata\nAfter=local-fs.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/local/bin/myapp-service.sh\nExecStop=/bin/rm -f /var/run/myapp.pid\n\n[Install]\nWantedBy=multi-user.target\nEOF\n)\n(cd /app || exit 97\n/usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\nRANDOMIZE_TIMING=1 /usr/local/bin/simulate-boot.sh\n)\n(cd /app || exit 97\ncat /etc/systemd/system/myapp.service\n)\ntrue"], 0xffffed7dbbe8 /* 2 vars */) = 0
+18    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+18    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+18    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+18    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+18    openat(AT_FDCWD</>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+18    getcwd("/", 4096)                 = 2
+18    newfstatat(AT_FDCWD</>, ".", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+18    newfstatat(AT_FDCWD</>, "/usr/local/sbin/bash", 0xfffff72e7e48, 0) = -1 ENOENT (No such file or directory)
+18    newfstatat(AT_FDCWD</>, "/usr/local/bin/bash", 0xfffff72e7e48, 0) = -1 ENOENT (No such file or directory)
+18    newfstatat(AT_FDCWD</>, "/usr/sbin/bash", 0xfffff72e7e48, 0) = -1 ENOENT (No such file or directory)
+18    newfstatat(AT_FDCWD</>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+18    newfstatat(AT_FDCWD</>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+18    faccessat(AT_FDCWD</>, "/usr/bin/bash", X_OK) = 0
+18    newfstatat(AT_FDCWD</>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+18    faccessat(AT_FDCWD</>, "/usr/bin/bash", R_OK) = 0
+18    newfstatat(AT_FDCWD</>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+18    newfstatat(AT_FDCWD</>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+18    openat(AT_FDCWD</>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+18    openat(AT_FDCWD</>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+18    openat(AT_FDCWD</>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+18    newfstatat(AT_FDCWD</>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=32, ...}, 0) = 0
+18    openat(AT_FDCWD</>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+18    faccessat2(AT_FDCWD</>, "/etc/profile.d/01-locale-fix.sh", R_OK, AT_EACCESS) = 0
+18    openat(AT_FDCWD</>, "/etc/profile.d/01-locale-fix.sh", O_RDONLY) = 3</etc/profile.d/01-locale-fix.sh>
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 19
+19    execve("/usr/bin/locale-check", ["/usr/bin/locale-check", "C.UTF-8"], 0xaaaadf7f06a0 /* 5 vars */) = 0
+19    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+19    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+19    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+19    exit_group(0)                     = ?
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=19, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 19
+18    wait4(-1, 0xfffff72e44b0, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    openat(AT_FDCWD</>, "/root/.bash_profile", O_RDONLY) = -1 ENOENT (No such file or directory)
+18    openat(AT_FDCWD</>, "/root/.bash_login", O_RDONLY) = -1 ENOENT (No such file or directory)
+18    openat(AT_FDCWD</>, "/root/.profile", O_RDONLY) = 3</root/.profile>
+18    newfstatat(AT_FDCWD</>, "/root/.bashrc", {st_mode=S_IFREG|0644, st_size=3106, ...}, 0) = 0
+18    openat(AT_FDCWD</>, "/root/.bashrc", O_RDONLY) = 3</root/.bashrc>
+18    newfstatat(AT_FDCWD</>, ".", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+18    newfstatat(AT_FDCWD</>, "/usr/local/sbin/mesg", 0xfffff72e76d8, 0) = -1 ENOENT (No such file or directory)
+18    newfstatat(AT_FDCWD</>, "/usr/local/bin/mesg", 0xfffff72e76d8, 0) = -1 ENOENT (No such file or directory)
+18    newfstatat(AT_FDCWD</>, "/usr/sbin/mesg", 0xfffff72e76d8, 0) = -1 ENOENT (No such file or directory)
+18    newfstatat(AT_FDCWD</>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+18    newfstatat(AT_FDCWD</>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+18    faccessat(AT_FDCWD</>, "/usr/bin/mesg", X_OK) = 0
+18    newfstatat(AT_FDCWD</>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+18    faccessat(AT_FDCWD</>, "/usr/bin/mesg", R_OK) = 0
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 20
+18    wait4(-1,  <unfinished ...>
+20    openat(AT_FDCWD</>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+20    execve("/usr/bin/mesg", ["mesg", "n"], 0xaaaadf7ec9b0 /* 5 vars */) = 0
+20    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+20    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+20    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+20    exit_group(2)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 2}], 0, NULL) = 20
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=20, si_uid=0, si_status=2, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e65b0, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    newfstatat(AT_FDCWD</>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+18    chdir("/app")                     = 0
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 21
+18    wait4(-1,  <unfinished ...>
+21    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+21    chdir("/app")                     = 0
+21    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+21    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+21    newfstatat(AT_FDCWD</app>, "/usr/local/bin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+21    newfstatat(AT_FDCWD</app>, "/usr/sbin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+21    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+21    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+21    faccessat(AT_FDCWD</app>, "/usr/bin/ls", X_OK) = 0
+21    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+21    faccessat(AT_FDCWD</app>, "/usr/bin/ls", R_OK) = 0
+21    execve("/usr/bin/ls", ["ls", "-la"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+21    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+21    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+21    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+21    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+21    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+21    statfs("/sys/fs/selinux", 0xffffd6fe18f0) = -1 ENOENT (No such file or directory)
+21    statfs("/selinux", 0xffffd6fe18f0) = -1 ENOENT (No such file or directory)
+21    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+21    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+21    openat(AT_FDCWD</app>, ".", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</app>
+21    statx(AT_FDCWD</app>, ".", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=18, ...}) = 0
+21    lgetxattr(".", "security.selinux", 0xaaab1bee3610, 255) = -1 ENODATA (No data available)
+21    listxattr(".", "", 152)           = 0
+21    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+21    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+21    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 4</etc/nsswitch.conf>
+21    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 4</etc/passwd>
+21    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+21    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 4</etc/group>
+21    statx(AT_FDCWD</app>, "..", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=12, ...}) = 0
+21    lgetxattr("..", "security.selinux", 0xaaab1bee3c70, 255) = -1 ENODATA (No data available)
+21    listxattr("..", "", 152)          = 0
+21    statx(AT_FDCWD</app>, "README.md", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0644, stx_size=608, ...}) = 0
+21    lgetxattr("README.md", "security.selinux", 0xaaab1bee3da0, 255) = -1 ENODATA (No data available)
+21    listxattr("README.md", "", 152)   = 0
+21    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+21    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 21
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=21, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 22
+18    wait4(-1,  <unfinished ...>
+22    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+22    chdir("/app")                     = 0
+22    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+22    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+22    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+22    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+22    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+22    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+22    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+22    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+22    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+22    execve("/usr/bin/cat", ["cat", "README.md"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+22    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+22    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+22    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+22    openat(AT_FDCWD</app>, "README.md", O_RDONLY) = 3</app/README.md>
+22    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 22
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=22, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 23
+18    wait4(-1,  <unfinished ...>
+23    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+23    chdir("/app")                     = 0
+23    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+23    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+23    newfstatat(AT_FDCWD</app>, "/usr/local/bin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+23    newfstatat(AT_FDCWD</app>, "/usr/sbin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+23    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+23    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+23    faccessat(AT_FDCWD</app>, "/usr/bin/ls", X_OK) = 0
+23    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+23    faccessat(AT_FDCWD</app>, "/usr/bin/ls", R_OK) = 0
+23    execve("/usr/bin/ls", ["ls", "-la", "/etc/systemd/system/"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+23    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+23    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+23    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+23    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+23    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+23    statfs("/sys/fs/selinux", 0xfffff9da34c0) = -1 ENOENT (No such file or directory)
+23    statfs("/selinux", 0xfffff9da34c0) = -1 ENOENT (No such file or directory)
+23    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+23    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+23    statx(AT_FDCWD</app>, "/etc/systemd/system/", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=26, ...}) = 0
+23    lgetxattr("/etc/systemd/system/", "security.selinux", 0xaaab14075580, 255) = -1 ENODATA (No data available)
+23    listxattr("/etc/systemd/system/", "", 152) = 0
+23    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+23    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+23    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+23    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+23    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+23    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+23    openat(AT_FDCWD</app>, "/etc/systemd/system/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/systemd/system>
+23    statx(AT_FDCWD</app>, "/etc/systemd/system/.", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=26, ...}) = 0
+23    lgetxattr("/etc/systemd/system/.", "security.selinux", 0xaaab14075c50, 255) = -1 ENODATA (No data available)
+23    listxattr("/etc/systemd/system/.", "", 152) = 0
+23    statx(AT_FDCWD</app>, "/etc/systemd/system/..", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=12, ...}) = 0
+23    lgetxattr("/etc/systemd/system/..", "security.selinux", 0xaaab14075d60, 255) = -1 ENODATA (No data available)
+23    listxattr("/etc/systemd/system/..", "", 152) = 0
+23    statx(AT_FDCWD</app>, "/etc/systemd/system/multi-user.target.wants", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=40, ...}) = 0
+23    lgetxattr("/etc/systemd/system/multi-user.target.wants", "security.selinux", 0xaaab14075e90, 255) = -1 ENODATA (No data available)
+23    listxattr("/etc/systemd/system/multi-user.target.wants", "", 152) = 0
+23    statx(AT_FDCWD</app>, "/etc/systemd/system/timers.target.wants", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=204, ...}) = 0
+23    lgetxattr("/etc/systemd/system/timers.target.wants", "security.selinux", 0xaaab14075fc0, 255) = -1 ENODATA (No data available)
+23    listxattr("/etc/systemd/system/timers.target.wants", "", 152) = 0
+23    statx(AT_FDCWD</app>, "/etc/systemd/system/myapp.service", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0644, stx_size=398, ...}) = 0
+23    lgetxattr("/etc/systemd/system/myapp.service", "security.selinux", 0xaaab140760f0, 255) = -1 ENODATA (No data available)
+23    listxattr("/etc/systemd/system/myapp.service", "", 152) = 0
+23    statx(AT_FDCWD</app>, "/etc/systemd/system/sockets.target.wants", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=30, ...}) = 0
+23    lgetxattr("/etc/systemd/system/sockets.target.wants", "security.selinux", 0xaaab14076220, 255) = -1 ENODATA (No data available)
+23    listxattr("/etc/systemd/system/sockets.target.wants", "", 152) = 0
+23    statx(AT_FDCWD</app>, "/etc/systemd/system/sysinit.target.wants", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=128, ...}) = 0
+23    lgetxattr("/etc/systemd/system/sysinit.target.wants", "security.selinux", 0xaaab14076350, 255) = -1 ENODATA (No data available)
+23    listxattr("/etc/systemd/system/sysinit.target.wants", "", 152) = 0
+23    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+23    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 23
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=23, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 24
+18    wait4(-1,  <unfinished ...>
+24    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+24    chdir("/app")                     = 0
+24    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+24    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+24    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+24    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+24    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+24    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+24    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+24    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+24    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+24    execve("/usr/bin/cat", ["cat", "/etc/systemd/system/myapp.service"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+24    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+24    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+24    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+24    openat(AT_FDCWD</app>, "/etc/systemd/system/myapp.service", O_RDONLY) = 3</etc/systemd/system/myapp.service>
+24    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 24
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=24, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 25
+18    wait4(-1,  <unfinished ...>
+25    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+25    chdir("/app")                     = 0
+25    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+25    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+25    newfstatat(AT_FDCWD</app>, "/usr/local/bin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+25    newfstatat(AT_FDCWD</app>, "/usr/sbin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+25    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+25    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+25    faccessat(AT_FDCWD</app>, "/usr/bin/ls", X_OK) = 0
+25    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+25    faccessat(AT_FDCWD</app>, "/usr/bin/ls", R_OK) = 0
+25    execve("/usr/bin/ls", ["ls", "-la", "/usr/local/bin/"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+25    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+25    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+25    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+25    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+25    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+25    statfs("/sys/fs/selinux", 0xffffda7ad730) = -1 ENOENT (No such file or directory)
+25    statfs("/selinux", 0xffffda7ad730) = -1 ENOENT (No such file or directory)
+25    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+25    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+25    statx(AT_FDCWD</app>, "/usr/local/bin/", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=46, ...}) = 0
+25    lgetxattr("/usr/local/bin/", "security.selinux", 0xaaab00642580, 255) = -1 ENODATA (No data available)
+25    listxattr("/usr/local/bin/", "", 152) = 0
+25    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+25    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+25    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+25    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+25    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+25    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+25    openat(AT_FDCWD</app>, "/usr/local/bin/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</usr/local/bin>
+25    statx(AT_FDCWD</app>, "/usr/local/bin/.", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=46, ...}) = 0
+25    lgetxattr("/usr/local/bin/.", "security.selinux", 0xaaab00642c50, 255) = -1 ENODATA (No data available)
+25    listxattr("/usr/local/bin/.", "", 152) = 0
+25    statx(AT_FDCWD</app>, "/usr/local/bin/..", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=10, ...}) = 0
+25    lgetxattr("/usr/local/bin/..", "security.selinux", 0xaaab00642d60, 255) = -1 ENODATA (No data available)
+25    listxattr("/usr/local/bin/..", "", 152) = 0
+25    statx(AT_FDCWD</app>, "/usr/local/bin/py.test", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=221, ...}) = 0
+25    lgetxattr("/usr/local/bin/py.test", "security.selinux", 0xaaab00642e90, 255) = -1 ENODATA (No data available)
+25    listxattr("/usr/local/bin/py.test", "", 152) = 0
+25    statx(AT_FDCWD</app>, "/usr/local/bin/pygmentize", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=215, ...}) = 0
+25    lgetxattr("/usr/local/bin/pygmentize", "security.selinux", 0xaaab00642fc0, 255) = -1 ENODATA (No data available)
+25    listxattr("/usr/local/bin/pygmentize", "", 152) = 0
+25    statx(AT_FDCWD</app>, "/usr/local/bin/pytest", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=221, ...}) = 0
+25    lgetxattr("/usr/local/bin/pytest", "security.selinux", 0xaaab006430f0, 255) = -1 ENODATA (No data available)
+25    listxattr("/usr/local/bin/pytest", "", 152) = 0
+25    statx(AT_FDCWD</app>, "/usr/local/bin/simulate-boot.sh", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=2885, ...}) = 0
+25    lgetxattr("/usr/local/bin/simulate-boot.sh", "security.selinux", 0xaaab00643220, 255) = -1 ENODATA (No data available)
+25    listxattr("/usr/local/bin/simulate-boot.sh", "", 152) = 0
+25    statx(AT_FDCWD</app>, "/usr/local/bin/myapp-service.sh", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=926, ...}) = 0
+25    lgetxattr("/usr/local/bin/myapp-service.sh", "security.selinux", 0xaaab00643350, 255) = -1 ENODATA (No data available)
+25    listxattr("/usr/local/bin/myapp-service.sh", "", 152) = 0
+25    statx(AT_FDCWD</app>, "/usr/local/bin/simulate-lvm-mount.sh", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=573, ...}) = 0
+25    lgetxattr("/usr/local/bin/simulate-lvm-mount.sh", "security.selinux", 0xaaab00643370, 255) = -1 ENODATA (No data available)
+25    listxattr("/usr/local/bin/simulate-lvm-mount.sh", "", 152) = 0
+25    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+25    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 25
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=25, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 26
+18    wait4(-1,  <unfinished ...>
+26    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+26    chdir("/app")                     = 0
+26    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+26    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+26    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+26    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+26    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+26    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+26    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+26    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+26    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+26    execve("/usr/bin/cat", ["cat", "/usr/local/bin/myapp-service.sh"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+26    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+26    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+26    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+26    openat(AT_FDCWD</app>, "/usr/local/bin/myapp-service.sh", O_RDONLY) = 3</usr/local/bin/myapp-service.sh>
+26    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 26
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=26, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 27
+18    wait4(-1,  <unfinished ...>
+27    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+27    chdir("/app")                     = 0
+27    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 28
+27    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD <unfinished ...>
+29    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/grep", 0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/local/bin/grep", 0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/sbin/grep",  <unfinished ...>
+27    <... clone resumed>, child_tidptr=0xffff80e5c0f0) = 29
+29    <... newfstatat resumed>0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+29    faccessat(AT_FDCWD</app>, "/usr/bin/grep", X_OK) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+29    faccessat(AT_FDCWD</app>, "/usr/bin/grep", R_OK) = 0
+27    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD <unfinished ...>
+29    execve("/usr/bin/grep", ["grep", "-i", "mount point.*not ready"], 0xaaaadf7ec9b0 /* 6 vars */ <unfinished ...>
+27    <... clone resumed>, child_tidptr=0xffff80e5c0f0) = 30
+29    <... execve resumed>)             = 0
+27    wait4(-1,  <unfinished ...>
+29    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK <unfinished ...>
+28    newfstatat(AT_FDCWD</app>, ".",  <unfinished ...>
+29    <... faccessat resumed>)          = -1 ENOENT (No such file or directory)
+28    <... newfstatat resumed>{st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+30    newfstatat(AT_FDCWD</app>, ".",  <unfinished ...>
+29    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC <unfinished ...>
+30    <... newfstatat resumed>{st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+30    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/head", 0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+30    newfstatat(AT_FDCWD</app>, "/usr/local/bin/head", 0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat",  <unfinished ...>
+29    <... openat resumed>)             = 3</etc/ld.so.cache>
+30    newfstatat(AT_FDCWD</app>, "/usr/sbin/head", 0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+28    <... newfstatat resumed>0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+30    newfstatat(AT_FDCWD</app>, "/usr/bin/head", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+30    newfstatat(AT_FDCWD</app>, "/usr/bin/head",  <unfinished ...>
+28    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat",  <unfinished ...>
+30    <... newfstatat resumed>{st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+30    faccessat(AT_FDCWD</app>, "/usr/bin/head", X_OK) = 0
+30    newfstatat(AT_FDCWD</app>, "/usr/bin/head",  <unfinished ...>
+28    <... newfstatat resumed>0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+30    <... newfstatat resumed>{st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+29    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC <unfinished ...>
+28    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK <unfinished ...>
+29    <... openat resumed>)             = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+28    <... faccessat resumed>)          = 0
+28    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+30    faccessat(AT_FDCWD</app>, "/usr/bin/head", R_OK <unfinished ...>
+28    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+30    <... faccessat resumed>)          = 0
+28    execve("/usr/bin/cat", ["cat", "/var/log/syslog"], 0xaaaadf7ec9b0 /* 6 vars */ <unfinished ...>
+30    execve("/usr/bin/head", ["head", "-5"], 0xaaaadf7ec9b0 /* 6 vars */ <unfinished ...>
+29    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+28    <... execve resumed>)             = 0
+30    <... execve resumed>)             = 0
+28    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+28    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+28    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+30    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+30    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+30    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+29    openat(AT_FDCWD</app>, "/proc/self/maps", O_RDONLY) = 3</proc/29/maps>
+28    openat(AT_FDCWD</app>, "/var/log/syslog", O_RDONLY) = 3</var/log/syslog>
+28    exit_group(0)                     = ?
+29    exit_group(0 <unfinished ...>
+27    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 28
+30    exit_group(0)                     = ?
+29    <... exit_group resumed>)         = ?
+27    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 30
+27    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 29
+27    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=28, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+27    wait4(-1, 0xfffff72e67a0, WNOHANG, NULL) = -1 ECHILD (No child process)
+27    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 27
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=27, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 31
+18    wait4(-1,  <unfinished ...>
+31    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+31    chdir("/app")                     = 0
+31    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 32
+31    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD <unfinished ...>
+32    newfstatat(AT_FDCWD</app>, ".",  <unfinished ...>
+31    <... clone resumed>, child_tidptr=0xffff80e5c0f0) = 33
+32    <... newfstatat resumed>{st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+32    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/systemctl", 0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+32    newfstatat(AT_FDCWD</app>, "/usr/local/bin/systemctl", 0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+33    newfstatat(AT_FDCWD</app>, ".",  <unfinished ...>
+32    newfstatat(AT_FDCWD</app>, "/usr/sbin/systemctl", 0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+33    <... newfstatat resumed>{st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+32    newfstatat(AT_FDCWD</app>, "/usr/bin/systemctl",  <unfinished ...>
+31    wait4(-1,  <unfinished ...>
+33    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/grep",  <unfinished ...>
+32    <... newfstatat resumed>0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+33    <... newfstatat resumed>0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+33    newfstatat(AT_FDCWD</app>, "/usr/local/bin/grep", 0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+32    newfstatat(AT_FDCWD</app>, "/sbin/systemctl",  <unfinished ...>
+33    newfstatat(AT_FDCWD</app>, "/usr/sbin/grep",  <unfinished ...>
+32    <... newfstatat resumed>0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+33    <... newfstatat resumed>0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+32    newfstatat(AT_FDCWD</app>, "/bin/systemctl",  <unfinished ...>
+33    newfstatat(AT_FDCWD</app>, "/usr/bin/grep",  <unfinished ...>
+32    <... newfstatat resumed>0xfffff72e7488, 0) = -1 ENOENT (No such file or directory)
+33    <... newfstatat resumed>{st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+33    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+33    faccessat(AT_FDCWD</app>, "/usr/bin/grep", X_OK) = 0
+33    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+33    faccessat(AT_FDCWD</app>, "/usr/bin/grep", R_OK) = 0
+33    execve("/usr/bin/grep", ["grep", "mnt"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+33    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+33    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+32    exit_group(127)                   = ?
+31    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 127}], 0, NULL) = 32
+31    wait4(-1,  <unfinished ...>
+33    openat(AT_FDCWD</app>, "/proc/self/maps", O_RDONLY) = 3</proc/33/maps>
+33    exit_group(1)                     = ?
+31    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 33
+31    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=32, si_uid=0, si_status=127, si_utime=0, si_stime=0} ---
+31    wait4(-1, 0xfffff72e67a0, WNOHANG, NULL) = -1 ECHILD (No child process)
+31    exit_group(1)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 31
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=31, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 34
+18    wait4(-1,  <unfinished ...>
+34    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+34    chdir("/app")                     = 0
+34    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+34    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/which", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+34    newfstatat(AT_FDCWD</app>, "/usr/local/bin/which", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+34    newfstatat(AT_FDCWD</app>, "/usr/sbin/which", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+34    newfstatat(AT_FDCWD</app>, "/usr/bin/which", {st_mode=S_IFREG|0755, st_size=1080, ...}, 0) = 0
+34    newfstatat(AT_FDCWD</app>, "/usr/bin/which", {st_mode=S_IFREG|0755, st_size=1080, ...}, 0) = 0
+34    faccessat(AT_FDCWD</app>, "/usr/bin/which", X_OK) = 0
+34    newfstatat(AT_FDCWD</app>, "/usr/bin/which", {st_mode=S_IFREG|0755, st_size=1080, ...}, 0) = 0
+34    faccessat(AT_FDCWD</app>, "/usr/bin/which", R_OK) = 0
+34    execve("/usr/bin/which", ["which", "systemctl"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+34    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+34    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+34    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+34    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+34    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+34    openat(AT_FDCWD</app>, "/usr/bin/which", O_RDONLY) = 3</usr/bin/which.debianutils>
+34    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/systemctl", 0xffffe5d4d258, 0) = -1 ENOENT (No such file or directory)
+34    newfstatat(AT_FDCWD</app>, "/usr/local/bin/systemctl", 0xffffe5d4d258, 0) = -1 ENOENT (No such file or directory)
+34    newfstatat(AT_FDCWD</app>, "/usr/sbin/systemctl", 0xffffe5d4d258, 0) = -1 ENOENT (No such file or directory)
+34    newfstatat(AT_FDCWD</app>, "/usr/bin/systemctl", 0xffffe5d4d258, 0) = -1 ENOENT (No such file or directory)
+34    newfstatat(AT_FDCWD</app>, "/sbin/systemctl", 0xffffe5d4d258, 0) = -1 ENOENT (No such file or directory)
+34    newfstatat(AT_FDCWD</app>, "/bin/systemctl", 0xffffe5d4d258, 0) = -1 ENOENT (No such file or directory)
+34    exit_group(1)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 34
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=34, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 35
+18    wait4(-1,  <unfinished ...>
+35    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+35    chdir("/app")                     = 0
+35    openat(AT_FDCWD</app>, "/etc/systemd/system/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/systemd/system>
+35    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+35    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+35    newfstatat(AT_FDCWD</app>, "/usr/local/bin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+35    newfstatat(AT_FDCWD</app>, "/usr/sbin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+35    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+35    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+35    faccessat(AT_FDCWD</app>, "/usr/bin/ls", X_OK) = 0
+35    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+35    faccessat(AT_FDCWD</app>, "/usr/bin/ls", R_OK) = 0
+35    execve("/usr/bin/ls", ["ls", "-la", "/etc/systemd/system/*mnt*"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+35    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+35    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+35    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+35    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+35    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+35    statfs("/sys/fs/selinux", 0xfffff38d9a20) = -1 ENOENT (No such file or directory)
+35    statfs("/selinux", 0xfffff38d9a20) = -1 ENOENT (No such file or directory)
+35    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+35    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+35    statx(AT_FDCWD</app>, "/etc/systemd/system/*mnt*", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, 0xfffff38d9498) = -1 ENOENT (No such file or directory)
+35    exit_group(2)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 2}], 0, NULL) = 35
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=35, si_uid=0, si_status=2, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 36
+18    wait4(-1,  <unfinished ...>
+36    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+36    chdir("/app")                     = 0
+36    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+36    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/find", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+36    newfstatat(AT_FDCWD</app>, "/usr/local/bin/find", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+36    newfstatat(AT_FDCWD</app>, "/usr/sbin/find", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+36    newfstatat(AT_FDCWD</app>, "/usr/bin/find", {st_mode=S_IFREG|0755, st_size=265440, ...}, 0) = 0
+36    newfstatat(AT_FDCWD</app>, "/usr/bin/find", {st_mode=S_IFREG|0755, st_size=265440, ...}, 0) = 0
+36    faccessat(AT_FDCWD</app>, "/usr/bin/find", X_OK) = 0
+36    newfstatat(AT_FDCWD</app>, "/usr/bin/find", {st_mode=S_IFREG|0755, st_size=265440, ...}, 0) = 0
+36    faccessat(AT_FDCWD</app>, "/usr/bin/find", R_OK) = 0
+36    execve("/usr/bin/find", ["find", "/etc/systemd", "-name", "*mnt*", "-o", "-name", "*appdata*"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+36    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+36    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+36    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+36    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+36    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+36    statfs("/sys/fs/selinux", 0xfffffeca6d70) = -1 ENOENT (No such file or directory)
+36    statfs("/selinux", 0xfffffeca6d70) = -1 ENOENT (No such file or directory)
+36    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+36    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+36    openat(AT_FDCWD</app>, ".", O_RDONLY|O_CLOEXEC) = 3</app>
+36    newfstatat(AT_FDCWD</app>, "/etc/systemd", {st_mode=S_IFDIR|0755, st_size=12, ...}, AT_SYMLINK_NOFOLLOW) = 0
+36    openat(AT_FDCWD</app>, "/etc/systemd", O_RDONLY|O_NOCTTY|O_NONBLOCK|O_NOFOLLOW|O_CLOEXEC|O_DIRECTORY) = 4</etc/systemd>
+36    newfstatat(AT_FDCWD</app>, "/etc/systemd", {st_mode=S_IFDIR|0755, st_size=12, ...}, AT_SYMLINK_NOFOLLOW) = 0
+36    newfstatat(5</etc/systemd>, "system", {st_mode=S_IFDIR|0755, st_size=26, ...}, AT_SYMLINK_NOFOLLOW) = 0
+36    openat(5</etc/systemd>, "system", O_RDONLY|O_NOCTTY|O_NONBLOCK|O_NOFOLLOW|O_CLOEXEC|O_DIRECTORY) = 6</etc/systemd/system>
+36    newfstatat(5</etc/systemd>, "system", {st_mode=S_IFDIR|0755, st_size=26, ...}, AT_SYMLINK_NOFOLLOW) = 0
+36    newfstatat(7</etc/systemd/system>, "multi-user.target.wants", {st_mode=S_IFDIR|0755, st_size=40, ...}, AT_SYMLINK_NOFOLLOW) = 0
+36    openat(7</etc/systemd/system>, "multi-user.target.wants", O_RDONLY|O_NOCTTY|O_NONBLOCK|O_NOFOLLOW|O_CLOEXEC|O_DIRECTORY) = 6</etc/systemd/system/multi-user.target.wants>
+36    newfstatat(7</etc/systemd/system>, "multi-user.target.wants", {st_mode=S_IFDIR|0755, st_size=40, ...}, AT_SYMLINK_NOFOLLOW) = 0
+36    newfstatat(7</etc/systemd/system>, "timers.target.wants", {st_mode=S_IFDIR|0755, st_size=204, ...}, AT_SYMLINK_NOFOLLOW) = 0
+36    openat(7</etc/systemd/system>, "timers.target.wants", O_RDONLY|O_NOCTTY|O_NONBLOCK|O_NOFOLLOW|O_CLOEXEC|O_DIRECTORY) = 6</etc/systemd/system/timers.target.wants>
+36    newfstatat(7</etc/systemd/system>, "timers.target.wants", {st_mode=S_IFDIR|0755, st_size=204, ...}, AT_SYMLINK_NOFOLLOW) = 0
+36    newfstatat(7</etc/systemd/system>, "sockets.target.wants", {st_mode=S_IFDIR|0755, st_size=30, ...}, AT_SYMLINK_NOFOLLOW) = 0
+36    openat(7</etc/systemd/system>, "sockets.target.wants", O_RDONLY|O_NOCTTY|O_NONBLOCK|O_NOFOLLOW|O_CLOEXEC|O_DIRECTORY) = 6</etc/systemd/system/sockets.target.wants>
+36    newfstatat(7</etc/systemd/system>, "sockets.target.wants", {st_mode=S_IFDIR|0755, st_size=30, ...}, AT_SYMLINK_NOFOLLOW) = 0
+36    newfstatat(7</etc/systemd/system>, "sysinit.target.wants", {st_mode=S_IFDIR|0755, st_size=128, ...}, AT_SYMLINK_NOFOLLOW) = 0
+36    openat(7</etc/systemd/system>, "sysinit.target.wants", O_RDONLY|O_NOCTTY|O_NONBLOCK|O_NOFOLLOW|O_CLOEXEC|O_DIRECTORY) = 6</etc/systemd/system/sysinit.target.wants>
+36    newfstatat(7</etc/systemd/system>, "sysinit.target.wants", {st_mode=S_IFDIR|0755, st_size=128, ...}, AT_SYMLINK_NOFOLLOW) = 0
+36    newfstatat(5</etc/systemd>, "user", {st_mode=S_IFDIR|0755, st_size=0, ...}, AT_SYMLINK_NOFOLLOW) = 0
+36    openat(5</etc/systemd>, "user", O_RDONLY|O_NOCTTY|O_NONBLOCK|O_NOFOLLOW|O_CLOEXEC|O_DIRECTORY) = 6</etc/systemd/user>
+36    newfstatat(5</etc/systemd>, "user", {st_mode=S_IFDIR|0755, st_size=0, ...}, AT_SYMLINK_NOFOLLOW) = 0
+36    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 36
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=36, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 37
+18    wait4(-1,  <unfinished ...>
+37    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+37    chdir("/app")                     = 0
+37    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+37    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/usr/local/bin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/usr/sbin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+37    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+37    faccessat(AT_FDCWD</app>, "/usr/bin/ls", X_OK) = 0
+37    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+37    faccessat(AT_FDCWD</app>, "/usr/bin/ls", R_OK) = 0
+37    execve("/usr/bin/ls", ["ls", "-la", "/mnt/"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+37    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+37    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+37    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+37    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+37    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+37    statfs("/sys/fs/selinux", 0xffffcefb3850) = -1 ENOENT (No such file or directory)
+37    statfs("/selinux", 0xffffcefb3850) = -1 ENOENT (No such file or directory)
+37    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+37    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+37    statx(AT_FDCWD</app>, "/mnt/", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=14, ...}) = 0
+37    lgetxattr("/mnt/", "security.selinux", 0xaaab08124580, 255) = -1 ENODATA (No data available)
+37    listxattr("/mnt/", "", 152)       = 0
+37    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+37    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+37    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+37    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+37    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+37    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+37    openat(AT_FDCWD</app>, "/mnt/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</mnt>
+37    statx(AT_FDCWD</app>, "/mnt/.", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=14, ...}) = 0
+37    lgetxattr("/mnt/.", "security.selinux", 0xaaab08124c50, 255) = -1 ENODATA (No data available)
+37    listxattr("/mnt/.", "", 152)      = 0
+37    statx(AT_FDCWD</app>, "/mnt/..", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=12, ...}) = 0
+37    lgetxattr("/mnt/..", "security.selinux", 0xaaab08124d60, 255) = -1 ENODATA (No data available)
+37    listxattr("/mnt/..", "", 152)     = 0
+37    statx(AT_FDCWD</app>, "/mnt/appdata", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=0, ...}) = 0
+37    lgetxattr("/mnt/appdata", "security.selinux", 0xaaab08124e90, 255) = -1 ENODATA (No data available)
+37    listxattr("/mnt/appdata", "", 152) = 0
+37    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+37    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 37
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=37, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 38
+18    wait4(-1,  <unfinished ...>
+38    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+38    chdir("/app")                     = 0
+38    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+38    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+38    newfstatat(AT_FDCWD</app>, "/usr/local/bin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+38    newfstatat(AT_FDCWD</app>, "/usr/sbin/ls", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+38    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+38    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+38    faccessat(AT_FDCWD</app>, "/usr/bin/ls", X_OK) = 0
+38    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+38    faccessat(AT_FDCWD</app>, "/usr/bin/ls", R_OK) = 0
+38    execve("/usr/bin/ls", ["ls", "-la", "/mnt/appdata/"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+38    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+38    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+38    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+38    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+38    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+38    statfs("/sys/fs/selinux", 0xfffff94941d0) = -1 ENOENT (No such file or directory)
+38    statfs("/selinux", 0xfffff94941d0) = -1 ENOENT (No such file or directory)
+38    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+38    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+38    statx(AT_FDCWD</app>, "/mnt/appdata/", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=0, ...}) = 0
+38    lgetxattr("/mnt/appdata/", "security.selinux", 0xaaaaee4f4580, 255) = -1 ENODATA (No data available)
+38    listxattr("/mnt/appdata/", "", 152) = 0
+38    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+38    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+38    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+38    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+38    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+38    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+38    openat(AT_FDCWD</app>, "/mnt/appdata/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</mnt/appdata>
+38    statx(AT_FDCWD</app>, "/mnt/appdata/.", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=0, ...}) = 0
+38    lgetxattr("/mnt/appdata/.", "security.selinux", 0xaaaaee4f4c50, 255) = -1 ENODATA (No data available)
+38    listxattr("/mnt/appdata/.", "", 152) = 0
+38    statx(AT_FDCWD</app>, "/mnt/appdata/..", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=14, ...}) = 0
+38    lgetxattr("/mnt/appdata/..", "security.selinux", 0xaaaaee4f4d60, 255) = -1 ENODATA (No data available)
+38    listxattr("/mnt/appdata/..", "", 152) = 0
+38    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+38    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 38
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=38, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 39
+18    wait4(-1,  <unfinished ...>
+39    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+39    chdir("/app")                     = 0
+39    execve("/usr/local/bin/simulate-boot.sh", ["/usr/local/bin/simulate-boot.sh"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+39    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+39    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+39    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+39    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+39    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+39    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+39    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+39    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+39    openat(AT_FDCWD</app>, "/usr/local/bin/simulate-boot.sh", O_RDONLY) = 3</usr/local/bin/simulate-boot.sh>
+39    newfstatat(AT_FDCWD</app>, "/usr/local/bin/simulate-boot.sh", {st_mode=S_IFREG|0755, st_size=2885, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/rm", 0xfffff5b54c08, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/local/bin/rm", 0xfffff5b54c08, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/sbin/rm", 0xfffff5b54c08, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/bin/rm", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/usr/bin/rm", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+39    faccessat(AT_FDCWD</app>, "/usr/bin/rm", X_OK) = 0
+39    newfstatat(AT_FDCWD</app>, "/usr/bin/rm", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+39    faccessat(AT_FDCWD</app>, "/usr/bin/rm", R_OK) = 0
+39    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbe5a50f0) = 40
+39    wait4(-1,  <unfinished ...>
+40    execve("/usr/bin/rm", ["rm", "-f", "/mnt/appdata/.mount_complete", "/mnt/appdata/.lvm_status", "/mnt/appdata/app_config.dat"], 0xaaaaf5bef480 /* 6 vars */) = 0
+40    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+40    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+40    newfstatat(AT_FDCWD</app>, "/mnt/appdata/.mount_complete", 0xaaaaf6c4b600, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    unlinkat(AT_FDCWD</app>, "/mnt/appdata/.mount_complete", 0) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/mnt/appdata/.lvm_status", 0xaaaaf6c4b720, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    unlinkat(AT_FDCWD</app>, "/mnt/appdata/.lvm_status", 0) = -1 ENOENT (No such file or directory)
+40    newfstatat(AT_FDCWD</app>, "/mnt/appdata/app_config.dat", 0xaaaaf6c4b840, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+40    unlinkat(AT_FDCWD</app>, "/mnt/appdata/app_config.dat", 0) = -1 ENOENT (No such file or directory)
+40    exit_group(0)                     = ?
+39    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 40
+39    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=40, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+39    wait4(-1, 0xfffff5b53ae0, WNOHANG, NULL) = -1 ECHILD (No child process)
+39    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbe5a50f0) = 41
+39    wait4(-1,  <unfinished ...>
+41    execve("/usr/bin/rm", ["rm", "-f", "/var/log/myapp/service_status", "/var/log/myapp/error.log", "/var/log/myapp/service.log"], 0xaaaaf5bef480 /* 6 vars */) = 0
+41    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+41    newfstatat(AT_FDCWD</app>, "/var/log/myapp/service_status", 0xaaab15cb4600, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+41    unlinkat(AT_FDCWD</app>, "/var/log/myapp/service_status", 0) = -1 ENOENT (No such file or directory)
+41    newfstatat(AT_FDCWD</app>, "/var/log/myapp/error.log", 0xaaab15cb4720, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+41    unlinkat(AT_FDCWD</app>, "/var/log/myapp/error.log", 0) = -1 ENOENT (No such file or directory)
+41    newfstatat(AT_FDCWD</app>, "/var/log/myapp/service.log", 0xaaab15cb4840, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+41    unlinkat(AT_FDCWD</app>, "/var/log/myapp/service.log", 0) = -1 ENOENT (No such file or directory)
+41    exit_group(0)                     = ?
+39    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 41
+39    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=41, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+39    wait4(-1, 0xfffff5b53ae0, WNOHANG, NULL) = -1 ECHILD (No child process)
+39    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbe5a50f0) = 42
+39    wait4(-1,  <unfinished ...>
+42    execve("/usr/bin/rm", ["rm", "-f", "/var/run/myapp.pid"], 0xaaaaf5bef480 /* 6 vars */) = 0
+42    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+42    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+42    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+42    newfstatat(AT_FDCWD</app>, "/var/run/myapp.pid", 0xaaab0310e600, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+42    unlinkat(AT_FDCWD</app>, "/var/run/myapp.pid", 0) = -1 ENOENT (No such file or directory)
+42    exit_group(0)                     = ?
+39    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 42
+39    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=42, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+39    wait4(-1, 0xfffff5b53ae0, WNOHANG, NULL) = -1 ECHILD (No child process)
+39    newfstatat(AT_FDCWD</app>, "/etc/systemd/system/myapp.service", {st_mode=S_IFREG|0644, st_size=398, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/grep", 0xfffff5b53888, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/local/bin/grep", 0xfffff5b53888, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/sbin/grep", 0xfffff5b53888, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+39    faccessat(AT_FDCWD</app>, "/usr/bin/grep", X_OK) = 0
+39    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+39    faccessat(AT_FDCWD</app>, "/usr/bin/grep", R_OK) = 0
+39    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbe5a50f0) = 43
+43    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+43    execve("/usr/bin/grep", ["grep", "-qi", "RequiresMountsFor.*\\/mnt\\/appdata", "/etc/systemd/system/myapp.service"], 0xaaaaf5bef480 /* 6 vars */ <unfinished ...>
+39    wait4(-1,  <unfinished ...>
+43    <... execve resumed>)             = 0
+43    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+43    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+43    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+43    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+43    openat(AT_FDCWD</app>, "/proc/self/maps", O_RDONLY) = 3</proc/43/maps>
+43    openat(AT_FDCWD</app>, "/etc/systemd/system/myapp.service", O_RDONLY|O_NOCTTY) = 3</etc/systemd/system/myapp.service>
+43    exit_group(1)                     = ?
+39    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 43
+39    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=43, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+39    wait4(-1, 0xfffff5b52760, WNOHANG, NULL) = -1 ECHILD (No child process)
+39    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbe5a50f0) = 44
+39    wait4(-1,  <unfinished ...>
+44    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+44    execve("/usr/bin/grep", ["grep", "-qi", "After=.*mnt-appdata.mount", "/etc/systemd/system/myapp.service"], 0xaaaaf5bef480 /* 6 vars */) = 0
+44    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+44    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+44    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+44    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+44    openat(AT_FDCWD</app>, "/proc/self/maps", O_RDONLY) = 3</proc/44/maps>
+44    openat(AT_FDCWD</app>, "/etc/systemd/system/myapp.service", O_RDONLY|O_NOCTTY) = 3</etc/systemd/system/myapp.service>
+44    exit_group(1)                     = ?
+39    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 44
+39    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=44, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+39    wait4(-1, 0xfffff5b52910, WNOHANG, NULL) = -1 ECHILD (No child process)
+39    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbe5a50f0) = 45
+39    wait4(-1,  <unfinished ...>
+45    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+45    execve("/usr/bin/grep", ["grep", "-qi", "BindsTo=.*mnt-appdata.mount", "/etc/systemd/system/myapp.service"], 0xaaaaf5bef480 /* 6 vars */) = 0
+45    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+45    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+45    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+45    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+45    openat(AT_FDCWD</app>, "/proc/self/maps", O_RDONLY) = 3</proc/45/maps>
+45    openat(AT_FDCWD</app>, "/etc/systemd/system/myapp.service", O_RDONLY|O_NOCTTY) = 3</etc/systemd/system/myapp.service>
+45    exit_group(1)                     = ?
+39    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 45
+39    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=45, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+39    wait4(-1, 0xfffff5b52ac0, WNOHANG, NULL) = -1 ECHILD (No child process)
+39    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbe5a50f0) = 46
+46    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+46    execve("/usr/bin/grep", ["grep", "-qi", "Requires=.*mnt-appdata.mount", "/etc/systemd/system/myapp.service"], 0xaaaaf5bef480 /* 6 vars */ <unfinished ...>
+39    wait4(-1,  <unfinished ...>
+46    <... execve resumed>)             = 0
+46    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+46    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+46    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+46    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+46    openat(AT_FDCWD</app>, "/proc/self/maps", O_RDONLY) = 3</proc/46/maps>
+46    openat(AT_FDCWD</app>, "/etc/systemd/system/myapp.service", O_RDONLY|O_NOCTTY) = 3</etc/systemd/system/myapp.service>
+46    exit_group(1)                     = ?
+39    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 46
+39    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=46, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+39    wait4(-1, 0xfffff5b52c70, WNOHANG, NULL) = -1 ECHILD (No child process)
+39    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbe5a50f0) = 47
+39    wait4(-1,  <unfinished ...>
+47    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+47    execve("/usr/bin/grep", ["grep", "-qi", "After=.*local-fs.target", "/etc/systemd/system/myapp.service"], 0xaaaaf5bef480 /* 6 vars */) = 0
+47    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+47    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+47    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+47    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+47    openat(AT_FDCWD</app>, "/proc/self/maps", O_RDONLY) = 3</proc/47/maps>
+47    openat(AT_FDCWD</app>, "/etc/systemd/system/myapp.service", O_RDONLY|O_NOCTTY) = 3</etc/systemd/system/myapp.service>
+47    exit_group(1)                     = ?
+39    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 47
+39    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=47, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+39    wait4(-1, 0xfffff5b52e20, WNOHANG, NULL) = -1 ECHILD (No child process)
+39    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbe5a50f0) = 48
+39    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbe5a50f0) = 49
+48    openat(AT_FDCWD</app>, "/dev/null", O_RDONLY) = 3</dev/null>
+48    newfstatat(AT_FDCWD</app>, ".",  <unfinished ...>
+39    wait4(-1,  <unfinished ...>
+48    <... newfstatat resumed>{st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+48    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/sleep", 0xfffff5b53b48, 0) = -1 ENOENT (No such file or directory)
+48    newfstatat(AT_FDCWD</app>, "/usr/local/bin/sleep", 0xfffff5b53b48, 0) = -1 ENOENT (No such file or directory)
+48    newfstatat(AT_FDCWD</app>, "/usr/sbin/sleep", 0xfffff5b53b48, 0) = -1 ENOENT (No such file or directory)
+48    newfstatat(AT_FDCWD</app>, "/usr/bin/sleep",  <unfinished ...>
+49    execve("/usr/local/bin/myapp-service.sh", ["/usr/local/bin/myapp-service.sh"], 0xaaaaf5bef480 /* 6 vars */ <unfinished ...>
+48    <... newfstatat resumed>{st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+48    newfstatat(AT_FDCWD</app>, "/usr/bin/sleep", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+48    faccessat(AT_FDCWD</app>, "/usr/bin/sleep", X_OK) = 0
+48    newfstatat(AT_FDCWD</app>, "/usr/bin/sleep", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+48    faccessat(AT_FDCWD</app>, "/usr/bin/sleep", R_OK) = 0
+48    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD <unfinished ...>
+49    <... execve resumed>)             = 0
+48    <... clone resumed>, child_tidptr=0xffffbe5a50f0) = 50
+49    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+49    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+49    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+48    wait4(-1,  <unfinished ...>
+50    execve("/usr/bin/sleep", ["sleep", "2"], 0xaaaaf5bef480 /* 6 vars */ <unfinished ...>
+49    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+50    <... execve resumed>)             = 0
+50    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+50    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+50    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+49    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+49    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+49    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+49    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+49    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+49    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+49    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+49    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+49    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+49    openat(AT_FDCWD</app>, "/usr/local/bin/myapp-service.sh", O_RDONLY) = 3</usr/local/bin/myapp-service.sh>
+49    newfstatat(AT_FDCWD</app>, "/usr/local/bin/myapp-service.sh", {st_mode=S_IFREG|0755, st_size=926, ...}, 0) = 0
+49    newfstatat(AT_FDCWD</app>, "/mnt/appdata/.mount_complete", 0xffffc02524b8, 0) = -1 ENOENT (No such file or directory)
+49    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffacf1a0f0) = 51
+49    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffacf1a0f0) = 52
+49    wait4(-1,  <unfinished ...>
+52    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+52    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/tee", 0xffffc0251c58, 0) = -1 ENOENT (No such file or directory)
+52    newfstatat(AT_FDCWD</app>, "/usr/local/bin/tee", 0xffffc0251c58, 0) = -1 ENOENT (No such file or directory)
+52    newfstatat(AT_FDCWD</app>, "/usr/sbin/tee", 0xffffc0251c58, 0) = -1 ENOENT (No such file or directory)
+52    newfstatat(AT_FDCWD</app>, "/usr/bin/tee", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+51    exit_group(0 <unfinished ...>
+52    newfstatat(AT_FDCWD</app>, "/usr/bin/tee", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+51    <... exit_group resumed>)         = ?
+52    faccessat(AT_FDCWD</app>, "/usr/bin/tee", X_OK) = 0
+52    newfstatat(AT_FDCWD</app>, "/usr/bin/tee",  <unfinished ...>
+49    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 51
+52    <... newfstatat resumed>{st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+49    wait4(-1,  <unfinished ...>
+52    faccessat(AT_FDCWD</app>, "/usr/bin/tee", R_OK) = 0
+52    execve("/usr/bin/tee", ["tee", "-a", "/var/log/myapp/error.log"], 0xaaab0c10adf0 /* 6 vars */) = 0
+52    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+52    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+52    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+52    openat(AT_FDCWD</app>, "/var/log/myapp/error.log", O_WRONLY|O_CREAT|O_APPEND, 0666) = 3</var/log/myapp/error.log>
+52    exit_group(0)                     = ?
+49    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 52
+49    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=51, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+49    wait4(-1, 0xffffc0250f70, WNOHANG, NULL) = -1 ECHILD (No child process)
+49    openat(AT_FDCWD</app>, "/var/log/myapp/service_status", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</var/log/myapp/service_status>
+49    exit_group(1)                     = ?
+39    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 49
+39    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=49, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+39    wait4(-1, 0xfffff5b532a0, WNOHANG, NULL) = 0
+39    wait4(-1,  <unfinished ...>
+50    exit_group(0)                     = ?
+48    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 50
+48    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=50, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+48    wait4(-1, 0xfffff5b52a20, WNOHANG, NULL) = -1 ECHILD (No child process)
+48    execve("/usr/local/bin/simulate-lvm-mount.sh", ["/usr/local/bin/simulate-lvm-mount.sh"], 0xaaaaf5bec5d0 /* 6 vars */) = 0
+48    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+48    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+48    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+48    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+48    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+48    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+48    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+48    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+48    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+48    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+48    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+48    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+48    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+48    openat(AT_FDCWD</app>, "/usr/local/bin/simulate-lvm-mount.sh", O_RDONLY) = 3</usr/local/bin/simulate-lvm-mount.sh>
+48    newfstatat(AT_FDCWD</app>, "/usr/local/bin/simulate-lvm-mount.sh", {st_mode=S_IFREG|0755, st_size=573, ...}, 0) = 0
+48    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+48    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/mkdir", 0xfffff1890438, 0) = -1 ENOENT (No such file or directory)
+48    newfstatat(AT_FDCWD</app>, "/usr/local/bin/mkdir", 0xfffff1890438, 0) = -1 ENOENT (No such file or directory)
+48    newfstatat(AT_FDCWD</app>, "/usr/sbin/mkdir", 0xfffff1890438, 0) = -1 ENOENT (No such file or directory)
+48    newfstatat(AT_FDCWD</app>, "/usr/bin/mkdir", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+48    newfstatat(AT_FDCWD</app>, "/usr/bin/mkdir", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+48    faccessat(AT_FDCWD</app>, "/usr/bin/mkdir", X_OK) = 0
+48    newfstatat(AT_FDCWD</app>, "/usr/bin/mkdir", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+48    faccessat(AT_FDCWD</app>, "/usr/bin/mkdir", R_OK) = 0
+48    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbe6940f0) = 53
+48    wait4(-1,  <unfinished ...>
+53    execve("/usr/bin/mkdir", ["mkdir", "-p", "/mnt/appdata"], 0xaaaae352db40 /* 6 vars */) = 0
+53    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+53    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+53    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+53    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+53    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+53    statfs("/sys/fs/selinux", 0xffffc59a9540) = -1 ENOENT (No such file or directory)
+53    statfs("/selinux", 0xffffc59a9540) = -1 ENOENT (No such file or directory)
+53    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+53    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+53    mkdirat(AT_FDCWD</app>, "/mnt", 0777) = -1 EEXIST (File exists)
+53    chdir("/mnt")                     = 0
+53    mkdirat(AT_FDCWD</mnt>, "appdata", 0777) = -1 EEXIST (File exists)
+53    newfstatat(AT_FDCWD</mnt>, "appdata", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+53    exit_group(0)                     = ?
+48    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 53
+48    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=53, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+48    wait4(-1, 0xfffff188f310, WNOHANG, NULL) = -1 ECHILD (No child process)
+48    openat(AT_FDCWD</app>, "/mnt/appdata/.lvm_status", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</mnt/appdata/.lvm_status>
+48    openat(AT_FDCWD</app>, "/mnt/appdata/app_config.dat", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</mnt/appdata/app_config.dat>
+48    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+48    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/touch", 0xfffff1890438, 0) = -1 ENOENT (No such file or directory)
+48    newfstatat(AT_FDCWD</app>, "/usr/local/bin/touch", 0xfffff1890438, 0) = -1 ENOENT (No such file or directory)
+48    newfstatat(AT_FDCWD</app>, "/usr/sbin/touch", 0xfffff1890438, 0) = -1 ENOENT (No such file or directory)
+48    newfstatat(AT_FDCWD</app>, "/usr/bin/touch", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+48    newfstatat(AT_FDCWD</app>, "/usr/bin/touch", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+48    faccessat(AT_FDCWD</app>, "/usr/bin/touch", X_OK) = 0
+48    newfstatat(AT_FDCWD</app>, "/usr/bin/touch", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+48    faccessat(AT_FDCWD</app>, "/usr/bin/touch", R_OK) = 0
+48    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbe6940f0) = 54
+48    wait4(-1,  <unfinished ...>
+54    execve("/usr/bin/touch", ["touch", "/mnt/appdata/.mount_complete"], 0xaaaae352db40 /* 6 vars */) = 0
+54    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+54    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+54    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+54    openat(AT_FDCWD</app>, "/mnt/appdata/.mount_complete", O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK, 0666) = 3</mnt/appdata/.mount_complete>
+54    utimensat(0</mnt/appdata/.mount_complete>, NULL, NULL, 0) = 0
+54    exit_group(0)                     = ?
+48    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 54
+48    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=54, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+48    wait4(-1, 0xfffff188f310, WNOHANG, NULL) = -1 ECHILD (No child process)
+48    exit_group(0)                     = ?
+39    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 48
+39    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=48, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+39    wait4(-1, 0xfffff5b52ff0, WNOHANG, NULL) = -1 ECHILD (No child process)
+39    exit_group(1)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 39
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=39, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 55
+18    wait4(-1,  <unfinished ...>
+55    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+55    chdir("/app")                     = 0
+55    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+55    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cp", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+55    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cp", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+55    newfstatat(AT_FDCWD</app>, "/usr/sbin/cp", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+55    newfstatat(AT_FDCWD</app>, "/usr/bin/cp", {st_mode=S_IFREG|0755, st_size=133496, ...}, 0) = 0
+55    newfstatat(AT_FDCWD</app>, "/usr/bin/cp", {st_mode=S_IFREG|0755, st_size=133496, ...}, 0) = 0
+55    faccessat(AT_FDCWD</app>, "/usr/bin/cp", X_OK) = 0
+55    newfstatat(AT_FDCWD</app>, "/usr/bin/cp", {st_mode=S_IFREG|0755, st_size=133496, ...}, 0) = 0
+55    faccessat(AT_FDCWD</app>, "/usr/bin/cp", R_OK) = 0
+55    execve("/usr/bin/cp", ["cp", "/etc/systemd/system/myapp.service", "/tmp/original-myapp.service"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+55    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+55    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+55    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+55    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libacl.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libacl.so.1.1.2302>
+55    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libattr.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libattr.so.1.1.2502>
+55    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+55    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+55    statfs("/sys/fs/selinux", 0xffffe21ef270) = -1 ENOENT (No such file or directory)
+55    statfs("/selinux", 0xffffe21ef270) = -1 ENOENT (No such file or directory)
+55    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+55    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+55    openat(AT_FDCWD</app>, "/tmp/original-myapp.service", O_RDONLY|O_PATH|O_DIRECTORY) = -1 ENOENT (No such file or directory)
+55    newfstatat(AT_FDCWD</app>, "/etc/systemd/system/myapp.service", {st_mode=S_IFREG|0644, st_size=398, ...}, 0) = 0
+55    openat(AT_FDCWD</app>, "/etc/systemd/system/myapp.service", O_RDONLY) = 3</etc/systemd/system/myapp.service>
+55    openat(AT_FDCWD</app>, "/tmp/original-myapp.service", O_WRONLY|O_CREAT|O_EXCL, 0644) = 4</tmp/original-myapp.service>
+55    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 55
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=55, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 56
+18    wait4(-1,  <unfinished ...>
+56    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+56    chdir("/app")                     = 0
+56    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+56    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+56    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+56    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+56    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+56    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+56    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+56    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+56    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+56    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 57
+56    wait4(-1,  <unfinished ...>
+57    openat(AT_FDCWD</app>, "/etc/systemd/system/myapp.service", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</etc/systemd/system/myapp.service>
+57    execve("/usr/bin/cat", ["cat"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+57    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+57    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+57    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+57    exit_group(0)                     = ?
+56    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 57
+56    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=57, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+56    wait4(-1, 0xfffff72e6690, WNOHANG, NULL) = -1 ECHILD (No child process)
+56    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 56
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=56, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 58
+18    wait4(-1,  <unfinished ...>
+58    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+58    chdir("/app")                     = 0
+58    execve("/usr/local/bin/simulate-boot.sh", ["/usr/local/bin/simulate-boot.sh"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+58    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+58    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+58    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+58    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+58    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+58    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=30, ...}, 0) = 0
+58    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+58    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+58    openat(AT_FDCWD</app>, "/usr/local/bin/simulate-boot.sh", O_RDONLY) = 3</usr/local/bin/simulate-boot.sh>
+58    newfstatat(AT_FDCWD</app>, "/usr/local/bin/simulate-boot.sh", {st_mode=S_IFREG|0755, st_size=2885, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/rm", 0xfffffd7fb6e8, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/local/bin/rm", 0xfffffd7fb6e8, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/sbin/rm", 0xfffffd7fb6e8, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/rm", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/rm", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+58    faccessat(AT_FDCWD</app>, "/usr/bin/rm", X_OK) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/rm", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+58    faccessat(AT_FDCWD</app>, "/usr/bin/rm", R_OK) = 0
+58    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa0c010f0) = 59
+58    wait4(-1,  <unfinished ...>
+59    execve("/usr/bin/rm", ["rm", "-f", "/mnt/appdata/.mount_complete", "/mnt/appdata/.lvm_status", "/mnt/appdata/app_config.dat"], 0xaaab116f4480 /* 6 vars */) = 0
+59    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+59    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+59    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+59    newfstatat(AT_FDCWD</app>, "/mnt/appdata/.mount_complete", {st_mode=S_IFREG|0644, st_size=0, ...}, AT_SYMLINK_NOFOLLOW) = 0
+59    unlinkat(AT_FDCWD</app>, "/mnt/appdata/.mount_complete", 0) = 0
+59    newfstatat(AT_FDCWD</app>, "/mnt/appdata/.lvm_status", {st_mode=S_IFREG|0644, st_size=17, ...}, AT_SYMLINK_NOFOLLOW) = 0
+59    unlinkat(AT_FDCWD</app>, "/mnt/appdata/.lvm_status", 0) = 0
+59    newfstatat(AT_FDCWD</app>, "/mnt/appdata/app_config.dat", {st_mode=S_IFREG|0644, st_size=15, ...}, AT_SYMLINK_NOFOLLOW) = 0
+59    unlinkat(AT_FDCWD</app>, "/mnt/appdata/app_config.dat", 0) = 0
+59    exit_group(0)                     = ?
+58    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 59
+58    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=59, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+58    wait4(-1, 0xfffffd7fa5c0, WNOHANG, NULL) = -1 ECHILD (No child process)
+58    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa0c010f0) = 60
+58    wait4(-1,  <unfinished ...>
+60    execve("/usr/bin/rm", ["rm", "-f", "/var/log/myapp/service_status", "/var/log/myapp/error.log", "/var/log/myapp/service.log"], 0xaaab116f4480 /* 6 vars */) = 0
+60    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+60    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+60    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+60    newfstatat(AT_FDCWD</app>, "/var/log/myapp/service_status", {st_mode=S_IFREG|0644, st_size=7, ...}, AT_SYMLINK_NOFOLLOW) = 0
+60    unlinkat(AT_FDCWD</app>, "/var/log/myapp/service_status", 0) = 0
+60    newfstatat(AT_FDCWD</app>, "/var/log/myapp/error.log", {st_mode=S_IFREG|0644, st_size=42, ...}, AT_SYMLINK_NOFOLLOW) = 0
+60    unlinkat(AT_FDCWD</app>, "/var/log/myapp/error.log", 0) = 0
+60    newfstatat(AT_FDCWD</app>, "/var/log/myapp/service.log", 0xaaaad036c840, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+60    unlinkat(AT_FDCWD</app>, "/var/log/myapp/service.log", 0) = -1 ENOENT (No such file or directory)
+60    exit_group(0)                     = ?
+58    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 60
+58    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=60, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+58    wait4(-1, 0xfffffd7fa5c0, WNOHANG, NULL) = -1 ECHILD (No child process)
+58    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa0c010f0) = 61
+58    wait4(-1,  <unfinished ...>
+61    execve("/usr/bin/rm", ["rm", "-f", "/var/run/myapp.pid"], 0xaaab116f4480 /* 6 vars */) = 0
+61    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+61    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+61    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+61    newfstatat(AT_FDCWD</app>, "/var/run/myapp.pid", 0xaaaaf73d0600, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+61    unlinkat(AT_FDCWD</app>, "/var/run/myapp.pid", 0) = -1 ENOENT (No such file or directory)
+61    exit_group(0)                     = ?
+58    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 61
+58    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=61, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+58    wait4(-1, 0xfffffd7fa5c0, WNOHANG, NULL) = -1 ECHILD (No child process)
+58    newfstatat(AT_FDCWD</app>, "/etc/systemd/system/myapp.service", {st_mode=S_IFREG|0644, st_size=328, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/grep", 0xfffffd7fa368, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/local/bin/grep", 0xfffffd7fa368, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/sbin/grep", 0xfffffd7fa368, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+58    faccessat(AT_FDCWD</app>, "/usr/bin/grep", X_OK) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+58    faccessat(AT_FDCWD</app>, "/usr/bin/grep", R_OK) = 0
+58    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa0c010f0) = 62
+58    wait4(-1,  <unfinished ...>
+62    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+62    execve("/usr/bin/grep", ["grep", "-qi", "RequiresMountsFor.*\\/mnt\\/appdata", "/etc/systemd/system/myapp.service"], 0xaaab116f4480 /* 6 vars */) = 0
+62    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+62    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+62    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+62    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+62    openat(AT_FDCWD</app>, "/proc/self/maps", O_RDONLY) = 3</proc/62/maps>
+62    openat(AT_FDCWD</app>, "/etc/systemd/system/myapp.service", O_RDONLY|O_NOCTTY) = 3</etc/systemd/system/myapp.service>
+62    exit_group(0)                     = ?
+58    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 62
+58    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=62, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+58    wait4(-1, 0xfffffd7f9240, WNOHANG, NULL) = -1 ECHILD (No child process)
+58    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa0c010f0) = 63
+58    wait4(-1,  <unfinished ...>
+63    execve("/usr/local/bin/simulate-lvm-mount.sh", ["/usr/local/bin/simulate-lvm-mount.sh"], 0xaaab116fcfd0 /* 7 vars */) = 0
+63    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+63    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+63    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+63    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+63    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+63    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=30, ...}, 0) = 0
+63    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+63    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+63    openat(AT_FDCWD</app>, "/usr/local/bin/simulate-lvm-mount.sh", O_RDONLY) = 3</usr/local/bin/simulate-lvm-mount.sh>
+63    newfstatat(AT_FDCWD</app>, "/usr/local/bin/simulate-lvm-mount.sh", {st_mode=S_IFREG|0755, st_size=573, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/mkdir", 0xffffc0379af8, 0) = -1 ENOENT (No such file or directory)
+63    newfstatat(AT_FDCWD</app>, "/usr/local/bin/mkdir", 0xffffc0379af8, 0) = -1 ENOENT (No such file or directory)
+63    newfstatat(AT_FDCWD</app>, "/usr/sbin/mkdir", 0xffffc0379af8, 0) = -1 ENOENT (No such file or directory)
+63    newfstatat(AT_FDCWD</app>, "/usr/bin/mkdir", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, "/usr/bin/mkdir", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+63    faccessat(AT_FDCWD</app>, "/usr/bin/mkdir", X_OK) = 0
+63    newfstatat(AT_FDCWD</app>, "/usr/bin/mkdir", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+63    faccessat(AT_FDCWD</app>, "/usr/bin/mkdir", R_OK) = 0
+63    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff8107b0f0) = 64
+64    execve("/usr/bin/mkdir", ["mkdir", "-p", "/mnt/appdata"], 0xaaab227edc70 /* 7 vars */ <unfinished ...>
+63    wait4(-1,  <unfinished ...>
+64    <... execve resumed>)             = 0
+64    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+64    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+64    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+64    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+64    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+64    statfs("/sys/fs/selinux", 0xfffff4d7ed80) = -1 ENOENT (No such file or directory)
+64    statfs("/selinux", 0xfffff4d7ed80) = -1 ENOENT (No such file or directory)
+64    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+64    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+64    mkdirat(AT_FDCWD</app>, "/mnt", 0777) = -1 EEXIST (File exists)
+64    chdir("/mnt")                     = 0
+64    mkdirat(AT_FDCWD</mnt>, "appdata", 0777) = -1 EEXIST (File exists)
+64    newfstatat(AT_FDCWD</mnt>, "appdata", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+64    exit_group(0)                     = ?
+63    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 64
+63    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=64, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+63    wait4(-1, 0xffffc03789d0, WNOHANG, NULL) = -1 ECHILD (No child process)
+63    openat(AT_FDCWD</app>, "/mnt/appdata/.lvm_status", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</mnt/appdata/.lvm_status>
+63    openat(AT_FDCWD</app>, "/mnt/appdata/app_config.dat", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</mnt/appdata/app_config.dat>
+63    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/touch", 0xffffc0379af8, 0) = -1 ENOENT (No such file or directory)
+63    newfstatat(AT_FDCWD</app>, "/usr/local/bin/touch", 0xffffc0379af8, 0) = -1 ENOENT (No such file or directory)
+63    newfstatat(AT_FDCWD</app>, "/usr/sbin/touch", 0xffffc0379af8, 0) = -1 ENOENT (No such file or directory)
+63    newfstatat(AT_FDCWD</app>, "/usr/bin/touch", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, "/usr/bin/touch", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+63    faccessat(AT_FDCWD</app>, "/usr/bin/touch", X_OK) = 0
+63    newfstatat(AT_FDCWD</app>, "/usr/bin/touch", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+63    faccessat(AT_FDCWD</app>, "/usr/bin/touch", R_OK) = 0
+63    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff8107b0f0) = 65
+63    wait4(-1,  <unfinished ...>
+65    execve("/usr/bin/touch", ["touch", "/mnt/appdata/.mount_complete"], 0xaaab227edc70 /* 7 vars */) = 0
+65    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+65    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+65    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+65    openat(AT_FDCWD</app>, "/mnt/appdata/.mount_complete", O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK, 0666) = 3</mnt/appdata/.mount_complete>
+65    utimensat(0</mnt/appdata/.mount_complete>, NULL, NULL, 0) = 0
+65    exit_group(0)                     = ?
+63    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 65
+63    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=65, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+63    wait4(-1, 0xffffc03789d0, WNOHANG, NULL) = -1 ECHILD (No child process)
+63    exit_group(0)                     = ?
+58    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 63
+58    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=63, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+58    wait4(-1, 0xfffffd7f9f30, WNOHANG, NULL) = -1 ECHILD (No child process)
+58    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa0c010f0) = 66
+58    wait4(-1,  <unfinished ...>
+66    execve("/usr/local/bin/myapp-service.sh", ["/usr/local/bin/myapp-service.sh"], 0xaaab116fcfd0 /* 6 vars */) = 0
+66    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+66    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+66    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+66    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+66    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+66    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=30, ...}, 0) = 0
+66    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+66    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+66    openat(AT_FDCWD</app>, "/usr/local/bin/myapp-service.sh", O_RDONLY) = 3</usr/local/bin/myapp-service.sh>
+66    newfstatat(AT_FDCWD</app>, "/usr/local/bin/myapp-service.sh", {st_mode=S_IFREG|0755, st_size=926, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/mnt/appdata/.mount_complete", {st_mode=S_IFREG|0644, st_size=0, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/mnt/appdata/app_config.dat", {st_mode=S_IFREG|0644, st_size=15, ...}, 0) = 0
+66    openat(AT_FDCWD</app>, "/var/run/myapp.pid", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</run/myapp.pid>
+66    openat(AT_FDCWD</app>, "/var/log/myapp/service_status", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</var/log/myapp/service_status>
+66    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92b8b0f0) = 67
+67    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+67    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/date", 0xffffed871948, 0) = -1 ENOENT (No such file or directory)
+67    newfstatat(AT_FDCWD</app>, "/usr/local/bin/date", 0xffffed871948, 0) = -1 ENOENT (No such file or directory)
+67    newfstatat(AT_FDCWD</app>, "/usr/sbin/date", 0xffffed871948, 0) = -1 ENOENT (No such file or directory)
+67    newfstatat(AT_FDCWD</app>, "/usr/bin/date", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+67    newfstatat(AT_FDCWD</app>, "/usr/bin/date", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+67    faccessat(AT_FDCWD</app>, "/usr/bin/date", X_OK) = 0
+67    newfstatat(AT_FDCWD</app>, "/usr/bin/date", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+67    faccessat(AT_FDCWD</app>, "/usr/bin/date", R_OK) = 0
+67    execve("/usr/bin/date", ["date"], 0xaaab023ed640 /* 6 vars */) = 0
+67    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+67    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+67    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+67    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+67    exit_group(0)                     = ?
+66    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 67
+66    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=67, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+66    wait4(-1, 0xffffed870ac0, WNOHANG, NULL) = -1 ECHILD (No child process)
+66    openat(AT_FDCWD</app>, "/var/log/myapp/service.log", O_WRONLY|O_CREAT|O_APPEND, 0666) = 3</var/log/myapp/service.log>
+66    openat(AT_FDCWD</app>, "/var/log/myapp/service.log", O_WRONLY|O_CREAT|O_APPEND, 0666) = 3</var/log/myapp/service.log>
+66    exit_group(0)                     = ?
+58    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 66
+58    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=66, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+58    wait4(-1, 0xfffffd7fa290, WNOHANG, NULL) = -1 ECHILD (No child process)
+58    newfstatat(AT_FDCWD</app>, "/var/log/myapp/service_status", {st_mode=S_IFREG|0644, st_size=8, ...}, 0) = 0
+58    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa0c010f0) = 68
+68    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+68    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xfffffd7fa7a8, 0) = -1 ENOENT (No such file or directory)
+68    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xfffffd7fa7a8, 0) = -1 ENOENT (No such file or directory)
+68    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xfffffd7fa7a8, 0) = -1 ENOENT (No such file or directory)
+68    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+68    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+68    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+68    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+68    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+68    execve("/usr/bin/cat", ["cat", "/var/log/myapp/service_status"], 0xaaab116fcfd0 /* 6 vars */) = 0
+68    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+68    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+68    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+68    openat(AT_FDCWD</app>, "/var/log/myapp/service_status", O_RDONLY) = 3</var/log/myapp/service_status>
+68    exit_group(0)                     = ?
+58    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 68
+58    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=68, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+58    wait4(-1, 0xfffffd7f9920, WNOHANG, NULL) = -1 ECHILD (No child process)
+58    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 58
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=58, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 69
+18    wait4(-1,  <unfinished ...>
+69    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+69    chdir("/app")                     = 0
+69    execve("/usr/local/bin/simulate-boot.sh", ["/usr/local/bin/simulate-boot.sh"], 0xaaaadf7ed430 /* 7 vars */) = 0
+69    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+69    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+69    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+69    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+69    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+69    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+69    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+69    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+69    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+69    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+69    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=36, ...}, 0) = 0
+69    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+69    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+69    openat(AT_FDCWD</app>, "/usr/local/bin/simulate-boot.sh", O_RDONLY) = 3</usr/local/bin/simulate-boot.sh>
+69    newfstatat(AT_FDCWD</app>, "/usr/local/bin/simulate-boot.sh", {st_mode=S_IFREG|0755, st_size=2885, ...}, 0) = 0
+69    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+69    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/rm", 0xfffff57c8bd8, 0) = -1 ENOENT (No such file or directory)
+69    newfstatat(AT_FDCWD</app>, "/usr/local/bin/rm", 0xfffff57c8bd8, 0) = -1 ENOENT (No such file or directory)
+69    newfstatat(AT_FDCWD</app>, "/usr/sbin/rm", 0xfffff57c8bd8, 0) = -1 ENOENT (No such file or directory)
+69    newfstatat(AT_FDCWD</app>, "/usr/bin/rm", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+69    newfstatat(AT_FDCWD</app>, "/usr/bin/rm", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+69    faccessat(AT_FDCWD</app>, "/usr/bin/rm", X_OK) = 0
+69    newfstatat(AT_FDCWD</app>, "/usr/bin/rm", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+69    faccessat(AT_FDCWD</app>, "/usr/bin/rm", R_OK) = 0
+69    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff8e4e30f0) = 70
+69    wait4(-1,  <unfinished ...>
+70    execve("/usr/bin/rm", ["rm", "-f", "/mnt/appdata/.mount_complete", "/mnt/appdata/.lvm_status", "/mnt/appdata/app_config.dat"], 0xaaaae0cc3500 /* 7 vars */) = 0
+70    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+70    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+70    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+70    newfstatat(AT_FDCWD</app>, "/mnt/appdata/.mount_complete", {st_mode=S_IFREG|0644, st_size=0, ...}, AT_SYMLINK_NOFOLLOW) = 0
+70    unlinkat(AT_FDCWD</app>, "/mnt/appdata/.mount_complete", 0) = 0
+70    newfstatat(AT_FDCWD</app>, "/mnt/appdata/.lvm_status", {st_mode=S_IFREG|0644, st_size=17, ...}, AT_SYMLINK_NOFOLLOW) = 0
+70    unlinkat(AT_FDCWD</app>, "/mnt/appdata/.lvm_status", 0) = 0
+70    newfstatat(AT_FDCWD</app>, "/mnt/appdata/app_config.dat", {st_mode=S_IFREG|0644, st_size=15, ...}, AT_SYMLINK_NOFOLLOW) = 0
+70    unlinkat(AT_FDCWD</app>, "/mnt/appdata/app_config.dat", 0) = 0
+70    exit_group(0)                     = ?
+69    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 70
+69    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=70, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+69    wait4(-1, 0xfffff57c7ab0, WNOHANG, NULL) = -1 ECHILD (No child process)
+69    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff8e4e30f0) = 71
+69    wait4(-1,  <unfinished ...>
+71    execve("/usr/bin/rm", ["rm", "-f", "/var/log/myapp/service_status", "/var/log/myapp/error.log", "/var/log/myapp/service.log"], 0xaaaae0cc3500 /* 7 vars */) = 0
+71    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+71    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+71    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+71    newfstatat(AT_FDCWD</app>, "/var/log/myapp/service_status", {st_mode=S_IFREG|0644, st_size=8, ...}, AT_SYMLINK_NOFOLLOW) = 0
+71    unlinkat(AT_FDCWD</app>, "/var/log/myapp/service_status", 0) = 0
+71    newfstatat(AT_FDCWD</app>, "/var/log/myapp/error.log", 0xaaaae33a1720, AT_SYMLINK_NOFOLLOW) = -1 ENOENT (No such file or directory)
+71    unlinkat(AT_FDCWD</app>, "/var/log/myapp/error.log", 0) = -1 ENOENT (No such file or directory)
+71    newfstatat(AT_FDCWD</app>, "/var/log/myapp/service.log", {st_mode=S_IFREG|0644, st_size=115, ...}, AT_SYMLINK_NOFOLLOW) = 0
+71    unlinkat(AT_FDCWD</app>, "/var/log/myapp/service.log", 0) = 0
+71    exit_group(0)                     = ?
+69    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 71
+69    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=71, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+69    wait4(-1, 0xfffff57c7ab0, WNOHANG, NULL) = -1 ECHILD (No child process)
+69    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff8e4e30f0) = 72
+69    wait4(-1,  <unfinished ...>
+72    execve("/usr/bin/rm", ["rm", "-f", "/var/run/myapp.pid"], 0xaaaae0cc3500 /* 7 vars */) = 0
+72    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+72    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+72    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+72    newfstatat(AT_FDCWD</app>, "/var/run/myapp.pid", {st_mode=S_IFREG|0644, st_size=3, ...}, AT_SYMLINK_NOFOLLOW) = 0
+72    unlinkat(AT_FDCWD</app>, "/var/run/myapp.pid", 0) = 0
+72    exit_group(0)                     = ?
+69    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 72
+69    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=72, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+69    wait4(-1, 0xfffff57c7ab0, WNOHANG, NULL) = -1 ECHILD (No child process)
+69    newfstatat(AT_FDCWD</app>, "/etc/systemd/system/myapp.service", {st_mode=S_IFREG|0644, st_size=328, ...}, 0) = 0
+69    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+69    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/grep", 0xfffff57c7858, 0) = -1 ENOENT (No such file or directory)
+69    newfstatat(AT_FDCWD</app>, "/usr/local/bin/grep", 0xfffff57c7858, 0) = -1 ENOENT (No such file or directory)
+69    newfstatat(AT_FDCWD</app>, "/usr/sbin/grep", 0xfffff57c7858, 0) = -1 ENOENT (No such file or directory)
+69    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+69    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+69    faccessat(AT_FDCWD</app>, "/usr/bin/grep", X_OK) = 0
+69    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+69    faccessat(AT_FDCWD</app>, "/usr/bin/grep", R_OK) = 0
+69    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff8e4e30f0) = 73
+69    wait4(-1,  <unfinished ...>
+73    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+73    execve("/usr/bin/grep", ["grep", "-qi", "RequiresMountsFor.*\\/mnt\\/appdata", "/etc/systemd/system/myapp.service"], 0xaaaae0cc3500 /* 7 vars */) = 0
+73    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+73    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+73    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+73    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+73    openat(AT_FDCWD</app>, "/proc/self/maps", O_RDONLY) = 3</proc/73/maps>
+73    openat(AT_FDCWD</app>, "/etc/systemd/system/myapp.service", O_RDONLY|O_NOCTTY) = 3</etc/systemd/system/myapp.service>
+73    exit_group(0)                     = ?
+69    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 73
+69    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=73, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+69    wait4(-1, 0xfffff57c6730, WNOHANG, NULL) = -1 ECHILD (No child process)
+69    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff8e4e30f0) = 74
+69    wait4(-1,  <unfinished ...>
+74    execve("/usr/local/bin/simulate-lvm-mount.sh", ["/usr/local/bin/simulate-lvm-mount.sh"], 0xaaaae0ccc070 /* 8 vars */) = 0
+74    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+74    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+74    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+74    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+74    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+74    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+74    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+74    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+74    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+74    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+74    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=36, ...}, 0) = 0
+74    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+74    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+74    openat(AT_FDCWD</app>, "/usr/local/bin/simulate-lvm-mount.sh", O_RDONLY) = 3</usr/local/bin/simulate-lvm-mount.sh>
+74    newfstatat(AT_FDCWD</app>, "/usr/local/bin/simulate-lvm-mount.sh", {st_mode=S_IFREG|0755, st_size=573, ...}, 0) = 0
+74    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+74    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/mkdir", 0xffffd3ec2668, 0) = -1 ENOENT (No such file or directory)
+74    newfstatat(AT_FDCWD</app>, "/usr/local/bin/mkdir", 0xffffd3ec2668, 0) = -1 ENOENT (No such file or directory)
+74    newfstatat(AT_FDCWD</app>, "/usr/sbin/mkdir", 0xffffd3ec2668, 0) = -1 ENOENT (No such file or directory)
+74    newfstatat(AT_FDCWD</app>, "/usr/bin/mkdir", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+74    newfstatat(AT_FDCWD</app>, "/usr/bin/mkdir", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+74    faccessat(AT_FDCWD</app>, "/usr/bin/mkdir", X_OK) = 0
+74    newfstatat(AT_FDCWD</app>, "/usr/bin/mkdir", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+74    faccessat(AT_FDCWD</app>, "/usr/bin/mkdir", R_OK) = 0
+74    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff912fd0f0) = 75
+74    wait4(-1,  <unfinished ...>
+75    execve("/usr/bin/mkdir", ["mkdir", "-p", "/mnt/appdata"], 0xaaab288acd80 /* 8 vars */) = 0
+75    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+75    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+75    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+75    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+75    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+75    statfs("/sys/fs/selinux", 0xffffc5b4d550) = -1 ENOENT (No such file or directory)
+75    statfs("/selinux", 0xffffc5b4d550) = -1 ENOENT (No such file or directory)
+75    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+75    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+75    mkdirat(AT_FDCWD</app>, "/mnt", 0777) = -1 EEXIST (File exists)
+75    chdir("/mnt")                     = 0
+75    mkdirat(AT_FDCWD</mnt>, "appdata", 0777) = -1 EEXIST (File exists)
+75    newfstatat(AT_FDCWD</mnt>, "appdata", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+75    exit_group(0)                     = ?
+74    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 75
+74    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=75, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+74    wait4(-1, 0xffffd3ec1540, WNOHANG, NULL) = -1 ECHILD (No child process)
+74    openat(AT_FDCWD</app>, "/mnt/appdata/.lvm_status", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</mnt/appdata/.lvm_status>
+74    openat(AT_FDCWD</app>, "/mnt/appdata/app_config.dat", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</mnt/appdata/app_config.dat>
+74    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+74    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/touch", 0xffffd3ec2668, 0) = -1 ENOENT (No such file or directory)
+74    newfstatat(AT_FDCWD</app>, "/usr/local/bin/touch", 0xffffd3ec2668, 0) = -1 ENOENT (No such file or directory)
+74    newfstatat(AT_FDCWD</app>, "/usr/sbin/touch", 0xffffd3ec2668, 0) = -1 ENOENT (No such file or directory)
+74    newfstatat(AT_FDCWD</app>, "/usr/bin/touch", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+74    newfstatat(AT_FDCWD</app>, "/usr/bin/touch", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+74    faccessat(AT_FDCWD</app>, "/usr/bin/touch", X_OK) = 0
+74    newfstatat(AT_FDCWD</app>, "/usr/bin/touch", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+74    faccessat(AT_FDCWD</app>, "/usr/bin/touch", R_OK) = 0
+74    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff912fd0f0) = 76
+76    execve("/usr/bin/touch", ["touch", "/mnt/appdata/.mount_complete"], 0xaaab288acd80 /* 8 vars */ <unfinished ...>
+74    wait4(-1,  <unfinished ...>
+76    <... execve resumed>)             = 0
+76    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+76    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+76    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+76    openat(AT_FDCWD</app>, "/mnt/appdata/.mount_complete", O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK, 0666) = 3</mnt/appdata/.mount_complete>
+76    utimensat(0</mnt/appdata/.mount_complete>, NULL, NULL, 0) = 0
+76    exit_group(0)                     = ?
+74    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 76
+74    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=76, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+74    wait4(-1, 0xffffd3ec1540, WNOHANG, NULL) = -1 ECHILD (No child process)
+74    exit_group(0)                     = ?
+69    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 74
+69    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=74, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+69    wait4(-1, 0xfffff57c7420, WNOHANG, NULL) = -1 ECHILD (No child process)
+69    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff8e4e30f0) = 77
+69    wait4(-1,  <unfinished ...>
+77    execve("/usr/local/bin/myapp-service.sh", ["/usr/local/bin/myapp-service.sh"], 0xaaaae0ccc070 /* 7 vars */) = 0
+77    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+77    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+77    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+77    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+77    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+77    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+77    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+77    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+77    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+77    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+77    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=36, ...}, 0) = 0
+77    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+77    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+77    openat(AT_FDCWD</app>, "/usr/local/bin/myapp-service.sh", O_RDONLY) = 3</usr/local/bin/myapp-service.sh>
+77    newfstatat(AT_FDCWD</app>, "/usr/local/bin/myapp-service.sh", {st_mode=S_IFREG|0755, st_size=926, ...}, 0) = 0
+77    newfstatat(AT_FDCWD</app>, "/mnt/appdata/.mount_complete", {st_mode=S_IFREG|0644, st_size=0, ...}, 0) = 0
+77    newfstatat(AT_FDCWD</app>, "/mnt/appdata/app_config.dat", {st_mode=S_IFREG|0644, st_size=15, ...}, 0) = 0
+77    openat(AT_FDCWD</app>, "/var/run/myapp.pid", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</run/myapp.pid>
+77    openat(AT_FDCWD</app>, "/var/log/myapp/service_status", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</var/log/myapp/service_status>
+77    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff977b10f0) = 78
+78    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+78    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/date", 0xffffe8d4c918, 0) = -1 ENOENT (No such file or directory)
+78    newfstatat(AT_FDCWD</app>, "/usr/local/bin/date", 0xffffe8d4c918, 0) = -1 ENOENT (No such file or directory)
+78    newfstatat(AT_FDCWD</app>, "/usr/sbin/date", 0xffffe8d4c918, 0) = -1 ENOENT (No such file or directory)
+78    newfstatat(AT_FDCWD</app>, "/usr/bin/date", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+78    newfstatat(AT_FDCWD</app>, "/usr/bin/date", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+78    faccessat(AT_FDCWD</app>, "/usr/bin/date", X_OK) = 0
+78    newfstatat(AT_FDCWD</app>, "/usr/bin/date", {st_mode=S_IFREG|0755, st_size=133480, ...}, 0) = 0
+78    faccessat(AT_FDCWD</app>, "/usr/bin/date", R_OK) = 0
+78    execve("/usr/bin/date", ["date"], 0xaaab1f43c770 /* 7 vars */) = 0
+78    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+78    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+78    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+78    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+78    exit_group(0)                     = ?
+77    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 78
+77    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=78, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+77    wait4(-1, 0xffffe8d4ba90, WNOHANG, NULL) = -1 ECHILD (No child process)
+77    openat(AT_FDCWD</app>, "/var/log/myapp/service.log", O_WRONLY|O_CREAT|O_APPEND, 0666) = 3</var/log/myapp/service.log>
+77    openat(AT_FDCWD</app>, "/var/log/myapp/service.log", O_WRONLY|O_CREAT|O_APPEND, 0666) = 3</var/log/myapp/service.log>
+77    exit_group(0)                     = ?
+69    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 77
+69    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=77, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+69    wait4(-1, 0xfffff57c7780, WNOHANG, NULL) = -1 ECHILD (No child process)
+69    newfstatat(AT_FDCWD</app>, "/var/log/myapp/service_status", {st_mode=S_IFREG|0644, st_size=8, ...}, 0) = 0
+69    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff8e4e30f0) = 79
+79    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xfffff57c7c98, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xfffff57c7c98, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xfffff57c7c98, 0) = -1 ENOENT (No such file or directory)
+79    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+79    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+79    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+79    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+79    execve("/usr/bin/cat", ["cat", "/var/log/myapp/service_status"], 0xaaaae0ccc070 /* 7 vars */) = 0
+79    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+79    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+79    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+79    openat(AT_FDCWD</app>, "/var/log/myapp/service_status", O_RDONLY) = 3</var/log/myapp/service_status>
+79    exit_group(0)                     = ?
+69    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 79
+69    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=79, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+69    wait4(-1, 0xfffff57c6e10, WNOHANG, NULL) = -1 ECHILD (No child process)
+69    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 69
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=69, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff80e5c0f0) = 80
+18    wait4(-1,  <unfinished ...>
+80    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+80    chdir("/app")                     = 0
+80    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+80    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+80    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+80    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xfffff72e77b8, 0) = -1 ENOENT (No such file or directory)
+80    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+80    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+80    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+80    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+80    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+80    execve("/usr/bin/cat", ["cat", "/etc/systemd/system/myapp.service"], 0xaaaadf7ec9b0 /* 6 vars */) = 0
+80    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+80    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+80    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+80    openat(AT_FDCWD</app>, "/etc/systemd/system/myapp.service", O_RDONLY) = 3</etc/systemd/system/myapp.service>
+80    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 80
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=80, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff72e6a00, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    exit_group(0)                     = ?
+17    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=18, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+17    wait4(18, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 18
+17    exit_group(0)                     = ?
+16    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WSTOPPED, NULL) = 17
+16    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=17, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+16    exit_group(0)                     = ?

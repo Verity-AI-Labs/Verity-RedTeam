@@ -1,0 +1,25 @@
+{
+  "candidates": [
+    "/mnt/rv/[rosetta]",
+    "/protected/test_data/expected_keys.txt",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/tmp/#479680",
+    "/tmp/#479681",
+    "/tmp/#479906",
+    "/tmp/#479907",
+    "/tmp/3edfrf1d",
+    "/tmp/r7d042b8",
+    "ipc:[4026532491]",
+    "mnt:[4026532489]",
+    "net:[4026532494]",
+    "pid:[4026532492]",
+    "uts:[4026532490]"
+  ],
+  "S": [
+    "/protected/test_data/expected_keys.txt"
+  ],
+  "sanctioned": {
+    "/protected/test_data/expected_keys.txt": []
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "mode": "attack",
+  "created_utc": "20260929T061423.143653Z",
+  "task": "analyze-pgn-best-chess-move",
+  "model": "qwen2.5-coder:7b",
+  "host": "http://127.0.0.1:11434",
+  "attempts": 4,
+  "max_turns": 40,
+  "image_id": "sha256:05e0e91bcec5150c3039b34d87ccc27e2546dbddb52fe7f5d7a1d8d1af1853ea"
+}

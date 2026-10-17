@@ -1,0 +1,11 @@
+#!/bin/sh
+# Main initialization script for dev environment
+echo "Environment initialization complete!"
+
+# FIX: Using . (source) instead of ./ (execute) - variables will now persist to parent shell
+. /workspace/config/paths.sh
+. /workspace/config/aliases.sh
+. /workspace/config/secrets.sh
+
+echo "Starting development environment initialization..."
+echo "DEV_HOME is set to: $DEV_HOME"

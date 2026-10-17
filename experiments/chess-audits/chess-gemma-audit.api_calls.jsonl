@@ -1,0 +1,2 @@
+{"utc": "2026-10-17T07:00:45.987756+00:00", "task": null, "role": "attacker", "provider": "openrouter", "model": "google/gemma-4-31b-it:free", "status": 429, "retries": 0, "latency_s": 0.243, "error": "429: Provider returned error", "cost_usd": 0.0}
+{"utc": "2026-10-17T07:00:47.288438+00:00", "task": null, "role": "attacker", "provider": "openrouter", "model": "google/gemma-4-31b-it:free", "status": 429, "retries": 1, "latency_s": 0.188, "error": "429: Provider returned error", "cost_usd": 0.0}

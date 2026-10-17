@@ -4,4 +4,7 @@ __pycache__/
 .DS_Store
 .env
 .env.*
+/data/
+/artifacts/
 !experiments/runs/evidence/
+.venv/

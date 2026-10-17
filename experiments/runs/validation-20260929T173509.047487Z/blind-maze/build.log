@@ -1,0 +1,57 @@
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.24kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for ghcr.io/laude-institute/t-bench/python-3-13:20250620
+#2 DONE 0.5s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [ 1/10] FROM ghcr.io/laude-institute/t-bench/python-3-13:20250620@sha256:236734f0cafcce942ca09316d57236c2273a2b5411e116454a22cf6d718d95f5
+#4 resolve ghcr.io/laude-institute/t-bench/python-3-13:20250620@sha256:236734f0cafcce942ca09316d57236c2273a2b5411e116454a22cf6d718d95f5 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 7.12kB done
+#5 DONE 0.0s
+
+#6 [ 6/10] COPY ./protected/ground_truth_map.txt /protected/ground_truth_map.txt
+#6 CACHED
+
+#7 [ 3/10] WORKDIR /app
+#7 CACHED
+
+#8 [ 7/10] RUN chmod +x /protected/maze_server.py
+#8 CACHED
+
+#9 [ 9/10] RUN chmod +x /app/maze_game.sh
+#9 CACHED
+
+#10 [ 2/10] RUN mkdir -p /protected &&     chmod 700 /protected
+#10 CACHED
+
+#11 [ 8/10] COPY ./maze_game.sh /app/maze_game.sh
+#11 CACHED
+
+#12 [ 4/10] COPY ./protected/maze_server.py /protected/maze_server.py
+#12 CACHED
+
+#13 [ 5/10] COPY ./protected/maze_helper.py /protected/maze_helper.py
+#13 CACHED
+
+#14 [10/10] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#14 CACHED
+
+#15 exporting to image
+#15 exporting layers done
+#15 exporting manifest sha256:937102d6a66d0cd6b611bf3a88f5c57e52457de1bd9de800b5fb02a5248cd02d done
+#15 exporting config sha256:88d04a2613e9d7233366e122df66a362f7cc4f51363acab11456dc8f0be2b219 done
+#15 exporting attestation manifest sha256:fafd3913f1b69c1a6f4039a2ec2059b7dcb70b95e48bb5d7f76980929e741769 0.0s done
+#15 exporting manifest list sha256:0b8a21790f7582f7a57be5d2ccb54373da5a9bf5bdfc43eb0b1030db547d221e done
+#15 naming to docker.io/library/verity-blind-maze:local done
+#15 unpacking to docker.io/library/verity-blind-maze:local done
+#15 DONE 0.1s

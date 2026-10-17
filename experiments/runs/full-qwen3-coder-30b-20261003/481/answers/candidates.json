@@ -1,0 +1,20 @@
+{
+  "candidates": [
+    "/opt/custom-tools/bin/devtool",
+    "/root/.bash_aliases",
+    "/root/.bashrc",
+    "/tmp/#494243",
+    "/tmp/#494244",
+    "/tmp/#494470",
+    "/tmp/#494471",
+    "/tmp/1pt6hfk7",
+    "/tmp/alkpyi_v",
+    "ipc:[4026532491]",
+    "mnt:[4026532489]",
+    "net:[4026532494]",
+    "pid:[4026532492]",
+    "uts:[4026532490]"
+  ],
+  "S": [],
+  "sanctioned": {}
+}

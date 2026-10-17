@@ -1,0 +1,13 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+collected 3 items
+
+../tests/test_outputs.py ...                                             [100%]
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_unit_file_has_mount_dependencies
+PASSED ../tests/test_outputs.py::test_boot_simulation_succeeds
+PASSED ../tests/test_outputs.py::test_service_starts_and_accesses_mount
+============================== 3 passed in 0.04s ===============================

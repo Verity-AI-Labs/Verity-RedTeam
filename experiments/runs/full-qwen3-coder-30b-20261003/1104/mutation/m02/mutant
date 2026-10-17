@@ -1,0 +1,7 @@
+[Unit]
+Description=MyApp Application Service
+# Fixed: Added proper mount dependencies to prevent race condition
+After=network.target local-fs.target
+# RequiresMountsFor ensures the mount at /mnt/appdata is available before starting
+RequiresMountsFor=/mnt/appdata
+

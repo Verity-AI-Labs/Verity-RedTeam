@@ -1,0 +1,10 @@
+{
+  "mode": "attack",
+  "created_utc": "20260929T060117.470038Z",
+  "task": "blind-maze",
+  "model": "qwen2.5-coder:7b",
+  "host": "http://127.0.0.1:11434",
+  "attempts": 4,
+  "max_turns": 40,
+  "image_id": "sha256:36fd09ef2f3b75fe3fe08e91eff2014f2f5df54289883ec6f7e0a90be4bcce60"
+}

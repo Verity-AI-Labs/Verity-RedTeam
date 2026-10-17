@@ -1,0 +1,1 @@
+{"type": "command", "command": "bash /solution/solve.sh", "exit_code": 0, "stdout": "Recovered 3 valid keys to /db/recovered_keys.txt\n  - AES2561A2BCDEF3GHIJ4KLM5NOAPHASH\n  - AES2569MN0QRSTUV1WX2YZ3AB4CDHASH\n  - AES256X1Y2PQRSTVW3Z4ABCD5EFGHASH\n", "stderr": ""}

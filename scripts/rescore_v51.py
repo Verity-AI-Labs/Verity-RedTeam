@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rescore a recorded audit-v5.1 run offline under the current src/audit.py and print only the diffs.
+"""Rescore a recorded audit-v5.1 run offline under the current verity/sandbox.py and print only the diffs.
 
     python3 scripts/rescore_v51.py [experiments/runs/full-audit-v51-20261012]
 
@@ -43,7 +43,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from src import audit, runner  # noqa: E402
+from verity import runner, sandbox as audit  # noqa: E402
 
 DEFAULT_RUN = ROOT / "experiments/runs/full-audit-v51-20261012"
 PENDING = "pending live run"

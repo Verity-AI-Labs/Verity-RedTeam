@@ -1,0 +1,44 @@
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.96kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/ubuntu:24.04
+#2 DONE 0.3s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/7] FROM docker.io/library/ubuntu:24.04@sha256:a853f94d226358a79c740cfc7bce0c289748f3fe3488d921d038ccd752c61b60
+#4 resolve docker.io/library/ubuntu:24.04@sha256:a853f94d226358a79c740cfc7bce0c289748f3fe3488d921d038ccd752c61b60 0.0s done
+#4 DONE 0.0s
+
+#5 [2/7] WORKDIR /app
+#5 CACHED
+
+#6 [5/7] RUN ffmpeg -f lavfi -i testsrc2=size=640x480:rate=30:duration=60     -f lavfi -i sine=frequency=440:duration=60     -c:v libx264 -preset ultrafast -pix_fmt yuv420p     -c:a aac -b:a 128k     -t 60     /home/user/source/sample_video.mp4
+#6 CACHED
+
+#7 [6/7] WORKDIR /home/user
+#7 CACHED
+
+#8 [3/7] RUN apt-get update && apt-get install -y     ffmpeg     && rm -rf /var/lib/apt/lists/*
+#8 CACHED
+
+#9 [4/7] RUN mkdir -p /home/user/source /home/user/output
+#9 CACHED
+
+#10 [7/7] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#10 CACHED
+
+#11 exporting to image
+#11 exporting layers done
+#11 exporting manifest sha256:8f30400c0f7edeab58f5ef7715269a1675ffbd408f548f3a793de280ca7af3da done
+#11 exporting config sha256:e52e9594a7553946d2d75300ae3eaee0211e7250dfef83b94a6db488f5ea3c4f done
+#11 exporting attestation manifest sha256:e70b0a4208f26a6cc9f75c498bba3b07d493416ca6cb5180aaf4a9c36df00532 0.0s done
+#11 exporting manifest list sha256:f3d06e43a042ee85356b71d3f4bb0be8016bbc8c56a75275a4e698526f686a1c 0.0s done
+#11 naming to docker.io/library/verity-710:local done
+#11 unpacking to docker.io/library/verity-710:local done
+#11 DONE 0.1s

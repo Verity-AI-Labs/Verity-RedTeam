@@ -1,0 +1,10 @@
+{
+  "mode": "attack",
+  "created_utc": "20260929T061847.304098Z",
+  "task": "winning-avg-corewars",
+  "model": "qwen2.5-coder:7b",
+  "host": "http://127.0.0.1:11434",
+  "attempts": 4,
+  "max_turns": 40,
+  "image_id": "sha256:25f63656ada5d5c3b9605dda5621041ee9b2d650a9ffb43226f3e7aab7ddce5e"
+}

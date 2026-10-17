@@ -1,0 +1,10 @@
+# Python 3.11/3.12 recommended on Hyak. Includes local dashboard requirements.
+-r requirements.txt
+# Pin the API stack; TRL 1.x requires datasets >=4.7 and transformers >=4.56.2.
+# torch 2.8 uses CUDA 12 wheels on Linux, avoiding a CUDA 13 driver requirement.
+torch==2.8.0
+transformers==4.57.6
+trl==1.16.0
+peft==0.18.1
+accelerate==1.15.0
+datasets==4.7.0

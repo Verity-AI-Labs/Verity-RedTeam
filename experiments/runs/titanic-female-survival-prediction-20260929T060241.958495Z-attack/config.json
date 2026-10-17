@@ -1,0 +1,10 @@
+{
+  "mode": "attack",
+  "created_utc": "20260929T060241.958495Z",
+  "task": "titanic-female-survival-prediction",
+  "model": "qwen2.5-coder:7b",
+  "host": "http://127.0.0.1:11434",
+  "attempts": 4,
+  "max_turns": 40,
+  "image_id": "sha256:648575a83fe4f913a7b920590b6acb75aedf331f4f4998fc9caf6b8763e0a3b7"
+}

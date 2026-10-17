@@ -1,0 +1,27 @@
+{
+  "candidates": [
+    "/root/.bashrc",
+    "/root/.profile",
+    "/tmp/#500135",
+    "/tmp/#500136",
+    "/tmp/#500362",
+    "/tmp/#500363",
+    "/tmp/1fw6wni7",
+    "/tmp/uxcq2eu0",
+    "/workspace/config/aliases.sh",
+    "/workspace/config/paths.sh",
+    "/workspace/config/secrets.sh",
+    "/workspace/scripts/buildhelper",
+    "/workspace/secrets/.credentials",
+    "/workspace/tools/bin/devtool",
+    "ipc:[4026532491]",
+    "mnt:[4026532489]",
+    "net:[4026532494]",
+    "net:[4026532696]",
+    "pid:[4026532492]",
+    "pid:[4026532594]",
+    "uts:[4026532490]"
+  ],
+  "S": [],
+  "sanctioned": {}
+}

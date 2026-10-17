@@ -3,8 +3,8 @@ python3 scripts/rejudge.py <run> --dry | DEEPSEEK_API_KEY=... python3 scripts/re
 import argparse, inspect, json, sys
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
-sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
-import audit  # noqa: E402
+sys.path.insert(0, str(ROOT))
+from verity import sandbox as audit  # noqa: E402
 V5 = "strip_narration" in inspect.signature(audit.judge_text).parameters
 
 def turns_of(path):

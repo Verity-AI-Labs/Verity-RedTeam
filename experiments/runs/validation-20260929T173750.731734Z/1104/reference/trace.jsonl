@@ -1,0 +1,1 @@
+{"type": "command", "command": "bash /solution/solve.sh", "exit_code": 0, "stdout": "Fixed myapp.service unit file with RequiresMountsFor=/mnt/appdata\n", "stderr": ""}

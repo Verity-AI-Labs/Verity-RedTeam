@@ -1,0 +1,69 @@
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 8.75kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/ubuntu:24.04
+#2 DONE 0.7s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [ 1/15] FROM docker.io/library/ubuntu:24.04@sha256:a853f94d226358a79c740cfc7bce0c289748f3fe3488d921d038ccd752c61b60
+#4 resolve docker.io/library/ubuntu:24.04@sha256:a853f94d226358a79c740cfc7bce0c289748f3fe3488d921d038ccd752c61b60 0.0s done
+#4 DONE 0.0s
+
+#5 [ 4/15] WORKDIR /app
+#5 CACHED
+
+#6 [ 2/15] WORKDIR /app
+#6 CACHED
+
+#7 [ 8/15] RUN cat > /usr/local/bin/myapp-service.sh << 'EOFSCRIPT'
+#7 CACHED
+
+#8 [ 9/15] RUN chmod +x /usr/local/bin/myapp-service.sh
+#8 CACHED
+
+#9 [13/15] RUN mkdir -p /var/log && cat > /var/log/syslog << 'EOFLOGS'
+#9 CACHED
+
+#10 [10/15] RUN cat > /usr/local/bin/simulate-boot.sh << 'EOFSCRIPT'
+#10 CACHED
+
+#11 [ 5/15] RUN mkdir -p /etc/systemd/system     && mkdir -p /var/log/myapp     && mkdir -p /mnt/appdata
+#11 CACHED
+
+#12 [ 3/15] RUN apt-get update && apt-get install -y     lvm2     && rm -rf /var/lib/apt/lists/*
+#12 CACHED
+
+#13 [14/15] RUN cat > /app/README.md << 'EOFREADME'
+#13 CACHED
+
+#14 [ 7/15] RUN chmod +x /usr/local/bin/simulate-lvm-mount.sh
+#14 CACHED
+
+#15 [12/15] RUN cat > /etc/systemd/system/myapp.service << 'EOFUNIT'
+#15 CACHED
+
+#16 [ 6/15] RUN cat > /usr/local/bin/simulate-lvm-mount.sh << 'EOFSCRIPT'
+#16 CACHED
+
+#17 [11/15] RUN chmod +x /usr/local/bin/simulate-boot.sh
+#17 CACHED
+
+#18 [15/15] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#18 CACHED
+
+#19 exporting to image
+#19 exporting layers done
+#19 exporting manifest sha256:782f0b837d075afe167d87aba72ceef92acbb79896121104578d9e632fa25d07 done
+#19 exporting config sha256:a9f043a4d75853f5a2f7fc4cb02b01827c579c4bd38330accacdae93f001d592 done
+#19 exporting attestation manifest sha256:c57765aeabc429394f1c1570feb504db619f2841e6bc0529621404bc18dbe884
+#19 exporting attestation manifest sha256:c57765aeabc429394f1c1570feb504db619f2841e6bc0529621404bc18dbe884 0.1s done
+#19 exporting manifest list sha256:07c307b859eabcac98ff2b6ea404f3bcb06575fc655899a8b994b18b6acf66af 0.0s done
+#19 naming to docker.io/library/verity-1104:local done
+#19 unpacking to docker.io/library/verity-1104:local 0.0s done
+#19 DONE 0.2s

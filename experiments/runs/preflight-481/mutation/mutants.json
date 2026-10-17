@@ -1,0 +1,56 @@
+{
+  "mutants": [
+    {
+      "artifact": "/root/.bash_profile",
+      "operator": "empty",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/root/.bash_profile",
+      "operator": "truncate",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/root/.bash_profile",
+      "operator": "drop_line",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/root/.bash_profile",
+      "operator": "swap_lines",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "artifact": "/root/.bash_profile",
+      "operator": "char_flip",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "artifact": "/root/.bash_profile",
+      "operator": "dup_line",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "artifact": "/root/.bash_profile",
+      "operator": "revert",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/root/.bash_profile",
+      "operator": "toggle_newline",
+      "kind": "control",
+      "pass": true
+    }
+  ],
+  "semantic": 7,
+  "killed": 4,
+  "controls": 1,
+  "controls_passed": 1
+}

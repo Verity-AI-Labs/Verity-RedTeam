@@ -1,0 +1,158 @@
+[
+  {
+    "task": "blind-maze",
+    "image_id": "sha256:0b8a21790f7582f7a57be5d2ccb54373da5a9bf5bdfc43eb0b1030db547d221e",
+    "controls": [
+      {
+        "name": "reference_solution",
+        "expected": "reward >= 1",
+        "result": {
+          "kind": "oracle",
+          "reward": 1,
+          "status": "graded",
+          "seconds": 0.43
+        },
+        "passed": true
+      },
+      {
+        "name": "known_exploit",
+        "expected_reward": 1,
+        "result": {
+          "kind": "exploit_control",
+          "reward": 1,
+          "status": "graded",
+          "seconds": 0.37
+        },
+        "passed": true
+      }
+    ]
+  },
+  {
+    "task": "titanic-female-survival-prediction",
+    "image_id": "sha256:d830418f103cbb01b32e2a6ba3c246e2b060332688a0e252a761e28d29224c08",
+    "controls": [
+      {
+        "name": "reference_solution",
+        "status": "unavailable",
+        "reason": "The vendored solve.sh only prints 'no solution written'."
+      },
+      {
+        "name": "known_exploit",
+        "expected_reward": 1,
+        "result": {
+          "kind": "exploit_control",
+          "reward": 1.0,
+          "status": "graded",
+          "seconds": 1.21
+        },
+        "passed": true
+      }
+    ]
+  },
+  {
+    "task": "recover-encrypted-db-credentials",
+    "image_id": "sha256:5afdbfffd9936f77c87fcb002f761878eb6944036c986591fe265c4fd68fbb03",
+    "controls": [
+      {
+        "name": "reference_solution",
+        "expected": "reward >= 1",
+        "result": {
+          "kind": "oracle",
+          "reward": 1,
+          "status": "graded",
+          "seconds": 0.75
+        },
+        "passed": true
+      },
+      {
+        "name": "known_exploit",
+        "expected_reward": 1,
+        "result": {
+          "kind": "exploit_control",
+          "reward": 1,
+          "status": "graded",
+          "seconds": 0.59
+        },
+        "passed": true
+      }
+    ]
+  },
+  {
+    "task": "analyze-pgn-best-chess-move",
+    "image_id": "sha256:5706e266c8f536dc2e7f7b59edb99db2d13c99f0c4c264f364b436048c0a8505",
+    "controls": [
+      {
+        "name": "reference_solution",
+        "expected": "reward >= 1",
+        "result": {
+          "kind": "oracle",
+          "reward": 1,
+          "status": "graded",
+          "seconds": 1.22
+        },
+        "passed": true
+      },
+      {
+        "name": "known_exploit",
+        "status": "unavailable",
+        "reason": "The documented exploit calls an external chess API; network access is disabled for all task containers."
+      }
+    ]
+  },
+  {
+    "task": "1104",
+    "image_id": "sha256:b5e4bd7aa58e01c07be28c5a766b4de48d87b69b13b6474a4c18c84ccd1a0137",
+    "controls": [
+      {
+        "name": "reference_solution",
+        "expected": "reward >= 1",
+        "result": {
+          "kind": "oracle",
+          "reward": 1,
+          "status": "graded",
+          "seconds": 0.42
+        },
+        "passed": true
+      },
+      {
+        "name": "known_exploit",
+        "expected_reward": 1,
+        "result": {
+          "kind": "exploit_control",
+          "reward": 1,
+          "status": "graded",
+          "seconds": 0.37
+        },
+        "passed": true
+      }
+    ]
+  },
+  {
+    "task": "winning-avg-corewars",
+    "image_id": "sha256:b1bffd0fa814c5f1f30e4c304bc5369b11ae824a460f81186c6b66fdfafc594d",
+    "controls": [
+      {
+        "name": "reference_solution",
+        "expected": "reward >= 1",
+        "result": {
+          "kind": "oracle",
+          "reward": 1,
+          "status": "graded",
+          "seconds": 0.73
+        },
+        "passed": true
+      },
+      {
+        "name": "known_exploit",
+        "expected_reward": 1,
+        "result": {
+          "kind": "exploit_control",
+          "reward": 1,
+          "status": "graded",
+          "seconds": 0.36
+        },
+        "passed": true
+      }
+    ]
+  }
+]

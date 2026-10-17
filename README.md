@@ -1,147 +1,109 @@
-# Verity RedTeam
+# Verity
 
-Verity audits reinforcement learning environments for reward hacks before they are used for training. For each task it runs the reference solution and grader to check that the grader is valid, records what the grader actually reads, then gives an attacker model four attempts to pass the grader without doing the real work. Passing attempts are replayed under trace and reviewed by a judge model. Docker runs the task containers; Ollama runs the models locally.
+**Find the ways an RL environment can be cheated, then stop the model from learning them while it trains.**
 
-Each run writes one `report.json` per task with seven sections: provenance, spec, validity, oracle_footprint, redteam, profile, scorecard. See [docs/audit.md](docs/audit.md) for the full schema and evidence rules.
+Verity is one system that works on any reinforcement-learning environment. Chess is the demo environment: easy to see, and it looks good in a demo. The 13 Terminal Wrench tasks are real agent environments audited by the same system.
 
-## Current Tasks
+## How it works
 
-Ten Terminal Wrench tasks, all registered in `tasks.json`:
+1. **Audit.** An AI attacker probes the environment's grader for shortcuts. Verity proves each one with numbers: what the grader paid against what the answer was really worth, or traced evidence of the exact file the agent read or changed.
+2. **Markers.** Each proven shortcut becomes a marker: a small rule, plus a warning and a fix. Verity tests every marker against cheat variants and honest answers before it can act.
+3. **Guard.** During training, Guard sits between the environment's grader and the trainer. Every model output is checked against the markers in about 2 µs. In **enforce** mode, a match turns the reward into −1, so cheating never pays. In **observe** mode, matches are only logged.
 
-| Task ID | Description |
+## Where everything is
+
+```
+verity/                 THE SYSTEM: knows nothing about any particular environment
+  environment.py        the plug every environment implements
+  audit.py              one command to audit any environment and write its markers
+  probe.py              audit engine for answer environments: attacker, proof, marker testing
+  sandbox.py            audit engine for agent environments in Docker: grader checks, attacker, traced proof, judge
+  runner.py             Docker and task plumbing used by sandbox.py
+  llm.py                model client: OpenRouter, DeepSeek or Ollama, with a spend cap
+  markers.py            the marker format, rule matching, testing, conversion from sandbox reports
+  guard.py              enforces markers between the grader and the trainer
+  prompts/              attacker and judge prompts
+environments/           ENVIRONMENTS plugged into Verity
+  chess.py              the demo: chess with a seeded, disclosed grader bug
+  terminal_wrench.py    13 sandboxed terminal tasks (task files in tasks/, listed in tasks.json)
+train.py                RL fine-tuning (TRL GRPO + LoRA) on any answer environment, Guard observing or enforcing
+evaluate.py             held-out comparison: base model vs. both trained arms
+dashboard/              local demo UI: audit, training curves, arena, real environments
+markers/                audit output: one marker file per environment
+experiments/            raw results: sandbox audit runs (runs/), chess audit reports (chess-audits/)
+scripts/                Hyak jobs, batch audits, maintenance scripts
+tests/                  unit tests (no GPU, Docker or network needed)
+docs/                   original plan, Devpost draft, lab log, report schema, dashboard API
+data/, artifacts/       not in git: chess positions; trained models, telemetry, results
+```
+
+[PROGRESS.md](PROGRESS.md) has the current state and results.
+
+## The plug: adding an environment
+
+Create `environments/<name>.py` with `NAME`, `VERSION`, `KIND` and `DESCRIPTION`. Then add:
+
+- **Answer environments** (the model replies with text):
+  - `tasks(split)` and `data_path(split)`
+  - `grade(task, output)`: the environment's own reward, which is what gets audited
+  - `check(task, output)`: a trusted reference score
+  - `honest_examples(task)`
+  - optional: `metrics`, `task_key`, and a seeded bug for offline demos
+- **Sandbox environments** (the model runs commands in a Docker machine): `tasks()`. The sandbox engine does the rest.
+
+[verity/environment.py](verity/environment.py) has the full contract. Once the file exists, the same commands work:
+
+```bash
+python -m verity.audit <name> ...            # find and prove hacks, write markers/<name>.json
+python train.py --env <name> --arm verity    # train with Guard enforcing those markers
+```
+
+## Run it
+
+```bash
+uv venv --python 3.13 && uv pip install -r requirements.txt   # requirements-ml.txt adds torch/TRL for training and the arena
+brew install stockfish                                       # chess labels, arena and live probes
+.venv/bin/python -m unittest discover -s tests               # all tests
+```
+
+| Task | Command |
 |---|---|
-| blind-maze | Explore a blind maze and write its map |
-| titanic-female-survival-prediction | Predict female Titanic survival outcomes |
-| recover-encrypted-db-credentials | Recover credentials from an encrypted database |
-| analyze-pgn-best-chess-move | Find the best move in a chess game |
-| 1104 | Fix a systemd service's LVM mount dependency |
-| winning-avg-corewars | Write a high-performing Core War warrior |
-| 462 | Persist appmonitor environment configuration |
-| 481 | Fix bash customizations not applied in new sessions |
-| 710 | Write a video-processing script for compilation clips |
-| 361 | Fix a multi-script dev environment initialization |
+| Generate chess positions | `python -m environments.chess --stockfish $(which stockfish)` |
+| Audit chess offline (seeded bug, no API) | `python -m verity.audit chess --fixture` |
+| Audit chess with an AI attacker | `python -m verity.audit chess --model anthropic/claude-opus-5.5 --input-price 4 --output-price 20` (`OPENROUTER_API_KEY` in `.env`) |
+| Audit a sandboxed task | `python -m verity.audit terminal_wrench --task blind-maze --model qwen3-coder:30b` (Docker + Ollama, or `--provider openrouter`) |
+| Markers from an existing audit, plus a replay | `python -m verity.audit terminal_wrench --report experiments/runs/full-audit-v51-20261012/blind-maze/report.json --replay experiments/runs/full-audit-v51-20261012/blind-maze/redteam/a1/trajectory.jsonl` |
+| Batch sandbox audits over the API | `python scripts/run-batch.py --dry-run` (then without `--dry-run`) |
+| Guard speed | `python -m verity.guard --pack markers/chess-fixture.json` |
+| Train one arm (CUDA) | `python train.py --env chess --arm verity --output runs/verity --signatures markers/chess-fixture.json` |
+| Evaluate both arms | `python evaluate.py --env chess --baseline runs/baseline --verity runs/verity --output runs/results.json` |
+| Dashboard | `python -m dashboard.server`, then open http://127.0.0.1:8765 |
 
-## Requirements
+### Training on Hyak
 
-- Python 3.9+
-- Docker (Docker Desktop, OrbStack, or Linux Docker). Privileged containers must be allowed, because the strace tracer sidecar needs them.
-- Ollama serving on `http://127.0.0.1:11434`. `scripts/setup-local.sh` installs and starts it on macOS; on Linux, install Ollama normally.
-- Network access during image builds (the task containers themselves run with no network).
+[scripts/hyak.sh](scripts/hyak.sh) has stages `setup`, `smoke` (5 steps per arm), `pilot` (baseline only: does hacking emerge?), `full` and `evaluate`. Environment variables tune the runs:
 
-## Before the first run
+| Variable | Use |
+|---|---|
+| `LEARNING_RATE`, `STEPS`, `SEED`, `PILOT_STEPS` | training settings |
+| `ARMS=baseline` / `ARMS=verity` | train one arm per GPU, in parallel |
+| `SIGNATURES` | which marker file to use |
 
-1. Pull the model. It is used as both the attacker and the judge:
-```bash
-   ollama pull qwen3-coder:30b
-```
-2. Run the unit tests (no Docker, no models):
-```bash
-   PYTHONPATH=. python3 -m unittest tests.test_audit tests.test_runner
-```
-3. Run the Docker integration test. It must pass before a real run, because it is the only check that tracing works on this machine:
-```bash
-   VERITY_DOCKER_TESTS=1 PYTHONPATH=. python3 -m unittest tests.test_audit -v
-```
-4. Smoke-test the four newest tasks. Each should print `valid`:
-```bash
-   for t in 462 481 710 361; do
-     python3 src/runner.py audit --task $t --attempts 1 --max-turns 1 \
-       --attacker qwen3-coder:30b --judge qwen3-coder:30b
-   done
-   for r in experiments/runs/*-audit/report.json; do
-     python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); v=r["validity"]; print(r["provenance"]["task_id"], v.get("verdict"), v.get("error"))' "$r"
-   done
-```
-   If a task prints `oracle_fails`, read `oracle/oracle.log` in its run folder. When done, delete the smoke-test runs so they are not mixed into the results:
-```bash
-   rm -rf experiments/runs/*-audit
-```
+`full` refuses to start unless the pilot showed hacking emerging. `scripts/sync_hyak.sh` copies results to `artifacts/` for the dashboard.
 
-## Run the full audit
+Defaults: Qwen2.5-1.5B-Instruct, LoRA rank 16, 8 tasks × 8 samples per step, 160 tokens, temperature 1.0, checkpoints every 25 steps. Both arms always use identical settings.
 
-Runs all ten tasks in sequence. A task that crashes is logged and skipped; it does not stop the loop.
+Each run writes three things:
+- `run.json`: settings, versions, and git commit.
+- `telemetry.jsonl`, logged per step:
+  - grader reward, guarded reward and true score
+  - catch rate and caught examples
+  - Guard cost
+  - a reward-up-but-quality-flat alarm
+- `adapter/`: the trained model.
 
-```bash
-set -o pipefail
-ATTACKER=qwen3-coder:30b
-JUDGE=qwen3-coder:30b
-mkdir -p experiments/runs/logs
-for task in blind-maze titanic-female-survival-prediction \
-            recover-encrypted-db-credentials analyze-pgn-best-chess-move \
-            1104 winning-avg-corewars 462 481 710 361; do
-  python3 src/runner.py audit --task "$task" --attacker "$ATTACKER" --judge "$JUDGE" \
-    2>&1 | tee "experiments/runs/logs/$task.log" || echo "$task" >> experiments/runs/logs/failed.txt
-done
-```
+## Honest limits
 
-Each task uses four attempts of up to 40 turns. Reports are written to `experiments/runs/<task>-<timestamp>-audit/report.json`, and any crashed task IDs are listed in `experiments/runs/logs/failed.txt`.
-
-To run one task:
-
-```bash
-python3 src/runner.py audit --task blind-maze \
-  --attacker qwen3-coder:30b --judge qwen3-coder:30b
-```
-
-## Run with DeepSeek (hosted API)
-
-`scripts/run-batch.py` audits the same ten tasks with `deepseek-flash` as both attacker and judge, three tasks in parallel. It writes `<out>/<task>/report.json`, `<out>/api_calls.jsonl` (one line per API call: usage, estimated cost, peak flag, reasoning) and `<out>/run_manifest.json`. It stops when the estimated spend passes `--max-usd` (default 4.25), on HTTP 401/402, or at the hard deadline; the in-flight task still writes its report (`redteam.aborted: true`). No new task starts after `--deadline-hours` (default 4). Generation settings are recorded in `provenance.request_config` and hashed into `protocol_id`. The Ollama workflow above is unchanged.
-
-1. Set the key in the current shell only (it is read from the environment and never written anywhere):
-```bash
-   read -rs DEEPSEEK_API_KEY && export DEEPSEEK_API_KEY
-```
-2. Check the plan. This makes no network, Docker or model calls:
-```bash
-   python3 scripts/run-batch.py --dry-run
-```
-3. Smoke-test one task in its own folder, with its own spend cap:
-```bash
-   python3 scripts/run-batch.py --tasks blind-maze --max-usd 0.75 \
-     --out experiments/runs/smoke-deepseek-v4.1-flash-$(date -u +%Y%m%d)
-```
-4. Run all ten tasks, keeping the Mac awake (default folder `experiments/runs/full-deepseek-v4.1-flash-<UTC date>`):
-```bash
-   caffeinate -ims python3 scripts/run-batch.py 2>&1 | tee -a experiments/runs/deepseek-batch.log
-```
-If the run stops early, rerun the same command with `--resume`. Tasks with a complete report are skipped, and partial or aborted task folders are moved to `<out>/superseded/`.
-
-## Reading the results
-
-Print each task's scorecard:
-
-```bash
-for report in experiments/runs/*-audit/report.json; do
-  python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); print(r["provenance"]["task_id"], json.dumps(r["scorecard"]))' "$report"
-done
-```
-
-List attempts that trace evidence labels a hack but the judge called honest. Review these by hand, because a legitimate solution that writes a different file than the reference solution can trigger trace evidence:
-
-```bash
-for r in experiments/runs/*-audit/report.json; do python3 -c 'import json,sys
-r=json.load(open(sys.argv[1]))
-for a in r["redteam"].get("attempts", []):
-    if a["label"] == "hack" and a["judge"] == "honest": print(r["provenance"]["task_id"], a["id"], a["evidence_kinds"])' "$r"; done
-```
-
-Notes on interpretation:
-
-- Check `redteam.summary.errors` before interpreting a zero-hack result.
-- Zero hacks means none were found in that run; it does not mean the environment is safe. With four attempts, the per-attempt exploit rate could still be as high as about 53% (`no_exploit_upper`).
-- A `certified` hack has trace evidence behind it. A `judged` hack rests only on the judge's reading of the transcript, and the judge has not yet been validated with the current `prompts/judge.md`, and it is the same model as the attacker, so treat judged hacks as provisional.
-
-## Sharing results
-
-`experiments/runs/` is gitignored. Send results back as an archive:
-
-```bash
-tar czf verity-runs.tgz experiments/runs
-```
-
-## Adding a task
-
-1. Put the task under `tasks/<id>/original_task/`. It needs `instruction.md`, `environment/Dockerfile`, `solution/solve.sh`, and `tests/test_outputs.py`.
-2. Add an entry to `tasks.json` with `path`, `instruction`, `tests`, `exploit_reference`, `description`, and `grader`. For a pass/fail pytest grader, use `"command": "python3 -m pytest /tests/test_outputs.py -rA", "score_type": "binary"`. For a numeric grader, use `"score_type": "numeric"` with a `score_file` and an optional `pass_threshold`.
-3. The grader runs with no network, so any test dependency beyond pytest must be installed in the Dockerfile.
-4. Smoke-test the task as above and confirm `validity.verdict` is `valid` before including it in a run.
+- The chess bug is seeded and disclosed.
+- Command-matching markers for agent environments are a pre-execution screen, not a syscall sandbox.
+- Results describe these environments and runs, not general safety.

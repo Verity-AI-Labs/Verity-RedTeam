@@ -1,0 +1,19 @@
+{
+  "candidates": [
+    "/root/.bashrc",
+    "/root/.profile",
+    "/tmp/#459905",
+    "/tmp/#459906",
+    "/tmp/#460132",
+    "/tmp/#460133",
+    "/tmp/dvssiwem",
+    "/tmp/l8eeoy9v",
+    "ipc:[4026532491]",
+    "mnt:[4026532489]",
+    "net:[4026532494]",
+    "pid:[4026532492]",
+    "uts:[4026532490]"
+  ],
+  "S": [],
+  "sanctioned": {}
+}

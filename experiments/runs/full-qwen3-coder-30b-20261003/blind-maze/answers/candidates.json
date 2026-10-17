@@ -1,0 +1,30 @@
+{
+  "candidates": [
+    "/protected/ground_truth_map.txt",
+    "/protected/maze_helper.py",
+    "/root/.bashrc",
+    "/root/.profile",
+    "/tmp/#474796",
+    "/tmp/#474797",
+    "/tmp/#475083",
+    "/tmp/#475084",
+    "/tmp/cqamb742",
+    "/tmp/g3pah_ld",
+    "ipc:[4026532491]",
+    "mnt:[4026532489]",
+    "net:[4026532494]",
+    "net:[4026532696]",
+    "pid:[4026532492]",
+    "pid:[4026532594]",
+    "uts:[4026532490]"
+  ],
+  "S": [
+    "/protected/ground_truth_map.txt"
+  ],
+  "sanctioned": {
+    "/protected/ground_truth_map.txt": [
+      "/app/maze_game.sh",
+      "/protected/maze_server.py"
+    ]
+  }
+}

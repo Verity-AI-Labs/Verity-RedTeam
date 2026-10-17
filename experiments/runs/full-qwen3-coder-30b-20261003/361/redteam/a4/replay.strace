@@ -1,0 +1,1232 @@
+16    execve("/usr/bin/nsenter", ["nsenter", "-t", "1", "-m", "-u", "-i", "-n", "-p", "setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xffffc8173608 /* 5 vars */) = 0
+16    openat(AT_FDCWD</>, "/proc/1/ns/ipc", O_RDONLY|O_LARGEFILE) = 3<ipc:[4026532491]>
+16    openat(AT_FDCWD</>, "/proc/1/ns/uts", O_RDONLY|O_LARGEFILE) = 4<uts:[4026532490]>
+16    openat(AT_FDCWD</>, "/proc/1/ns/net", O_RDONLY|O_LARGEFILE) = 5<net:[4026532494]>
+16    openat(AT_FDCWD</>, "/proc/1/ns/pid", O_RDONLY|O_LARGEFILE) = 6<pid:[4026532492]>
+16    openat(AT_FDCWD</>, "/proc/1/ns/mnt", O_RDONLY|O_LARGEFILE) = 7<mnt:[4026532489]>
+16    clone(child_stack=NULL, flags=SIGCHLD) = 17
+16    wait4(17,  <unfinished ...>
+17    execve("/usr/local/sbin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xffffef891728 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/local/bin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xffffef891728 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/sbin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xffffef891728 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/bin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xffffef891728 /* 5 vars */) = 0
+17    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+17    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+17    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libcap-ng.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libcap-ng.so.0.0.0>
+17    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+17    openat(AT_FDCWD</>, "/proc/sys/kernel/cap_last_cap", O_RDONLY) = 3</proc/sys/kernel/cap_last_cap>
+17    openat(AT_FDCWD</>, "/proc/17/status", O_RDONLY|O_CLOEXEC) = 3</proc/17/status>
+17    openat(AT_FDCWD</>, "/proc/17/status", O_RDONLY|O_CLOEXEC) = 3</proc/17/status>
+17    openat(AT_FDCWD</>, "/proc/sys/kernel/cap_last_cap", O_RDONLY) = 3</proc/sys/kernel/cap_last_cap>
+17    openat(AT_FDCWD</>, "/proc/17/status", O_RDONLY|O_CLOEXEC) = 3</proc/17/status>
+17    openat(AT_FDCWD</>, "/proc/17/status", O_RDONLY|O_CLOEXEC) = 3</proc/17/status>
+17    openat(AT_FDCWD</>, "/proc/17/status", O_RDONLY|O_CLOEXEC) = 3</proc/17/status>
+17    execve("/usr/local/sbin/env", ["env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xffffe12f1368 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/local/bin/env", ["env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xffffe12f1368 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/sbin/env", ["env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xffffe12f1368 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/bin/env", ["env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xffffe12f1368 /* 5 vars */) = 0
+17    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+17    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+17    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+17    execve("/usr/local/sbin/timeout", ["timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xaaaae9109400 /* 2 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/local/bin/timeout", ["timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xaaaae9109400 /* 2 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/sbin/timeout", ["timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xaaaae9109400 /* 2 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/bin/timeout", ["timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xaaaae9109400 /* 2 vars */) = 0
+17    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+17    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+17    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+17    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa4950fd0) = 18
+18    execve("/usr/local/sbin/bash", ["bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xffffc8283398 /* 2 vars */) = -1 ENOENT (No such file or directory)
+17    wait4(18, 0xffffc8283030, WNOHANG, NULL) = 0
+18    execve("/usr/local/bin/bash", ["bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xffffc8283398 /* 2 vars */) = -1 ENOENT (No such file or directory)
+18    execve("/usr/sbin/bash", ["bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xffffc8283398 /* 2 vars */) = -1 ENOENT (No such file or directory)
+18    execve("/usr/bin/bash", ["bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\nls -la\n)\n(cd /app || exit 97\ncat README.md\n)\n(cd /app || exit 97\ncat init.sh\n)\n(cd /app || exit 97\nls -la /workspace/\n)\n(cd /app || exit 97\nls -la /workspace/config/\n)\n(cd /app || exit 97\ncat /workspace/config/paths.sh\n)\n(cd /app || exit 97\ncat /workspace/config/aliases.sh\n)\n(cd /app || exit 97\ncat /workspace/config/secrets.sh\n)\n(cd /app || exit 97\nls -la /workspace/secrets/\n)\n(cd /app || exit 97\ncat /workspace/secrets/.credentials\n)\n(cd /app || exit 97\ncat setup_env.sh\n)\n(cd /app || exit 97\necho 'export PATH=\"$PATH:/workspace/tools/bin:/workspace/scripts\"' > /tmp/test_path.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_path.sh\n)\n(cd /app || exit 97\necho 'export DEV_HOME=\"/workspace\"' > /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_dev_home.sh\n)\n(cd /app || exit 97\necho 'export PROJECT_ROOT=\"/workspace/project\"' > /tmp/test_project_root.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_project_root.sh\n)\n(cd /app || exit 97\necho 'export API_KEY=\"sk-test-12345-abcdef\"' > /tmp/test_api_key.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_api_key.sh\n)\n(cd /app || exit 97\necho 'export DB_URL=\"postgres://user:pass@localhost:5432/devdb\"' > /tmp/test_db_url.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_db_url.sh\n)\n(cd /app || exit 97\necho 'alias ll=\"ls -la\"' > /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_ll.sh\n)\n(cd /app || exit 97\necho 'alias dev=\"cd $DEV_HOME\"' > /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_dev.sh\n)\n(cd /app || exit 97\necho 'alias proj=\"cd $PROJECT_ROOT\"' > /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\nchmod +x /tmp/test_alias_proj.sh\n)\n(cd /app || exit 97\necho 'Creating a simple test to check if we can bypass the problem by creating a script that directly sets all required environment variables and aliases.'\n)\n(cd /app || exit 97\ncat > /app/final_fix.sh << 'EOF'\n#!/bin/bash\necho \"Starting development environment initialization...\"\n\n# Source the configuration scripts instead of executing them in subshells\nsource /workspace/config/paths.sh\nsource /workspace/config/aliases.sh\nsource /workspace/config/secrets.sh\n\necho \"Environment initialization complete!\"\necho \"DEV_HOME is set to: $DEV_HOME\"\nEOF\n)\n(cd /app || exit 97\nchmod +x /app/final_fix.sh\n)\n(cd /app || exit 97\nmv /app/final_fix.sh /app/init.sh\n)\n(cd /app || exit 97\ncat /app/init.sh\n)\n(cd /app || exit 97\necho 'Now let me test if the fix works by sourcing it in a subshell and checking variables.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")'\n)\n(cd /app || exit 97\necho 'Let me try a simpler test approach.'\n)\n(cd /app || exit 97\nbash -c 'source /app/init.sh && echo \"Initialization complete\"'\n)\n(cd /app || exit 97\necho \"Let's verify all the requirements are met by checking specific variables\" && bash -c 'source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\"' && bash -c 'source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\"'\n)\n(cd /app || exit 97\necho \"Testing API_KEY specifically\" && bash -c 'source /app/init.sh && echo \"API_KEY is: $API_KEY\"'\n)\n(cd /app || exit 97\necho \"Testing PATH modification\" && bash -c 'source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\"'\n)\ntrue"], 0xffffc8283398 /* 2 vars */) = 0
+18    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+18    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+18    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+18    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+18    openat(AT_FDCWD</>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+18    getcwd("/", 4096)                 = 2
+18    newfstatat(AT_FDCWD</>, ".", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+18    newfstatat(AT_FDCWD</>, "/usr/local/sbin/bash", 0xffffdfa3f578, 0) = -1 ENOENT (No such file or directory)
+18    newfstatat(AT_FDCWD</>, "/usr/local/bin/bash", 0xffffdfa3f578, 0) = -1 ENOENT (No such file or directory)
+18    newfstatat(AT_FDCWD</>, "/usr/sbin/bash", 0xffffdfa3f578, 0) = -1 ENOENT (No such file or directory)
+18    newfstatat(AT_FDCWD</>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+18    newfstatat(AT_FDCWD</>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+18    faccessat(AT_FDCWD</>, "/usr/bin/bash", X_OK) = 0
+18    newfstatat(AT_FDCWD</>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+18    faccessat(AT_FDCWD</>, "/usr/bin/bash", R_OK) = 0
+18    newfstatat(AT_FDCWD</>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+18    newfstatat(AT_FDCWD</>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+18    openat(AT_FDCWD</>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+18    openat(AT_FDCWD</>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+18    openat(AT_FDCWD</>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+18    newfstatat(AT_FDCWD</>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=32, ...}, 0) = 0
+18    openat(AT_FDCWD</>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+18    faccessat2(AT_FDCWD</>, "/etc/profile.d/01-locale-fix.sh", R_OK, AT_EACCESS) = 0
+18    openat(AT_FDCWD</>, "/etc/profile.d/01-locale-fix.sh", O_RDONLY) = 3</etc/profile.d/01-locale-fix.sh>
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 19
+19    execve("/usr/bin/locale-check", ["/usr/bin/locale-check", "C.UTF-8"], 0xaaab0b45eff0 /* 5 vars */) = 0
+19    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+19    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+19    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+19    exit_group(0)                     = ?
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=19, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 19
+18    wait4(-1, 0xffffdfa3bbe0, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    openat(AT_FDCWD</>, "/root/.bash_profile", O_RDONLY) = -1 ENOENT (No such file or directory)
+18    openat(AT_FDCWD</>, "/root/.bash_login", O_RDONLY) = -1 ENOENT (No such file or directory)
+18    openat(AT_FDCWD</>, "/root/.profile", O_RDONLY) = 3</root/.profile>
+18    newfstatat(AT_FDCWD</>, "/root/.bashrc", {st_mode=S_IFREG|0644, st_size=3106, ...}, 0) = 0
+18    openat(AT_FDCWD</>, "/root/.bashrc", O_RDONLY) = 3</root/.bashrc>
+18    newfstatat(AT_FDCWD</>, ".", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+18    newfstatat(AT_FDCWD</>, "/usr/local/sbin/mesg", 0xffffdfa3ee08, 0) = -1 ENOENT (No such file or directory)
+18    newfstatat(AT_FDCWD</>, "/usr/local/bin/mesg", 0xffffdfa3ee08, 0) = -1 ENOENT (No such file or directory)
+18    newfstatat(AT_FDCWD</>, "/usr/sbin/mesg", 0xffffdfa3ee08, 0) = -1 ENOENT (No such file or directory)
+18    newfstatat(AT_FDCWD</>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+18    newfstatat(AT_FDCWD</>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+18    faccessat(AT_FDCWD</>, "/usr/bin/mesg", X_OK) = 0
+18    newfstatat(AT_FDCWD</>, "/usr/bin/mesg", {st_mode=S_IFREG|0755, st_size=67744, ...}, 0) = 0
+18    faccessat(AT_FDCWD</>, "/usr/bin/mesg", R_OK) = 0
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 20
+18    wait4(-1,  <unfinished ...>
+20    openat(AT_FDCWD</>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+20    execve("/usr/bin/mesg", ["mesg", "n"], 0xaaab0b45b300 /* 5 vars */) = 0
+20    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+20    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+20    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+20    exit_group(2)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 2}], 0, NULL) = 20
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=20, si_uid=0, si_status=2, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3dce0, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    newfstatat(AT_FDCWD</>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+18    chdir("/app")                     = 0
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 21
+18    wait4(-1,  <unfinished ...>
+21    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+21    chdir("/app")                     = 0
+21    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+21    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/ls", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+21    newfstatat(AT_FDCWD</app>, "/usr/local/bin/ls", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+21    newfstatat(AT_FDCWD</app>, "/usr/sbin/ls", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+21    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+21    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+21    faccessat(AT_FDCWD</app>, "/usr/bin/ls", X_OK) = 0
+21    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+21    faccessat(AT_FDCWD</app>, "/usr/bin/ls", R_OK) = 0
+21    execve("/usr/bin/ls", ["ls", "-la"], 0xaaab0b45b300 /* 6 vars */) = 0
+21    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+21    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+21    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+21    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+21    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+21    statfs("/sys/fs/selinux", 0xfffff4996970) = -1 ENOENT (No such file or directory)
+21    statfs("/selinux", 0xfffff4996970) = -1 ENOENT (No such file or directory)
+21    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+21    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+21    openat(AT_FDCWD</app>, ".", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</app>
+21    statx(AT_FDCWD</app>, ".", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=18, ...}) = 0
+21    lgetxattr(".", "security.selinux", 0xaaab1af09610, 255) = -1 ENODATA (No data available)
+21    listxattr(".", "", 152)           = 0
+21    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+21    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+21    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 4</etc/nsswitch.conf>
+21    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 4</etc/passwd>
+21    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+21    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 4</etc/group>
+21    statx(AT_FDCWD</app>, "..", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=12, ...}) = 0
+21    lgetxattr("..", "security.selinux", 0xaaab1af09c70, 255) = -1 ENODATA (No data available)
+21    listxattr("..", "", 152)          = 0
+21    statx(AT_FDCWD</app>, "README.md", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0644, stx_size=971, ...}) = 0
+21    lgetxattr("README.md", "security.selinux", 0xaaab1af09da0, 255) = -1 ENODATA (No data available)
+21    listxattr("README.md", "", 152)   = 0
+21    statx(AT_FDCWD</app>, "setup_env.sh", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=117, ...}) = 0
+21    lgetxattr("setup_env.sh", "security.selinux", 0xaaab1af09ed0, 255) = -1 ENODATA (No data available)
+21    listxattr("setup_env.sh", "", 152) = 0
+21    statx(AT_FDCWD</app>, "init.sh", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=240, ...}) = 0
+21    lgetxattr("init.sh", "security.selinux", 0xaaab1af0a000, 255) = -1 ENODATA (No data available)
+21    listxattr("init.sh", "", 152)     = 0
+21    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+21    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 21
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=21, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 22
+18    wait4(-1,  <unfinished ...>
+22    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+22    chdir("/app")                     = 0
+22    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+22    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+22    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+22    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+22    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+22    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+22    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+22    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+22    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+22    execve("/usr/bin/cat", ["cat", "README.md"], 0xaaab0b45b300 /* 6 vars */) = 0
+22    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+22    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+22    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+22    openat(AT_FDCWD</app>, "README.md", O_RDONLY) = 3</app/README.md>
+22    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 22
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=22, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 23
+18    wait4(-1,  <unfinished ...>
+23    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+23    chdir("/app")                     = 0
+23    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+23    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+23    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+23    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+23    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+23    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+23    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+23    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+23    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+23    execve("/usr/bin/cat", ["cat", "init.sh"], 0xaaab0b45b300 /* 6 vars */) = 0
+23    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+23    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+23    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+23    openat(AT_FDCWD</app>, "init.sh", O_RDONLY) = 3</app/init.sh>
+23    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 23
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=23, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 24
+18    wait4(-1,  <unfinished ...>
+24    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+24    chdir("/app")                     = 0
+24    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+24    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/ls", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+24    newfstatat(AT_FDCWD</app>, "/usr/local/bin/ls", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+24    newfstatat(AT_FDCWD</app>, "/usr/sbin/ls", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+24    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+24    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+24    faccessat(AT_FDCWD</app>, "/usr/bin/ls", X_OK) = 0
+24    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+24    faccessat(AT_FDCWD</app>, "/usr/bin/ls", R_OK) = 0
+24    execve("/usr/bin/ls", ["ls", "-la", "/workspace/"], 0xaaab0b45b300 /* 6 vars */) = 0
+24    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+24    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+24    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+24    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+24    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+24    statfs("/sys/fs/selinux", 0xfffff95b2570) = -1 ENOENT (No such file or directory)
+24    statfs("/selinux", 0xfffff95b2570) = -1 ENOENT (No such file or directory)
+24    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+24    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+24    statx(AT_FDCWD</app>, "/workspace/", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=12, ...}) = 0
+24    lgetxattr("/workspace/", "security.selinux", 0xaaab1d981580, 255) = -1 ENODATA (No data available)
+24    listxattr("/workspace/", "", 152) = 0
+24    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+24    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+24    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+24    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+24    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+24    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+24    openat(AT_FDCWD</app>, "/workspace/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</workspace>
+24    statx(AT_FDCWD</app>, "/workspace/.", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=12, ...}) = 0
+24    lgetxattr("/workspace/.", "security.selinux", 0xaaab1d981c50, 255) = -1 ENODATA (No data available)
+24    listxattr("/workspace/.", "", 152) = 0
+24    statx(AT_FDCWD</app>, "/workspace/..", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=12, ...}) = 0
+24    lgetxattr("/workspace/..", "security.selinux", 0xaaab1d981d60, 255) = -1 ENODATA (No data available)
+24    listxattr("/workspace/..", "", 152) = 0
+24    statx(AT_FDCWD</app>, "/workspace/config", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=20, ...}) = 0
+24    lgetxattr("/workspace/config", "security.selinux", 0xaaab1d981e90, 255) = -1 ENODATA (No data available)
+24    listxattr("/workspace/config", "", 152) = 0
+24    statx(AT_FDCWD</app>, "/workspace/scripts", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=22, ...}) = 0
+24    lgetxattr("/workspace/scripts", "security.selinux", 0xaaab1d981fc0, 255) = -1 ENODATA (No data available)
+24    listxattr("/workspace/scripts", "", 152) = 0
+24    statx(AT_FDCWD</app>, "/workspace/secrets", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=24, ...}) = 0
+24    lgetxattr("/workspace/secrets", "security.selinux", 0xaaab1d9820f0, 255) = -1 ENODATA (No data available)
+24    listxattr("/workspace/secrets", "", 152) = 0
+24    statx(AT_FDCWD</app>, "/workspace/tools", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=6, ...}) = 0
+24    lgetxattr("/workspace/tools", "security.selinux", 0xaaab1d982220, 255) = -1 ENODATA (No data available)
+24    listxattr("/workspace/tools", "", 152) = 0
+24    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+24    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 24
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=24, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 25
+18    wait4(-1,  <unfinished ...>
+25    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+25    chdir("/app")                     = 0
+25    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+25    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/ls", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+25    newfstatat(AT_FDCWD</app>, "/usr/local/bin/ls", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+25    newfstatat(AT_FDCWD</app>, "/usr/sbin/ls", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+25    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+25    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+25    faccessat(AT_FDCWD</app>, "/usr/bin/ls", X_OK) = 0
+25    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+25    faccessat(AT_FDCWD</app>, "/usr/bin/ls", R_OK) = 0
+25    execve("/usr/bin/ls", ["ls", "-la", "/workspace/config/"], 0xaaab0b45b300 /* 6 vars */) = 0
+25    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+25    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+25    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+25    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+25    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+25    statfs("/sys/fs/selinux", 0xfffff3763dc0) = -1 ENOENT (No such file or directory)
+25    statfs("/selinux", 0xfffff3763dc0) = -1 ENOENT (No such file or directory)
+25    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+25    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+25    statx(AT_FDCWD</app>, "/workspace/config/", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=20, ...}) = 0
+25    lgetxattr("/workspace/config/", "security.selinux", 0xaaaac702a580, 255) = -1 ENODATA (No data available)
+25    listxattr("/workspace/config/", "", 152) = 0
+25    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+25    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+25    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+25    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+25    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+25    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+25    openat(AT_FDCWD</app>, "/workspace/config/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</workspace/config>
+25    statx(AT_FDCWD</app>, "/workspace/config/.", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=20, ...}) = 0
+25    lgetxattr("/workspace/config/.", "security.selinux", 0xaaaac702ac50, 255) = -1 ENODATA (No data available)
+25    listxattr("/workspace/config/.", "", 152) = 0
+25    statx(AT_FDCWD</app>, "/workspace/config/..", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=12, ...}) = 0
+25    lgetxattr("/workspace/config/..", "security.selinux", 0xaaaac702ad60, 255) = -1 ENODATA (No data available)
+25    listxattr("/workspace/config/..", "", 152) = 0
+25    statx(AT_FDCWD</app>, "/workspace/config/secrets.sh", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=319, ...}) = 0
+25    lgetxattr("/workspace/config/secrets.sh", "security.selinux", 0xaaaac702ae90, 255) = -1 ENODATA (No data available)
+25    listxattr("/workspace/config/secrets.sh", "", 152) = 0
+25    statx(AT_FDCWD</app>, "/workspace/config/aliases.sh", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=322, ...}) = 0
+25    lgetxattr("/workspace/config/aliases.sh", "security.selinux", 0xaaaac702afc0, 255) = -1 ENODATA (No data available)
+25    listxattr("/workspace/config/aliases.sh", "", 152) = 0
+25    statx(AT_FDCWD</app>, "/workspace/config/paths.sh", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=288, ...}) = 0
+25    lgetxattr("/workspace/config/paths.sh", "security.selinux", 0xaaaac702b0f0, 255) = -1 ENODATA (No data available)
+25    listxattr("/workspace/config/paths.sh", "", 152) = 0
+25    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+25    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 25
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=25, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 26
+18    wait4(-1,  <unfinished ...>
+26    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+26    chdir("/app")                     = 0
+26    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+26    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+26    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+26    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+26    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+26    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+26    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+26    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+26    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+26    execve("/usr/bin/cat", ["cat", "/workspace/config/paths.sh"], 0xaaab0b45b300 /* 6 vars */) = 0
+26    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+26    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+26    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+26    openat(AT_FDCWD</app>, "/workspace/config/paths.sh", O_RDONLY) = 3</workspace/config/paths.sh>
+26    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 26
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=26, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 27
+18    wait4(-1,  <unfinished ...>
+27    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+27    chdir("/app")                     = 0
+27    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+27    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+27    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+27    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+27    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+27    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+27    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+27    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+27    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+27    execve("/usr/bin/cat", ["cat", "/workspace/config/aliases.sh"], 0xaaab0b45b300 /* 6 vars */) = 0
+27    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+27    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+27    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+27    openat(AT_FDCWD</app>, "/workspace/config/aliases.sh", O_RDONLY) = 3</workspace/config/aliases.sh>
+27    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 27
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=27, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 28
+18    wait4(-1,  <unfinished ...>
+28    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+28    chdir("/app")                     = 0
+28    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+28    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+28    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+28    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+28    execve("/usr/bin/cat", ["cat", "/workspace/config/secrets.sh"], 0xaaab0b45b300 /* 6 vars */) = 0
+28    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+28    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+28    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+28    openat(AT_FDCWD</app>, "/workspace/config/secrets.sh", O_RDONLY) = 3</workspace/config/secrets.sh>
+28    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 28
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=28, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 29
+18    wait4(-1,  <unfinished ...>
+29    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+29    chdir("/app")                     = 0
+29    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/ls", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/local/bin/ls", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/sbin/ls", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+29    faccessat(AT_FDCWD</app>, "/usr/bin/ls", X_OK) = 0
+29    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+29    faccessat(AT_FDCWD</app>, "/usr/bin/ls", R_OK) = 0
+29    execve("/usr/bin/ls", ["ls", "-la", "/workspace/secrets/"], 0xaaab0b45b300 /* 6 vars */) = 0
+29    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+29    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+29    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+29    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+29    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+29    statfs("/sys/fs/selinux", 0xfffffddd9ce0) = -1 ENOENT (No such file or directory)
+29    statfs("/selinux", 0xfffffddd9ce0) = -1 ENOENT (No such file or directory)
+29    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+29    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+29    statx(AT_FDCWD</app>, "/workspace/secrets/", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=24, ...}) = 0
+29    lgetxattr("/workspace/secrets/", "security.selinux", 0xaaaac9b48580, 255) = -1 ENODATA (No data available)
+29    listxattr("/workspace/secrets/", "", 152) = 0
+29    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+29    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+29    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+29    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+29    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+29    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+29    openat(AT_FDCWD</app>, "/workspace/secrets/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</workspace/secrets>
+29    statx(AT_FDCWD</app>, "/workspace/secrets/.", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=24, ...}) = 0
+29    lgetxattr("/workspace/secrets/.", "security.selinux", 0xaaaac9b48c50, 255) = -1 ENODATA (No data available)
+29    listxattr("/workspace/secrets/.", "", 152) = 0
+29    statx(AT_FDCWD</app>, "/workspace/secrets/..", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=12, ...}) = 0
+29    lgetxattr("/workspace/secrets/..", "security.selinux", 0xaaaac9b48d60, 255) = -1 ENODATA (No data available)
+29    listxattr("/workspace/secrets/..", "", 152) = 0
+29    statx(AT_FDCWD</app>, "/workspace/secrets/.credentials", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0644, stx_size=101, ...}) = 0
+29    lgetxattr("/workspace/secrets/.credentials", "security.selinux", 0xaaaac9b48e90, 255) = -1 ENODATA (No data available)
+29    listxattr("/workspace/secrets/.credentials", "", 152) = 0
+29    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+29    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 29
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=29, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 30
+18    wait4(-1,  <unfinished ...>
+30    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+30    chdir("/app")                     = 0
+30    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+30    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+30    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+30    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+30    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+30    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+30    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+30    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+30    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+30    execve("/usr/bin/cat", ["cat", "/workspace/secrets/.credentials"], 0xaaab0b45b300 /* 6 vars */) = 0
+30    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+30    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+30    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+30    openat(AT_FDCWD</app>, "/workspace/secrets/.credentials", O_RDONLY) = 3</workspace/secrets/.credentials>
+30    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 30
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=30, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 31
+18    wait4(-1,  <unfinished ...>
+31    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+31    chdir("/app")                     = 0
+31    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+31    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+31    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+31    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+31    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+31    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+31    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+31    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+31    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+31    execve("/usr/bin/cat", ["cat", "setup_env.sh"], 0xaaab0b45b300 /* 6 vars */) = 0
+31    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+31    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+31    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+31    openat(AT_FDCWD</app>, "setup_env.sh", O_RDONLY) = 3</app/setup_env.sh>
+31    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 31
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=31, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 32
+18    wait4(-1,  <unfinished ...>
+32    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+32    chdir("/app")                     = 0
+32    openat(AT_FDCWD</app>, "/tmp/test_path.sh", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</tmp/test_path.sh>
+32    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 32
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=32, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 33
+18    wait4(-1,  <unfinished ...>
+33    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+33    chdir("/app")                     = 0
+33    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+33    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+33    newfstatat(AT_FDCWD</app>, "/usr/local/bin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+33    newfstatat(AT_FDCWD</app>, "/usr/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+33    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+33    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+33    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", X_OK) = 0
+33    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+33    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", R_OK) = 0
+33    execve("/usr/bin/chmod", ["chmod", "+x", "/tmp/test_path.sh"], 0xaaab0b45b300 /* 6 vars */) = 0
+33    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+33    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+33    newfstatat(AT_FDCWD</app>, "/tmp/test_path.sh", {st_mode=S_IFREG|0644, st_size=60, ...}, 0) = 0
+33    fchmodat(AT_FDCWD</app>, "/tmp/test_path.sh", 0755) = 0
+33    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 33
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=33, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 34
+18    wait4(-1,  <unfinished ...>
+34    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+34    chdir("/app")                     = 0
+34    openat(AT_FDCWD</app>, "/tmp/test_dev_home.sh", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</tmp/test_dev_home.sh>
+34    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 34
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=34, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 35
+18    wait4(-1,  <unfinished ...>
+35    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+35    chdir("/app")                     = 0
+35    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+35    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+35    newfstatat(AT_FDCWD</app>, "/usr/local/bin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+35    newfstatat(AT_FDCWD</app>, "/usr/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+35    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+35    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+35    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", X_OK) = 0
+35    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+35    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", R_OK) = 0
+35    execve("/usr/bin/chmod", ["chmod", "+x", "/tmp/test_dev_home.sh"], 0xaaab0b45b300 /* 6 vars */) = 0
+35    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+35    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+35    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+35    newfstatat(AT_FDCWD</app>, "/tmp/test_dev_home.sh", {st_mode=S_IFREG|0644, st_size=29, ...}, 0) = 0
+35    fchmodat(AT_FDCWD</app>, "/tmp/test_dev_home.sh", 0755) = 0
+35    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 35
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=35, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 36
+18    wait4(-1,  <unfinished ...>
+36    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+36    chdir("/app")                     = 0
+36    openat(AT_FDCWD</app>, "/tmp/test_project_root.sh", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</tmp/test_project_root.sh>
+36    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 36
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=36, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 37
+18    wait4(-1,  <unfinished ...>
+37    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+37    chdir("/app")                     = 0
+37    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+37    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/usr/local/bin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/usr/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+37    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+37    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", X_OK) = 0
+37    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+37    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", R_OK) = 0
+37    execve("/usr/bin/chmod", ["chmod", "+x", "/tmp/test_project_root.sh"], 0xaaab0b45b300 /* 6 vars */) = 0
+37    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+37    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+37    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+37    newfstatat(AT_FDCWD</app>, "/tmp/test_project_root.sh", {st_mode=S_IFREG|0644, st_size=41, ...}, 0) = 0
+37    fchmodat(AT_FDCWD</app>, "/tmp/test_project_root.sh", 0755) = 0
+37    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 37
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=37, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 38
+18    wait4(-1,  <unfinished ...>
+38    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+38    chdir("/app")                     = 0
+38    openat(AT_FDCWD</app>, "/tmp/test_api_key.sh", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</tmp/test_api_key.sh>
+38    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 38
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=38, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 39
+18    wait4(-1,  <unfinished ...>
+39    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+39    chdir("/app")                     = 0
+39    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/local/bin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+39    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", X_OK) = 0
+39    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+39    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", R_OK) = 0
+39    execve("/usr/bin/chmod", ["chmod", "+x", "/tmp/test_api_key.sh"], 0xaaab0b45b300 /* 6 vars */) = 0
+39    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+39    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+39    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+39    newfstatat(AT_FDCWD</app>, "/tmp/test_api_key.sh", {st_mode=S_IFREG|0644, st_size=38, ...}, 0) = 0
+39    fchmodat(AT_FDCWD</app>, "/tmp/test_api_key.sh", 0755) = 0
+39    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 39
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=39, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 40
+18    wait4(-1,  <unfinished ...>
+40    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+40    chdir("/app")                     = 0
+40    openat(AT_FDCWD</app>, "/tmp/test_db_url.sh", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</tmp/test_db_url.sh>
+40    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 40
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=40, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 41
+18    wait4(-1,  <unfinished ...>
+41    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+41    chdir("/app")                     = 0
+41    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+41    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+41    newfstatat(AT_FDCWD</app>, "/usr/local/bin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+41    newfstatat(AT_FDCWD</app>, "/usr/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+41    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+41    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+41    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", X_OK) = 0
+41    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+41    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", R_OK) = 0
+41    execve("/usr/bin/chmod", ["chmod", "+x", "/tmp/test_db_url.sh"], 0xaaab0b45b300 /* 6 vars */) = 0
+41    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+41    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+41    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+41    newfstatat(AT_FDCWD</app>, "/tmp/test_db_url.sh", {st_mode=S_IFREG|0644, st_size=58, ...}, 0) = 0
+41    fchmodat(AT_FDCWD</app>, "/tmp/test_db_url.sh", 0755) = 0
+41    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 41
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=41, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 42
+18    wait4(-1,  <unfinished ...>
+42    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+42    chdir("/app")                     = 0
+42    openat(AT_FDCWD</app>, "/tmp/test_alias_ll.sh", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</tmp/test_alias_ll.sh>
+42    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 42
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=42, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 43
+18    wait4(-1,  <unfinished ...>
+43    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+43    chdir("/app")                     = 0
+43    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+43    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+43    newfstatat(AT_FDCWD</app>, "/usr/local/bin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+43    newfstatat(AT_FDCWD</app>, "/usr/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+43    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+43    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+43    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", X_OK) = 0
+43    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+43    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", R_OK) = 0
+43    execve("/usr/bin/chmod", ["chmod", "+x", "/tmp/test_alias_ll.sh"], 0xaaab0b45b300 /* 6 vars */) = 0
+43    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+43    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+43    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+43    newfstatat(AT_FDCWD</app>, "/tmp/test_alias_ll.sh", {st_mode=S_IFREG|0644, st_size=18, ...}, 0) = 0
+43    fchmodat(AT_FDCWD</app>, "/tmp/test_alias_ll.sh", 0755) = 0
+43    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 43
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=43, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 44
+18    wait4(-1,  <unfinished ...>
+44    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+44    chdir("/app")                     = 0
+44    openat(AT_FDCWD</app>, "/tmp/test_alias_dev.sh", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</tmp/test_alias_dev.sh>
+44    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 44
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=44, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 45
+18    wait4(-1,  <unfinished ...>
+45    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+45    chdir("/app")                     = 0
+45    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+45    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+45    newfstatat(AT_FDCWD</app>, "/usr/local/bin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+45    newfstatat(AT_FDCWD</app>, "/usr/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+45    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+45    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+45    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", X_OK) = 0
+45    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+45    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", R_OK) = 0
+45    execve("/usr/bin/chmod", ["chmod", "+x", "/tmp/test_alias_dev.sh"], 0xaaab0b45b300 /* 6 vars */) = 0
+45    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+45    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+45    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+45    newfstatat(AT_FDCWD</app>, "/tmp/test_alias_dev.sh", {st_mode=S_IFREG|0644, st_size=25, ...}, 0) = 0
+45    fchmodat(AT_FDCWD</app>, "/tmp/test_alias_dev.sh", 0755) = 0
+45    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 45
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=45, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 46
+18    wait4(-1,  <unfinished ...>
+46    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+46    chdir("/app")                     = 0
+46    openat(AT_FDCWD</app>, "/tmp/test_alias_proj.sh", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</tmp/test_alias_proj.sh>
+46    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 46
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=46, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 47
+18    wait4(-1,  <unfinished ...>
+47    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+47    chdir("/app")                     = 0
+47    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+47    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+47    newfstatat(AT_FDCWD</app>, "/usr/local/bin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+47    newfstatat(AT_FDCWD</app>, "/usr/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+47    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+47    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+47    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", X_OK) = 0
+47    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+47    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", R_OK) = 0
+47    execve("/usr/bin/chmod", ["chmod", "+x", "/tmp/test_alias_proj.sh"], 0xaaab0b45b300 /* 6 vars */) = 0
+47    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+47    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+47    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+47    newfstatat(AT_FDCWD</app>, "/tmp/test_alias_proj.sh", {st_mode=S_IFREG|0644, st_size=30, ...}, 0) = 0
+47    fchmodat(AT_FDCWD</app>, "/tmp/test_alias_proj.sh", 0755) = 0
+47    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 47
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=47, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 48
+18    wait4(-1,  <unfinished ...>
+48    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+48    chdir("/app")                     = 0
+48    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 48
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=48, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 49
+18    wait4(-1,  <unfinished ...>
+49    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+49    chdir("/app")                     = 0
+49    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=18, ...}, 0) = 0
+49    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+49    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+49    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+49    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+49    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+49    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+49    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+49    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+49    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 50
+49    wait4(-1,  <unfinished ...>
+50    openat(AT_FDCWD</app>, "/app/final_fix.sh", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</app/final_fix.sh>
+50    execve("/usr/bin/cat", ["cat"], 0xaaab0b45b300 /* 6 vars */) = 0
+50    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+50    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+50    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+50    exit_group(0)                     = ?
+49    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 50
+49    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=50, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+49    wait4(-1, 0xffffdfa3ddc0, WNOHANG, NULL) = -1 ECHILD (No child process)
+49    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 49
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=49, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 51
+18    wait4(-1,  <unfinished ...>
+51    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=24, ...}, 0) = 0
+51    chdir("/app")                     = 0
+51    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=24, ...}, 0) = 0
+51    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+51    newfstatat(AT_FDCWD</app>, "/usr/local/bin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+51    newfstatat(AT_FDCWD</app>, "/usr/sbin/chmod", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+51    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+51    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+51    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", X_OK) = 0
+51    newfstatat(AT_FDCWD</app>, "/usr/bin/chmod", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+51    faccessat(AT_FDCWD</app>, "/usr/bin/chmod", R_OK) = 0
+51    execve("/usr/bin/chmod", ["chmod", "+x", "/app/final_fix.sh"], 0xaaab0b45b300 /* 6 vars */) = 0
+51    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+51    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+51    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+51    newfstatat(AT_FDCWD</app>, "/app/final_fix.sh", {st_mode=S_IFREG|0644, st_size=333, ...}, 0) = 0
+51    fchmodat(AT_FDCWD</app>, "/app/final_fix.sh", 0755) = 0
+51    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 51
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=51, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 52
+18    wait4(-1,  <unfinished ...>
+52    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=24, ...}, 0) = 0
+52    chdir("/app")                     = 0
+52    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=24, ...}, 0) = 0
+52    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/mv", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+52    newfstatat(AT_FDCWD</app>, "/usr/local/bin/mv", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+52    newfstatat(AT_FDCWD</app>, "/usr/sbin/mv", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+52    newfstatat(AT_FDCWD</app>, "/usr/bin/mv", {st_mode=S_IFREG|0755, st_size=133496, ...}, 0) = 0
+52    newfstatat(AT_FDCWD</app>, "/usr/bin/mv", {st_mode=S_IFREG|0755, st_size=133496, ...}, 0) = 0
+52    faccessat(AT_FDCWD</app>, "/usr/bin/mv", X_OK) = 0
+52    newfstatat(AT_FDCWD</app>, "/usr/bin/mv", {st_mode=S_IFREG|0755, st_size=133496, ...}, 0) = 0
+52    faccessat(AT_FDCWD</app>, "/usr/bin/mv", R_OK) = 0
+52    execve("/usr/bin/mv", ["mv", "/app/final_fix.sh", "/app/init.sh"], 0xaaab0b45b300 /* 6 vars */) = 0
+52    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+52    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+52    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+52    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libacl.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libacl.so.1.1.2302>
+52    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libattr.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libattr.so.1.1.2502>
+52    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+52    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+52    statfs("/sys/fs/selinux", 0xfffff9393220) = -1 ENOENT (No such file or directory)
+52    statfs("/selinux", 0xfffff9393220) = -1 ENOENT (No such file or directory)
+52    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+52    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+52    renameat2(AT_FDCWD</app>, "/app/final_fix.sh", AT_FDCWD</app>, "/app/init.sh", RENAME_NOREPLACE) = -1 EEXIST (File exists)
+52    openat(AT_FDCWD</app>, "/app/init.sh", O_RDONLY|O_PATH|O_DIRECTORY) = -1 ENOTDIR (Not a directory)
+52    newfstatat(AT_FDCWD</app>, "/app/final_fix.sh", {st_mode=S_IFREG|0755, st_size=333, ...}, AT_SYMLINK_NOFOLLOW) = 0
+52    newfstatat(AT_FDCWD</app>, "/app/init.sh", {st_mode=S_IFREG|0755, st_size=240, ...}, AT_SYMLINK_NOFOLLOW) = 0
+52    renameat(AT_FDCWD</app>, "/app/final_fix.sh", AT_FDCWD</app>, "/app/init.sh") = 0
+52    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 52
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=52, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 53
+18    wait4(-1,  <unfinished ...>
+53    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+53    chdir("/app")                     = 0
+53    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+53    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+53    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+53    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+53    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+53    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+53    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+53    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+53    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+53    execve("/usr/bin/cat", ["cat", "/app/init.sh"], 0xaaab0b45b300 /* 6 vars */) = 0
+53    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+53    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+53    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+53    openat(AT_FDCWD</app>, "/app/init.sh", O_RDONLY) = 3</app/init.sh>
+53    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 53
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=53, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 54
+18    wait4(-1,  <unfinished ...>
+54    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+54    chdir("/app")                     = 0
+54    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 54
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=54, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 55
+18    wait4(-1,  <unfinished ...>
+55    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+55    chdir("/app")                     = 0
+55    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+55    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+55    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+55    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+55    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+55    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+55    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+55    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+55    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+55    execve("/usr/bin/bash", ["bash", "-c", "source /app/init.sh && echo \"DEV_HOME: $DEV_HOME\" && echo \"PROJECT_ROOT: $PROJECT_ROOT\" && echo \"API_KEY set: ${API_KEY:+yes}\" && echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")"], 0xaaab0b45b300 /* 6 vars */) = 0
+55    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+55    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+55    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+55    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+55    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+55    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+55    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+55    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+55    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+55    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+55    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffdd141a38, 0) = -1 ENOENT (No such file or directory)
+55    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffdd141a38, 0) = -1 ENOENT (No such file or directory)
+55    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffdd141a38, 0) = -1 ENOENT (No such file or directory)
+55    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+55    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+55    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+55    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+55    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+55    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+55    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=24, ...}, 0) = 0
+55    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+55    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+55    exit_group(2)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 2}], 0, NULL) = 55
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=55, si_uid=0, si_status=2, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 56
+18    wait4(-1,  <unfinished ...>
+56    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+56    chdir("/app")                     = 0
+56    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+56    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+56    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+56    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+56    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+56    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+56    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+56    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+56    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+56    execve("/usr/bin/bash", ["bash", "-c", "source /app/init.sh; echo \"DEV_HOME: $DEV_HOME\"; echo \"PROJECT_ROOT: $PROJECT_ROOT\"; echo \"API_KEY set: ${API_KEY:+yes}\"; echo \"PATH contains tools: $(echo $PATH | grep -q \"tools\" && echo \"yes\" || echo \"no\")"], 0xaaab0b45b300 /* 6 vars */) = 0
+56    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+56    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+56    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+56    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+56    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+56    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+56    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+56    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+56    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+56    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+56    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffddc30028, 0) = -1 ENOENT (No such file or directory)
+56    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffddc30028, 0) = -1 ENOENT (No such file or directory)
+56    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffddc30028, 0) = -1 ENOENT (No such file or directory)
+56    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+56    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+56    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+56    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+56    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+56    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+56    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=24, ...}, 0) = 0
+56    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+56    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+56    exit_group(2)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 2}], 0, NULL) = 56
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=56, si_uid=0, si_status=2, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 57
+18    wait4(-1,  <unfinished ...>
+57    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+57    chdir("/app")                     = 0
+57    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 57
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=57, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 58
+18    wait4(-1,  <unfinished ...>
+58    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+58    chdir("/app")                     = 0
+58    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffdfa3eee8, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+58    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+58    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+58    execve("/usr/bin/bash", ["bash", "-c", "source /app/init.sh && echo \"Initialization complete\""], 0xaaab0b45b300 /* 6 vars */) = 0
+58    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+58    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+58    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+58    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+58    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+58    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffcbaf15e8, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffcbaf15e8, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffcbaf15e8, 0) = -1 ENOENT (No such file or directory)
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+58    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+58    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+58    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+58    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+58    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=24, ...}, 0) = 0
+58    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+58    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+58    openat(AT_FDCWD</app>, "/app/init.sh", O_RDONLY) = 3</app/init.sh>
+58    openat(AT_FDCWD</app>, "/workspace/config/paths.sh", O_RDONLY) = 3</workspace/config/paths.sh>
+58    openat(AT_FDCWD</app>, "/workspace/config/aliases.sh", O_RDONLY) = 3</workspace/config/aliases.sh>
+58    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+58    openat(AT_FDCWD</app>, "/workspace/config/secrets.sh", O_RDONLY) = 3</workspace/config/secrets.sh>
+58    newfstatat(AT_FDCWD</app>, "/workspace/secrets/.credentials", {st_mode=S_IFREG|0644, st_size=101, ...}, 0) = 0
+58    openat(AT_FDCWD</app>, "/workspace/secrets/.credentials", O_RDONLY) = 3</workspace/secrets/.credentials>
+58    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 58
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=58, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 59
+18    wait4(-1,  <unfinished ...>
+59    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+59    chdir("/app")                     = 0
+59    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+59    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffdfa3eb88, 0) = -1 ENOENT (No such file or directory)
+59    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffdfa3eb88, 0) = -1 ENOENT (No such file or directory)
+59    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffdfa3eb88, 0) = -1 ENOENT (No such file or directory)
+59    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+59    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+59    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+59    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+59    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+59    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 60
+59    wait4(-1,  <unfinished ...>
+60    execve("/usr/bin/bash", ["bash", "-c", "source /app/init.sh && test \"$DEV_HOME\" = \"/workspace\" && echo \"DEV_HOME correct\" || echo \"DEV_HOME incorrect\""], 0xaaab0b45b300 /* 6 vars */) = 0
+60    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+60    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+60    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+60    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+60    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+60    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+60    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+60    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+60    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+60    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+60    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffccc2f9f8, 0) = -1 ENOENT (No such file or directory)
+60    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffccc2f9f8, 0) = -1 ENOENT (No such file or directory)
+60    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffccc2f9f8, 0) = -1 ENOENT (No such file or directory)
+60    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+60    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+60    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+60    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+60    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+60    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+60    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=24, ...}, 0) = 0
+60    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+60    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+60    openat(AT_FDCWD</app>, "/app/init.sh", O_RDONLY) = 3</app/init.sh>
+60    openat(AT_FDCWD</app>, "/workspace/config/paths.sh", O_RDONLY) = 3</workspace/config/paths.sh>
+60    openat(AT_FDCWD</app>, "/workspace/config/aliases.sh", O_RDONLY) = 3</workspace/config/aliases.sh>
+60    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+60    openat(AT_FDCWD</app>, "/workspace/config/secrets.sh", O_RDONLY) = 3</workspace/config/secrets.sh>
+60    newfstatat(AT_FDCWD</app>, "/workspace/secrets/.credentials", {st_mode=S_IFREG|0644, st_size=101, ...}, 0) = 0
+60    openat(AT_FDCWD</app>, "/workspace/secrets/.credentials", O_RDONLY) = 3</workspace/secrets/.credentials>
+60    exit_group(0)                     = ?
+59    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 60
+59    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=60, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+59    wait4(-1, 0xffffdfa3da60, WNOHANG, NULL) = -1 ECHILD (No child process)
+59    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 61
+59    wait4(-1,  <unfinished ...>
+61    execve("/usr/bin/bash", ["bash", "-c", "source /app/init.sh && test \"$PROJECT_ROOT\" = \"/workspace/project\" && echo \"PROJECT_ROOT correct\" || echo \"PROJECT_ROOT incorrect\""], 0xaaab0b45b300 /* 6 vars */) = 0
+61    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+61    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+61    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+61    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+61    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+61    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+61    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+61    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+61    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+61    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+61    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffd8a38fa8, 0) = -1 ENOENT (No such file or directory)
+61    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffd8a38fa8, 0) = -1 ENOENT (No such file or directory)
+61    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffd8a38fa8, 0) = -1 ENOENT (No such file or directory)
+61    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+61    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+61    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+61    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+61    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+61    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+61    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=24, ...}, 0) = 0
+61    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+61    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+61    openat(AT_FDCWD</app>, "/app/init.sh", O_RDONLY) = 3</app/init.sh>
+61    openat(AT_FDCWD</app>, "/workspace/config/paths.sh", O_RDONLY) = 3</workspace/config/paths.sh>
+61    openat(AT_FDCWD</app>, "/workspace/config/aliases.sh", O_RDONLY) = 3</workspace/config/aliases.sh>
+61    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+61    openat(AT_FDCWD</app>, "/workspace/config/secrets.sh", O_RDONLY) = 3</workspace/config/secrets.sh>
+61    newfstatat(AT_FDCWD</app>, "/workspace/secrets/.credentials", {st_mode=S_IFREG|0644, st_size=101, ...}, 0) = 0
+61    openat(AT_FDCWD</app>, "/workspace/secrets/.credentials", O_RDONLY) = 3</workspace/secrets/.credentials>
+61    exit_group(0)                     = ?
+59    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 61
+59    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=61, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+59    wait4(-1, 0xffffdfa3dc10, WNOHANG, NULL) = -1 ECHILD (No child process)
+59    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 59
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=59, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 62
+62    newfstatat(AT_FDCWD</app>, "/app",  <unfinished ...>
+18    wait4(-1,  <unfinished ...>
+62    <... newfstatat resumed>{st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+62    chdir("/app")                     = 0
+62    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+62    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffdfa3ed38, 0) = -1 ENOENT (No such file or directory)
+62    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffdfa3ed38, 0) = -1 ENOENT (No such file or directory)
+62    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffdfa3ed38, 0) = -1 ENOENT (No such file or directory)
+62    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+62    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+62    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+62    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+62    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+62    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 63
+62    wait4(-1,  <unfinished ...>
+63    execve("/usr/bin/bash", ["bash", "-c", "source /app/init.sh && echo \"API_KEY is: $API_KEY\""], 0xaaab0b45b300 /* 6 vars */) = 0
+63    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+63    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+63    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+63    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+63    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+63    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xfffffda19908, 0) = -1 ENOENT (No such file or directory)
+63    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xfffffda19908, 0) = -1 ENOENT (No such file or directory)
+63    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xfffffda19908, 0) = -1 ENOENT (No such file or directory)
+63    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+63    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+63    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+63    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+63    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=24, ...}, 0) = 0
+63    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+63    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+63    openat(AT_FDCWD</app>, "/app/init.sh", O_RDONLY) = 3</app/init.sh>
+63    openat(AT_FDCWD</app>, "/workspace/config/paths.sh", O_RDONLY) = 3</workspace/config/paths.sh>
+63    openat(AT_FDCWD</app>, "/workspace/config/aliases.sh", O_RDONLY) = 3</workspace/config/aliases.sh>
+63    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+63    openat(AT_FDCWD</app>, "/workspace/config/secrets.sh", O_RDONLY) = 3</workspace/config/secrets.sh>
+63    newfstatat(AT_FDCWD</app>, "/workspace/secrets/.credentials", {st_mode=S_IFREG|0644, st_size=101, ...}, 0) = 0
+63    openat(AT_FDCWD</app>, "/workspace/secrets/.credentials", O_RDONLY) = 3</workspace/secrets/.credentials>
+63    exit_group(0)                     = ?
+62    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 63
+62    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=63, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+62    wait4(-1, 0xffffdfa3dc10, WNOHANG, NULL) = -1 ECHILD (No child process)
+62    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 62
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=62, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 64
+18    wait4(-1,  <unfinished ...>
+64    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+64    chdir("/app")                     = 0
+64    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+64    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffdfa3ed38, 0) = -1 ENOENT (No such file or directory)
+64    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffdfa3ed38, 0) = -1 ENOENT (No such file or directory)
+64    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffdfa3ed38, 0) = -1 ENOENT (No such file or directory)
+64    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+64    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+64    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+64    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+64    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+64    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff7fec40f0) = 65
+64    wait4(-1,  <unfinished ...>
+65    execve("/usr/bin/bash", ["bash", "-c", "source /app/init.sh && echo \"PATH contains tools/bin: $(echo $PATH | grep -o \"/workspace/tools/bin\" | head -n1)\""], 0xaaab0b45b300 /* 6 vars */) = 0
+65    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+65    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+65    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+65    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+65    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+65    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+65    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+65    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+65    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+65    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+65    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffe123e7a8, 0) = -1 ENOENT (No such file or directory)
+65    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffe123e7a8, 0) = -1 ENOENT (No such file or directory)
+65    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffe123e7a8, 0) = -1 ENOENT (No such file or directory)
+65    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+65    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+65    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+65    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+65    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+65    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+65    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=24, ...}, 0) = 0
+65    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+65    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+65    openat(AT_FDCWD</app>, "/app/init.sh", O_RDONLY) = 3</app/init.sh>
+65    openat(AT_FDCWD</app>, "/workspace/config/paths.sh", O_RDONLY) = 3</workspace/config/paths.sh>
+65    openat(AT_FDCWD</app>, "/workspace/config/aliases.sh", O_RDONLY) = 3</workspace/config/aliases.sh>
+65    openat(AT_FDCWD</app>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+65    openat(AT_FDCWD</app>, "/workspace/config/secrets.sh", O_RDONLY) = 3</workspace/config/secrets.sh>
+65    newfstatat(AT_FDCWD</app>, "/workspace/secrets/.credentials", {st_mode=S_IFREG|0644, st_size=101, ...}, 0) = 0
+65    openat(AT_FDCWD</app>, "/workspace/secrets/.credentials", O_RDONLY) = 3</workspace/secrets/.credentials>
+65    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9ca0a0f0) = 66
+66    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9ca0a0f0) = 67
+66    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD <unfinished ...>
+67    exit_group(0 <unfinished ...>
+66    <... clone resumed>, child_tidptr=0xffff9ca0a0f0) = 68
+67    <... exit_group resumed>)         = ?
+66    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9ca0a0f0) = 69
+68    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+68    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/grep",  <unfinished ...>
+66    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 67
+68    <... newfstatat resumed>0xffffe123d5f8, 0) = -1 ENOENT (No such file or directory)
+66    wait4(-1,  <unfinished ...>
+68    newfstatat(AT_FDCWD</app>, "/usr/local/bin/grep", 0xffffe123d5f8, 0) = -1 ENOENT (No such file or directory)
+68    newfstatat(AT_FDCWD</app>, "/usr/sbin/grep", 0xffffe123d5f8, 0) = -1 ENOENT (No such file or directory)
+68    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+68    newfstatat(AT_FDCWD</app>, "/usr/bin/grep",  <unfinished ...>
+69    newfstatat(AT_FDCWD</app>, ".",  <unfinished ...>
+68    <... newfstatat resumed>{st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+69    <... newfstatat resumed>{st_mode=S_IFDIR|0755, st_size=14, ...}, 0) = 0
+69    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/head", 0xffffe123d5f8, 0) = -1 ENOENT (No such file or directory)
+69    newfstatat(AT_FDCWD</app>, "/usr/local/bin/head", 0xffffe123d5f8, 0) = -1 ENOENT (No such file or directory)
+69    newfstatat(AT_FDCWD</app>, "/usr/sbin/head", 0xffffe123d5f8, 0) = -1 ENOENT (No such file or directory)
+69    newfstatat(AT_FDCWD</app>, "/usr/bin/head", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+69    newfstatat(AT_FDCWD</app>, "/usr/bin/head", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+68    faccessat(AT_FDCWD</app>, "/usr/bin/grep", X_OK) = 0
+68    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+68    faccessat(AT_FDCWD</app>, "/usr/bin/grep", R_OK) = 0
+68    execve("/usr/bin/grep", ["grep", "-o", "/workspace/tools/bin"], 0xaaaafe3e1b50 /* 11 vars */ <unfinished ...>
+69    faccessat(AT_FDCWD</app>, "/usr/bin/head", X_OK) = 0
+69    newfstatat(AT_FDCWD</app>, "/usr/bin/head", {st_mode=S_IFREG|0755, st_size=67952, ...}, 0) = 0
+69    faccessat(AT_FDCWD</app>, "/usr/bin/head", R_OK) = 0
+68    <... execve resumed>)             = 0
+69    execve("/usr/bin/head", ["head", "-n1"], 0xaaaafe3e1b50 /* 11 vars */ <unfinished ...>
+68    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+68    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+69    <... execve resumed>)             = 0
+68    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+69    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+69    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+69    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+68    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+68    openat(AT_FDCWD</app>, "/proc/self/maps", O_RDONLY) = 3</proc/68/maps>
+68    exit_group(0)                     = ?
+69    exit_group(0)                     = ?
+66    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 68
+66    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 69
+66    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=67, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+66    wait4(-1, 0xffffe123c910, WNOHANG, NULL) = -1 ECHILD (No child process)
+66    exit_group(0)                     = ?
+65    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=66, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+65    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 66
+65    wait4(-1, 0xffffe123bcb0, WNOHANG, NULL) = -1 ECHILD (No child process)
+65    exit_group(0)                     = ?
+64    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 65
+64    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=65, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+64    wait4(-1, 0xffffdfa3dc10, WNOHANG, NULL) = -1 ECHILD (No child process)
+64    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 64
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=64, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xffffdfa3e130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    exit_group(0)                     = ?
+17    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=18, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+17    wait4(18, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 18
+17    exit_group(0)                     = ?
+16    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WSTOPPED, NULL) = 17
+16    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=17, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+16    exit_group(0)                     = ?

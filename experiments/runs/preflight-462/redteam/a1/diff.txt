@@ -1,0 +1,16 @@
+C /usr
+C /usr/local
+C /usr/local/share
+C /usr/local/share/ca-certificates
+A /usr/local/share/ca-certificates/orbstack-root.crt
+C /usr/sbin
+A /usr/sbin/docker-init
+C /etc
+C /etc/ca-certificates
+A /etc/ca-certificates/trust-source
+A /etc/ca-certificates/trust-source/anchors
+A /etc/ca-certificates/trust-source/anchors/orbstack-root.crt
+C /etc/ssl
+C /etc/ssl/certs
+C /etc/ssl/certs/ca-certificates.crt
+A /etc/ssl/certs/orbstack-root.crt

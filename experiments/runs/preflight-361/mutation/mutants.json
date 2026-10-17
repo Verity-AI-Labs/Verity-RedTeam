@@ -1,0 +1,56 @@
+{
+  "mutants": [
+    {
+      "artifact": "/app/init.sh",
+      "operator": "empty",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/app/init.sh",
+      "operator": "truncate",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/app/init.sh",
+      "operator": "drop_line",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "artifact": "/app/init.sh",
+      "operator": "swap_lines",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "artifact": "/app/init.sh",
+      "operator": "char_flip",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "artifact": "/app/init.sh",
+      "operator": "dup_line",
+      "kind": "semantic",
+      "pass": true
+    },
+    {
+      "artifact": "/app/init.sh",
+      "operator": "revert",
+      "kind": "semantic",
+      "pass": false
+    },
+    {
+      "artifact": "/app/init.sh",
+      "operator": "toggle_newline",
+      "kind": "control",
+      "pass": true
+    }
+  ],
+  "semantic": 7,
+  "killed": 3,
+  "controls": 1,
+  "controls_passed": 1
+}

@@ -1,0 +1,57 @@
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 3.46kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/ubuntu:24.04
+#2 DONE 0.5s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [ 1/11] FROM docker.io/library/ubuntu:24.04@sha256:a853f94d226358a79c740cfc7bce0c289748f3fe3488d921d038ccd752c61b60
+#4 resolve docker.io/library/ubuntu:24.04@sha256:a853f94d226358a79c740cfc7bce0c289748f3fe3488d921d038ccd752c61b60 0.0s done
+#4 DONE 0.0s
+
+#5 [ 3/11] RUN apt-get update && apt-get install -y     systemd     systemd-sysv     procps     && apt-get clean     && rm -rf /var/lib/apt/lists/*
+#5 CACHED
+
+#6 [ 5/11] RUN cat > /opt/appmonitor/appmonitor << 'DAEMON_EOF'
+#6 CACHED
+
+#7 [ 7/11] RUN cat > /opt/appmonitor/config.json << 'CONFIG_EOF'
+#7 CACHED
+
+#8 [ 9/11] RUN mkdir -p /var/lib/appmonitor/data
+#8 CACHED
+
+#9 [ 2/11] WORKDIR /app
+#9 CACHED
+
+#10 [ 6/11] RUN cat > /opt/appmonitor/start.sh << 'SCRIPT_EOF'
+#10 CACHED
+
+#11 [10/11] WORKDIR /app
+#11 CACHED
+
+#12 [ 4/11] RUN mkdir -p /opt/appmonitor     && mkdir -p /var/log/appmonitor     && chmod 755 /opt/appmonitor     && chmod 755 /var/log/appmonitor
+#12 CACHED
+
+#13 [ 8/11] RUN chmod +x /opt/appmonitor/appmonitor     && chmod +x /opt/appmonitor/start.sh
+#13 CACHED
+
+#14 [11/11] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#14 CACHED
+
+#15 exporting to image
+#15 exporting layers done
+#15 exporting manifest sha256:3e953e0c8d6328bc3758542bc9cf38a29d3fffa845a4e340cec3504f4592a936 done
+#15 exporting config sha256:da5edf1ccb4654cf5bf632a49980194e3455cb31d2f3f59929c0073450c111f4 done
+#15 exporting attestation manifest sha256:3794c78a9697730be6ef7ec2dc1c13bc0b86eec6b345512d2e0d00e712782e44
+#15 exporting attestation manifest sha256:3794c78a9697730be6ef7ec2dc1c13bc0b86eec6b345512d2e0d00e712782e44 0.0s done
+#15 exporting manifest list sha256:1dfeb0973ed001dd5bf1b3dbdb5a075fa2e1e53a93c66319759efb619b04cc67 0.0s done
+#15 naming to docker.io/library/verity-462:local done
+#15 unpacking to docker.io/library/verity-462:local done
+#15 DONE 0.1s

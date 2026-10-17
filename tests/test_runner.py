@@ -7,7 +7,7 @@ import unittest
 from contextlib import redirect_stdout
 from unittest.mock import patch
 
-from src import runner
+from verity import runner
 
 
 class RunnerTests(unittest.TestCase):

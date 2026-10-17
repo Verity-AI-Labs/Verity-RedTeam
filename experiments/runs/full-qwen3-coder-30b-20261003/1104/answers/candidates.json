@@ -1,0 +1,25 @@
+{
+  "candidates": [
+    "/root/.bashrc",
+    "/root/.profile",
+    "/tmp/#486601",
+    "/tmp/#486602",
+    "/tmp/#486889",
+    "/tmp/#486890",
+    "/tmp/jlawvgcd",
+    "/tmp/o04olh5s",
+    "/usr/local/bin/myapp-service.sh",
+    "/usr/local/bin/simulate-boot.sh",
+    "/usr/local/bin/simulate-lvm-mount.sh",
+    "/var/log/myapp/service.log",
+    "/var/log/myapp/service_status",
+    "ipc:[4026532491]",
+    "mnt:[4026532489]",
+    "net:[4026532494]",
+    "net:[4026532495]",
+    "pid:[4026532492]",
+    "uts:[4026532490]"
+  ],
+  "S": [],
+  "sanctioned": {}
+}

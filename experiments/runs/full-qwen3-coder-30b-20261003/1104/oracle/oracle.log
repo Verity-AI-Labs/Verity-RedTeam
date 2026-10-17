@@ -1,0 +1,2 @@
+Fixed myapp.service unit file with RequiresMountsFor=/mnt/appdata
+VERITY-CGROUP=1

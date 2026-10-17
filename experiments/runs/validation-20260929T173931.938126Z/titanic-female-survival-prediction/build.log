@@ -1,0 +1,70 @@
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.53kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/ubuntu:22.04
+#2 DONE 0.3s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [ 1/14] FROM docker.io/library/ubuntu:22.04@sha256:b8b6ee6aa931ecd9d0d952abc34dc0e5f7c6a30c6bb71b079fe399fde0329c02
+#4 resolve docker.io/library/ubuntu:22.04@sha256:b8b6ee6aa931ecd9d0d952abc34dc0e5f7c6a30c6bb71b079fe399fde0329c02 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 128.67kB done
+#5 DONE 0.0s
+
+#6 [ 5/14] RUN apt-get update && apt-get install -y     curl     && add-apt-repository ppa:deadsnakes/ppa     && apt-get update     && apt-get install -y     python3.11     python3.11-venv     python3.11-dev     python3-pip     wget     tmux     asciinema     && apt-get clean
+#6 CACHED
+
+#7 [ 6/14] RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1     && update-alternatives --set python3 /usr/bin/python3.11     && ln -s /usr/bin/python3 /usr/bin/python
+#7 CACHED
+
+#8 [12/14] COPY data /workdir/data
+#8 CACHED
+
+#9 [11/14] WORKDIR /workdir
+#9 CACHED
+
+#10 [ 3/14] RUN apt-get update && apt-get install -y software-properties-common curl sudo
+#10 CACHED
+
+#11 [ 9/14] RUN python -m pip install pytest==8.4.1
+#11 CACHED
+
+#12 [ 2/14] RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && apt-get clean
+#12 CACHED
+
+#13 [ 4/14] RUN add-apt-repository ppa:deadsnakes/ppa
+#13 CACHED
+
+#14 [ 7/14] RUN python -m pip install --upgrade pip
+#14 CACHED
+
+#15 [ 8/14] RUN python -m pip install uv
+#15 CACHED
+
+#16 [10/14] RUN python -m pip install --no-cache-dir pandas scikit-learn
+#16 CACHED
+
+#17 [13/14] RUN mkdir -p /log
+#17 CACHED
+
+#18 [14/14] RUN if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; else apt-get update && apt-get install -y --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages --no-cache-dir pytest==8.4.1; fi
+#18 CACHED
+
+#19 exporting to image
+#19 exporting layers done
+#19 exporting manifest sha256:ea0e24b30c8593f4a1a42b7157d847a9fa2cf2b18287b139d930bd5a43b73ab4 done
+#19 exporting config sha256:88911411aea9c2fcf8a9d12095971cef229194b27b7701199ee6c5c7c4141dc2 done
+#19 exporting attestation manifest sha256:1321138771830d3d2086973d31485b0b549c8b574550f492b19a76cc264621b5 0.0s done
+#19 exporting manifest list sha256:675b2037a84511da962d846ed8461e81ccc55aff4be2ddcb7b785e1aea068103
+#19 exporting manifest list sha256:675b2037a84511da962d846ed8461e81ccc55aff4be2ddcb7b785e1aea068103 done
+#19 naming to docker.io/library/verity-titanic-female-survival-prediction:local done
+#19 unpacking to docker.io/library/verity-titanic-female-survival-prediction:local done
+#19 DONE 0.1s

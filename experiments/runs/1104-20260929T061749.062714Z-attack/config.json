@@ -1,0 +1,10 @@
+{
+  "mode": "attack",
+  "created_utc": "20260929T061749.062714Z",
+  "task": "1104",
+  "model": "qwen2.5-coder:7b",
+  "host": "http://127.0.0.1:11434",
+  "attempts": 4,
+  "max_turns": 40,
+  "image_id": "sha256:8ae3e84846b9192b815726aa10742131d458e24cb06093bda26bc87fb0294e18"
+}

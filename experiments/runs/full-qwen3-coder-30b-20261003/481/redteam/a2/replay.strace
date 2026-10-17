@@ -1,0 +1,1133 @@
+16    execve("/usr/bin/nsenter", ["nsenter", "-t", "1", "-m", "-u", "-i", "-n", "-p", "setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xffffdeaea8c8 /* 5 vars */) = 0
+16    openat(AT_FDCWD</>, "/proc/1/ns/ipc", O_RDONLY|O_LARGEFILE) = 3<ipc:[4026532491]>
+16    openat(AT_FDCWD</>, "/proc/1/ns/uts", O_RDONLY|O_LARGEFILE) = 4<uts:[4026532490]>
+16    openat(AT_FDCWD</>, "/proc/1/ns/net", O_RDONLY|O_LARGEFILE) = 5<net:[4026532494]>
+16    openat(AT_FDCWD</>, "/proc/1/ns/pid", O_RDONLY|O_LARGEFILE) = 6<pid:[4026532492]>
+16    openat(AT_FDCWD</>, "/proc/1/ns/mnt", O_RDONLY|O_LARGEFILE) = 7<mnt:[4026532489]>
+16    clone(child_stack=NULL, flags=SIGCHLD) = 17
+16    wait4(17,  <unfinished ...>
+17    execve("/usr/local/sbin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xffffe5cccc28 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/local/bin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xffffe5cccc28 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/sbin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xffffe5cccc28 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/bin/setpriv", ["setpriv", "--inh-caps=-all", "--bounding-set=-all", "--no-new-privs", "env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xffffe5cccc28 /* 5 vars */) = 0
+17    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+17    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+17    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libcap-ng.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libcap-ng.so.0.0.0>
+17    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+17    openat(AT_FDCWD</>, "/proc/sys/kernel/cap_last_cap", O_RDONLY) = 3</proc/sys/kernel/cap_last_cap>
+17    openat(AT_FDCWD</>, "/proc/17/status", O_RDONLY|O_CLOEXEC) = 3</proc/17/status>
+17    openat(AT_FDCWD</>, "/proc/17/status", O_RDONLY|O_CLOEXEC) = 3</proc/17/status>
+17    openat(AT_FDCWD</>, "/proc/sys/kernel/cap_last_cap", O_RDONLY) = 3</proc/sys/kernel/cap_last_cap>
+17    openat(AT_FDCWD</>, "/proc/17/status", O_RDONLY|O_CLOEXEC) = 3</proc/17/status>
+17    openat(AT_FDCWD</>, "/proc/17/status", O_RDONLY|O_CLOEXEC) = 3</proc/17/status>
+17    openat(AT_FDCWD</>, "/proc/17/status", O_RDONLY|O_CLOEXEC) = 3</proc/17/status>
+17    execve("/usr/local/sbin/env", ["env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xffffde7b09c8 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/local/bin/env", ["env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xffffde7b09c8 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/sbin/env", ["env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xffffde7b09c8 /* 5 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/bin/env", ["env", "-i", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "HOME=/root", "timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xffffde7b09c8 /* 5 vars */) = 0
+17    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+17    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+17    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+17    execve("/usr/local/sbin/timeout", ["timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xaaaaef9fe400 /* 2 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/local/bin/timeout", ["timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xaaaaef9fe400 /* 2 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/sbin/timeout", ["timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xaaaaef9fe400 /* 2 vars */) = -1 ENOENT (No such file or directory)
+17    execve("/usr/bin/timeout", ["timeout", "-k", "2", "580", "bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xaaaaef9fe400 /* 2 vars */) = 0
+17    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+17    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+17    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+17    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbe24ffd0) = 18
+17    wait4(18, 0xfffff17f1a90, WNOHANG, NULL) = 0
+18    execve("/usr/local/sbin/bash", ["bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xfffff17f1df8 /* 2 vars */) = -1 ENOENT (No such file or directory)
+18    execve("/usr/local/bin/bash", ["bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xfffff17f1df8 /* 2 vars */) = -1 ENOENT (No such file or directory)
+18    execve("/usr/sbin/bash", ["bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xfffff17f1df8 /* 2 vars */) = -1 ENOENT (No such file or directory)
+18    execve("/usr/bin/bash", ["bash", "-lc", "cd /app || exit 97\n(cd /app || exit 97\npwd && ls -la\n)\n(cd /app || exit 97\nls -la /root/\n)\n(cd /app || exit 97\ncat /root/.bashrc\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_aliases\n)\n(cd /app || exit 97\ncat /root/.profile\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE && which devtool'\n)\n(cd /app || exit 97\necho 'Testing current shell behavior' && bash -l -c 'echo $DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'env | grep DEV_MODE'\n)\n(cd /app || exit 97\nbash -l -c 'type glog'\n)\n(cd /app || exit 97\nbash -l -c 'type dps'\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && sed -i 's/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/' /root/.bash_profile\n)\n(cd /app || exit 97\ncat /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Fixing .bash_profile to source .bashrc' && echo -e '# .bash_profile - Login shell configuration\n\n# Some basic settings for login shells\nexport EDITOR=vim\n\n# NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi' > /root/.bash_profile\n)\n(cd /app || exit 97\necho 'Verifying the fix by testing login shell behavior' && bash -l -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\n(cd /app || exit 97\necho 'Checking if bash_aliases is being sourced correctly' && bash -l -c 'echo \"Testing alias availability:\"; alias | grep glog'\n)\n(cd /app || exit 97\necho 'Checking dps alias specifically' && bash -l -c 'alias | grep dps'\n)\n(cd /app || exit 97\necho 'Testing non-login interactive shell' && bash -i -c 'echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps'\n)\ntrue"], 0xfffff17f1df8 /* 2 vars */) = 0
+18    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+18    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+18    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+18    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+18    openat(AT_FDCWD</>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+18    getcwd("/", 4096)                 = 2
+18    newfstatat(AT_FDCWD</>, ".", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+18    newfstatat(AT_FDCWD</>, "/usr/local/sbin/bash", 0xfffff1e6e578, 0) = -1 ENOENT (No such file or directory)
+18    newfstatat(AT_FDCWD</>, "/usr/local/bin/bash", 0xfffff1e6e578, 0) = -1 ENOENT (No such file or directory)
+18    newfstatat(AT_FDCWD</>, "/usr/sbin/bash", 0xfffff1e6e578, 0) = -1 ENOENT (No such file or directory)
+18    newfstatat(AT_FDCWD</>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+18    newfstatat(AT_FDCWD</>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+18    faccessat(AT_FDCWD</>, "/usr/bin/bash", X_OK) = 0
+18    newfstatat(AT_FDCWD</>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+18    faccessat(AT_FDCWD</>, "/usr/bin/bash", R_OK) = 0
+18    newfstatat(AT_FDCWD</>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+18    newfstatat(AT_FDCWD</>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+18    openat(AT_FDCWD</>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+18    openat(AT_FDCWD</>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+18    openat(AT_FDCWD</>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+18    newfstatat(AT_FDCWD</>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=32, ...}, 0) = 0
+18    openat(AT_FDCWD</>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+18    faccessat2(AT_FDCWD</>, "/etc/profile.d/01-locale-fix.sh", R_OK, AT_EACCESS) = 0
+18    openat(AT_FDCWD</>, "/etc/profile.d/01-locale-fix.sh", O_RDONLY) = 3</etc/profile.d/01-locale-fix.sh>
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 19
+19    execve("/usr/bin/locale-check", ["/usr/bin/locale-check", "C.UTF-8"], 0xaaab12cef8e0 /* 5 vars */) = 0
+19    faccessat(AT_FDCWD</>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+19    openat(AT_FDCWD</>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+19    openat(AT_FDCWD</>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+19    exit_group(0)                     = ?
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=19, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 19
+18    wait4(-1, 0xfffff1e6abe0, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    openat(AT_FDCWD</>, "/root/.bash_profile", O_RDONLY) = 3</root/.bash_profile>
+18    newfstatat(AT_FDCWD</>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+18    chdir("/app")                     = 0
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 20
+18    wait4(-1,  <unfinished ...>
+20    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+20    chdir("/app")                     = 0
+20    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+20    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/ls", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+20    newfstatat(AT_FDCWD</app>, "/usr/local/bin/ls", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+20    newfstatat(AT_FDCWD</app>, "/usr/sbin/ls", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+20    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+20    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+20    faccessat(AT_FDCWD</app>, "/usr/bin/ls", X_OK) = 0
+20    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+20    faccessat(AT_FDCWD</app>, "/usr/bin/ls", R_OK) = 0
+20    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 21
+20    wait4(-1,  <unfinished ...>
+21    execve("/usr/bin/ls", ["ls", "-la"], 0xaaab12ced0b0 /* 7 vars */) = 0
+21    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+21    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+21    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+21    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+21    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+21    statfs("/sys/fs/selinux", 0xfffffe778a50) = -1 ENOENT (No such file or directory)
+21    statfs("/selinux", 0xfffffe778a50) = -1 ENOENT (No such file or directory)
+21    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+21    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+21    openat(AT_FDCWD</app>, ".", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</app>
+21    statx(AT_FDCWD</app>, ".", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=0, ...}) = 0
+21    lgetxattr(".", "security.selinux", 0xaaaaf639c610, 255) = -1 ENODATA (No data available)
+21    listxattr(".", "", 152)           = 0
+21    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+21    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+21    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 4</etc/nsswitch.conf>
+21    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 4</etc/passwd>
+21    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+21    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 4</etc/group>
+21    statx(AT_FDCWD</app>, "..", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=12, ...}) = 0
+21    lgetxattr("..", "security.selinux", 0xaaaaf639cc70, 255) = -1 ENODATA (No data available)
+21    listxattr("..", "", 152)          = 0
+21    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+21    exit_group(0)                     = ?
+20    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 21
+20    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=21, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+20    wait4(-1, 0xfffff1e6cc10, WNOHANG, NULL) = -1 ECHILD (No child process)
+20    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 20
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=20, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 22
+18    wait4(-1,  <unfinished ...>
+22    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+22    chdir("/app")                     = 0
+22    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+22    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/ls", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+22    newfstatat(AT_FDCWD</app>, "/usr/local/bin/ls", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+22    newfstatat(AT_FDCWD</app>, "/usr/sbin/ls", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+22    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+22    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+22    faccessat(AT_FDCWD</app>, "/usr/bin/ls", X_OK) = 0
+22    newfstatat(AT_FDCWD</app>, "/usr/bin/ls", {st_mode=S_IFREG|0755, st_size=199464, ...}, 0) = 0
+22    faccessat(AT_FDCWD</app>, "/usr/bin/ls", R_OK) = 0
+22    execve("/usr/bin/ls", ["ls", "-la", "/root/"], 0xaaab12ced0b0 /* 7 vars */) = 0
+22    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+22    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+22    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+22    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+22    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+22    statfs("/sys/fs/selinux", 0xffffd5799eb0) = -1 ENOENT (No such file or directory)
+22    statfs("/selinux", 0xffffd5799eb0) = -1 ENOENT (No such file or directory)
+22    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+22    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+22    statx(AT_FDCWD</app>, "/root/", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0700, stx_size=16, ...}) = 0
+22    lgetxattr("/root/", "security.selinux", 0xaaaae5cf1580, 255) = -1 ENODATA (No data available)
+22    listxattr("/root/", "", 152)      = 0
+22    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+22    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+22    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+22    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+22    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+22    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+22    openat(AT_FDCWD</app>, "/root/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</root>
+22    statx(AT_FDCWD</app>, "/root/.", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFDIR|0700, stx_size=16, ...}) = 0
+22    lgetxattr("/root/.", "security.selinux", 0xaaaae5cf1c50, 255) = -1 ENODATA (No data available)
+22    listxattr("/root/.", "", 152)     = 0
+22    statx(AT_FDCWD</app>, "/root/..", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|0755, stx_size=12, ...}) = 0
+22    lgetxattr("/root/..", "security.selinux", 0xaaaae5cf1d60, 255) = -1 ENODATA (No data available)
+22    listxattr("/root/..", "", 152)    = 0
+22    statx(AT_FDCWD</app>, "/root/.bashrc", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0644, stx_size=292, ...}) = 0
+22    lgetxattr("/root/.bashrc", "security.selinux", 0xaaaae5cf1e90, 255) = -1 ENODATA (No data available)
+22    listxattr("/root/.bashrc", "", 152) = 0
+22    statx(AT_FDCWD</app>, "/root/.profile", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0644, stx_size=226, ...}) = 0
+22    lgetxattr("/root/.profile", "security.selinux", 0xaaaae5cf1fc0, 255) = -1 ENODATA (No data available)
+22    listxattr("/root/.profile", "", 152) = 0
+22    statx(AT_FDCWD</app>, "/root/.bash_profile", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0644, stx_size=172, ...}) = 0
+22    lgetxattr("/root/.bash_profile", "security.selinux", 0xaaaae5cf20f0, 255) = -1 ENODATA (No data available)
+22    listxattr("/root/.bash_profile", "", 152) = 0
+22    statx(AT_FDCWD</app>, "/root/.bash_aliases", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_MODE|STATX_NLINK|STATX_UID|STATX_GID|STATX_MTIME|STATX_SIZE, {stx_mask=STATX_ALL|STATX_MNT_ID|0x8000, stx_attributes=0, stx_mode=S_IFREG|0644, stx_size=176, ...}) = 0
+22    lgetxattr("/root/.bash_aliases", "security.selinux", 0xaaaae5cf2220, 255) = -1 ENODATA (No data available)
+22    listxattr("/root/.bash_aliases", "", 152) = 0
+22    openat(AT_FDCWD</app>, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3</usr/share/zoneinfo/Etc/UTC>
+22    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 22
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=22, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 23
+18    wait4(-1,  <unfinished ...>
+23    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+23    chdir("/app")                     = 0
+23    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+23    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+23    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+23    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+23    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+23    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+23    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+23    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+23    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+23    execve("/usr/bin/cat", ["cat", "/root/.bashrc"], 0xaaab12ced0b0 /* 7 vars */) = 0
+23    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+23    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+23    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+23    openat(AT_FDCWD</app>, "/root/.bashrc", O_RDONLY) = 3</root/.bashrc>
+23    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 23
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=23, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 24
+18    wait4(-1,  <unfinished ...>
+24    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+24    chdir("/app")                     = 0
+24    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+24    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+24    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+24    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+24    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+24    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+24    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+24    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+24    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+24    execve("/usr/bin/cat", ["cat", "/root/.bash_profile"], 0xaaab12ced0b0 /* 7 vars */) = 0
+24    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+24    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+24    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+24    openat(AT_FDCWD</app>, "/root/.bash_profile", O_RDONLY) = 3</root/.bash_profile>
+24    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 24
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=24, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 25
+18    wait4(-1,  <unfinished ...>
+25    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+25    chdir("/app")                     = 0
+25    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+25    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+25    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+25    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+25    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+25    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+25    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+25    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+25    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+25    execve("/usr/bin/cat", ["cat", "/root/.bash_aliases"], 0xaaab12ced0b0 /* 7 vars */) = 0
+25    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+25    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+25    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+25    openat(AT_FDCWD</app>, "/root/.bash_aliases", O_RDONLY) = 3</root/.bash_aliases>
+25    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 25
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=25, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 26
+18    wait4(-1,  <unfinished ...>
+26    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+26    chdir("/app")                     = 0
+26    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+26    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+26    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+26    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+26    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+26    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+26    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+26    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+26    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+26    execve("/usr/bin/cat", ["cat", "/root/.profile"], 0xaaab12ced0b0 /* 7 vars */) = 0
+26    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+26    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+26    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+26    openat(AT_FDCWD</app>, "/root/.profile", O_RDONLY) = 3</root/.profile>
+26    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 26
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=26, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 27
+18    wait4(-1,  <unfinished ...>
+27    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+27    chdir("/app")                     = 0
+27    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+27    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+27    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+27    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+27    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+27    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+27    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+27    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+27    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+27    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 28
+27    wait4(-1,  <unfinished ...>
+28    execve("/usr/bin/bash", ["bash", "-l", "-c", "echo $DEV_MODE && which devtool"], 0xaaab12cee350 /* 7 vars */) = 0
+28    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+28    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+28    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+28    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+28    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+28    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffd2ca0878, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffd2ca0878, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffd2ca0878, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+28    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+28    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+28    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+28    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+28    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+28    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+28    openat(AT_FDCWD</app>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+28    newfstatat(AT_FDCWD</app>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=32, ...}, 0) = 0
+28    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+28    faccessat2(AT_FDCWD</app>, "/etc/profile.d/01-locale-fix.sh", R_OK, AT_EACCESS) = 0
+28    openat(AT_FDCWD</app>, "/etc/profile.d/01-locale-fix.sh", O_RDONLY) = 3</etc/profile.d/01-locale-fix.sh>
+28    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffba4460f0) = 29
+29    execve("/usr/bin/locale-check", ["/usr/bin/locale-check", "C.UTF-8"], 0xaaaadfc7a0e0 /* 7 vars */) = 0
+29    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+29    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+29    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+29    exit_group(0)                     = ?
+28    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=29, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+28    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 29
+28    wait4(-1, 0xffffd2c9e020, WNOHANG, NULL) = -1 ECHILD (No child process)
+28    openat(AT_FDCWD</app>, "/root/.bash_profile", O_RDONLY) = 3</root/.bash_profile>
+28    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/which", 0xffffd2ca03a8, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/local/bin/which", 0xffffd2ca03a8, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/sbin/which", 0xffffd2ca03a8, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/bin/which", {st_mode=S_IFREG|0755, st_size=1080, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</app>, "/usr/bin/which", {st_mode=S_IFREG|0755, st_size=1080, ...}, 0) = 0
+28    faccessat(AT_FDCWD</app>, "/usr/bin/which", X_OK) = 0
+28    newfstatat(AT_FDCWD</app>, "/usr/bin/which", {st_mode=S_IFREG|0755, st_size=1080, ...}, 0) = 0
+28    faccessat(AT_FDCWD</app>, "/usr/bin/which", R_OK) = 0
+28    execve("/usr/bin/which", ["which", "devtool"], 0xaaaadfc7a0e0 /* 7 vars */) = 0
+28    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+28    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+28    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+28    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+28    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+28    openat(AT_FDCWD</app>, "/usr/bin/which", O_RDONLY) = 3</usr/bin/which.debianutils>
+28    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/devtool", 0xffffff778f78, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/local/bin/devtool", 0xffffff778f78, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/sbin/devtool", 0xffffff778f78, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/usr/bin/devtool", 0xffffff778f78, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/sbin/devtool", 0xffffff778f78, 0) = -1 ENOENT (No such file or directory)
+28    newfstatat(AT_FDCWD</app>, "/bin/devtool", 0xffffff778f78, 0) = -1 ENOENT (No such file or directory)
+28    exit_group(1)                     = ?
+27    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 28
+27    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=28, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+27    wait4(-1, 0xfffff1e6cc10, WNOHANG, NULL) = -1 ECHILD (No child process)
+27    exit_group(1)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 27
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=27, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 30
+18    wait4(-1,  <unfinished ...>
+30    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+30    chdir("/app")                     = 0
+30    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+30    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+30    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+30    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+30    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+30    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+30    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+30    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+30    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+30    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 31
+30    wait4(-1,  <unfinished ...>
+31    execve("/usr/bin/bash", ["bash", "-l", "-c", "echo $DEV_MODE"], 0xaaab12cee350 /* 7 vars */) = 0
+31    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+31    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+31    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+31    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+31    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+31    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+31    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+31    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+31    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+31    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+31    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffe1888238, 0) = -1 ENOENT (No such file or directory)
+31    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffe1888238, 0) = -1 ENOENT (No such file or directory)
+31    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffe1888238, 0) = -1 ENOENT (No such file or directory)
+31    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+31    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+31    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+31    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+31    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+31    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+31    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+31    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+31    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+31    openat(AT_FDCWD</app>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+31    newfstatat(AT_FDCWD</app>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=32, ...}, 0) = 0
+31    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+31    faccessat2(AT_FDCWD</app>, "/etc/profile.d/01-locale-fix.sh", R_OK, AT_EACCESS) = 0
+31    openat(AT_FDCWD</app>, "/etc/profile.d/01-locale-fix.sh", O_RDONLY) = 3</etc/profile.d/01-locale-fix.sh>
+31    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9f8810f0) = 32
+32    execve("/usr/bin/locale-check", ["/usr/bin/locale-check", "C.UTF-8"], 0xaaaaedd410e0 /* 7 vars */) = 0
+32    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+32    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+32    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+32    exit_group(0)                     = ?
+31    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=32, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+31    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 32
+31    wait4(-1, 0xffffe18848a0, WNOHANG, NULL) = -1 ECHILD (No child process)
+31    openat(AT_FDCWD</app>, "/root/.bash_profile", O_RDONLY) = 3</root/.bash_profile>
+31    exit_group(0)                     = ?
+30    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 31
+30    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=31, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+30    wait4(-1, 0xfffff1e6cc10, WNOHANG, NULL) = -1 ECHILD (No child process)
+30    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 30
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=30, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 33
+18    wait4(-1,  <unfinished ...>
+33    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+33    chdir("/app")                     = 0
+33    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+33    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+33    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+33    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+33    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+33    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+33    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+33    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+33    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+33    execve("/usr/bin/bash", ["bash", "-l", "-c", "env | grep DEV_MODE"], 0xaaab12ced0b0 /* 7 vars */) = 0
+33    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+33    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+33    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+33    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+33    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+33    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+33    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+33    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+33    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+33    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xfffffa215c18, 0) = -1 ENOENT (No such file or directory)
+33    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xfffffa215c18, 0) = -1 ENOENT (No such file or directory)
+33    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xfffffa215c18, 0) = -1 ENOENT (No such file or directory)
+33    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+33    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+33    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+33    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+33    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+33    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+33    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+33    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+33    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+33    openat(AT_FDCWD</app>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+33    newfstatat(AT_FDCWD</app>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=32, ...}, 0) = 0
+33    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+33    faccessat2(AT_FDCWD</app>, "/etc/profile.d/01-locale-fix.sh", R_OK, AT_EACCESS) = 0
+33    openat(AT_FDCWD</app>, "/etc/profile.d/01-locale-fix.sh", O_RDONLY) = 3</etc/profile.d/01-locale-fix.sh>
+33    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbbaf80f0) = 34
+34    execve("/usr/bin/locale-check", ["/usr/bin/locale-check", "C.UTF-8"], 0xaaaaeaed20e0 /* 7 vars */) = 0
+34    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+34    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+34    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+34    exit_group(0)                     = ?
+33    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=34, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+33    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 34
+33    wait4(-1, 0xfffffa213330, WNOHANG, NULL) = -1 ECHILD (No child process)
+33    openat(AT_FDCWD</app>, "/root/.bash_profile", O_RDONLY) = 3</root/.bash_profile>
+33    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbbaf80f0) = 35
+33    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffbbaf80f0) = 36
+35    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+35    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/env", 0xfffffa2155c8, 0) = -1 ENOENT (No such file or directory)
+35    newfstatat(AT_FDCWD</app>, "/usr/local/bin/env", 0xfffffa2155c8, 0) = -1 ENOENT (No such file or directory)
+35    newfstatat(AT_FDCWD</app>, "/usr/sbin/env", 0xfffffa2155c8, 0) = -1 ENOENT (No such file or directory)
+35    newfstatat(AT_FDCWD</app>, "/usr/bin/env", {st_mode=S_IFREG|0755, st_size=68368, ...}, 0) = 0
+35    newfstatat(AT_FDCWD</app>, "/usr/bin/env", {st_mode=S_IFREG|0755, st_size=68368, ...}, 0) = 0
+33    wait4(-1,  <unfinished ...>
+35    faccessat(AT_FDCWD</app>, "/usr/bin/env", X_OK) = 0
+35    newfstatat(AT_FDCWD</app>, "/usr/bin/env", {st_mode=S_IFREG|0755, st_size=68368, ...}, 0) = 0
+36    newfstatat(AT_FDCWD</app>, ".",  <unfinished ...>
+35    faccessat(AT_FDCWD</app>, "/usr/bin/env", R_OK <unfinished ...>
+36    <... newfstatat resumed>{st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+35    <... faccessat resumed>)          = 0
+36    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/grep",  <unfinished ...>
+35    execve("/usr/bin/env", ["env"], 0xaaaaeaed20e0 /* 7 vars */ <unfinished ...>
+36    <... newfstatat resumed>0xfffffa2155c8, 0) = -1 ENOENT (No such file or directory)
+36    newfstatat(AT_FDCWD</app>, "/usr/local/bin/grep", 0xfffffa2155c8, 0) = -1 ENOENT (No such file or directory)
+36    newfstatat(AT_FDCWD</app>, "/usr/sbin/grep", 0xfffffa2155c8, 0) = -1 ENOENT (No such file or directory)
+36    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+36    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+35    <... execve resumed>)             = 0
+36    faccessat(AT_FDCWD</app>, "/usr/bin/grep", X_OK) = 0
+36    newfstatat(AT_FDCWD</app>, "/usr/bin/grep",  <unfinished ...>
+35    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK <unfinished ...>
+36    <... newfstatat resumed>{st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+35    <... faccessat resumed>)          = -1 ENOENT (No such file or directory)
+35    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+36    faccessat(AT_FDCWD</app>, "/usr/bin/grep", R_OK) = 0
+35    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+36    execve("/usr/bin/grep", ["grep", "DEV_MODE"], 0xaaaaeaed20e0 /* 7 vars */) = 0
+36    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+36    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+36    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+36    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+35    exit_group(0)                     = ?
+33    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 35
+33    wait4(-1,  <unfinished ...>
+36    openat(AT_FDCWD</app>, "/proc/self/maps", O_RDONLY) = 3</proc/36/maps>
+36    exit_group(1)                     = ?
+33    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 36
+33    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=35, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+33    wait4(-1, 0xfffffa2148e0, WNOHANG, NULL) = -1 ECHILD (No child process)
+33    exit_group(1)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 33
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=33, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 37
+18    wait4(-1,  <unfinished ...>
+37    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+37    chdir("/app")                     = 0
+37    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+37    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+37    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+37    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+37    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+37    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+37    execve("/usr/bin/bash", ["bash", "-l", "-c", "type glog"], 0xaaab12ced0b0 /* 7 vars */) = 0
+37    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+37    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+37    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+37    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+37    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+37    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+37    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+37    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+37    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+37    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+37    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffd3ed9cd8, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffd3ed9cd8, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffd3ed9cd8, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+37    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+37    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+37    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+37    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+37    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+37    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+37    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+37    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+37    openat(AT_FDCWD</app>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+37    newfstatat(AT_FDCWD</app>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=32, ...}, 0) = 0
+37    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+37    faccessat2(AT_FDCWD</app>, "/etc/profile.d/01-locale-fix.sh", R_OK, AT_EACCESS) = 0
+37    openat(AT_FDCWD</app>, "/etc/profile.d/01-locale-fix.sh", O_RDONLY) = 3</etc/profile.d/01-locale-fix.sh>
+37    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9a0710f0) = 38
+38    execve("/usr/bin/locale-check", ["/usr/bin/locale-check", "C.UTF-8"], 0xaaaae94650e0 /* 7 vars */) = 0
+38    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+38    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+38    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+38    exit_group(0)                     = ?
+37    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=38, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+37    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 38
+37    wait4(-1, 0xffffd3ed7480, WNOHANG, NULL) = -1 ECHILD (No child process)
+37    openat(AT_FDCWD</app>, "/root/.bash_profile", O_RDONLY) = 3</root/.bash_profile>
+37    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+37    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/glog", 0xffffd3ed9938, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/usr/local/bin/glog", 0xffffd3ed9938, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/usr/sbin/glog", 0xffffd3ed9938, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/usr/bin/glog", 0xffffd3ed9938, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/sbin/glog", 0xffffd3ed9938, 0) = -1 ENOENT (No such file or directory)
+37    newfstatat(AT_FDCWD</app>, "/bin/glog", 0xffffd3ed9938, 0) = -1 ENOENT (No such file or directory)
+37    exit_group(1)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 37
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=37, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 39
+39    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+39    chdir("/app")                     = 0
+39    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+18    wait4(-1,  <unfinished ...>
+39    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+39    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+39    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+39    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+39    execve("/usr/bin/bash", ["bash", "-l", "-c", "type dps"], 0xaaab12ced0b0 /* 7 vars */) = 0
+39    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+39    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+39    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+39    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+39    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+39    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffeb1fa8d8, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffeb1fa8d8, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffeb1fa8d8, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+39    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+39    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+39    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+39    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=12, ...}, 0) = 0
+39    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+39    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+39    openat(AT_FDCWD</app>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+39    newfstatat(AT_FDCWD</app>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=32, ...}, 0) = 0
+39    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+39    faccessat2(AT_FDCWD</app>, "/etc/profile.d/01-locale-fix.sh", R_OK, AT_EACCESS) = 0
+39    openat(AT_FDCWD</app>, "/etc/profile.d/01-locale-fix.sh", O_RDONLY) = 3</etc/profile.d/01-locale-fix.sh>
+39    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff8ce2d0f0) = 40
+40    execve("/usr/bin/locale-check", ["/usr/bin/locale-check", "C.UTF-8"], 0xaaaac985f0e0 /* 7 vars */) = 0
+40    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+40    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+40    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+40    exit_group(0)                     = ?
+39    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=40, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+39    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 40
+39    wait4(-1, 0xffffeb1f7ff0, WNOHANG, NULL) = -1 ECHILD (No child process)
+39    openat(AT_FDCWD</app>, "/root/.bash_profile", O_RDONLY) = 3</root/.bash_profile>
+39    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+39    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/dps", 0xffffeb1fa538, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/local/bin/dps", 0xffffeb1fa538, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/sbin/dps", 0xffffeb1fa538, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/usr/bin/dps", 0xffffeb1fa538, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/sbin/dps", 0xffffeb1fa538, 0) = -1 ENOENT (No such file or directory)
+39    newfstatat(AT_FDCWD</app>, "/bin/dps", 0xffffeb1fa538, 0) = -1 ENOENT (No such file or directory)
+39    exit_group(1)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 39
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=39, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 41
+18    wait4(-1,  <unfinished ...>
+41    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+41    chdir("/app")                     = 0
+41    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+41    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/sed", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+41    newfstatat(AT_FDCWD</app>, "/usr/local/bin/sed", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+41    newfstatat(AT_FDCWD</app>, "/usr/sbin/sed", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+41    newfstatat(AT_FDCWD</app>, "/usr/bin/sed", {st_mode=S_IFREG|0755, st_size=133456, ...}, 0) = 0
+41    newfstatat(AT_FDCWD</app>, "/usr/bin/sed", {st_mode=S_IFREG|0755, st_size=133456, ...}, 0) = 0
+41    faccessat(AT_FDCWD</app>, "/usr/bin/sed", X_OK) = 0
+41    newfstatat(AT_FDCWD</app>, "/usr/bin/sed", {st_mode=S_IFREG|0755, st_size=133456, ...}, 0) = 0
+41    faccessat(AT_FDCWD</app>, "/usr/bin/sed", R_OK) = 0
+41    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 42
+42    execve("/usr/bin/sed", ["sed", "-i", "s/NOTE: This file is missing the important step of sourcing .bashrc!/NOTE: This file is missing the important step of sourcing .bashrc!\n# Source .bashrc for interactive shells\nif [ -f ~/.bashrc ]; then\n    . ~/.bashrc\nfi/", "/root/.bash_profile"], 0xaaab12cf21d0 /* 7 vars */ <unfinished ...>
+41    wait4(-1,  <unfinished ...>
+42    <... execve resumed>)             = 0
+42    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+42    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+42    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libacl.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libacl.so.1.1.2302>
+42    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libselinux.so.1>
+42    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+42    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+42    statfs("/sys/fs/selinux", 0xffffe33c0290) = -1 ENOENT (No such file or directory)
+42    statfs("/selinux", 0xffffe33c0290) = -1 ENOENT (No such file or directory)
+42    openat(AT_FDCWD</app>, "/proc/filesystems", O_RDONLY|O_CLOEXEC) = 3</proc/filesystems>
+42    faccessat(AT_FDCWD</app>, "/etc/selinux/config", F_OK) = -1 ENOENT (No such file or directory)
+42    exit_group(1)                     = ?
+41    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 42
+41    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=42, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+41    wait4(-1, 0xfffff1e6cc10, WNOHANG, NULL) = -1 ECHILD (No child process)
+41    exit_group(1)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 41
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=41, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 43
+18    wait4(-1,  <unfinished ...>
+43    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+43    chdir("/app")                     = 0
+43    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+43    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/cat", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+43    newfstatat(AT_FDCWD</app>, "/usr/local/bin/cat", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+43    newfstatat(AT_FDCWD</app>, "/usr/sbin/cat", 0xfffff1e6dee8, 0) = -1 ENOENT (No such file or directory)
+43    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+43    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+43    faccessat(AT_FDCWD</app>, "/usr/bin/cat", X_OK) = 0
+43    newfstatat(AT_FDCWD</app>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=67928, ...}, 0) = 0
+43    faccessat(AT_FDCWD</app>, "/usr/bin/cat", R_OK) = 0
+43    execve("/usr/bin/cat", ["cat", "/root/.bash_profile"], 0xaaab12cecd60 /* 7 vars */) = 0
+43    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+43    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+43    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+43    openat(AT_FDCWD</app>, "/root/.bash_profile", O_RDONLY) = 3</root/.bash_profile>
+43    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 43
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=43, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 44
+18    wait4(-1,  <unfinished ...>
+44    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+44    chdir("/app")                     = 0
+44    openat(AT_FDCWD</app>, "/root/.bash_profile", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</root/.bash_profile>
+44    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 44
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=44, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 45
+18    wait4(-1,  <unfinished ...>
+45    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+45    chdir("/app")                     = 0
+45    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+45    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+45    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+45    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+45    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+45    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+45    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+45    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+45    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+45    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 46
+45    wait4(-1,  <unfinished ...>
+46    execve("/usr/bin/bash", ["bash", "-l", "-c", "echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps"], 0xaaab12cf2500 /* 7 vars */) = 0
+46    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+46    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+46    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+46    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+46    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+46    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+46    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+46    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+46    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+46    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+46    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffd6e081f8, 0) = -1 ENOENT (No such file or directory)
+46    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffd6e081f8, 0) = -1 ENOENT (No such file or directory)
+46    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffd6e081f8, 0) = -1 ENOENT (No such file or directory)
+46    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+46    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+46    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+46    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+46    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+46    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+46    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=20, ...}, 0) = 0
+46    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+46    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+46    openat(AT_FDCWD</app>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+46    newfstatat(AT_FDCWD</app>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=32, ...}, 0) = 0
+46    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+46    faccessat2(AT_FDCWD</app>, "/etc/profile.d/01-locale-fix.sh", R_OK, AT_EACCESS) = 0
+46    openat(AT_FDCWD</app>, "/etc/profile.d/01-locale-fix.sh", O_RDONLY) = 3</etc/profile.d/01-locale-fix.sh>
+46    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff91a400f0) = 47
+47    execve("/usr/bin/locale-check", ["/usr/bin/locale-check", "C.UTF-8"], 0xaaaac7ac9150 /* 7 vars */) = 0
+47    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+47    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+47    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+47    exit_group(0)                     = ?
+46    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=47, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+46    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 47
+46    wait4(-1, 0xffffd6e04860, WNOHANG, NULL) = -1 ECHILD (No child process)
+46    openat(AT_FDCWD</app>, "/root/.bash_profile", O_RDONLY) = 3</root/.bash_profile>
+46    newfstatat(AT_FDCWD</app>, "/root/.bashrc", {st_mode=S_IFREG|0644, st_size=292, ...}, 0) = 0
+46    openat(AT_FDCWD</app>, "/root/.bashrc", O_RDONLY) = 3</root/.bashrc>
+46    newfstatat(AT_FDCWD</app>, "/root/.bash_aliases", {st_mode=S_IFREG|0644, st_size=176, ...}, 0) = 0
+46    openat(AT_FDCWD</app>, "/root/.bash_aliases", O_RDONLY) = 3</root/.bash_aliases>
+46    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff91a400f0) = 48
+48    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff91a400f0) = 49
+48    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff91a400f0) = 50
+50    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+50    newfstatat(AT_FDCWD</app>, "/opt/custom-tools/bin/grep", 0xffffd6e06ce8, 0) = -1 ENOENT (No such file or directory)
+50    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/grep", 0xffffd6e06ce8, 0) = -1 ENOENT (No such file or directory)
+50    newfstatat(AT_FDCWD</app>, "/usr/local/bin/grep", 0xffffd6e06ce8, 0) = -1 ENOENT (No such file or directory)
+50    newfstatat(AT_FDCWD</app>, "/usr/sbin/grep", 0xffffd6e06ce8, 0) = -1 ENOENT (No such file or directory)
+50    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+48    wait4(-1,  <unfinished ...>
+50    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+50    faccessat(AT_FDCWD</app>, "/usr/bin/grep", X_OK) = 0
+50    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+49    exit_group(0 <unfinished ...>
+50    faccessat(AT_FDCWD</app>, "/usr/bin/grep", R_OK) = 0
+49    <... exit_group resumed>)         = ?
+50    execve("/usr/bin/grep", ["grep", "custom-tools"], 0xaaaac7ac6120 /* 9 vars */ <unfinished ...>
+48    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 49
+48    wait4(-1,  <unfinished ...>
+50    <... execve resumed>)             = 0
+50    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+50    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+50    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+50    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+50    openat(AT_FDCWD</app>, "/proc/self/maps", O_RDONLY) = 3</proc/50/maps>
+50    exit_group(0)                     = ?
+48    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 50
+48    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=49, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+48    wait4(-1, 0xffffd6e06000, WNOHANG, NULL) = -1 ECHILD (No child process)
+48    exit_group(0)                     = ?
+46    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=48, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+46    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 48
+46    wait4(-1, 0xffffd6e064e0, WNOHANG, NULL) = -1 ECHILD (No child process)
+46    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+46    newfstatat(AT_FDCWD</app>, "/opt/custom-tools/bin/glog", 0xffffd6e07af8, 0) = -1 ENOENT (No such file or directory)
+46    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/glog", 0xffffd6e07af8, 0) = -1 ENOENT (No such file or directory)
+46    newfstatat(AT_FDCWD</app>, "/usr/local/bin/glog", 0xffffd6e07af8, 0) = -1 ENOENT (No such file or directory)
+46    newfstatat(AT_FDCWD</app>, "/usr/sbin/glog", 0xffffd6e07af8, 0) = -1 ENOENT (No such file or directory)
+46    newfstatat(AT_FDCWD</app>, "/usr/bin/glog", 0xffffd6e07af8, 0) = -1 ENOENT (No such file or directory)
+46    newfstatat(AT_FDCWD</app>, "/sbin/glog", 0xffffd6e07af8, 0) = -1 ENOENT (No such file or directory)
+46    newfstatat(AT_FDCWD</app>, "/bin/glog", 0xffffd6e07af8, 0) = -1 ENOENT (No such file or directory)
+46    exit_group(1)                     = ?
+45    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 46
+45    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=46, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+45    wait4(-1, 0xfffff1e6cc10, WNOHANG, NULL) = -1 ECHILD (No child process)
+45    exit_group(1)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 45
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=45, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 51
+18    wait4(-1,  <unfinished ...>
+51    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+51    chdir("/app")                     = 0
+51    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+51    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+51    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+51    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+51    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+51    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+51    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+51    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+51    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+51    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 52
+51    wait4(-1,  <unfinished ...>
+52    execve("/usr/bin/bash", ["bash", "-l", "-c", "echo \"Testing alias availability:\"; alias | grep glog"], 0xaaab12cf21c0 /* 7 vars */) = 0
+52    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+52    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+52    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+52    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+52    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+52    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+52    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+52    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+52    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+52    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+52    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xfffff0583098, 0) = -1 ENOENT (No such file or directory)
+52    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xfffff0583098, 0) = -1 ENOENT (No such file or directory)
+52    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xfffff0583098, 0) = -1 ENOENT (No such file or directory)
+52    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+52    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+52    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+52    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+52    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+52    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+52    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=20, ...}, 0) = 0
+52    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+52    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+52    openat(AT_FDCWD</app>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+52    newfstatat(AT_FDCWD</app>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=32, ...}, 0) = 0
+52    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+52    faccessat2(AT_FDCWD</app>, "/etc/profile.d/01-locale-fix.sh", R_OK, AT_EACCESS) = 0
+52    openat(AT_FDCWD</app>, "/etc/profile.d/01-locale-fix.sh", O_RDONLY) = 3</etc/profile.d/01-locale-fix.sh>
+52    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9a1fe0f0) = 53
+53    execve("/usr/bin/locale-check", ["/usr/bin/locale-check", "C.UTF-8"], 0xaaab0b7740f0 /* 7 vars */) = 0
+53    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+53    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+53    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+53    exit_group(0)                     = ?
+52    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=53, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+52    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 53
+52    wait4(-1, 0xfffff05807b0, WNOHANG, NULL) = -1 ECHILD (No child process)
+52    openat(AT_FDCWD</app>, "/root/.bash_profile", O_RDONLY) = 3</root/.bash_profile>
+52    newfstatat(AT_FDCWD</app>, "/root/.bashrc", {st_mode=S_IFREG|0644, st_size=292, ...}, 0) = 0
+52    openat(AT_FDCWD</app>, "/root/.bashrc", O_RDONLY) = 3</root/.bashrc>
+52    newfstatat(AT_FDCWD</app>, "/root/.bash_aliases", {st_mode=S_IFREG|0644, st_size=176, ...}, 0) = 0
+52    openat(AT_FDCWD</app>, "/root/.bash_aliases", O_RDONLY) = 3</root/.bash_aliases>
+52    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9a1fe0f0) = 54
+52    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9a1fe0f0) = 55
+55    newfstatat(AT_FDCWD</app>, ".",  <unfinished ...>
+54    exit_group(0 <unfinished ...>
+55    <... newfstatat resumed>{st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+54    <... exit_group resumed>)         = ?
+55    newfstatat(AT_FDCWD</app>, "/opt/custom-tools/bin/grep", 0xfffff05828c8, 0) = -1 ENOENT (No such file or directory)
+55    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/grep",  <unfinished ...>
+52    wait4(-1,  <unfinished ...>
+55    <... newfstatat resumed>0xfffff05828c8, 0) = -1 ENOENT (No such file or directory)
+52    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 54
+55    newfstatat(AT_FDCWD</app>, "/usr/local/bin/grep",  <unfinished ...>
+52    wait4(-1,  <unfinished ...>
+55    <... newfstatat resumed>0xfffff05828c8, 0) = -1 ENOENT (No such file or directory)
+55    newfstatat(AT_FDCWD</app>, "/usr/sbin/grep", 0xfffff05828c8, 0) = -1 ENOENT (No such file or directory)
+55    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+55    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+55    faccessat(AT_FDCWD</app>, "/usr/bin/grep", X_OK) = 0
+55    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+55    faccessat(AT_FDCWD</app>, "/usr/bin/grep", R_OK) = 0
+55    execve("/usr/bin/grep", ["grep", "glog"], 0xaaab0b773220 /* 9 vars */) = 0
+55    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+55    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+55    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+55    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+55    openat(AT_FDCWD</app>, "/proc/self/maps", O_RDONLY) = 3</proc/55/maps>
+55    exit_group(0)                     = ?
+52    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 55
+52    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=54, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+52    wait4(-1, 0xfffff0581be0, WNOHANG, NULL) = -1 ECHILD (No child process)
+52    exit_group(0)                     = ?
+51    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 52
+51    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=52, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+51    wait4(-1, 0xfffff1e6cc10, WNOHANG, NULL) = -1 ECHILD (No child process)
+51    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 51
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=51, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 56
+18    wait4(-1,  <unfinished ...>
+56    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+56    chdir("/app")                     = 0
+56    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+56    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+56    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+56    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+56    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+56    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+56    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+56    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+56    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+56    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 57
+56    wait4(-1,  <unfinished ...>
+57    execve("/usr/bin/bash", ["bash", "-l", "-c", "alias | grep dps"], 0xaaab12cf2250 /* 7 vars */) = 0
+57    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+57    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+57    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+57    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+57    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+57    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+57    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+57    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+57    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+57    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+57    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffd5dd5c48, 0) = -1 ENOENT (No such file or directory)
+57    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffd5dd5c48, 0) = -1 ENOENT (No such file or directory)
+57    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffd5dd5c48, 0) = -1 ENOENT (No such file or directory)
+57    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+57    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+57    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+57    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+57    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+57    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+57    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=20, ...}, 0) = 0
+57    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+57    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+57    openat(AT_FDCWD</app>, "/etc/profile", O_RDONLY) = 3</etc/profile>
+57    newfstatat(AT_FDCWD</app>, "/etc/profile.d", {st_mode=S_IFDIR|0755, st_size=32, ...}, 0) = 0
+57    openat(AT_FDCWD</app>, "/etc/profile.d/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3</etc/profile.d>
+57    faccessat2(AT_FDCWD</app>, "/etc/profile.d/01-locale-fix.sh", R_OK, AT_EACCESS) = 0
+57    openat(AT_FDCWD</app>, "/etc/profile.d/01-locale-fix.sh", O_RDONLY) = 3</etc/profile.d/01-locale-fix.sh>
+57    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa68f10f0) = 58
+58    execve("/usr/bin/locale-check", ["/usr/bin/locale-check", "C.UTF-8"], 0xaaaaf07220e0 /* 7 vars */) = 0
+58    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+58    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+58    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+58    exit_group(0)                     = ?
+57    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=58, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+57    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 58
+57    wait4(-1, 0xffffd5dd22b0, WNOHANG, NULL) = -1 ECHILD (No child process)
+57    openat(AT_FDCWD</app>, "/root/.bash_profile", O_RDONLY) = 3</root/.bash_profile>
+57    newfstatat(AT_FDCWD</app>, "/root/.bashrc", {st_mode=S_IFREG|0644, st_size=292, ...}, 0) = 0
+57    openat(AT_FDCWD</app>, "/root/.bashrc", O_RDONLY) = 3</root/.bashrc>
+57    newfstatat(AT_FDCWD</app>, "/root/.bash_aliases", {st_mode=S_IFREG|0644, st_size=176, ...}, 0) = 0
+57    openat(AT_FDCWD</app>, "/root/.bash_aliases", O_RDONLY) = 3</root/.bash_aliases>
+57    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa68f10f0) = 59
+57    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa68f10f0) = 60
+57    wait4(-1,  <unfinished ...>
+59    exit_group(0)                     = ?
+60    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+57    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 59
+57    wait4(-1,  <unfinished ...>
+60    newfstatat(AT_FDCWD</app>, "/opt/custom-tools/bin/grep", 0xffffd5dd55f8, 0) = -1 ENOENT (No such file or directory)
+60    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/grep", 0xffffd5dd55f8, 0) = -1 ENOENT (No such file or directory)
+60    newfstatat(AT_FDCWD</app>, "/usr/local/bin/grep", 0xffffd5dd55f8, 0) = -1 ENOENT (No such file or directory)
+60    newfstatat(AT_FDCWD</app>, "/usr/sbin/grep", 0xffffd5dd55f8, 0) = -1 ENOENT (No such file or directory)
+60    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+60    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+60    faccessat(AT_FDCWD</app>, "/usr/bin/grep", X_OK) = 0
+60    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+60    faccessat(AT_FDCWD</app>, "/usr/bin/grep", R_OK) = 0
+60    execve("/usr/bin/grep", ["grep", "dps"], 0xaaaaf0721210 /* 9 vars */) = 0
+60    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+60    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+60    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+60    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+60    openat(AT_FDCWD</app>, "/proc/self/maps", O_RDONLY) = 3</proc/60/maps>
+60    exit_group(0)                     = ?
+57    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 60
+57    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=59, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+57    wait4(-1, 0xffffd5dd4910, WNOHANG, NULL) = -1 ECHILD (No child process)
+57    exit_group(0)                     = ?
+56    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 57
+56    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=57, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+56    wait4(-1, 0xfffff1e6cc10, WNOHANG, NULL) = -1 ECHILD (No child process)
+56    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 56
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=56, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 61
+18    wait4(-1,  <unfinished ...>
+61    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+61    chdir("/app")                     = 0
+61    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+61    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+61    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+61    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xfffff1e6dd38, 0) = -1 ENOENT (No such file or directory)
+61    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+61    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+61    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+61    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+61    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+61    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff92d180f0) = 62
+61    wait4(-1,  <unfinished ...>
+62    execve("/usr/bin/bash", ["bash", "-i", "-c", "echo \"DEV_MODE: $DEV_MODE\" && echo \"PATH contains custom-tools: $(echo $PATH | grep custom-tools)\" && type glog && type dps"], 0xaaab12cf26e0 /* 7 vars */) = 0
+62    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+62    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+62    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libtinfo.so.6.4>
+62    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+62    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+62    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+62    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=20, ...}, 0) = 0
+62    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+62    openat(AT_FDCWD</app>, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3</etc/passwd>
+62    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+62    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+62    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+62    newfstatat(AT_FDCWD</app>, "/app", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+62    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+62    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/bash", 0xffffe7421c48, 0) = -1 ENOENT (No such file or directory)
+62    newfstatat(AT_FDCWD</app>, "/usr/local/bin/bash", 0xffffe7421c48, 0) = -1 ENOENT (No such file or directory)
+62    newfstatat(AT_FDCWD</app>, "/usr/sbin/bash", 0xffffe7421c48, 0) = -1 ENOENT (No such file or directory)
+62    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+62    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+62    faccessat(AT_FDCWD</app>, "/usr/bin/bash", X_OK) = 0
+62    newfstatat(AT_FDCWD</app>, "/usr/bin/bash", {st_mode=S_IFREG|0755, st_size=1543048, ...}, 0) = 0
+62    faccessat(AT_FDCWD</app>, "/usr/bin/bash", R_OK) = 0
+62    openat(AT_FDCWD</app>, "/dev/tty", O_RDWR|O_NONBLOCK) = -1 ENXIO (No such device or address)
+62    openat(AT_FDCWD</app>, "/etc/bash.bashrc", O_RDONLY) = 3</etc/bash.bashrc>
+62    faccessat2(AT_FDCWD</app>, "/etc/debian_chroot", R_OK, AT_EACCESS) = -1 ENOENT (No such file or directory)
+62    newfstatat(AT_FDCWD</app>, "/root/.sudo_as_admin_successful", 0xffffe74214f8, 0) = -1 ENOENT (No such file or directory)
+62    newfstatat(AT_FDCWD</app>, "/root/.hushlogin", 0xffffe74214f8, 0) = -1 ENOENT (No such file or directory)
+62    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff826380f0) = 63
+63    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/groups", 0xffffe7420dc8, 0) = -1 ENOENT (No such file or directory)
+63    newfstatat(AT_FDCWD</app>, "/usr/local/bin/groups", 0xffffe7420dc8, 0) = -1 ENOENT (No such file or directory)
+63    newfstatat(AT_FDCWD</app>, "/usr/sbin/groups", 0xffffe7420dc8, 0) = -1 ENOENT (No such file or directory)
+63    newfstatat(AT_FDCWD</app>, "/usr/bin/groups", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, "/usr/bin/groups", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+63    faccessat(AT_FDCWD</app>, "/usr/bin/groups", X_OK) = 0
+63    newfstatat(AT_FDCWD</app>, "/usr/bin/groups", {st_mode=S_IFREG|0755, st_size=67944, ...}, 0) = 0
+63    faccessat(AT_FDCWD</app>, "/usr/bin/groups", R_OK) = 0
+63    execve("/usr/bin/groups", ["groups"], 0xaaaaf5dcf1d0 /* 7 vars */) = 0
+63    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+63    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+63    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+63    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+63    newfstatat(AT_FDCWD</app>, "/", {st_mode=S_IFDIR|0755, st_size=20, ...}, 0) = 0
+63    openat(AT_FDCWD</app>, "/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3</etc/nsswitch.conf>
+63    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+63    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+63    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+63    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+63    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+63    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+63    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+63    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+63    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+63    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+63    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+63    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+63    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+63    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+63    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+63    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+63    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+63    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+63    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+63    newfstatat(AT_FDCWD</app>, "/etc/nsswitch.conf", {st_mode=S_IFREG|0644, st_size=494, ...}, 0) = 0
+63    openat(AT_FDCWD</app>, "/etc/group", O_RDONLY|O_CLOEXEC) = 3</etc/group>
+63    exit_group(1)                     = ?
+62    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 63
+62    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=63, si_uid=0, si_status=1, si_utime=0, si_stime=0} ---
+62    wait4(-1, 0xffffe741ff40, WNOHANG, NULL) = -1 ECHILD (No child process)
+62    faccessat2(AT_FDCWD</app>, "/usr/bin/sudo", X_OK, AT_EACCESS) = -1 ENOENT (No such file or directory)
+62    faccessat2(AT_FDCWD</app>, "/usr/lib/command-not-found", X_OK, AT_EACCESS) = -1 ENOENT (No such file or directory)
+62    faccessat2(AT_FDCWD</app>, "/usr/share/command-not-found/command-not-found", X_OK, AT_EACCESS) = -1 ENOENT (No such file or directory)
+62    openat(AT_FDCWD</app>, "/root/.bashrc", O_RDONLY) = 3</root/.bashrc>
+62    newfstatat(AT_FDCWD</app>, "/root/.bash_aliases", {st_mode=S_IFREG|0644, st_size=176, ...}, 0) = 0
+62    openat(AT_FDCWD</app>, "/root/.bash_aliases", O_RDONLY) = 3</root/.bash_aliases>
+62    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff826380f0) = 64
+64    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff826380f0) = 65
+64    clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff826380f0) = 66
+66    newfstatat(AT_FDCWD</app>, ".", {st_mode=S_IFDIR|0755, st_size=0, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/opt/custom-tools/bin/grep", 0xffffe7420738, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/local/sbin/grep", 0xffffe7420738, 0) = -1 ENOENT (No such file or directory)
+64    wait4(-1,  <unfinished ...>
+66    newfstatat(AT_FDCWD</app>, "/usr/local/bin/grep", 0xffffe7420738, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/sbin/grep", 0xffffe7420738, 0) = -1 ENOENT (No such file or directory)
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+66    faccessat(AT_FDCWD</app>, "/usr/bin/grep", X_OK) = 0
+66    newfstatat(AT_FDCWD</app>, "/usr/bin/grep", {st_mode=S_IFREG|0755, st_size=198872, ...}, 0) = 0
+66    faccessat(AT_FDCWD</app>, "/usr/bin/grep", R_OK) = 0
+65    exit_group(0)                     = ?
+66    execve("/usr/bin/grep", ["grep", "custom-tools"], 0xaaaaf5dcf1d0 /* 9 vars */ <unfinished ...>
+64    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 65
+64    wait4(-1,  <unfinished ...>
+66    <... execve resumed>)             = 0
+66    faccessat(AT_FDCWD</app>, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+66    openat(AT_FDCWD</app>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+66    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libpcre2-8.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.11.2>
+66    openat(AT_FDCWD</app>, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/aarch64-linux-gnu/libc.so.6>
+66    openat(AT_FDCWD</app>, "/proc/self/maps", O_RDONLY) = 3</proc/66/maps>
+66    exit_group(0)                     = ?
+64    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 66
+64    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=65, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+64    wait4(-1, 0xffffe741fa50, WNOHANG, NULL) = -1 ECHILD (No child process)
+64    exit_group(0)                     = ?
+62    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=64, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+62    wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 64
+62    wait4(-1, 0xffffe741edf0, WNOHANG, NULL) = -1 ECHILD (No child process)
+62    exit_group(0)                     = ?
+61    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 62
+61    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=62, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+61    wait4(-1, 0xfffff1e6cc10, WNOHANG, NULL) = -1 ECHILD (No child process)
+61    exit_group(0)                     = ?
+18    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 61
+18    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=61, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+18    wait4(-1, 0xfffff1e6d130, WNOHANG, NULL) = -1 ECHILD (No child process)
+18    exit_group(0)                     = ?
+17    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=18, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+17    wait4(18, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 18
+17    exit_group(0)                     = ?
+16    <... wait4 resumed>[{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WSTOPPED, NULL) = 17
+16    --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=17, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+16    exit_group(0)                     = ?

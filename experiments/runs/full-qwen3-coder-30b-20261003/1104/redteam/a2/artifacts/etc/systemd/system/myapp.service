@@ -1,0 +1,13 @@
+[Unit]
+Description=MyApp Application Service
+# Fixed: Added proper mount dependency to prevent race condition
+RequiresMountsFor=/mnt/appdata
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/myapp-service.sh
+ExecStop=/bin/rm -f /var/run/myapp.pid
+
+[Install]
+WantedBy=multi-user.target
