@@ -46,7 +46,7 @@ chmod +x /usr/local/bin/cloudflared' \
     cd "$(dirname "$0")/.."
     git ls-files | grep -v '^experiments/runs/' | rsync -az --files-from=- -e "ssh -o StrictHostKeyChecking=accept-new" ./ "ubuntu@$IP:verity/"
     grep '^OPENROUTER_API_KEY' .env | "${SSH[@]}" 'umask 077; cat > verity/.env'
-    "${SSH[@]}" "cd verity && pkill -f audit_server.py; pkill -f 'cloudflared tunnel'; sleep 1; \
+    "${SSH[@]}" "cd verity && pkill -f '[a]udit_server.py'; pkill -f '[c]loudflared tunnel'; sleep 1; \
       nohup python3 dashboard/audit_server.py --port 8771 --token $TOKEN > audit.log 2>&1 < /dev/null & \
       nohup cloudflared tunnel --no-autoupdate --url http://127.0.0.1:8771 > tunnel.log 2>&1 < /dev/null & \
       for i in \$(seq 1 30); do grep -q trycloudflare tunnel.log && break; sleep 2; done; \

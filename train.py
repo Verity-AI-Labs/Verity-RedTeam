@@ -82,6 +82,14 @@ def training_config(args, env, train_data):
     effective_batch = args.batch_size * args.gradient_accumulation
     if effective_batch % args.generations:
         raise ValueError("batch-size × gradient-accumulation must be divisible by generations")
+    init = None
+    if getattr(args, "init_adapter", None):
+        adapter = Path(args.init_adapter)
+        if not (adapter / "adapter_config.json").is_file() or not (adapter / "adapter_model.safetensors").is_file():
+            raise ValueError(f"--init-adapter: no LoRA adapter in {adapter}")
+        if json.loads((adapter / "adapter_config.json").read_text()).get("r") != args.lora_r:
+            raise ValueError("--init-adapter: the adapter's rank differs from --lora-r")
+        init = {"init_adapter": str(adapter.resolve()), "init_adapter_sha256": sha256(adapter / "adapter_model.safetensors")}
     return {
         "model": args.model, "revision": args.revision,
         "max_steps": args.steps, "seed": args.seed, "data_seed": args.seed,
@@ -97,6 +105,7 @@ def training_config(args, env, train_data):
         "environment": environment.identity(env),
         **({"max_tool_calls": env.MAX_TOOL_CALLS} if env.KIND == "tools" else {}),
         **({"use_vllm": True, "vllm_gpu_memory_utilization": args.vllm_memory} if args.vllm else {}),
+        **(init or {}),  # continued training: LoRA starts from this adapter; optimizer and schedule start fresh
     }
 
 
@@ -181,6 +190,8 @@ def main(argv=None):
     parser.add_argument("--vllm", action="store_true", help="generate with vLLM colocated on the training GPU")
     parser.add_argument("--vllm-memory", type=float, default=0.35, help="vLLM's share of GPU memory")
     parser.add_argument("--resume", nargs="?", const="auto")
+    parser.add_argument("--init-adapter", help="continue training from this LoRA adapter (a run's adapter/ directory); "
+                                               "the optimizer and learning-rate schedule start fresh")
     parser.add_argument("--save-steps", type=int, default=25, help="checkpoint interval (preemptible GPUs: lower)")
     parser.add_argument("--keep-checkpoints", type=int, default=3, help="how many recent checkpoints to keep")
     parser.add_argument("--dry-run", action="store_true", help="validate inputs and print the config without a GPU")
@@ -273,13 +284,17 @@ def main(argv=None):
                 run["wall_seconds"] = round(time.monotonic() - started, 3)
                 write_json(output / "run.json", run)
 
+        if config.get("init_adapter"):
+            from peft import PeftModel
+            model = PeftModel.from_pretrained(model, config["init_adapter"], is_trainable=True)
         trainer = GRPOTrainer(
             model=model, processing_class=tokenizer, reward_funcs=[reward],
             environment_factory=guard.episode_class(env) if env.KIND == "tools" else None,
             train_dataset=Dataset.from_list(dataset_rows(tasks)), args=settings,
-            peft_config=LoraConfig(r=config["lora_r"], lora_alpha=config["lora_alpha"], lora_dropout=0.0,
-                                   target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
-                                   task_type="CAUSAL_LM"), callbacks=[Progress()],
+            peft_config=None if config.get("init_adapter") else LoraConfig(
+                r=config["lora_r"], lora_alpha=config["lora_alpha"], lora_dropout=0.0,
+                target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+                task_type="CAUSAL_LM"), callbacks=[Progress()],
         )
         trainer.train(resume_from_checkpoint=checkpoint)
         trainer.save_model(str(output / "adapter"))

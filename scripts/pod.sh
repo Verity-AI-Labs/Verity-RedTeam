@@ -13,7 +13,8 @@
 #                                               prints the tunnel's URL (Vercel's INFERENCE_URL)
 # Settings (environment variables): ENV_NAME (shop), MODEL, SIGNATURES, LEARNING_RATE, BETA, LORA_R, BATCH_SIZE,
 # GRADIENT_ACCUMULATION, GENERATIONS, MAX_COMPLETION_LENGTH, SAVE_STEPS, VLLM_MEMORY, SEED; RUNS (the pod's folder for
-# runs, default /workspace/runs/$ENV_NAME); for serve, SHOP_RUNS (default /workspace/runs/shop).
+# runs, default /workspace/runs/$ENV_NAME); INIT_ADAPTER (continue from an adapter on the pod); for serve, SHOP_RUNS
+# (default /workspace/runs/shop).
 set -euo pipefail
 IP=$1 PORT=$2 COMMAND=$3
 shift 3
@@ -55,7 +56,7 @@ case "$COMMAND" in
       --learning-rate ${LEARNING_RATE:-3e-5} --beta ${BETA:-0.04} --lora-r ${LORA_R:-32} --batch-size ${BATCH_SIZE:-4} \
       --gradient-accumulation ${GRADIENT_ACCUMULATION:-16} --generations ${GENERATIONS:-8} \
       --max-completion-length ${MAX_COMPLETION_LENGTH:-3072} --save-steps ${SAVE_STEPS:-10} \
-      --vllm --vllm-memory ${VLLM_MEMORY:-0.45} > $RUNS/$NAME.log 2>&1 < /dev/null &
+      --vllm --vllm-memory ${VLLM_MEMORY:-0.45} ${INIT_ADAPTER:+--init-adapter $INIT_ADAPTER} > $RUNS/$NAME.log 2>&1 < /dev/null &
       echo started $NAME" ;;
   status)
     "${SSH[@]}" "tail -n 5 $RUNS/*.log; for run in $RUNS/*/run.json; do python3 -c \"import json,sys; r=json.load(open(sys.argv[1])); \
