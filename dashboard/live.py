@@ -34,6 +34,19 @@ from evaluate import TOOL_CALL, Policy, run_call, tool_calls, tool_names  # noqa
 import scripts.match as match  # noqa: E402
 
 ARMS = ("baseline", "verity")
+# well-known openings a live game can start from (the models move deterministically, so the start varies the game)
+OPENINGS = {"Italian Game": "e4 e5 Nf3 Nc6 Bc4", "Ruy Lopez": "e4 e5 Nf3 Nc6 Bb5", "Sicilian Defence": "e4 c5 Nf3 d6",
+            "French Defence": "e4 e6 d4 d5", "Caro-Kann Defence": "e4 c6 d4 d5", "Scandinavian Defence": "e4 d5 exd5 Qxd5",
+            "Queen's Gambit Declined": "d4 d5 c4 e6", "King's Indian Defence": "d4 Nf6 c4 g6 Nc3 Bg7",
+            "Nimzo-Indian Defence": "d4 Nf6 c4 e6 Nc3 Bb4", "London System": "d4 d5 Bf4 Nf6", "English Opening": "c4 e5 Nc3 Nf6",
+            "Reti Opening": "Nf3 d5 g3 Nf6"}
+
+
+def opening_fen(moves):
+    board = chess.Board()
+    for move in moves.split():
+        board.push_san(move)
+    return board.fen()
 
 
 class Prefixed:
@@ -59,9 +72,13 @@ class Chess:
             if self.thread and self.thread.is_alive():
                 return False
             white = body.get("white") if body.get("white") in ARMS else "verity"
-            fen = random.choice(self.starts) if body.get("start") == "heldout" else chess.STARTING_FEN
+            if body.get("start") == "heldout":
+                fen, opening = random.choice(self.starts), None
+            else:  # a random well-known opening, so each game differs
+                opening = random.choice(list(OPENINGS))
+                fen = opening_fen(OPENINGS[opening])
             self.game = {"white": white, "black": "baseline" if white == "verity" else "verity", "start_fen": fen,
-                         "plies": [], "status": "playing", "live": True}
+                         "opening": opening, "plies": [], "status": "playing", "live": True}
             self.thread = threading.Thread(target=self.play, args=(self.game,), daemon=True)
             self.thread.start()
             return True

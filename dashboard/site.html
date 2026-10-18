@@ -241,7 +241,7 @@ footer .prov { font: 12px/1.7 var(--mono); color: var(--faint); }
       </div>
       <div class="toolbar" id="chess-controls" hidden>
         <select id="chess-white" aria-label="Who plays White"><option value="verity">Verity plays White</option><option value="baseline">Unguarded plays White</option></select>
-        <select id="chess-start" aria-label="Starting position"><option value="opening">From the opening</option><option value="heldout">From a held-out position</option></select>
+        <select id="chess-start" aria-label="Starting position"><option value="opening">From a random opening</option><option value="heldout">From a held-out position</option></select>
         <button class="btn primary" type="button" id="chess-go">Start a live game</button>
         <button class="btn" type="button" id="chess-stop">Stop</button>
         <span class="status"><span class="dot" id="chess-dot"></span><span id="chess-status">Checking the inference server…</span></span>
@@ -585,7 +585,7 @@ function liveDemo(demo, ui) {
       view.set([g]);
       if (g.status === "playing") {
         const last = g.plies[g.plies.length - 1], white = last ? last.color === "black" : g.start_fen.split(" ")[1] === "w";
-        status.textContent = `${NAME[white ? g.white : g.black]} (${white ? "White" : "Black"}) is thinking · move ${g.plies.length + 1}`;
+        status.textContent = `${g.opening ? g.opening + " · " : ""}${NAME[white ? g.white : g.black]} (${white ? "White" : "Black"}) is thinking · move ${g.plies.length + 1}`;
         return true;
       }
       status.textContent = g.status === "finished" ? `Finished: ${g.result}, ${g.reason}.` : `${g.status}${g.reason ? ": " + g.reason : ""}`;
