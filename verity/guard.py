@@ -1,9 +1,12 @@
 """Guard: sits between an environment's grader and the trainer, and enforces markers.
 
-For every model output, Guard asks the environment for its reward, checks the output against the
-markers, and returns the reward the trainer should use:
+For every model output (a text reply, or each tool call of an episode), Guard checks it against the
+markers and returns the reward the trainer should use:
 
-    enforce: a matching marker replaces the reward with its penalty (usually -1)
+    enforce: a matching marker replaces the reward with its penalty (usually -1). In a tools environment the
+             matching call is blocked instead, and each blocked call adds its marker's penalty to the
+             episode's reward: fewer attempts always score higher, and the agent's own play after the
+             warning still counts (warn and redirect)
     observe: the environment's reward passes through untouched; matches are only logged
 
 Each batch is logged to telemetry (environment reward, guarded reward, true score, catch rate,
@@ -13,6 +16,8 @@ from __future__ import annotations
 
 import argparse
 import copy
+import functools
+import inspect
 import json
 import math
 import statistics
@@ -109,6 +114,64 @@ class Guard:
                 examples.append({"reply": reply[:2000], "env_reward": reward, "guarded_reward": guarded,
                                  "true_score": score, "signature_ids": [m["id"] for m in matches],
                                  "warnings": [m.get("on_match", {}).get("warn", "") for m in matches]})
+        return self._record(rewards, base, true_scores, extras, examples, caught, costs, step)
+
+    def episode_class(self, base):
+        """The environment's Episode class with every tool call checked before it runs.
+
+        A call that newly matches a marker is not run in enforce mode: the agent gets the marker's warning
+        as the tool result instead, and keeps playing (warn and redirect). In observe mode the call runs
+        and the match is only recorded."""
+        guard = self
+
+        def checked(name, method):
+            @functools.wraps(method)
+            def tool(episode, *args, **kwargs):
+                call = f"{name}({', '.join(str(value) for value in [*args, *kwargs.values()])})"
+                start = time.perf_counter_ns()
+                before = {m["id"] for m in guard.check("\n".join(episode.log), "calls")}
+                fired = [m for m in guard.check("\n".join([*episode.log, call]), "calls") if m["id"] not in before]
+                episode.check_us.append((time.perf_counter_ns() - start) / 1000)
+                episode.trace.append({"call": call, "blocked": bool(fired) and guard.enforce})
+                if fired:
+                    episode.flags.append({"call": call, "signature_ids": [m["id"] for m in fired], "blocked": guard.enforce,
+                                          "reward": min(float(m.get("on_match", {}).get("reward", -1)) for m in fired),
+                                          "warnings": [m.get("on_match", {}).get("warn", "") for m in fired]})
+                    if guard.enforce:
+                        return " ".join(episode.flags[-1]["warnings"]) or "Blocked by Verity."
+                return method(episode, *args, **kwargs)
+            return tool
+
+        class Guarded(base):
+            def reset(self, **task):
+                self.flags, self.check_us, self.trace = [], [], []  # trace: every call in order, blocked or not
+                return super().reset(**task)
+        for name, method in inspect.getmembers(base, predicate=inspect.isfunction):
+            if not name.startswith("_") and name not in ("reset", "get_reward"):
+                setattr(Guarded, name, checked(name, method))
+        Guarded.__name__ = Guarded.__qualname__ = base.__name__
+        return Guarded
+
+    def episodes(self, episodes, env, step=None):
+        """Guarded rewards for a batch of finished episodes of a tools environment, plus the telemetry row."""
+        rewards, true_scores, costs, examples, extras, caught, base = [], [], [], [], [], 0, []
+        for episode in episodes:
+            reward, score = float(env.grade(episode)), float(env.check(episode))
+            guarded = reward + sum(flag["reward"] for flag in episode.flags) if self.enforce else reward
+            base.append(reward)
+            true_scores.append(score)
+            rewards.append(guarded)
+            extras.append(env.metrics(episode) if hasattr(env, "metrics") else {})
+            costs.extend(episode.check_us or [0.0])
+            caught += bool(episode.flags)
+            if episode.flags and len(examples) < 8:
+                examples.append({"reply": "\n".join(episode.log)[:2000], "trace": episode.trace[:40],
+                                 "env_reward": reward, "guarded_reward": guarded,
+                                 "true_score": score, "signature_ids": sorted({i for f in episode.flags for i in f["signature_ids"]}),
+                                 "warnings": [w for f in episode.flags for w in f["warnings"]][:3]})
+        return self._record(rewards, base, true_scores, extras, examples, caught, costs, step)
+
+    def _record(self, rewards, base, true_scores, extras, examples, caught, costs, step):
         if not rewards:
             return [], {}
         row = {"event": "rollout", "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -140,17 +203,19 @@ class Guard:
 
 def main():
     parser = argparse.ArgumentParser(description="Measure how long one Guard check takes.")
-    parser.add_argument("--pack", default="markers/chess-fixture.json")
+    parser.add_argument("--pack", required=True, help="a marker file, e.g. markers/<environment>.json")
+    parser.add_argument("--field", default="completion", help="what the markers read: completion, calls, command, ...")
+    parser.add_argument("--sample", action="append", help="an output to check (repeatable)")
     parser.add_argument("--iterations", type=int, default=10000)
     args = parser.parse_args()
     if args.iterations < 1:
         parser.error("iterations must be positive")
     guard = Guard(args.pack)
-    samples = ["e2e4", "e2e4 d2d4 g1f3", "My move is e2e4."]
+    samples = args.sample or ["a short reply", "a longer reply with several sentences " * 8, "step one\nstep two\nstep three"]
     costs = []
     for index in range(args.iterations):
         start = time.perf_counter_ns()
-        guard.check(samples[index % len(samples)])
+        guard.check(samples[index % len(samples)], args.field)
         costs.append((time.perf_counter_ns() - start) / 1000)
     costs.sort()
     print(json.dumps({"checks": len(costs), "mean_us": round(statistics.fmean(costs), 2),

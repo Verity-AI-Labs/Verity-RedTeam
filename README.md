@@ -8,7 +8,7 @@ Verity is one system that works on any reinforcement-learning environment. Chess
 
 1. **Audit.** An AI attacker probes the environment's grader for shortcuts. Verity proves each one with numbers: what the grader paid against what the answer was really worth, or traced evidence of the exact file the agent read or changed.
 2. **Markers.** Each proven shortcut becomes a marker: a small rule, plus a warning and a fix. Verity tests every marker against cheat variants and honest answers before it can act.
-3. **Guard.** During training, Guard sits between the environment's grader and the trainer. Every model output is checked against the markers in about 2 µs. In **enforce** mode, a match turns the reward into −1, so cheating never pays. In **observe** mode, matches are only logged.
+3. **Guard.** During training, Guard sits between the environment's grader and the trainer. Every model output is checked against the markers in about 2 µs. In **enforce** mode, a match turns the reward into −1, so cheating never pays. In a multi-step (tools) environment, Guard checks each tool call before it runs: a matching call is blocked, the agent gets the marker's warning as the tool result and keeps going, and each blocked call costs its penalty. In **observe** mode, matches are only logged.
 
 ## Where everything is
 
@@ -16,7 +16,7 @@ Verity is one system that works on any reinforcement-learning environment. Chess
 verity/                 THE SYSTEM: knows nothing about any particular environment
   environment.py        the plug every environment implements
   audit.py              one command to audit any environment and write its markers
-  probe.py              audit engine for answer environments: attacker, proof, marker testing
+  probe.py              audit engine for answer and tools environments: attacker, proof, marker testing
   sandbox.py            audit engine for agent environments in Docker: grader checks, attacker, traced proof, judge
   runner.py             Docker and task plumbing used by sandbox.py
   llm.py                model client: OpenRouter, DeepSeek or Ollama, with a spend cap
@@ -25,13 +25,15 @@ verity/                 THE SYSTEM: knows nothing about any particular environme
   prompts/              attacker and judge prompts
 environments/           ENVIRONMENTS plugged into Verity
   chess.py              the demo: chess with a seeded, disclosed grader bug
+  chess_game.py         multi-step chess through tools (legal_moves, move, hint), with a seeded, disclosed loophole
   terminal_wrench.py    13 sandboxed terminal tasks (task files in tasks/, listed in tasks.json)
-train.py                RL fine-tuning (TRL GRPO + LoRA) on any answer environment, Guard observing or enforcing
+train.py                RL fine-tuning (TRL GRPO + LoRA) on any answer or tools environment, Guard observing or enforcing
 evaluate.py             held-out comparison: base model vs. both trained arms
-dashboard/              local demo UI: audit, training curves, arena, real environments
+dashboard/              site.py builds the site from the run files; live.py is the inference server for live games
+web/                    the hosted site (Vercel): index.html (built by site.py) and api/live.js (forwards live games)
 markers/                audit output: one marker file per environment
-experiments/            raw results: sandbox audit runs (runs/), chess audit reports (chess-audits/)
-scripts/                Hyak jobs, batch audits, maintenance scripts
+experiments/            raw results: sandbox audit runs (runs/), audit reports (<environment>-audits/)
+scripts/                Hyak jobs, batch audits, match.py (head-to-head chess between trained arms)
 tests/                  unit tests (no GPU, Docker or network needed)
 docs/                   original plan, Devpost draft, lab log, report schema, dashboard API
 data/, artifacts/       not in git: chess positions; trained models, telemetry, results
@@ -49,6 +51,10 @@ Create `environments/<name>.py` with `NAME`, `VERSION`, `KIND` and `DESCRIPTION`
   - `check(task, output)`: a trusted reference score
   - `honest_examples(task)`
   - optional: `metrics`, `task_key`, and a seeded bug for offline demos
+- **Tools environments** (the model calls tools over several steps):
+  - an `Episode` class whose public methods are the tools, with `reset(**task)`
+  - `tasks(split)`, `data_path(split)`, `grade(episode)`, `check(episode)` and `honest_logs()`
+  - optional: `metrics`, `done`, `MAX_TOOL_CALLS`, and a seeded exploit for offline demos
 - **Sandbox environments** (the model runs commands in a Docker machine): `tasks()`. The sandbox engine does the rest.
 
 [verity/environment.py](verity/environment.py) has the full contract. Once the file exists, the same commands work:
@@ -85,11 +91,15 @@ brew install stockfish                                       # chess labels, are
 
 | Variable | Use |
 |---|---|
-| `LEARNING_RATE`, `STEPS`, `SEED`, `PILOT_STEPS` | training settings |
-| `ARMS=baseline` / `ARMS=verity` | train one arm per GPU, in parallel |
-| `SIGNATURES` | which marker file to use |
+| `ENV_NAME` (required) | the environment to train on, e.g. `chess_game` |
+| `MODEL`, `LEARNING_RATE`, `STEPS`, `SEED`, `PILOT_STEPS`, `SAVE_STEPS` | training settings |
+| `BATCH_SIZE`, `GRADIENT_ACCUMULATION`, `GENERATIONS`, `MAX_COMPLETION_LENGTH` | rollout settings |
+| `ARMS=baseline` / `ARMS=verity` | train one arm per job, in parallel |
+| `SIGNATURES` | marker file (default `markers/$ENV_NAME.json`) |
+| `DATA_DIR`, `TRAIN_DATA`, `EVAL_DATA` | where the environment's data files are |
+| `EVAL_TASKS`, `EVAL_DISABLE`, `EVAL_DEPLOY`, `EVAL_OUTPUT` | held-out evaluation size, tools to disable, deployment mode (the environment's `DEPLOYMENT` tools and prompt), output file |
 
-`full` refuses to start unless the pilot showed hacking emerging. `scripts/sync_hyak.sh` copies results to `artifacts/` for the dashboard.
+`full` refuses to start unless the pilot showed hacking emerging: the baseline's marker match rate (`caught_rate`) rose. A job given several GPUs splits the model across them. `scripts/sync_hyak.sh` copies results to `artifacts/` for the dashboard.
 
 Defaults: Qwen2.5-1.5B-Instruct, LoRA rank 16, 8 tasks × 8 samples per step, 160 tokens, temperature 1.0, checkpoints every 25 steps. Both arms always use identical settings.
 

@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "id": "core",
+      "title": "Finish the active implementation and measured AI-marker experiment",
+      "owner": "claude",
+      "status": "external",
+      "depends": [],
+      "scope": [
+        "*"
+      ],
+      "brief": "Continue the user's existing implementation session in the main checkout. Reconcile live job state with PROGRESS.md, verify matched runs and tests, and provide an exact handoff. Do not repeat already completed experiments.",
+      "deliverables": [
+        "workflow/handoffs/core.md"
+      ],
+      "acceptance": "Handoff identifies commit/dirty state, exact tests, experiment paths, actual job status, remaining blockers, and which claims the artifacts support.",
+      "note": "User says Claude is actively implementing. External session is not managed or restarted by this queue."
+    },
+    {
+      "id": "pitch",
+      "title": "Evidence-checked three-minute demo and judge Q&A",
+      "owner": "codex",
+      "status": "blocked",
+      "depends": [],
+      "scope": [
+        "docs/pitch-kit.md",
+        "docs/claims-check.md",
+        "HANDOFF.md"
+      ],
+      "brief": "Read current PROGRESS.md, docs/devpost.md and relevant result/audit JSON in the main checkout READ-ONLY. Build a three-minute spoken demo script with exact clicks, a 30-second fallback, and ten skeptical judge questions with evidence-backed answers. Audit every numerical and feature claim; distinguish fixture-marker and AI-marker experiments. Known drift to check: 2 vs 3 audit queries, 868 vs 621 variants, the completed live audit vs earlier credit failure, and whether automatic re-audit exists. Draft corrected Devpost passages in claims-check.md without editing the main Devpost.",
+      "deliverables": [
+        "docs/pitch-kit.md",
+        "docs/claims-check.md",
+        "HANDOFF.md"
+      ],
+      "acceptance": "Each number points to a real source file/field; unresolved claims are flagged; script fits 3 minutes and has an offline path.",
+      "worktree": "/Users/mohit/Desktop/Verity-RedTeam/.agent-worktrees/pitch",
+      "branch": "flow/pitch",
+      "base_commit": "e3f18f4d0424f1a8d5d1ccc22b73a6ef21104a4f",
+      "packet": "/Users/mohit/Desktop/Verity-RedTeam/.agent-flow/packets/pitch.md",
+      "agent": "codex",
+      "started_at": "2026-10-17T21:20:34.704710+00:00",
+      "runner_pid": 97488,
+      "log": "/Users/mohit/Desktop/Verity-RedTeam/.agent-flow/runs/pitch/1792272034704129000",
+      "finished_at": "2026-10-17T21:22:40.104390+00:00",
+      "changed_files": [],
+      "note": "CLI exited 1; inspect /Users/mohit/Desktop/Verity-RedTeam/.agent-flow/runs/pitch/1792272034704129000/events.log. Quota/auth failures are not retried."
+    },
+    {
+      "id": "customer",
+      "title": "Turn the demo into a testable startup offer",
+      "owner": "codex",
+      "status": "prepared",
+      "depends": [],
+      "scope": [
+        "docs/customer-kit.md",
+        "docs/discovery-notes.csv",
+        "HANDOFF.md"
+      ],
+      "brief": "Create a one-page offer for teams building RL environments: a scoped grader audit with reproducible exploit evidence and a validated training guard integration. Separate existing features from roadmap. Draft five non-leading interview questions, a 15-minute call outline, two outreach drafts, a small paid-pilot proposal with measurable acceptance, and a CSV note template. Treat price and willingness-to-pay as hypotheses. Do not send messages, invent customers, or claim general safety certification.",
+      "deliverables": [
+        "docs/customer-kit.md",
+        "docs/discovery-notes.csv",
+        "HANDOFF.md"
+      ],
+      "acceptance": "Founder can use it immediately in a real conversation; buyer, pain, deliverable, success test, and open assumptions are explicit.",
+      "worktree": "/Users/mohit/Desktop/Verity-RedTeam/.agent-worktrees/customer",
+      "branch": "flow/customer",
+      "base_commit": "e3f18f4d0424f1a8d5d1ccc22b73a6ef21104a4f",
+      "packet": "/Users/mohit/Desktop/Verity-RedTeam/.agent-flow/packets/customer.md"
+    },
+    {
+      "id": "qa",
+      "title": "Independent release and evidence review",
+      "owner": "codex",
+      "status": "ready",
+      "depends": [
+        "core"
+      ],
+      "scope": [
+        "docs/release-review.md",
+        "HANDOFF.md"
+      ],
+      "brief": "Review the implementation owner's completed handoff and committed source. Verify the demo commands, results provenance, fixture versus AI-marker separation, and existing test suite. Record concrete defects and reproduction steps. Do not modify implementation files or start new training/audits. If the snapshot lacks the completed implementation, report that rather than reviewing stale code.",
+      "deliverables": [
+        "docs/release-review.md",
+        "HANDOFF.md"
+      ],
+      "acceptance": "Release checklist has pass/fail/evidence for offline demo, matched runs, truthful claims, tests, and backup recovery."
+    },
+    {
+      "id": "founder",
+      "title": "Rehearse and learn from real potential users",
+      "owner": "human",
+      "status": "ready",
+      "depends": [],
+      "scope": [],
+      "brief": "Record one 3-minute practice run, ask three relevant people about their latest grader/training failure, and capture verbatim pain/workaround/buyer/next step. Finish submission logistics and disclosures. The agents can draft; you own conversations, presentation, and final submission.",
+      "deliverables": [],
+      "acceptance": "One timed rehearsal, three real conversations or scheduled follow-ups, and a submission-ready demo backup."
+    }
+  ]
+}

@@ -9,15 +9,16 @@ A marker file is JSON: {"version": 1, "environment": ..., "signatures": [marker,
      "fix": "..."}
 
 A rule is data, never code: {"regex": str, "min_count": int, "distinct": bool}, or {"any": [rules]},
-{"all": [rules]}, {"not": rule}. Any rule can add "field": "completion" | "command" | "read" | "write"
-to say which part of the model's behavior it looks at.
+{"all": [rules]}, {"not": rule}. Any rule can add "field" to say which part of the model's behavior it
+looks at: "completion" (a text reply), "calls" (an episode's tool-call log, one call per line),
+"command" (a shell command), "read" / "write" (a file path).
 """
 from __future__ import annotations
 
 import hashlib
 import re
 
-FIELDS = {"completion", "command", "read", "write"}
+FIELDS = {"completion", "calls", "command", "read", "write"}
 
 
 def text(output):

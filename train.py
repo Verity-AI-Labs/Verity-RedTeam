@@ -1,11 +1,11 @@
-"""RL fine-tuning (GRPO + LoRA) of an open model on any answer environment, with Verity's Guard.
+"""RL fine-tuning (GRPO + LoRA) of an open model on an answer or tools environment, with Verity's Guard.
 
     python train.py --env chess --arm baseline --output runs/baseline   # Guard only watches and logs
     python train.py --env chess --arm verity   --output runs/verity     # Guard enforces the markers
 
 The two arms are identical except for that one switch: same model, data, seed and settings. Every
-answer the model writes is scored by the environment's grader *through Guard*; the trainer only ever
-sees Guard's reward. Needs a CUDA GPU (see scripts/hyak.sh); --dry-run checks inputs anywhere.
+answer (or, in a tools environment, every tool call) goes through Guard; the trainer only ever sees
+Guard's reward. Needs a CUDA GPU (see scripts/hyak.sh); --dry-run checks inputs anywhere.
 """
 import argparse
 from datetime import datetime, timezone
@@ -48,18 +48,21 @@ def dataset_rows(tasks):
 
 
 def make_reward(env, guard):
-    """The only TRL-specific glue: TRL's reward call -> Guard.batch over environment tasks."""
-    def verity_reward(prompts, completions, **columns):
-        fields = {key: value for key, value in columns.items()
-                  if key != "completion_ids" and isinstance(value, list) and len(value) == len(completions)}
-        tasks = [{key: value[i] for key, value in fields.items()} for i in range(len(completions))]
+    """The only TRL-specific glue: TRL's reward call -> Guard, for answer or tools environments."""
+    def verity_reward(prompts, completions, environments=None, **columns):
         step = getattr(columns.get("trainer_state"), "global_step", None)
-        rewards, row = guard.batch(tasks, completions, env, step=step)
+        if env.KIND == "tools":
+            rewards, row = guard.episodes(environments, env, step=step)
+        else:
+            fields = {key: value for key, value in columns.items()
+                      if key != "completion_ids" and isinstance(value, list) and len(value) == len(completions)}
+            tasks = [{key: value[i] for key, value in fields.items()} for i in range(len(completions))]
+            rewards, row = guard.batch(tasks, completions, env, step=step)
         log = columns.get("log_metric")
-        if callable(log):
-            for key in ("true_score", "caught_rate", "check_us", "hack_rate"):
-                if row.get(key) is not None:
-                    log("verity/" + key, row[key])
+        if callable(log):  # Guard's batch means plus every metric the environment reports
+            for key, value in row.items():
+                if isinstance(value, float):
+                    log("verity/" + key, value)
         return rewards
     return verity_reward
 
@@ -85,19 +88,33 @@ def training_config(args, env, train_data):
         "train_dataset_sha256": sha256(train_data),
         "signature_sha256": sha256(args.signatures),
         "environment": environment.identity(env),
+        **({"max_tool_calls": env.MAX_TOOL_CALLS} if env.KIND == "tools" else {}),
     }
 
 
-def grpo_settings(config, output, bf16):
+def grpo_settings(config, output, bf16, save_steps=25, keep=3):
     keys = ("max_steps", "seed", "data_seed", "per_device_train_batch_size",
             "gradient_accumulation_steps", "num_generations", "generation_batch_size",
             "max_completion_length", "temperature", "learning_rate", "beta", "loss_type", "scale_rewards")
     return {**{key: config[key] for key in keys},
             "output_dir": str(output), "logging_steps": 1,
-            "save_strategy": "steps", "save_steps": 25, "save_total_limit": 3,
+            "save_strategy": "steps", "save_steps": save_steps, "save_total_limit": keep,
             "bf16": bf16, "fp16": not bf16, "gradient_checkpointing": True,
             "remove_unused_columns": False, "report_to": "none", "use_vllm": False,
-            "shuffle_dataset": True}
+            "shuffle_dataset": True, "chat_template_kwargs": {"enable_thinking": False},
+            **({"max_tool_calling_iterations": config["max_tool_calls"]} if "max_tool_calls" in config else {})}
+
+
+def split_layers(model, revision, gpus):
+    """A device map for one model on several GPUs: embeddings, final norm and LM head stay on GPU 0, where the
+    trainer keeps its own tensors (logits must land there); the transformer layers are spread over all GPUs."""
+    from transformers import AutoConfig
+    layers = AutoConfig.from_pretrained(model, revision=revision).num_hidden_layers
+    first = max(1, layers // gpus - 3)  # GPU 0 also holds the embeddings and LM head
+    device_map = {"model.embed_tokens": 0, "model.rotary_emb": 0, "model.norm": 0, "lm_head": 0}
+    for index in range(layers):
+        device_map[f"model.layers.{index}"] = 0 if index < first else 1 + (index - first) * (gpus - 1) // (layers - first)
+    return device_map
 
 
 def resolve_resume(output, resume, config, arm):
@@ -132,7 +149,7 @@ def resolve_resume(output, resume, config, arm):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--env", default="chess", help="an answer environment in environments/")
+    parser.add_argument("--env", required=True, help="an answer or tools environment in environments/")
     parser.add_argument("--arm", choices=("baseline", "verity"), required=True,
                         help="baseline: Guard observes only; verity: Guard enforces")
     parser.add_argument("--train-data", help="task file (default: the environment's training split)")
@@ -150,12 +167,14 @@ def main(argv=None):
     parser.add_argument("--max-completion-length", type=int, default=160)
     parser.add_argument("--learning-rate", type=float, default=5e-6)
     parser.add_argument("--resume", nargs="?", const="auto")
+    parser.add_argument("--save-steps", type=int, default=25, help="checkpoint interval (preemptible GPUs: lower)")
+    parser.add_argument("--keep-checkpoints", type=int, default=3, help="how many recent checkpoints to keep")
     parser.add_argument("--dry-run", action="store_true", help="validate inputs and print the config without a GPU")
     args = parser.parse_args(argv)
     try:
         env = environment.load(args.env)
-        if env.KIND != "answer":
-            raise ValueError(f"{args.env} is a {env.KIND} environment; train.py trains on answer environments")
+        if env.KIND not in ("answer", "tools"):
+            raise ValueError(f"{args.env} is a {env.KIND} environment; train.py trains on answer and tools environments")
         args.signatures = args.signatures or str(ROOT / f"markers/{env.NAME}.json")
         train_data = Path(args.train_data or env.data_path("train"))
         config = training_config(args, env, train_data)
@@ -218,14 +237,17 @@ def main(argv=None):
         if tokenizer.pad_token_id is None:
             tokenizer.pad_token = tokenizer.eos_token
         tokenizer.padding_side = "left"
+        gpus = torch.cuda.device_count()  # more than one: split the model across them (one process, no DDP)
         model = AutoModelForCausalLM.from_pretrained(args.model, revision=args.revision,
-                                                     torch_dtype=torch.bfloat16 if bf16 else torch.float16)
+                                                     dtype=torch.bfloat16 if bf16 else torch.float16,
+                                                     **({"device_map": split_layers(args.model, args.revision, gpus)}
+                                                        if gpus > 1 else {}))
         model.config.use_cache = False
-        run.update({"status": "running", "gpu": torch.cuda.get_device_name(0),
+        run.update({"status": "running", "gpu": torch.cuda.get_device_name(0), "gpus": gpus,
                     "model_commit": getattr(model.config, "_commit_hash", None),
                     "packages": {name: importlib.metadata.version(name)
                                  for name in ("torch", "transformers", "trl", "peft", "accelerate", "datasets")}})
-        settings = GRPOConfig(**grpo_settings(config, output, bf16))
+        settings = GRPOConfig(**grpo_settings(config, output, bf16, args.save_steps, args.keep_checkpoints))
         run["precision"] = "bfloat16" if bf16 else "float16"
         write_json(output / "run.json", run)
 
@@ -237,6 +259,7 @@ def main(argv=None):
 
         trainer = GRPOTrainer(
             model=model, processing_class=tokenizer, reward_funcs=[reward],
+            environment_factory=guard.episode_class(env.Episode) if env.KIND == "tools" else None,
             train_dataset=Dataset.from_list(dataset_rows(tasks)), args=settings,
             peft_config=LoraConfig(r=16, lora_alpha=32, lora_dropout=0.0,
                                    target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],

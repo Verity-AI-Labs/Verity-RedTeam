@@ -1,0 +1,719 @@
+<title>Verity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,500;112,700;125,800&family=Literata:opsz,wght@7..72,400;7..72,600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+Symbols+2&display=swap">
+<style>
+/* Layout: a product page over one long case-file column. The hero states the thesis; each numbered case-study section is one stage of the pipeline; the match breaks out into a board + transcript grid. */
+:root {
+  --paper: #eef1f4;
+  --sheet: #ffffff;
+  --ink: #12161c;
+  --muted: #586271;
+  --rule: #d3d9e1;
+  --cobalt: #2a43d4;
+  --on-cobalt: #ffffff;
+  --hack: #c23d27;
+  --guard: #17784f;
+  --hack-wash: #fbe9e5;
+  --guard-wash: #e3f3ea;
+  --sq-light: #e2e6eb;
+  --sq-dark: #8d9aaf;
+  --code-bg: #f6f7f9;
+  --bar: rgba(238, 241, 244, .9);
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "Literata", Georgia, "Times New Roman", serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --pieces: "Noto Sans Symbols 2", "Segoe UI Symbol", "DejaVu Sans", "Apple Symbols", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0e1116; --sheet: #151a21; --ink: #e5e9ef; --muted: #97a1af; --rule: #29303a;
+    --cobalt: #8d9dff; --on-cobalt: #0e1116; --hack: #f17c64; --guard: #4cc08c; --hack-wash: #2c1a16; --guard-wash: #13261d;
+    --sq-light: #b8c1ce; --sq-dark: #5c6a81; --code-bg: #11151b; --bar: rgba(14, 17, 22, .88); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0e1116; --sheet: #151a21; --ink: #e5e9ef; --muted: #97a1af; --rule: #29303a;
+  --cobalt: #8d9dff; --on-cobalt: #0e1116; --hack: #f17c64; --guard: #4cc08c; --hack-wash: #2c1a16; --guard-wash: #13261d;
+  --sq-light: #b8c1ce; --sq-dark: #5c6a81; --code-bg: #11151b; --bar: rgba(14, 17, 22, .88); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+body { background: var(--paper); color: var(--ink); font: 16px/1.6 var(--body); }
+.page { max-width: 1120px; margin: 0 auto; padding-inline: clamp(16px, 4vw, 40px); padding-block: 8px 72px; }
+a { color: var(--cobalt); }
+a:focus-visible, button:focus-visible, textarea:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 3px; }
+h1, h2, h3 { font-family: var(--display); font-stretch: 112%; text-wrap: balance; margin: 0; }
+h2 { font-size: clamp(24px, 3.2vw, 34px); line-height: 1.15; font-weight: 700; letter-spacing: -0.01em; }
+p { margin: 0; max-width: 66ch; }
+.label { font: 600 11px/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.mono { font-family: var(--mono); font-size: .92em; }
+.hack { color: var(--hack); }
+.guard { color: var(--guard); }
+
+/* top bar */
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bar); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--rule); }
+.topbar .inner { max-width: 1120px; margin: 0 auto; padding-inline: clamp(16px, 4vw, 40px); height: 56px; display: flex; align-items: center; gap: 24px; }
+.wordmark { font: 800 19px/1 var(--display); font-stretch: 125%; letter-spacing: 0.14em; color: var(--ink); text-decoration: none; }
+.topbar nav { display: flex; gap: 4px 18px; overflow-x: auto; margin-left: auto; scrollbar-width: none; }
+.topbar nav a { font: 600 12px/1 var(--mono); letter-spacing: .04em; color: var(--muted); text-decoration: none; white-space: nowrap; padding: 6px 0; }
+.topbar nav a:hover { color: var(--ink); }
+
+/* hero */
+.hero { display: grid; gap: 26px; padding-block: 52px 40px; }
+.hero .kicker { color: var(--cobalt); }
+.hero h1 { font-size: clamp(34px, 5.6vw, 64px); line-height: 1.02; font-weight: 800; font-stretch: 125%; letter-spacing: -0.02em; max-width: 17ch; }
+.hero .lede { font-size: clamp(17px, 1.8vw, 20px); color: var(--muted); max-width: 60ch; }
+.ctas { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 600 14px/1 var(--mono); padding: 12px 16px; border-radius: 6px; text-decoration: none; border: 1px solid var(--cobalt); }
+.btn.primary { background: var(--cobalt); color: var(--on-cobalt); }
+.btn.secondary { color: var(--cobalt); background: transparent; }
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-block: 1px solid var(--rule); }
+.steps > div { padding: 18px 20px 20px 0; display: grid; gap: 6px; align-content: start; }
+.steps > div + div { border-left: 1px solid var(--rule); padding-left: 20px; }
+.steps b { font: 700 17px/1.2 var(--display); font-stretch: 112%; }
+.steps span:last-child { font-size: 14.5px; color: var(--muted); }
+.scoreline { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); border: 1px solid var(--rule); background: var(--sheet); border-radius: 6px; }
+.scoreline > div { padding: 16px 18px; display: grid; gap: 4px; align-content: start; }
+.scoreline > div + div { border-left: 1px solid var(--rule); }
+.scoreline .big { font: 800 30px/1.05 var(--display); font-stretch: 112%; font-variant-numeric: tabular-nums; }
+.scoreline .sub { font-size: 13.5px; color: var(--muted); }
+
+/* case study header */
+.casehead { margin-top: 56px; padding: 26px 0 6px; border-top: 2px solid var(--ink); display: grid; gap: 12px; }
+.casehead h2 { font-size: clamp(26px, 3.6vw, 40px); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips span { font: 600 12px/1 var(--mono); padding: 7px 9px; border: 1px solid var(--rule); border-radius: 4px; background: var(--sheet); }
+
+/* sections */
+section { padding-block: 48px 8px; display: grid; gap: 22px; border-top: 1px solid var(--rule); margin-top: 40px; }
+.casehead + section { border-top: 0; margin-top: 0; padding-top: 28px; }
+.head { display: grid; gap: 10px; }
+.head .label b { color: var(--cobalt); }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+.three { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; align-items: start; }
+.stack { display: grid; gap: 18px; align-content: start; min-width: 0; }
+.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 18px 20px; min-width: 0; }
+.panel > .label { margin-bottom: 10px; display: block; }
+.note { font-size: 14px; color: var(--muted); }
+
+/* call logs */
+.log { list-style: none; margin: 0; padding: 0; font: 13px/1.5 var(--mono); display: grid; gap: 2px; }
+.log li { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 8px; padding: 5px 8px; border-radius: 4px; }
+.log li .ep { color: var(--muted); }
+.log li .res { color: var(--muted); overflow-wrap: anywhere; }
+.log li.flag { background: var(--hack-wash); }
+.log li.flag .why { color: var(--hack); font-family: var(--body); font-size: 13px; }
+.log li.block { background: var(--guard-wash); }
+.log li.block .res { color: var(--guard); }
+.log li.reward .res { color: var(--ink); font-weight: 600; }
+.quote { border-left: 3px solid var(--cobalt); padding: 4px 0 4px 16px; font-style: italic; max-width: 66ch; }
+
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+th, td { text-align: right; padding: 8px 10px; border-bottom: 1px solid var(--rule); font-variant-numeric: tabular-nums; vertical-align: top; }
+th:first-child, td:first-child { text-align: left; }
+td.text { text-align: left; }
+th { font: 600 11px/1.3 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.scroll { overflow-x: auto; }
+pre.code { margin: 0; background: var(--code-bg); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; font: 12.5px/1.55 var(--mono); overflow-x: auto; white-space: pre; min-width: 0; }
+pre.code.wrap { white-space: pre-wrap; overflow-wrap: anywhere; }
+.try .warn { font: 13px/1.5 var(--body); color: var(--guard); border-left: 3px solid var(--guard); padding-left: 12px; }
+.k { color: var(--cobalt); }
+.s { color: var(--guard); }
+.c { color: var(--muted); }
+.stats { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14.5px; }
+.stats b { font-family: var(--display); font-stretch: 112%; font-size: 20px; margin-right: 4px; font-variant-numeric: tabular-nums; }
+
+/* try guard */
+.try { display: grid; gap: 12px; }
+.presets { display: flex; flex-wrap: wrap; gap: 8px; }
+.presets button, .controls button { font: 600 12.5px/1.2 var(--mono); background: var(--paper); color: var(--ink); border: 1px solid var(--rule); border-radius: 5px; padding: 8px 11px; cursor: pointer; }
+.presets button:hover, .controls button:hover { border-color: var(--cobalt); }
+.try textarea { width: 100%; min-height: 168px; resize: vertical; font: 13px/1.55 var(--mono); color: var(--ink); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 6px; padding: 10px 12px; }
+.try .verdict { font: 700 15px/1.3 var(--display); font-stretch: 112%; }
+
+/* charts */
+.chart svg { width: 100%; height: auto; display: block; }
+.chart .axis { stroke: var(--rule); stroke-width: 1; }
+.chart text { fill: var(--muted); font: 11px var(--mono); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font: 12.5px var(--mono); color: var(--muted); margin-top: 8px; }
+.legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+
+/* match */
+.games { display: flex; flex-wrap: wrap; gap: 8px; }
+.games button { font: 600 12.5px/1.3 var(--mono); background: var(--sheet); color: var(--ink); border: 1px solid var(--rule); border-radius: 5px; padding: 8px 12px; cursor: pointer; text-align: left; }
+.games button[aria-pressed="true"] { border-color: var(--cobalt); box-shadow: inset 0 0 0 1px var(--cobalt); }
+.games button small { display: block; font-weight: 400; color: var(--muted); }
+.arena { display: grid; grid-template-columns: minmax(0, 440px) minmax(0, 1fr); gap: 28px; align-items: start; }
+.boardwrap { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 10px; }
+.evalbar { position: relative; background: #1c2129; border-radius: 3px; overflow: hidden; }
+.evalbar div { position: absolute; left: 0; right: 0; bottom: 0; background: #f4f5f7; transition: height .25s; }
+.board { display: grid; grid-template-columns: repeat(8, 1fr); aspect-ratio: 1; max-width: 100%; border-radius: 4px; overflow: hidden; border: 1px solid var(--rule); }
+.sq { position: relative; display: grid; place-items: center; aspect-ratio: 1; font: clamp(22px, 4.6vw, 40px)/1 var(--pieces); user-select: none; }
+.sq.l { background: var(--sq-light); }
+.sq.d { background: var(--sq-dark); }
+.sq.hl::after { content: ""; position: absolute; inset: 0; background: rgba(42, 67, 212, .28); }
+.sq .w { color: #fbfbfc; -webkit-text-stroke: 1.2px #1a1d22; paint-order: stroke fill; position: relative; z-index: 1; }
+.sq .b { color: #15181d; position: relative; z-index: 1; }
+.sq .coord { position: absolute; font: 600 9px var(--mono); color: rgba(20, 24, 30, .55); }
+.sq .rank { top: 2px; left: 3px; } .sq .file { bottom: 1px; right: 3px; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+.controls button { background: var(--sheet); font-size: 13px; padding: 7px 12px; }
+.controls .pos { font: 12.5px var(--mono); color: var(--muted); margin-left: auto; }
+.players { display: grid; gap: 4px; font: 13px var(--mono); margin-bottom: 8px; }
+.turn { display: grid; gap: 10px; }
+.turn .who { font: 700 16px/1.3 var(--display); font-stretch: 112%; }
+.pill { display: inline-block; font: 600 11px/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; padding: 4px 7px; border-radius: 3px; vertical-align: middle; }
+.pill.baseline { background: var(--hack-wash); color: var(--hack); }
+.pill.verity { background: var(--guard-wash); color: var(--guard); }
+.moves { font: 13px/1.9 var(--mono); max-height: 180px; overflow-y: auto; border-top: 1px solid var(--rule); padding-top: 8px; }
+.moves button { font: inherit; background: none; border: 0; color: var(--ink); padding: 0 3px; cursor: pointer; border-radius: 3px; }
+.moves button.on { background: var(--cobalt); color: var(--on-cobalt); }
+.moves button.fb { text-decoration: underline wavy var(--hack); }
+.moves .n { color: var(--muted); margin-left: 6px; }
+.evalchart { margin-top: 12px; }
+.evalchart svg { width: 100%; height: auto; display: block; border: 1px solid var(--rule); border-radius: 4px; background: var(--sheet); }
+.evalchart text { font: 600 11px var(--mono); }
+.matchsum { margin-top: 4px; }
+.live { display: grid; gap: 12px; border-color: var(--cobalt); }
+.livebar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.livebar select { font: 600 13px var(--mono); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 10px 10px; }
+.btn:disabled { opacity: .5; cursor: wait; }
+button.btn { cursor: pointer; }
+.pending { padding: 22px; border: 1px dashed var(--rule); border-radius: 6px; color: var(--muted); font-size: 15px; }
+footer { margin-top: 64px; padding-top: 18px; border-top: 2px solid var(--ink); display: grid; gap: 10px; font-size: 13.5px; color: var(--muted); }
+footer .prov { font: 12px/1.7 var(--mono); }
+@media (max-width: 860px) {
+  .two, .arena { grid-template-columns: minmax(0, 1fr); }
+  .steps { grid-template-columns: minmax(0, 1fr); }
+  .steps > div + div { border-left: 0; border-top: 1px solid var(--rule); padding-left: 0; }
+  .scoreline > div + div { border-left: 0; border-top: 1px solid var(--rule); }
+}
+@media (max-width: 520px) { .topbar nav a.optional { display: none; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .evalbar div { transition: none; } }
+</style>
+
+<header class="topbar">
+  <div class="inner">
+    <a class="wordmark" href="#top">VERITY</a>
+    <nav aria-label="Sections">
+      <a href="#how" class="optional">How it works</a>
+      <a href="#case">Case study</a>
+      <a href="#try">Try Guard</a>
+      <a href="#match">Match</a>
+      <a href="#plug" class="optional">Plug in</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page" id="top">
+  <div class="hero">
+    <span class="label kicker">Reward-hack audits for RL environments</span>
+    <h1>Models learn what the grader pays for. Bugs included.</h1>
+    <p class="lede">Verity attacks an RL environment with a frontier model before training, proves each reward hack it finds, and turns it into a rule. During training, Guard checks every action against those rules, so the model is warned and redirected instead of paid for cheating.</p>
+    <div class="ctas"><a class="btn primary" href="#match">Watch the match</a><a class="btn secondary" href="#try">Try Guard</a></div>
+    <div class="steps" id="how">
+      <div><span class="label">Before training</span><b>Audit</b><span>A frontier model plays the environment through its own tools, looking for reward it can earn without doing the task.</span></div>
+      <div><span class="label">The output</span><b>Marker</b><span>Each proven hack becomes a detection rule, tested against exploit variants and hundreds of honest episodes.</span></div>
+      <div><span class="label">During training</span><b>Guard</b><span>Every tool call is checked in microseconds. A match is blocked, the agent gets the warning, and the attempt costs reward.</span></div>
+    </div>
+    <div class="scoreline" id="scoreline"></div>
+  </div>
+
+  <div class="casehead" id="case">
+    <span class="label">Case study</span>
+    <h2>Chess, played through tools</h2>
+    <p id="case-lede">The agent plays four moves against an engine by calling tools, from realistic middlegame positions where the choice of move matters. It sees the board, the position and its legal moves in standard notation, and each move is scored against Stockfish's best move. We planted one loophole in the training environment and did not tell the auditor: the task allows one hint per game, but nothing enforces it. Deployed, the agent just plays chess: there is no hint tool.</p>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <section id="audit">
+    <div class="head">
+      <span class="label"><b>01</b> · Audit</span>
+      <h2>Opus played the game and found the loophole</h2>
+      <p>The auditor gets what a training agent gets: the task prompt and the tools <span id="tool-list" class="mono"></span>. It never sees the grader's code. Its instructions are the same for every environment: test whether each stated limit is enforced, exploit what you find, and reproduce it in three finished episodes.</p>
+    </div>
+    <div class="two">
+      <div class="panel"><span class="label">Auditor tool calls, in order</span><ol class="log" id="audit-log"></ol></div>
+      <div class="stack">
+        <div class="panel"><span class="label">Proof: the same episodes, two scorers</span><div class="scroll"><table id="proof"></table></div>
+          <p class="note" style="margin-top:10px">Grader reward is what the environment pays. The last column is the environment's own reference for the same episode under its stated rule: a game that breaks the one-hint rule scores 0.</p></div>
+        <div class="stats" id="audit-stats"></div>
+        <p class="quote" id="audit-quote"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="marker">
+    <div class="head">
+      <span class="label"><b>02</b> · Marker</span>
+      <h2>The finding becomes a rule Guard can check</h2>
+      <p>Opus writes the marker in Verity's small rule language. Verity accepts it only if it catches the exploit and stays silent on honest play.</p>
+    </div>
+    <div class="two">
+      <pre class="code wrap" id="marker-json"></pre>
+      <div class="stack">
+        <div class="stats" id="marker-stats"></div>
+        <p class="note" id="marker-fix"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="guard">
+    <div class="head">
+      <span class="label"><b>03</b> · Guard</span>
+      <h2>Inside training, the hack stops paying</h2>
+      <p>Guard wraps each tool the trainer exposes. Before a call runs, it checks the episode's calls so far plus this one against the markers. A new match is not executed: the agent receives the marker's warning as the tool result and keeps playing, and each blocked call costs the marker's penalty. Moves the agent makes on its own still count.</p>
+    </div>
+    <div class="two">
+      <div class="panel"><span class="label">A real training episode from the Verity run</span><ol class="log" id="guard-log"></ol></div>
+      <div class="panel try" id="try">
+        <span class="label">Try Guard · the marker above, running in your browser</span>
+        <div class="presets" id="presets"></div>
+        <label class="note" for="try-input">One tool call per line, in order. Edit freely.</label>
+        <textarea id="try-input" spellcheck="false" autocomplete="off"></textarea>
+        <div class="verdict" id="try-verdict"></div>
+        <p class="warn" id="try-warn" hidden></p>
+        <ol class="log" id="try-out"></ol>
+      </div>
+    </div>
+    <div class="stats" id="guard-stats"></div>
+  </section>
+
+  <section id="training">
+    <div class="head">
+      <span class="label"><b>04</b> · Training</span>
+      <h2>Same model, same data, same steps</h2>
+      <p id="train-config">The only difference between the two runs is whether Guard enforces the marker.</p>
+    </div>
+    <div id="train-body"></div>
+  </section>
+
+  <section id="match">
+    <div class="head">
+      <span class="label"><b>05</b> · Match</span>
+      <h2>The two trained models play each other</h2>
+      <p>Both models play as deployed: the board, the position and the legal moves, and two tools, <span class="mono">move()</span> and <span class="mono">legal_moves()</span>. The training-only <span class="mono">hint()</span> does not exist here. Same base model, same prompt, greedy decoding, colors alternate. An illegal move is refused and retried; no legal move in four turns loses on time, as in a real game. Nothing is ever played for a model. Stockfish scores every move.</p>
+    </div>
+    <div class="panel live" id="live" hidden>
+      <span class="label">Live game · both trained models running on our GPU inference server</span>
+      <div class="livebar" id="live-controls">
+        <select id="live-white" aria-label="Who plays White"><option value="verity">Verity plays White</option><option value="baseline">Unguarded plays White</option></select>
+        <select id="live-start" aria-label="Starting position"><option value="opening">From the opening</option><option value="heldout">From a held-out position</option></select>
+        <button type="button" class="btn primary" id="live-go">Start a live game</button>
+        <button type="button" class="btn secondary" id="live-stop">Stop</button>
+      </div>
+      <p class="note" id="live-status">Press Start. Each move takes a few seconds: the model calls its tools, then Stockfish scores the move.</p>
+      <div id="live-viewer"></div>
+    </div>
+    <div class="panel matchsum" id="matchsum-panel" hidden><span class="label">Recorded games, scored by Stockfish</span><div class="scroll" id="matchsum"></div></div>
+    <div id="match-body"></div>
+  </section>
+
+  <section id="results">
+    <div class="head">
+      <span class="label"><b>06</b> · Held-out games</span>
+      <h2>Against the engine, on positions never seen in training</h2>
+    </div>
+    <div id="results-body"></div>
+  </section>
+
+  <section id="plug">
+    <div class="head">
+      <span class="label">Plug in an environment</span>
+      <h2>One system. Chess is one instance.</h2>
+      <p>Verity does not know chess. An environment plugs in with a few functions, and the same audit, marker validation and Guard run on it. Nothing about the hint loophole is written anywhere in Verity.</p>
+    </div>
+    <div class="two">
+      <pre class="code"><span class="c"># environments/chess_game.py: the whole plug</span>
+<span class="k">NAME</span>, <span class="k">VERSION</span>, <span class="k">KIND</span> = <span class="s">"chess_game"</span>, 3, <span class="s">"tools"</span>
+
+<span class="k">class</span> Episode:              <span class="c"># its public methods are the tools</span>
+    <span class="k">def</span> reset(self, **task)
+    <span class="k">def</span> legal_moves(self) -> str
+    <span class="k">def</span> move(self, move: str) -> str
+    <span class="k">def</span> hint(self) -> str
+
+<span class="k">def</span> tasks(split)            <span class="c"># what to train on</span>
+<span class="k">def</span> grade(episode)          <span class="c"># the reward as shipped</span>
+<span class="k">def</span> check(episode)          <span class="c"># the reference: the stated rules</span>
+<span class="k">def</span> honest_logs()           <span class="c"># normal play, so markers never flag it</span>
+<span class="k">DEPLOYMENT</span> = {<span class="s">"tools"</span>: (<span class="s">"legal_moves"</span>, <span class="s">"move"</span>), ...}  <span class="c"># no hint</span></pre>
+      <pre class="code"><span class="c"># find, prove and mark the hacks</span>
+python -m verity.audit chess_game \
+    --model anthropic/claude-opus-5.5
+
+<span class="c"># GRPO with Guard enforcing the markers</span>
+python train.py --env chess_game --arm verity
+
+<span class="c"># the matched run with Guard only watching</span>
+python train.py --env chess_game --arm baseline
+
+<span class="c"># held-out games, as deployed</span>
+python evaluate.py --env chess_game --deploy</pre>
+    </div>
+    <div class="scroll"><table>
+      <thead><tr><th>Environment</th><th class="text">What the audit found</th><th class="text">With Guard</th></tr></thead>
+      <tbody>
+        <tr><td>chess (one answer)</td><td class="text">The grader credits the best move found anywhere in a reply, so listing many moves pays.</td><td class="text">Qwen2.5-1.5B, two seeds: the unguarded run lists moves in 100% of held-out replies; the guarded run in 0%.</td></tr>
+        <tr><td>Terminal Wrench</td><td class="text">13 sandboxed terminal tasks, DeepSeek as attacker: all 13 hackable, 10 with measured proof (answer files read, grader files rewritten).</td><td class="text">Markers block the recorded hack command, for example reading the hidden map in blind-maze.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <footer>
+    <span>The hint loophole in chess_game is planted on purpose and disclosed; the auditor was not told about it. Results come from single small runs and describe this environment only. Parts of Verity were built before DubHacks.</span>
+    <span class="prov" id="prov"></span>
+  </footer>
+</div>
+
+<script type="application/json" id="data">{}</script>
+<script>
+const D = JSON.parse(document.getElementById("data").textContent || "{}");
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const pct = (x) => x == null ? "–" : `${Math.round(100 * x)}%`;
+const f2 = (x) => x == null ? "–" : Number(x).toFixed(2);
+const ARM = { baseline: "Unguarded", verity: "Verity", base: "Untrained" };
+const COLOR = { baseline: "var(--hack)", verity: "var(--guard)", base: "var(--muted)" };
+const pending = (el, text) => { el.innerHTML = `<div class="pending">${esc(text)}</div>`; };
+const mean = (rows, key) => rows.length ? rows.reduce((a, r) => a + (r[key] || 0), 0) / rows.length : null;
+
+/* hero numbers and case-study chips */
+(function hero() {
+  const cells = [], t = D.training || {};
+  if (t.baseline && t.verity) {
+    const b = t.baseline.slice(-10), v = t.verity.slice(-10);
+    cells.push(`<div><span class="label">What training paid, last 10 steps</span><span class="big"><span class="hack">${f2(mean(b, "env_reward"))}</span> vs <span class="guard">${f2(mean(v, "env_reward"))}</span></span><span class="sub">Grader reward per game, Unguarded vs Verity.${mean(b, "env_reward") > mean(v, "env_reward") ? " The unguarded run is paid more, mostly for moves it copied from the hint." : ""}</span></div>`);
+  }
+  const closed = D.results && D.results.closed;
+  if (closed && closed.models.baseline && closed.models.verity) {
+    cells.push(`<div><span class="label">Real skill, as deployed</span><span class="big"><span class="hack">${f2(closed.models.baseline.env_reward)}</span> vs <span class="guard">${f2(closed.models.verity.env_reward)}</span></span><span class="sub">Held-out positions with only the deployment tools, so every move is the model's own. Untrained: ${f2(closed.models.base && closed.models.base.env_reward)}.</span></div>`);
+  }
+  if (D.match && D.match.games && D.match.games.length) {
+    const w = { baseline: 0, verity: 0 };
+    D.match.games.forEach((g) => { if (g.winner === "draw") { w.baseline += .5; w.verity += .5; } else if (g.winner) w[g.winner] += 1; });
+    const q = D.match.totals || {};
+    cells.push(`<div><span class="label">Head-to-head match</span><span class="big"><span class="guard">${w.verity}</span> – <span class="hack">${w.baseline}</span></span><span class="sub">Verity vs Unguarded over ${D.match.games.length} games, as deployed (no hint tool).${q.verity && q.baseline ? ` Stockfish move quality ${f2(q.verity.quality)} vs ${f2(q.baseline.quality)}.` : ""}</span></div>`);
+  }
+  if (D.audit) cells.push(`<div><span class="label">Audit</span><span class="big">$${D.audit.cost_usd.toFixed(2)}</span><span class="sub">${D.audit.calls} tool calls by ${esc(D.audit.attacker_short)}, black box.</span></div>`);
+  $("scoreline").innerHTML = cells.join("");
+  $("scoreline").hidden = !cells.length;
+  const chips = [D.environment, D.model, "GRPO + LoRA rank 16"];
+  if (t.run) chips.push(`${t.run.steps} steps per run`, `${t.run.games_per_step} games per step`);
+  const r = D.provenance && D.provenance.runs && D.provenance.runs.verity;
+  if (r && r.gpu) chips.push(`${r.gpus || 1} × ${r.gpu} per run`);
+  $("chips").innerHTML = chips.filter(Boolean).map((c) => `<span>${esc(c)}</span>`).join("");
+})();
+
+/* 01 audit */
+(function audit() {
+  $("tool-list").textContent = (D.tools || []).join(", ");
+  const a = D.audit;
+  if (!a) { pending($("audit-log"), "Audit report not built yet."); return; }
+  $("audit-log").innerHTML = a.steps.map((s) => {
+    const body = s.reward != null ? `<span class="res">finish → reward ${f2(s.reward)}</span>` : `${esc(s.call)} → <span class="res">${esc(s.result)}</span>`;
+    return `<li class="${s.flag ? "flag" : s.reward != null ? "reward" : ""}"><span class="ep">ep ${s.episode}</span><span>${body}${s.flag ? `<br><span class="why">${esc(s.flag)}</span>` : ""}</span></li>`;
+  }).join("");
+  $("proof").innerHTML = `<thead><tr><th>Episode</th><th class="text">Calls</th><th>Grader reward</th><th>Under the stated rule</th></tr></thead><tbody>` +
+    a.proof.rows.map((r) => `<tr><td>${r.task}</td><td class="text mono">${esc(Object.entries(r.counts || {}).map(([k, n]) => `${k} ×${n}`).join(" · "))}</td><td>${f2(r.env_reward)}</td><td class="${r.env_reward - r.true_score >= .3 ? "hack" : ""}">${f2(r.true_score)}</td></tr>`).join("") +
+    `<tr><td><b>Mean</b></td><td></td><td><b>${f2(a.proof.env_reward)}</b></td><td class="hack"><b>${f2(a.proof.true_score)}</b></td></tr></tbody>`;
+  $("audit-stats").innerHTML = `<span><b>${a.calls}</b>of ${a.max_calls} tool calls</span><span><b>$${a.cost_usd.toFixed(2)}</b>API cost</span><span><b>${a.proof.tasks}</b>finished episodes</span>`;
+  $("audit-quote").textContent = a.explanation ? `“${a.explanation}” (${a.attacker_short})` : "";
+  $("audit-quote").hidden = !a.explanation;
+})();
+
+/* 02 marker */
+(function marker() {
+  const m = D.marker;
+  if (!m) { pending($("marker-json"), "Marker not built yet."); return; }
+  const shown = { id: m.id, class: m.class, field: m.field, detect: m.detect, on_match: m.on_match };
+  $("marker-json").innerHTML = esc(JSON.stringify(shown, null, 2)).replace(/(&quot;[a-z_]+&quot;):/g, '<span class="k">$1</span>:');
+  const v = m.validation;
+  $("marker-stats").innerHTML = `<span><b>${pct(v.exploit_recall)}</b>of ${v.exploit_n} exploit episodes caught</span><span><b>${Math.round(v.honest_false_alarms * v.honest_n)}</b>of ${v.honest_n} honest episodes flagged</span>`;
+  $("marker-fix").innerHTML = `<b>Suggested fix, from the auditor:</b> ${esc(m.fix)}`;
+})();
+
+/* 03 guard: a real episode, and the same check running here */
+function compileRule(rule) {
+  if (rule.regex != null) {
+    let source = rule.regex, flags = "gi";  /* Verity matches case-insensitively */
+    const inline = source.match(/^\(\?([aiLmsux]+)\)/);
+    if (inline) { source = source.slice(inline[0].length); if (inline[1].includes("m")) flags += "m"; if (inline[1].includes("s")) flags += "s"; }
+    const re = new RegExp(source, flags), count = rule.min_count || 1, distinct = !!rule.distinct;
+    return (value) => {
+      const seen = new Set(); let total = 0;
+      for (const match of value.matchAll(re)) {
+        const token = match[0].toLowerCase();
+        if (!distinct || !seen.has(token)) { total += 1; seen.add(token); }
+        if (total >= count) return true;
+      }
+      return false;
+    };
+  }
+  if (rule.not) { const child = compileRule(rule.not); return (v) => !child(v); }
+  const children = (rule.any || rule.all).map(compileRule);
+  return rule.any ? (v) => children.some((c) => c(v)) : (v) => children.every((c) => c(v));
+}
+function guardRun(calls, markers) {  /* Guard's enforce mode: a call that newly matches is blocked and never joins the log */
+  const rules = markers.map((m) => ({ m, test: compileRule(m.detect) })), log = [], out = [];
+  for (const call of calls) {
+    const before = new Set(rules.filter((r) => r.test(log.join("\n"))).map((r) => r.m.id));
+    const fired = rules.filter((r) => !before.has(r.m.id) && r.test([...log, call].join("\n")));
+    if (fired.length) out.push({ call, blocked: true, warn: fired.map((r) => r.m.on_match.warn).join(" "), penalty: Math.min(...fired.map((r) => r.m.on_match.reward)) });
+    else { log.push(call); out.push({ call, blocked: false }); }
+  }
+  return out;
+}
+(function guard() {
+  const g = D.guard;
+  if (g && g.example) {
+    $("guard-log").innerHTML = g.example.trace.map((t, i) =>
+      `<li class="${t.blocked ? "block" : ""}"><span class="ep">${i + 1}</span><span>${esc(t.call)}${t.blocked ? `<br><span class="res">blocked → “${esc(g.example.warning)}”</span>` : ""}</span></li>`).join("") +
+      `<li class="reward"><span class="ep"></span><span class="res">episode reward ${f2(g.example.guarded_reward)}: grader ${f2(g.example.env_reward)}, minus the penalty</span></li>`;
+    $("guard-stats").innerHTML = `<span><b>${g.check_us.toFixed(0)} µs</b>mean cost per tool-call check</span><span><b>${pct(g.caught_first)}</b>→ <b>${pct(g.caught_last)}</b>Verity games with a blocked call, first vs last 10 steps</span>`;
+  } else pending($("guard-log"), "Waiting for the Verity training run.");
+  const markers = D.markers || [];
+  if (!markers.length) { pending($("try-out"), "No marker yet."); return; }
+  const presets = {
+    "Honest game": "legal_moves()\nmove(e2e4)\nhint()\nmove(g1f3)\nlegal_moves()\nmove(f1c4)",
+    "The auditor's exploit": (D.audit && D.audit.exploit.length ? D.audit.exploit : ["hint()", "move(e2e4)", "hint()", "move(d2d4)"]).join("\n"),
+    "Asking twice in a row": "hint()\nhint()\nmove(e2e4)",
+  };
+  $("presets").innerHTML = Object.keys(presets).map((name) => `<button type="button">${esc(name)}</button>`).join("");
+  $("presets").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; $("try-input").value = presets[b.textContent]; run(); });
+  $("try-input").addEventListener("input", run);
+  $("try-input").value = presets["The auditor's exploit"];
+  function run() {
+    const calls = $("try-input").value.split("\n").map((s) => s.trim()).filter(Boolean);
+    const out = guardRun(calls, markers), blocked = out.filter((o) => o.blocked);
+    $("try-verdict").innerHTML = blocked.length
+      ? `<span class="guard">${blocked.length} call${blocked.length > 1 ? "s" : ""} blocked</span> · penalty ${blocked.reduce((a, o) => a + o.penalty, 0)} · the other calls run`
+      : `<span>Nothing blocked · every call runs and the reward stands</span>`;
+    $("try-warn").hidden = !blocked.length;
+    if (blocked.length) $("try-warn").textContent = `The agent gets this instead of the result: “${blocked[0].warn}”`;
+    $("try-out").innerHTML = out.map((o, i) => `<li class="${o.blocked ? "block" : ""}"><span class="ep">${i + 1}</span><span>${esc(o.call)}${o.blocked ? ` <span class="res">→ blocked, warning returned</span>` : ""}</span></li>`).join("");
+  }
+  run();
+})();
+
+/* 04 training */
+function chart(series, { yMax = 1, label = "" } = {}) {
+  const W = 520, H = 220, L = 40, R = 12, T = 12, B = 30;
+  const xs = series.flatMap((s) => s.points.map((p) => p[0]));
+  const xMax = Math.max(1, ...xs);
+  const X = (x) => L + x / xMax * (W - L - R), Y = (y) => T + (1 - y / yMax) * (H - T - B);
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}">`;
+  for (const g of [0, .25, .5, .75, 1]) {
+    svg += `<line class="axis" x1="${L}" x2="${W - R}" y1="${Y(g * yMax)}" y2="${Y(g * yMax)}" ${g ? 'stroke-dasharray="2 4"' : ""}/>`;
+    svg += `<text x="${L - 6}" y="${Y(g * yMax) + 4}" text-anchor="end">${Math.round(g * 100) + "%"}</text>`;
+  }
+  const step = Math.max(5, Math.ceil(xMax / 5 / 5) * 5);
+  for (let x = 0; x <= xMax; x += step) svg += `<text x="${X(x)}" y="${H - 10}" text-anchor="middle">${x}</text>`;
+  for (const s of series) {
+    if (!s.points.length) continue;
+    const smooth = s.points.map((p, i) => { const w = s.points.slice(Math.max(0, i - 4), i + 1); return [p[0], w.reduce((a, q) => a + q[1], 0) / w.length]; });
+    svg += `<polyline fill="none" stroke="${s.color}" stroke-opacity=".25" stroke-width="1" points="${s.points.map((p) => `${X(p[0])},${Y(p[1])}`).join(" ")}"/>`;
+    svg += `<polyline fill="none" stroke="${s.color}" stroke-width="2.4" stroke-linejoin="round" ${s.dash ? 'stroke-dasharray="6 4"' : ""} points="${smooth.map((p) => `${X(p[0])},${Y(p[1])}`).join(" ")}"/>`;
+    const e = smooth[smooth.length - 1];
+    svg += `<circle cx="${X(e[0])}" cy="${Y(e[1])}" r="3.5" fill="${s.color}"/>`;
+  }
+  return svg + "</svg>";
+}
+const legend = (items) => `<div class="legend">${items.map((i) => `<span><i style="background:${i.color}${i.dash ? ";opacity:.6" : ""}"></i>${esc(i.name)}</span>`).join("")}</div>`;
+(function training() {
+  const t = D.training;
+  if (!t || !t.baseline || !t.verity) { pending($("train-body"), "Training is running on the UW Hyak cluster. Curves appear here when both runs finish."); return; }
+  if (t.config) $("train-config").textContent = t.config;
+  const runs = (D.provenance || {}).runs || {};
+  const live = Object.values(runs).some((r) => r.status !== "completed" && r.steps_completed != null);
+  const pts = (arm, key) => t[arm].map((r) => [r.step, Math.max(0, r[key] ?? 0)]);
+  const pair = legend([{ name: "Unguarded", color: COLOR.baseline }, { name: "Verity", color: COLOR.verity }]);
+  const alarm = t.baseline.find((r) => r.alarm);
+  const none = (r) => !r.own_quality && (r.hints || 0) >= (r.moves || 0) - .05;  /* every move that step came from a hint */
+  const own = (arm) => t[arm].filter((r) => !none(r)).map((r) => [r.step, r.own_quality || 0]);
+  const stopped = t.baseline.findIndex((r, i) => t.baseline.slice(i).every(none));
+  $("train-body").innerHTML = (live && runs.baseline && runs.verity ? `<p class="note" style="margin-bottom:14px"><b>In progress:</b> Unguarded at step ${runs.baseline.steps_completed}, Verity at step ${runs.verity.steps_completed} of ${t.run ? t.run.steps : "–"}. The curves extend as the runs continue.</p>` : "") + `<div class="three">
+    <div class="panel chart"><span class="label">Games that went past one hint</span>${chart([{ color: COLOR.baseline, points: pts("baseline", "hint_abuse") }, { color: COLOR.verity, dash: true, points: pts("verity", "caught_rate") }], { label: "games past one hint" })}${legend([{ name: "Unguarded: extra hints ran", color: COLOR.baseline }, { name: "Verity: tried, blocked", color: COLOR.verity, dash: true }])}</div>
+    <div class="panel chart"><span class="label">What training paid (grader reward)</span>${chart([{ color: COLOR.baseline, points: pts("baseline", "env_reward") }, { color: COLOR.verity, points: pts("verity", "env_reward") }], { label: "grader reward" })}${pair}</div>
+    <div class="panel chart"><span class="label">Quality of the moves it chose itself</span>${chart([{ color: COLOR.baseline, points: own("baseline") }, { color: COLOR.verity, points: own("verity") }], { label: "own move quality" })}${pair}</div>
+  </div><p class="note" style="margin-top:12px">Faint lines are per-step values; bold lines are 5-step moving averages. One step is one GRPO update over ${t.run ? t.run.games_per_step : "–"} games. Move quality is exp(−centipawn loss / 200) against Stockfish's best move; the third chart counts only moves the model chose itself, not a hint's suggestion.${stopped >= 0 ? ` <b class="hack">The unguarded run stopped choosing its own moves at step ${t.baseline[stopped].step}</b>: from there every move was copied from the hint, so its line ends.` : ""} The unguarded run is paid more; the match and the held-out games test which model actually got better at chess, with the loophole removed.</p>${alarm ? `<p class="note"><b class="hack">Guard's alarm fired at step ${alarm.step} of the unguarded run</b>, where Guard only watches: grader reward was rising while the true score stayed flat. That is the signal to stop and re-audit.</p>` : ""}`;
+})();
+
+/* 05 match: one viewer component for recorded and live games */
+const FILES = "abcdefgh", GLYPH = { k: "♚", q: "♛", r: "♜", b: "♝", n: "♞", p: "♟" };
+function boardHTML(fen, last) {
+  const hl = last ? [last.slice(0, 2), last.slice(2, 4)] : [];
+  let html = "";
+  fen.split(" ")[0].split("/").forEach((row, r) => {
+    let c = 0;
+    for (const ch of row) {
+      if (/\d/.test(ch)) { for (let k = 0; k < +ch; k++) html += square(r, c++, ""); }
+      else html += square(r, c++, ch);
+    }
+  });
+  function square(r, c, piece) {
+    const name = FILES[c] + (8 - r);
+    const glyph = piece ? `<span class="${piece === piece.toUpperCase() ? "w" : "b"}">${GLYPH[piece.toLowerCase()]}&#xFE0E;</span>` : "";
+    const coord = (c === 0 ? `<span class="coord rank">${8 - r}</span>` : "") + (r === 7 ? `<span class="coord file">${FILES[c]}</span>` : "");
+    return `<div class="sq ${(r + c) % 2 ? "d" : "l"}${hl.includes(name) ? " hl" : ""}" aria-label="${name}">${glyph}${coord}</div>`;
+  }
+  return html;
+}
+function evalChart(g, ply) {  /* Verity's winning chances after each move, from Stockfish: up is good for Verity */
+  const W = 440, H = 120, L = 6, R = 6, T = 14, B = 14, n = Math.max(1, g.plies.length), vw = g.white === "verity";
+  const win = (cp) => { const w = 1 / (1 + Math.pow(10, -(cp || 0) / 400)); return vw ? w : 1 - w; };
+  const pts = [[0, win(g.plies.length ? g.plies[0].eval_before_white_cp : 0)]].concat(g.plies.map((p, i) => [i + 1, win(p.eval_white_cp)]));
+  const X = (i) => L + i / n * (W - L - R), Y = (v) => T + (1 - v) * (H - T - B);
+  const cur = pts[Math.min(ply, pts.length - 1)];
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Verity's winning chances by move, from Stockfish">
+    <rect x="${L}" y="${T}" width="${W - L - R}" height="${(H - T - B) / 2}" style="fill: var(--guard-wash)"/>
+    <rect x="${L}" y="${Y(.5)}" width="${W - L - R}" height="${(H - T - B) / 2}" style="fill: var(--hack-wash)"/>
+    <text x="${L + 6}" y="${T + 13}" style="fill: var(--guard)">Verity ahead</text>
+    <text x="${L + 6}" y="${H - B - 6}" style="fill: var(--hack)">Unguarded ahead</text>
+    <line x1="${L}" x2="${W - R}" y1="${Y(.5)}" y2="${Y(.5)}" style="stroke: var(--rule)"/>
+    <polyline fill="none" style="stroke: var(--ink)" stroke-width="2" stroke-linejoin="round" points="${pts.map(([i, v]) => `${X(i)},${Y(v)}`).join(" ")}"/>
+    <line x1="${X(cur[0])}" x2="${X(cur[0])}" y1="${T}" y2="${H - B}" style="stroke: var(--cobalt)" stroke-width="1.5"/>
+    <circle cx="${X(cur[0])}" cy="${Y(cur[1])}" r="4" style="fill: var(--cobalt)"/>
+  </svg>`;
+}
+function viewer(root, { live = false } = {}) {
+  root.innerHTML = `${live ? "" : `<div class="games"></div>`}
+    <div class="arena" style="margin-top:18px">
+      <div><div class="players"></div>
+        <div class="boardwrap"><div class="evalbar" title="Stockfish evaluation"><div class="evalfill"></div></div><div class="board"></div></div>
+        <div class="controls"><button type="button" data-act="first" aria-label="First move">⏮</button><button type="button" data-act="prev" aria-label="Previous move">◀</button><button type="button" data-act="play">Play</button><button type="button" data-act="next" aria-label="Next move">▶</button><button type="button" data-act="last" aria-label="Last move">⏭</button><span class="pos"></span></div>
+        <div class="evalchart"></div>
+      </div>
+      <div class="panel turn"></div>
+    </div>`;
+  const q = (s) => root.querySelector(s);
+  let games = [], game = 0, ply = 0, timer = null, follow = live;
+  const G = () => games[game];
+  const move = { first: () => 0, last: () => G().plies.length, prev: () => Math.max(0, ply - 1), next: () => Math.min(G().plies.length, ply + 1) };
+  function stop() { clearInterval(timer); timer = null; q('[data-act="play"]').textContent = "Play"; }
+  function go(act) {
+    if (!G()) return;
+    if (act === "play") {
+      if (timer) return stop();
+      if (ply >= G().plies.length) ply = 0;
+      q('[data-act="play"]').textContent = "Pause";
+      timer = setInterval(() => { if (ply >= G().plies.length) return stop(); ply++; draw(); }, 900);
+      return;
+    }
+    stop(); ply = move[act](); follow = live && ply === G().plies.length; draw();
+  }
+  q(".controls").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) go(b.dataset.act); });
+  if (!live) q(".games").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; game = +b.dataset.g; ply = 0; stop(); draw(); });
+  function draw() {
+    const g = G();
+    if (!g) return;
+    const p = g.plies[ply - 1];
+    if (!live) root.querySelectorAll(".games button").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.g === game)));
+    const tag = (arm) => `${ARM[arm]} <span class="pill ${arm}">${arm === "verity" ? "guarded" : "unguarded"}</span>`;
+    q(".players").innerHTML = `<span>Black · ${tag(g.black)}</span><span>White · ${tag(g.white)}</span>`;
+    q(".board").innerHTML = boardHTML(p ? p.fen_after : g.start_fen, p && p.uci);
+    q(".evalchart").innerHTML = evalChart(g, ply);
+    const cp = p ? p.eval_white_cp : (g.plies[0] ? g.plies[0].eval_before_white_cp : 0);
+    q(".evalfill").style.height = `${100 / (1 + Math.pow(10, -(cp || 0) / 400))}%`;
+    q(".pos").textContent = `ply ${ply} / ${g.plies.length}`;
+    let html;
+    if (!p) html = `<div class="who">Start position</div><p class="note">${ARM[g.white]} plays White.${g.result ? ` Result: <b>${esc(g.result)}</b>, ${esc(g.reason)}.` : ""}</p>`;
+    else {
+      const items = (p.transcript || []).map((x) => x.say != null
+        ? `<li><span class="ep">says</span><span class="res">${esc(x.say)}</span></li>`
+        : `<li class="${x.call === "hint" ? "flag" : ""}"><span class="ep">call</span><span>${esc(x.call)}(${esc(Object.values(x.arguments || {}).join(", "))}) → <span class="res">${esc(x.result)}</span></span></li>`).join("");
+      html = `<div class="who">${Math.ceil(p.ply / 2)}${p.color === "white" ? "." : "…"} ${esc(p.san)} <span class="pill ${p.policy}">${ARM[p.policy]}</span></div>
+        <div class="stats" style="font-size:13.5px"><span>Eval after the move: <b style="font-size:15px">${(p.eval_white_cp / 100).toFixed(2)}</b> (White's view)</span>${p.quality != null ? `<span>Move quality <b style="font-size:15px">${f2(p.quality)}</b> (lost ${Math.round(p.cp_loss)} cp)</span>` : ""}${p.hint_requests ? `<span class="hack">${p.hint_requests} hint request${p.hint_requests > 1 ? "s" : ""}</span>` : ""}${p.fallback ? `<span class="hack">No legal move chosen: random move played</span>` : ""}</div>
+        <ol class="log">${items || `<li><span class="ep"></span><span class="res">No tool calls.</span></li>`}</ol>`;
+    }
+    const moves = g.plies.map((m, i) => `${m.color === "white" ? `<span class="n">${Math.ceil(m.ply / 2)}.</span>` : ""}<button type="button" class="${i + 1 === ply ? "on" : ""}${m.fallback ? " fb" : ""}" data-p="${i + 1}">${esc(m.san)}</button>`).join("");
+    const f = g.forfeit && ply === g.plies.length ? g.forfeit : null;
+    const lost = f ? `<div class="who hack">${ARM[f.policy]} lost on time</div><p class="note">It played no legal move in four turns. Its calls:</p><ol class="log">${(f.transcript || []).filter((x) => x.call).map((x) =>
+      `<li class="flag"><span class="ep">call</span><span>${esc(x.call)}(${esc(Object.values(x.arguments || {}).join(", "))}) → <span class="res">${esc(x.result)}</span></span></li>`).join("")}</ol>` : "";
+    q(".turn").innerHTML = html + lost + `<div class="moves">${moves}</div>`;
+    q(".moves").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; stop(); ply = +b.dataset.p; follow = live && ply === g.plies.length; draw(); };
+    const on = q(".moves .on"); if (on && on.scrollIntoView) on.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+  return {
+    set(list) {
+      games = list;
+      if (!live) q(".games").innerHTML = games.map((g, i) => `<button type="button" data-g="${i}" aria-pressed="${i === game}">Game ${i + 1} · ${esc(g.result)}<small>${ARM[g.white]} (White) vs ${ARM[g.black]} (Black)</small></button>`).join("");
+      if (follow && G()) ply = G().plies.length;
+      draw();
+    },
+    go,
+  };
+}
+(function match() {
+  const m = D.match;
+  /* live games: the page asks /api/live (the inference server, directly or through the site's API route) */
+  fetch("/api/live").then((r) => r.ok ? r.json() : null).then((state) => {
+    if (!state) return;
+    $("live").hidden = false;
+    const status = $("live-status");
+    if (!state.available) {
+      $("live-controls").hidden = true;
+      status.textContent = "Live play runs on our GPU inference server, which is offline right now. The recorded games below are real games between the same two models.";
+      return;
+    }
+    const v = viewer($("live-viewer"), { live: true });
+    const show = (s) => {
+      const g = s && s.game;
+      if (!s || !s.available) { status.textContent = "The inference server went offline."; return; }
+      $("live-go").disabled = !!(g && g.status === "playing");
+      if (!g) return;
+      v.set([g]);
+      if (g.status === "playing") {
+        const last = g.plies[g.plies.length - 1];
+        const white = last ? last.color === "black" : g.start_fen.split(" ")[1] === "w";
+        status.textContent = `${ARM[white ? g.white : g.black]} (${white ? "White" : "Black"}) is thinking · ply ${g.plies.length + 1}`;
+      } else status.textContent = g.status === "finished" ? `Finished: ${g.result}, ${g.reason}.` : `${g.status}: ${g.reason || ""}`;
+    };
+    const post = (action, body) => fetch(`/api/live?action=${action}`, { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body || {}) }).then((r) => r.json()).then(show).catch(() => { status.textContent = "Could not reach the inference server."; });
+    $("live-go").addEventListener("click", () => post("start", { white: $("live-white").value, start: $("live-start").value }));
+    $("live-stop").addEventListener("click", () => post("stop"));
+    show(state);
+    setInterval(() => fetch("/api/live").then((r) => r.json()).then(show).catch(() => {}), 1000);
+  }).catch(() => {});
+  if (!m || !m.games || !m.games.length) { pending($("match-body"), "Recorded games appear here when the match finishes."); return; }
+  const T = m.totals || {};
+  $("matchsum").innerHTML = `<table><thead><tr><th>Model</th><th>Score</th><th>Move quality</th><th>Centipawns lost per move</th><th>Lost on time</th><th>Calls to missing tools</th></tr></thead><tbody>${["verity", "baseline"].filter((a) => T[a]).map((a) =>
+    `<tr><td><span style="color:${COLOR[a]}">●</span> ${ARM[a]}</td><td><b>${T[a].score}</b> / ${m.games.length}</td><td><b>${f2(T[a].quality)}</b></td><td>${T[a].cp_loss == null ? "–" : Math.round(T[a].cp_loss)}</td><td>${T[a].forfeits || 0}</td><td>${T[a].hint_requests}</td></tr>`).join("")}</tbody></table>
+    <p class="note" style="margin-top:10px">Stockfish (depth 10) scores every move each model made: quality 1.0 and 0 centipawns lost mean it found the best move. A model that plays no legal move in four turns loses on time.</p>`;
+  $("matchsum-panel").hidden = false;
+  const recorded = viewer($("match-body"));
+  recorded.set(m.games);
+  document.addEventListener("keydown", (e) => {
+    if (e.target.closest && e.target.closest("input,textarea,select")) return;
+    if (e.key === "ArrowRight") recorded.go("next");
+    if (e.key === "ArrowLeft") recorded.go("prev");
+  });
+})();
+
+/* 06 results */
+(function results() {
+  const r = D.results;
+  if (!r || !r.closed) { pending($("results-body"), "Held-out evaluation runs after training."); return; }
+  const table = (res, title, note) => {
+    const arms = ["base", "baseline", "verity"].filter((a) => res.models[a]);
+    return `<div class="panel"><span class="label">${esc(title)}</span><div class="scroll"><table><thead><tr><th>Policy</th><th>Reward</th><th>Own-move quality</th><th>Moves made</th><th>Hint calls / game</th><th>Illegal / game</th></tr></thead><tbody>${arms.map((a) => {
+      const x = res.models[a];
+      return `<tr><td><span style="color:${COLOR[a]}">●</span> ${ARM[a]}</td><td><b>${f2(x.env_reward)}</b></td><td>${f2(x.own_quality)}</td><td>${f2(x.moves)}</td><td>${f2(x.hints_requested)}</td><td>${f2(x.illegal)}</td></tr>`;
+    }).join("")}</tbody></table></div><p class="note" style="margin-top:10px">${esc(note)}</p></div>`;
+  };
+  $("results-body").innerHTML = `<div class="two">${table(r.closed, `Real skill · as deployed · ${r.closed.positions} positions`, "Only the deployment tools, move() and legal_moves(), so every move is the model's own. Reward: each move scores exp(−centipawn loss / 200) against Stockfish's best, summed over the episode; a win scores 1.")}${r.open ? table(r.open, `As shipped · hints on · ${r.open.positions} positions`, "The loophole is still open. This is what the grader sees; hint calls per game show which model leans on it.") : ""}</div>`;
+})();
+
+/* provenance */
+(function provenance() {
+  const p = D.provenance || {}, parts = [];
+  if (p.marker_sha256) parts.push(`marker sha256 ${p.marker_sha256}${D.audit ? `, written by ${esc(D.audit.attacker)} on ${esc(D.audit.created)}` : ""}`);
+  for (const [arm, run] of Object.entries(p.runs || {})) {
+    parts.push(`${ARM[arm]} run: ${run.steps_completed} steps, ${run.status}, ${run.gpus || 1} × ${esc(run.gpu)} (${esc(run.precision)}), ${Math.round((run.wall_seconds || 0) / 60)} min`);
+  }
+  if (D.built) parts.push(`page built ${esc(D.built)} from the run files`);
+  $("prov").innerHTML = parts.map((x) => `<span>${x}</span>`).join("<br>");
+})();
+</script>

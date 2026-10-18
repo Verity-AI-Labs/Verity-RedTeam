@@ -2,10 +2,11 @@
 
     python -m verity.audit chess --fixture                         replay the disclosed seeded bug, no API calls
     python -m verity.audit chess --model anthropic/claude-opus-5.5 --input-price 4 --output-price 20
+    python -m verity.audit chess_game --model anthropic/claude-opus-5.5 --input-price 4 --output-price 20
     python -m verity.audit terminal_wrench --task blind-maze --model qwen3-coder:30b
     python -m verity.audit terminal_wrench --report experiments/runs/.../blind-maze/report.json --replay .../trajectory.jsonl
 
-Answer environments go through verity/probe.py; sandbox environments through verity/sandbox.py.
+Answer and tools environments go through verity/probe.py; sandbox environments through verity/sandbox.py.
 Markers land in markers/, reports in experiments/<environment>-audits/ (sandbox reports in experiments/runs/).
 """
 import argparse
@@ -23,6 +24,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def audit_answer_environment(env, args, parser):
+    """Audit training tasks and record their fingerprint with the results.
+
+    Fixture mode avoids API access. Tool environments use episode and call
+    limits, while answer environments use task and score limits. Live request
+    accounting and task provenance are included in generated artifacts.
+    """
     tasks = env.tasks("train", path=args.data)
     fingerprint = hashlib.sha256(json.dumps(tasks, sort_keys=True).encode()).hexdigest()
     client = None
@@ -41,9 +48,13 @@ def audit_answer_environment(env, args, parser):
         client = llm.Client(provider="openrouter", attacker=args.model, input_price=args.input_price,
                             output_price=args.output_price, max_usd=args.max_usd, max_tokens=args.max_tokens,
                             max_tries=args.api_retries, log=report_path.with_suffix(".api_calls.jsonl"))
-    report, pack = probe.run(env, tasks, ask=client.ask if client else None, model=args.model,
-                             offline=args.fixture, count=args.count, seed=args.seed,
-                             max_scores=args.max_scores, audit_kind=args.audit_kind)
+    ask = client.ask if client else None
+    if env.KIND == "tools":
+        report, pack = probe.run_tools(env, tasks, ask=ask, model=args.model, offline=args.fixture, count=args.episodes,
+                                       seed=args.seed, max_calls=args.max_calls, audit_kind=args.audit_kind)
+    else:
+        report, pack = probe.run(env, tasks, ask=ask, model=args.model, offline=args.fixture, count=args.count,
+                                 seed=args.seed, max_scores=args.max_scores, audit_kind=args.audit_kind)
     report["data"] = {"path": str(args.data or "default"), "tasks_sha256": fingerprint}
     if client:
         report["api"] = {"request_config": client.request_config(), "digest": client.digest(args.model), **client.stats()}
@@ -61,6 +72,11 @@ def audit_answer_environment(env, args, parser):
 
 
 def audit_sandbox_environment(env, args, parser):
+    """Audit a sandbox or convert a saved report into validation markers.
+
+    Saved reports use the same conversion path as live audits. Optional
+    trajectory replay screens commands without executing them.
+    """
     if args.report:
         report = json.loads(Path(args.report).read_text())
     else:
@@ -72,7 +88,7 @@ def audit_sandbox_environment(env, args, parser):
         if args.provider == "openrouter":
             client = llm.Client(provider="openrouter", attacker=models["attacker"], judge=models["judge"],
                                 input_price=args.input_price, output_price=args.output_price, max_usd=args.max_usd)
-        else:  # deepseek API models, or any Ollama model name
+        else:
             client = llm.Client(max_usd=args.max_usd)
         path = sandbox.audit(args.task, ask=client.ask, model_digest=client.digest, models=models,
                              request_config=client.request_config())
@@ -93,6 +109,7 @@ def audit_sandbox_environment(env, args, parser):
 
 
 def main(argv=None):
+    """Parse CLI options, validate settings, and dispatch the selected audit."""
     llm.load_env()
     parser = argparse.ArgumentParser(description="Audit an RL environment for reward hacks and write its markers.")
     parser.add_argument("environment", help="a module in environments/, e.g. chess or terminal_wrench")
@@ -111,6 +128,9 @@ def main(argv=None):
     answer.add_argument("--api-retries", type=int, default=3)
     answer.add_argument("--audit-kind", choices=("frontier_audit", "model_audit"), default="frontier_audit")
     answer.add_argument("--report-out", help="report path (.md; .json and .transcript.jsonl next to it)")
+    tools = parser.add_argument_group("tools environments")
+    tools.add_argument("--episodes", type=int, default=6, help="episodes the attacker plays (3..16)")
+    tools.add_argument("--max-calls", type=int, default=80, help="total tool calls for the attacker (10..200)")
     sandboxed = parser.add_argument_group("sandbox environments")
     sandboxed.add_argument("--task", help="task id from tasks.json")
     sandboxed.add_argument("--judge", help="judge model (default: --model); use a different model family")
@@ -124,7 +144,7 @@ def main(argv=None):
     if not math.isfinite(args.max_usd) or args.max_usd <= 0:
         parser.error("--max-usd must be positive")
     env = environment.load(args.environment)
-    if env.KIND == "answer":
+    if env.KIND in ("answer", "tools"):
         return audit_answer_environment(env, args, parser)
     if not args.report and not args.task:
         parser.error(f"Choose --task ({', '.join(runner.TASKS)}) or --report")

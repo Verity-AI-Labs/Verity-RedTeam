@@ -8,3 +8,4 @@ __pycache__/
 /artifacts/
 !experiments/runs/evidence/
 .venv/
+dashboard/build/

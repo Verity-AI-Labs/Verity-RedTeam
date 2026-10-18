@@ -7,8 +7,10 @@ Each reply is scored by the environment's grader (what training saw), its truste
 """
 import argparse
 from contextlib import nullcontext
+import inspect
 import json
 from pathlib import Path
+import re
 import threading
 import time
 
@@ -42,7 +44,7 @@ class Policy:
         if self.tokenizer.pad_token_id is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
         self.tokenizer.padding_side = "left"
-        base = AutoModelForCausalLM.from_pretrained(model, revision=revision, torch_dtype=dtype)
+        base = AutoModelForCausalLM.from_pretrained(model, revision=revision, dtype=dtype)
         self.model = base
         for index, (name, path) in enumerate(self.adapters.items()):
             if not (Path(path) / "adapter_config.json").is_file():
@@ -61,6 +63,10 @@ class Policy:
             self.torch.mps.synchronize()
 
     def reply(self, prompt, arm="base"):
+        return self.chat([{"role": "user", "content": prompt}], arm)
+
+    def chat(self, messages, arm="base", tools=None):
+        """One greedy assistant turn for a conversation, optionally with tool schemas."""
         if arm != "base" and arm not in self.adapters:
             raise ValueError(f"Unknown policy {arm}; available: base, {', '.join(self.adapters)}")
         with self.lock, self.torch.inference_mode():
@@ -69,7 +75,7 @@ class Policy:
             context = self.model.disable_adapter() if arm == "base" and self.adapters else nullcontext()
             with context:
                 rendered = self.tokenizer.apply_chat_template(
-                    [{"role": "user", "content": prompt}], tokenize=False, add_generation_prompt=True)
+                    messages, tools=tools, tokenize=False, add_generation_prompt=True, enable_thinking=False)
                 inputs = self.tokenizer(rendered, return_tensors="pt", add_special_tokens=False,
                                         return_token_type_ids=False).to(self.device)
                 generated = self.model.generate(
@@ -85,6 +91,89 @@ class Policy:
             self.reply(prompt, arm)
             timings[arm] = round(time.monotonic() - started, 3)
         return timings
+
+
+TOOL_CALL = re.compile(r"<tool_call>\s*(\{.*?\})\s*</tool_call>", re.S)
+
+
+def tool_calls(text):
+    """The tool calls in a reply, in Qwen's format: <tool_call>{"name": ..., "arguments": {...}}</tool_call>."""
+    calls = []
+    for raw in TOOL_CALL.findall(text):
+        try:
+            call = json.loads(raw)
+        except ValueError:
+            continue
+        if isinstance(call, dict) and isinstance(call.get("name"), str):
+            arguments = call.get("arguments") or {}
+            calls.append({"name": call["name"], "arguments": arguments if isinstance(arguments, dict) else {}})
+    return calls
+
+
+def tool_names(episode_class):
+    return [name for name, _ in inspect.getmembers(episode_class, inspect.isfunction)
+            if not name.startswith("_") and name not in ("reset", "get_reward")]
+
+
+def play(policy, env, task, arm="base", disabled=(), episode=None, rounds=None, deploy=False):
+    """Play one episode of a tools environment.
+
+    deploy: use the environment's DEPLOYMENT tools and prompt (training-only tools do not exist for the agent).
+    disabled: tools that answer "not available". episode: an already reset episode to play instead of a fresh
+    env.Episode; rounds: model turns allowed. episode.transcript records what the model said and every tool
+    call with its result; episode.unavailable counts calls to tools the agent was not given."""
+    from transformers.utils import get_json_schema
+    if episode is None:
+        episode = env.Episode()
+        episode.reset(**task)
+    names = tool_names(type(episode))
+    if deploy:
+        names = [name for name in names if name in env.DEPLOYMENT["tools"]]
+    prompt = env.DEPLOYMENT["prompt"](task) if deploy else task["prompt"]
+    tools = [get_json_schema(getattr(episode, name)) for name in names]
+    messages, episode.unavailable, episode.transcript = [{"role": "user", "content": prompt}], 0, []
+    for _ in range(rounds or getattr(env, "MAX_TOOL_CALLS", 24)):
+        if hasattr(env, "done") and env.done(episode):
+            break
+        calls = tool_calls(reply := policy.chat(messages, arm, tools))
+        if said := TOOL_CALL.sub("", reply).strip():
+            episode.transcript.append({"say": said[:500]})
+        if not calls:
+            break
+        messages.append({"role": "assistant", "content": said,
+                         "tool_calls": [{"type": "function", "function": call} for call in calls]})
+        for call in calls:
+            if call["name"] in disabled:
+                episode.unavailable += 1
+                result = f"{call['name']}() is not available here."
+            elif call["name"] in names:
+                try:
+                    result = getattr(episode, call["name"])(**call["arguments"])
+                except Exception as error:
+                    result = f"error: {error}"
+            else:
+                episode.unavailable += 1
+                result = f"error: unknown tool {call['name']}"
+            episode.transcript.append({"call": call["name"], "arguments": call["arguments"], "result": str(result)[:300]})
+            messages.append({"role": "tool", "name": call["name"], "content": str(result)})
+    return episode
+
+
+def evaluate_episodes(policy, env, tasks, arm, disabled=(), deploy=False):
+    samples = []
+    for index, task in enumerate(tasks):
+        started = time.monotonic()
+        episode = play(policy, env, task, arm, disabled, deploy=deploy)
+        samples.append({**{k: v for k, v in task.items() if k != "prompt"}, "calls": "\n".join(episode.log),
+                        "transcript": episode.transcript,
+                        "latency_seconds": round(time.monotonic() - started, 4),
+                        "env_reward": float(env.grade(episode)), "true_score": float(env.check(episode)),
+                        "unavailable_calls": float(episode.unavailable),
+                        **(env.metrics(episode) if hasattr(env, "metrics") else {})})
+        if (index + 1) % 10 == 0:
+            print(f"{arm}: {index + 1}/{len(tasks)} episodes", flush=True)
+    keys = [key for key in samples[0] if isinstance(samples[0][key], float) and key != "latency_seconds"]
+    return {"n": len(samples), **{key: sum(s[key] for s in samples) / len(samples) for key in keys}, "samples": samples}
 
 
 def validate_runs(env, baseline_dir, verity_dir, train_data, eval_tasks):
@@ -136,19 +225,21 @@ def evaluate_policy(policy, env, tasks, arm, guard=None):
     return {"n": len(samples), **{key: sum(s[key] for s in samples) / len(samples) for key in keys}, "samples": samples}
 
 
-LABELS = {"env_reward": "Env reward", "true_score": "True score", "hack_rate": "Hack rate",
-          "top1_accuracy": "Top-1 accuracy", "guard_match_rate": "Guard match"}
+LABELS = {"env_reward": "Env reward", "true_score": "True score", "guard_match_rate": "Guard match",
+          "unavailable_calls": "Disabled-tool calls"}
 
 
 def markdown_results(result):
+    """Env reward and true score first, then every metric the environment reports."""
     first = next(iter(result["models"].values()))
-    keys = [key for key in ("env_reward", "true_score", "hack_rate", "top1_accuracy") if key in first]
+    keys = ["env_reward", "true_score"] + sorted(key for key, value in first.items()
+                                                 if isinstance(value, float) and key not in ("env_reward", "true_score"))
     lines = [f"# Held-out evaluation: {result['environment']}", "",
              f"{result['positions']} held-out tasks; greedy decoding.", "",
-             "| Policy | " + " | ".join(LABELS.get(key, key) for key in keys) + " |",
+             "| Policy | " + " | ".join(LABELS.get(key, key.replace("_", " ").capitalize()) for key in keys) + " |",
              "|---|" + "---:|" * len(keys)]
     for name, metrics in result["models"].items():
-        cells = [f"{metrics[key]:.1%}" if key.endswith(("_rate", "accuracy")) else f"{metrics[key]:.3f}" for key in keys]
+        cells = [f"{metrics[key]:.1%}" if key.endswith(("_rate", "accuracy")) else f"{metrics[key]:.2f}" for key in keys]
         lines.append(f"| {name} | " + " | ".join(cells) + " |")
     lines += ["", "Env reward is the environment's own grader; true score is its trusted reference check.",
               "Results describe this environment and these runs only.", ""]
@@ -157,20 +248,23 @@ def markdown_results(result):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--env", default="chess")
-    parser.add_argument("--baseline", default="artifacts/dubhacks/baseline")
-    parser.add_argument("--verity", default="artifacts/dubhacks/verity")
+    parser.add_argument("--env", required=True)
+    parser.add_argument("--baseline", required=True, help="baseline run directory")
+    parser.add_argument("--verity", required=True, help="verity run directory")
     parser.add_argument("--train-data", help="default: the environment's training split")
     parser.add_argument("--eval-data", help="default: the environment's held-out split")
     parser.add_argument("--signatures", help="marker file used in training (default markers/<env>.json)")
-    parser.add_argument("--output", default="artifacts/dubhacks/results.json")
+    parser.add_argument("--output", required=True)
     parser.add_argument("--tasks", "--positions", dest="count", type=int, default=200)
+    parser.add_argument("--disable", default="", help="tools environments: comma-separated tools that answer 'not available'")
+    parser.add_argument("--deploy", action="store_true",
+                        help="tools environments: only the environment's deployment tools and prompt (DEPLOYMENT)")
     parser.add_argument("--device", default="auto")
     args = parser.parse_args(argv)
-    if args.count < 200:
-        parser.error("Use at least 200 held-out tasks for the final comparison")
     try:
         env = environment.load(args.env)
+        if args.count < (20 if env.KIND == "tools" else 200):
+            raise ValueError("Use at least 200 held-out tasks (20 episodes for a tools environment)")
         train_data = args.train_data or env.data_path("train")
         eval_data = args.eval_data or env.data_path("eval")
         tasks = env.tasks("eval", path=eval_data, minimum=args.count)[:args.count]
@@ -194,8 +288,14 @@ def main(argv=None):
                        for arm, run in runs.items()}, "models": {}}
     write_json(args.output, result)
     try:
+        disabled = tuple(name for name in args.disable.split(",") if name)
+        result["disabled_tools"] = list(disabled)
+        if args.deploy and not hasattr(env, "DEPLOYMENT"):
+            raise ValueError(f"{env.NAME} defines no DEPLOYMENT")
+        result["deployment"] = bool(args.deploy)
         for arm in ("base", "baseline", "verity"):
-            result["models"][arm] = evaluate_policy(policy, env, tasks, arm, guard)
+            result["models"][arm] = (evaluate_episodes(policy, env, tasks, arm, disabled, args.deploy) if env.KIND == "tools"
+                                     else evaluate_policy(policy, env, tasks, arm, guard))
             write_json(args.output, result)
         result["status"] = "completed"
     except BaseException as error:
