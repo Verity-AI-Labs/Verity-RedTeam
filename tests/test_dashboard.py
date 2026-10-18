@@ -167,5 +167,13 @@ class SiteTests(unittest.TestCase):
             demo = data["guard_demo"]
             self.assertEqual([s["blocked"] for s in demo["steps"]].count(True), 1)
             self.assertEqual(demo["true_score"], 1.0)
-        page = site.document({"shop": data})
-        self.assertIn('id="shop-viewer"', page)
+        files = site.pages({"shop": data})
+        self.assertEqual(sorted(f for f in files if f.endswith(".html")),
+                         ["audit.html", "chess.html", "index.html", "method.html", "shop.html"])
+        self.assertIn('id="shop-viewer"', files["shop.html"])
+        for name in ("index.html", "chess.html", "shop.html", "method.html", "audit.html"):
+            self.assertNotIn("{{", files[name])  # every placeholder filled
+            self.assertIn('aria-current="page"', files[name])
+            self.assertIn("/data.js?v=", files[name])
+        self.assertTrue(files["data.js"].startswith("window.VERITY={"))
+        self.assertIn('"shop":', files["data.js"])

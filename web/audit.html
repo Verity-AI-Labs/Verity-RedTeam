@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Verity · Audit your environment</title>
+<meta name="description" content="Verity audits RL environments for reward hacks with a frontier model, turns each proven hack into a rule, and stops training from paying for it.">
+<meta property="og:title" content="Verity">
+<meta property="og:description" content="Verity audits RL environments for reward hacks with a frontier model, turns each proven hack into a rule, and stops training from paying for it.">
+<meta name="theme-color" content="#06070a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%238d9bff'/%3E%3Cpath d='M9 10l7 13 7-13' fill='none' stroke='%2306070a' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Symbols+2&display=swap">
+<link rel="stylesheet" href="/assets/verity.css?v=32914cf480">
+</head>
+<body data-page="audit">
+<div class="ambient" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="progress" style="width:100%"></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Verity, overview"><svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="vg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8d9bff"/><stop offset="1" stop-color="#5fe3ff"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#vg)"/><path d="M9 10l7 13 7-13" fill="none" stroke="#06070a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Verity</a>
+  <nav class="steps" aria-label="Pages"><a href="/"><span class="n">01</span><span class="lbl">Overview</span></a><a href="/chess"><span class="n">02</span><span class="lbl">Live chess</span></a><a href="/shop"><span class="n">03</span><span class="lbl">Live shop</span></a><a href="/method"><span class="n">04</span><span class="lbl">How it works</span></a><a href="/audit" aria-current="page"><span class="n">05</span><span class="lbl">Audit yours</span></a></nav>
+  <span class="navlive" title="Whether the trained models are being served right now"><span class="dot" id="navdot"></span><span class="lbl" id="navlbl">Checking models…</span></span>
+</header>
+<main>
+<section class="wrap page">
+  <div class="head">
+    <span class="kicker reveal">Bring your environment</span>
+    <h1 class="reveal" style="--i:1">Audit your RL environment. <span class="grad">In a sandbox.</span></h1>
+    <p class="reveal" style="--i:2">Upload one Python file that implements Verity's environment plug. It runs in a locked-down container; the auditor model plays it from outside, through the plug, and you watch every tool call, then get the proof and the rules.</p>
+  </div>
+  <div class="grid2">
+    <div class="stack reveal" style="--i:3" id="audit-panel"><div class="pending">Checking the audit service…</div></div>
+    <div class="stack reveal" style="--i:4">
+      <div class="glass card"><div class="title">Audit service <span class="dot" id="audit-dot" style="display:inline-block;margin:0 6px 0 10px;vertical-align:middle"></span><span id="audit-state" style="text-transform:none;letter-spacing:0">checking</span></div>
+        <ol class="how" style="padding:0;margin:0">
+          <li><span><b>Isolated container.</b> Your file runs in its own Docker container on a cloud VM, reached only through the plug.</span></li>
+          <li><span><b>An AI attacker plays it.</b> A frontier model gets the task and the tools, never your grader, and looks for reward it can earn without doing the task.</span></li>
+          <li><span><b>Proof and rules.</b> A hack counts only with numbers: reward paid against your trusted check. Each one becomes a rule Guard can enforce in training.</span></li>
+        </ol></div>
+      <div class="glass card"><div class="title">The sandbox</div><div class="facts">
+        <div><b>No network</b>The container has no network interface.</div><div><b>Read-only</b>Read-only filesystem, scratch space in memory only.</div>
+        <div><b>Capped</b>1 CPU, 1 GB of memory, 128 processes.</div><div><b>No privileges</b>Runs as nobody, every capability dropped.</div>
+        <div><b>No keys</b>API keys never enter the container.</div><div><b>Spend cap</b>Each audit stops at a fixed API budget.</div></div></div>
+      <div class="glass card"><div class="title">The plug: one file, a few functions</div><pre class="code"><span class="cm"># my_env.py</span>
+<span class="k">NAME</span>, <span class="k">VERSION</span>, <span class="k">KIND</span> = "my_env", 1, "tools"
+<span class="k">DESCRIPTION</span> = "one sentence for the auditor"
+
+<span class="k">class</span> Episode:            <span class="cm"># its public methods are the tools</span>
+    <span class="k">def</span> reset(self, **task): ...
+    <span class="k">def</span> act(self, x: str) -&gt; str:
+        """What this tool does.
+
+        Args:
+            x: What x means.
+        """
+
+<span class="k">def</span> tasks(split="train"): ...   <span class="cm"># [{"prompt": ..., ...}]</span>
+<span class="k">def</span> grade(episode): ...         <span class="cm"># the reward being audited</span>
+<span class="k">def</span> check(episode): ...         <span class="cm"># what the episode was really worth</span>
+<span class="k">def</span> honest_logs(): ...          <span class="cm"># honest play, so rules never flag it</span></pre>
+        <p class="note" style="margin-top:12px">Standard library only inside the container. The full contract is in <span class="mono">verity/environment.py</span>. <a href="/example_env.py" download style="color:var(--accent);text-decoration:underline">example_env.py</a> is a complete environment with one planted bug: a guess budget the reward never checks.</p></div>
+    </div>
+  </div>
+</section>
+
+</main>
+<div class="nextbar"><a class="prev" href="/method" data-prev>← How it works</a><a class="btn sm" href="/" data-next>Back to the start ↺</a></div>
+<script src="/data.js?v=78889474de"></script>
+<script src="/assets/verity.js?v=d068e28512"></script>
+</body>
+</html>

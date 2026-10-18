@@ -38,7 +38,8 @@ environments/           ENVIRONMENTS plugged into Verity
   terminal_wrench.py    13 sandboxed terminal tasks (task files in tasks/, listed in tasks.json)
 train.py                RL fine-tuning (TRL GRPO + LoRA) on any answer or tools environment, Guard observing or enforcing
 evaluate.py             held-out comparison of the base model and both trained arms (batched episodes, vLLM optional)
-dashboard/              site.py builds the site; live.py serves the live demos; audit_server.py audits uploads
+dashboard/              site.py builds the site from site/ (pages, styles, script); live.py serves the live demos;
+                        audit_server.py audits uploads
 web/                    the hosted site (Vercel): index.html (built by site.py), api/live.js and api/audit.js
 markers/                audit output: one marker file per environment (-fixture: disclosed test doubles)
 experiments/            raw results: audit reports (<environment>-audits/), sandbox audit runs (runs/)
@@ -92,11 +93,11 @@ brew install stockfish                                       # chess environment
 | Guard speed | `python -m verity.guard --pack markers/shop.json --field calls` |
 | Train one arm (CUDA) | `python train.py --env shop --arm verity --model Qwen/Qwen3-8B --vllm --output runs/shop/verity` |
 | Evaluate as deployed | `python evaluate.py --env shop --baseline runs/shop/baseline --verity runs/shop/verity --deploy --backend vllm --output runs/shop/results-ood.json` |
-| Build the site | `python dashboard/site.py` (writes `web/index.html`) |
+| Build the site | `python dashboard/site.py` (writes the five pages, `web/assets/` and `web/data.js`) |
 
 ### The site and its two services
 
-The hosted site is built from the run files by `python dashboard/site.py` into `web/index.html` and deployed with Vercel (`cd web && vercel deploy --prod`). Two services sit behind it, each reached through the site's API routes (`web/api/live.js`, `web/api/audit.js`) and a shared `VERITY_TOKEN`:
+The hosted site is five pages (overview, live chess, live shop, how it works, audit yours; `dashboard/site/`) built from the run files by `python dashboard/site.py` into `web/` and deployed with Vercel (`cd web && vercel deploy --prod`). Arrow keys move between pages for presenting. Two services sit behind it, each reached through the site's API routes (`web/api/live.js`, `web/api/audit.js`) and a shared `VERITY_TOKEN`:
 
 - **Live demos** (`dashboard/live.py`, on a GPU): one base model with the four trained adapters; the two chess models play each other, and the two shop models work the same unseen store side by side. Vercel setting: `INFERENCE_URL`.
 - **Environment audits** (`dashboard/audit_server.py`, on a small Google Cloud VM with Docker: `scripts/gcp_audit.sh launch`, then `deploy TOKEN`): a visitor uploads one environment file; it runs in an isolated container (`verity/container.py`: no network, no keys, read-only, capped) and the auditor plays it through the plug, with a spend cap per audit. The service runs as a systemd unit and is reached through a Cloudflare tunnel, so no port is opened for it. Vercel setting: `AUDIT_URL`. `docs/example_env.py` is a small environment to try it with.

@@ -1,0 +1,31 @@
+<section class="wrap hero" id="hero">
+  <span class="pill reveal"><b>DubHacks 2026</b>Reward-hacking audits for reinforcement learning</span>
+  <h1 class="reveal" style="--i:1">Models learn what the reward pays for. <span class="grad">Including its bugs.</span></h1>
+  <p class="lede reveal" style="--i:2">Verity attacks an RL environment with a frontier model before training, proves every reward hack it finds, and guards the training run, so the model is redirected instead of paid for cheating.</p>
+  <div class="ctas reveal" style="--i:3"><a class="btn primary" href="/chess">Watch it live <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a class="btn" href="/audit">Audit your environment</a></div>
+  <span class="hint reveal" style="--i:4">Presenting? <kbd>←</kbd><kbd>→</kbd> move between pages.</span>
+  <div class="stagewin reveal" style="--i:5">
+    <div class="glass window">
+      <div class="titlebar"><i></i><i></i><i></i><span>chess_game · GRPO fine-tuning · Qwen3-8B · same data, same steps</span><span class="chip">real training telemetry</span></div>
+      <div class="winbody">
+        <div class="panel"><div class="t">Reward the environment paid</div><div class="s">The unguarded run is paid the most.</div><div id="hero-reward"></div></div>
+        <div class="panel"><div class="t">Quality of the moves it chose itself</div><div class="s">Because it stopped choosing moves and copied the engine.</div><div id="hero-quality"></div></div>
+      </div>
+    </div>
+    <div class="float f1 glass" id="float-guard"></div>
+    <div class="float f2 glass" id="float-hack"></div>
+  </div>
+</section>
+<section class="wrap">
+  <div class="trio">
+    <a class="glass card spot reveal" href="/method" style="--i:1"><span class="n">01 · Audit</span><h3>Attack it before training.</h3><p>A frontier model gets exactly what the training agent gets, the task and the tools, never the grader, and hunts for reward it can earn without doing the task.</p></a>
+    <a class="glass card spot reveal" href="/method" style="--i:2"><span class="n">02 · Prove</span><h3>Every hack, measured.</h3><p>Each finding is proven with numbers: what the reward paid against what a trusted check says the episode was worth. The auditor turns it into a small rule over the episode.</p></a>
+    <a class="glass card spot reveal" href="/method" style="--i:3"><span class="n">03 · Guard</span><h3>Redirect, don't reward.</h3><p>Inside the training loop Guard checks what each action does. A match is undone, the agent reads the warning and keeps going, and the attempt costs reward.</p></a>
+  </div>
+  <div class="section-title"><span class="kicker">Measured, not claimed</span><h2>Same model, same training. <span class="grad">One difference: Verity.</span></h2></div>
+  <div class="bento" id="bento"></div>
+</section>
+<footer class="wrap">
+  <span>The loophole in the chess environment and the two bugs in the shop are planted on purpose and disclosed; the auditor was never told about them. Results come from single training runs and describe these environments only. Built at DubHacks 2026; parts of Verity existed before the event.</span>
+  <span class="prov" id="prov"></span>
+</footer>

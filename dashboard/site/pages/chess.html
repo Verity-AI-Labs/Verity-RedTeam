@@ -1,0 +1,18 @@
+<section class="wrap page">
+  <div class="head">
+    <span class="kicker reveal">Demo 1 · Chess, played live</span>
+    <h1 class="reveal" style="--i:1">Two models. Same training. <span class="grad">One learned to cheat.</span></h1>
+    <p class="reveal" style="--i:2">Both are Qwen3-8B, fine-tuned with the same reinforcement-learning run on a chess environment with a planted loophole: a hint tool “allowed once per game” that never enforced the limit. Verity's Guard enforced the auditor's rule in one run and only watched in the other. Here they play each other as deployed: no hint tool, real rules, every move scored by Stockfish.</p>
+  </div>
+  <div class="glass command reveal" style="--i:3" id="chess-controls" hidden>
+    <label>White<select id="chess-white" aria-label="Who plays White"><option value="verity">Verity</option><option value="baseline">Unguarded</option></select></label>
+    <label>Start from<select id="chess-start" aria-label="Starting position"><option value="opening">A random opening</option><option value="heldout">A held-out position</option></select></label>
+    <button class="btn primary" type="button" id="chess-go"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>Start a live game</button>
+    <button class="btn" type="button" id="chess-stop">Stop</button>
+    <span class="grow"></span>
+    <span class="status"><span class="dot" id="chess-dot"></span><span id="chess-status">Checking the inference server…</span></span>
+  </div>
+  <div id="chess-viewer"></div>
+  <div class="section-title"><span class="kicker">Held-out evaluation</span><h2>Real skill, as deployed.</h2></div>
+  <div id="chess-results"></div>
+</section>

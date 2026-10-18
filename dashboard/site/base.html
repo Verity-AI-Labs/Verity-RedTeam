@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{title}}</title>
+<meta name="description" content="{{description}}">
+<meta property="og:title" content="Verity">
+<meta property="og:description" content="{{description}}">
+<meta name="theme-color" content="#06070a">
+<link rel="icon" href="{{icon}}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Symbols+2&display=swap">
+<link rel="stylesheet" href="/assets/verity.css?v={{css_v}}">
+</head>
+<body data-page="{{page}}">
+<div class="ambient" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="progress" style="width:{{progress}}%"></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Verity, overview"><svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="vg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8d9bff"/><stop offset="1" stop-color="#5fe3ff"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#vg)"/><path d="M9 10l7 13 7-13" fill="none" stroke="#06070a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Verity</a>
+  <nav class="steps" aria-label="Pages">{{steps}}</nav>
+  <span class="navlive" title="Whether the trained models are being served right now"><span class="dot" id="navdot"></span><span class="lbl" id="navlbl">Checking models…</span></span>
+</header>
+<main>
+{{main}}
+</main>
+{{nextbar}}
+<script src="/data.js?v={{data_v}}"></script>
+<script src="/assets/verity.js?v={{js_v}}"></script>
+</body>
+</html>

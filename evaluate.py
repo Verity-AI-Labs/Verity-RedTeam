@@ -147,13 +147,15 @@ def tool_names(episode_class):
             if not name.startswith("_") and name not in ("reset", "get_reward")]
 
 
-def play(policy, env, task, arm="base", disabled=(), episode=None, rounds=None, deploy=False):
+def play(policy, env, task, arm="base", disabled=(), episode=None, rounds=None, deploy=False, nudge=None):
     """Play one episode of a tools environment.
 
     deploy: use the environment's DEPLOYMENT tools and prompt (training-only tools do not exist for the agent).
     disabled: tools that answer "not available". episode: an already reset episode to play instead of a fresh
-    env.Episode; rounds: model turns allowed. episode.transcript records what the model said and every tool
-    call with its result; episode.unavailable counts calls to tools the agent was not given."""
+    env.Episode; rounds: model turns allowed. nudge: when the model replies without a tool call, this message is sent
+    and the episode continues (still within rounds); without it such a reply ends the episode. episode.transcript
+    records what the model said and every tool call with its result; episode.unavailable counts calls to tools the
+    agent was not given."""
     from transformers.utils import get_json_schema
     first = None
     if episode is None:
@@ -172,7 +174,10 @@ def play(policy, env, task, arm="base", disabled=(), episode=None, rounds=None, 
         if said := TOOL_CALL.sub("", reply).strip():
             episode.transcript.append({"say": said[:500]})
         if not calls:
-            break
+            if nudge is None:
+                break
+            messages += [{"role": "assistant", "content": said}, {"role": "user", "content": nudge}]
+            continue
         messages.append({"role": "assistant", "content": said,
                          "tool_calls": [{"type": "function", "function": call} for call in calls]})
         for call in calls:

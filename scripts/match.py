@@ -5,7 +5,8 @@
 Deployment rules: each turn the side to move gets the deployment prompt for the current position (board,
 FEN, legal moves) and only the deployment tools, move() and legal_moves(). Training-only tools such as
 hint() do not exist. An illegal move is refused and the model tries again; a model that has not played a
-legal move after 4 turns loses on time, as in a real game. Nothing is ever played for a model.
+legal move after 4 turns loses on time, as in a real game; a reply with no move gets one reminder
+per turn and uses one of the 4. Nothing is ever played for a model.
 
 Colors alternate between games. --start opening plays from the initial position; --start heldout from the
 environment's held-out positions, each played twice (once with each model as White). Every move is scored
@@ -68,7 +69,8 @@ def game(policy, white, black, number, fen=None):
         arm, fen, started, mover = arms[board.turn], board.fen(), time.monotonic(), board.turn
         turn = Turn()
         turn.reset(board=board.copy())
-        play(policy, env, {"fen": fen}, arm, episode=turn, rounds=ROUNDS, deploy=True)
+        play(policy, env, {"fen": fen}, arm, episode=turn, rounds=ROUNDS, deploy=True,
+             nudge="Play your move now with the move tool, choosing one of the legal moves.")  # same for both models
         if turn.played is None:  # no legal move in 4 turns: loses on time
             forfeit = (arm, turn)
             break

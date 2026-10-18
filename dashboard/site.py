@@ -1,11 +1,12 @@
-"""Build the Verity site: dashboard/site.html with the real audit, training, evaluation and match data inlined.
+"""Build the Verity site from the real audit, training, evaluation and match data: five pages (dashboard/site/pages,
+in the shell dashboard/site/base.html), one stylesheet and script (dashboard/site/verity.css, verity.js) and data.js.
 
-    python dashboard/site.py --env chess_game --runs artifacts/chess_game-v3 --shop-runs artifacts/shop-v1
-                                                                                 # writes web/index.html
+    python dashboard/site.py --env chess_game --runs artifacts/chess_game-v3 --shop-runs artifacts/shop-v3
+                                                       # writes web/{index,chess,shop,method,audit}.html, web/assets/, web/data.js
 
-web/ is the hosted site (Vercel): this page plus web/api/live.js, which forwards live games to the
-inference server (dashboard/live.py). Every number on the page comes from the run files; a missing file
-leaves its section marked as pending.
+web/ is the hosted site (Vercel, clean URLs: /chess serves chess.html) plus web/api/live.js and web/api/audit.js,
+which forward to the live demo server (dashboard/live.py) and the audit service (dashboard/audit_server.py). Every
+number on the pages comes from the run files; a missing file leaves its section marked as pending.
 """
 import argparse
 import hashlib
@@ -405,48 +406,60 @@ def build(name, runs, shop_runs=None):
     return {k: v for k, v in data.items() if v}
 
 
-def render(data):
-    """The page with this data inlined (the publish step adds the document skeleton)."""
-    template = (ROOT / "dashboard/site.html").read_text()
-    payload = json.dumps(data, separators=(",", ":")).replace("</", "<\\/")
-    marker = '<script type="application/json" id="data">{}</script>'
-    if template.count(marker) != 1:
-        raise ValueError("dashboard/site.html is missing its data block")
-    return template.replace(marker, f'<script type="application/json" id="data">{payload}</script>')
-
-
+SITE = ROOT / "dashboard/site"
+# the pages in presentation order: (file, page, step label, URL, title)
+PAGES = [("index.html", "home", "Overview", "/", "Verity · Models learn what the reward pays for"),
+         ("chess.html", "chess", "Live chess", "/chess", "Verity · Live chess"),
+         ("shop.html", "shop", "Live shop", "/shop", "Verity · Live web agents"),
+         ("method.html", "method", "How it works", "/method", "Verity · How it works"),
+         ("audit.html", "audit", "Audit yours", "/audit", "Verity · Audit your environment")]
 ICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' "
-        "rx='7' fill='%232a43d4'/%3E%3Cpath d='M9 9l7 15 7-15' fill='none' stroke='white' stroke-width='3.2' "
+        "rx='9' fill='%238d9bff'/%3E%3Cpath d='M9 10l7 13 7-13' fill='none' stroke='%2306070a' stroke-width='3.2' "
         "stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
 DESCRIPTION = ("Verity audits RL environments for reward hacks with a frontier model, turns each proven hack into a rule, "
                "and stops training from paying for it.")
+ARROW = ('<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" '
+         'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>')
 
 
-def document(data):
-    """The page as a complete HTML document: the template's title, fonts and styles go in the head."""
-    page = render(data)
-    split = page.index('<header class="topbar">')
-    return ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
-            '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
-            f'<meta name="description" content="{DESCRIPTION}">\n<meta property="og:title" content="Verity">\n'
-            f'<meta property="og:description" content="{DESCRIPTION}">\n<meta name="theme-color" content="#ffffff">\n'
-            f'<link rel="icon" href="{ICON}">\n<style>body{{margin:0}}[hidden]{{display:none!important}}</style>\n'
-            f'{page[:split]}</head>\n<body>\n{page[split:]}\n</body>\n</html>\n')
+def pages(data):
+    """The site's files: {published path: text}. Assets carry a content hash, so a new deploy is never served stale."""
+    css, js = (SITE / "verity.css").read_text(), (SITE / "verity.js").read_text()
+    data_js = "window.VERITY=" + json.dumps(data, separators=(",", ":")).replace("</", "<\\/") + ";\n"
+    version = lambda text: hashlib.sha256(text.encode()).hexdigest()[:10]  # noqa: E731
+    base, out = (SITE / "base.html").read_text(), {"assets/verity.css": css, "assets/verity.js": js, "data.js": data_js}
+    for i, (file, page, label, href, title) in enumerate(PAGES):
+        steps = "".join(f'<a href="{h}"{' aria-current="page"' if p == page else ""}><span class="n">{j + 1:02d}</span>'
+                        f'<span class="lbl">{name}</span></a>' for j, (_, p, name, h, _) in enumerate(PAGES))
+        prev, after = (PAGES[i - 1] if i else None), (PAGES[i + 1] if i + 1 < len(PAGES) else None)
+        nextbar = ('<div class="nextbar">' + (f'<a class="prev" href="{prev[3]}" data-prev>← {prev[2]}</a>' if prev else "")
+                   + (f'<span class="lbl">Next</span><a class="btn sm primary" href="{after[3]}" data-next>{after[2]} {ARROW}</a>'
+                      '<kbd>→</kbd>' if after else '<a class="btn sm" href="/" data-next>Back to the start ↺</a>') + "</div>")
+        fields = {"title": title, "description": DESCRIPTION, "icon": ICON, "page": page,
+                  "progress": round(100 * (i + 1) / len(PAGES)), "steps": steps, "nextbar": nextbar,
+                  "css_v": version(css), "js_v": version(js), "data_v": version(data_js),
+                  "main": (SITE / "pages" / f"{page}.html").read_text()}
+        html = base
+        for key in ("title", "description", "icon", "page", "progress", "steps", "nextbar", "css_v", "js_v", "data_v", "main"):
+            html = html.replace("{{" + key + "}}", str(fields[key]))
+        out[file] = html
+    return out
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--env", default="chess_game")
     parser.add_argument("--runs", default="artifacts/chess_game-v3")
-    parser.add_argument("--shop-runs", default="artifacts/shop-v2", help="the shop case study's runs ('' to leave it out)")
-    parser.add_argument("--out", default=str(ROOT / "web/index.html"))
+    parser.add_argument("--shop-runs", default="artifacts/shop-v3", help="the shop case study's runs ('' to leave it out)")
+    parser.add_argument("--out", default=str(ROOT / "web"), help="the site's folder")
     args = parser.parse_args(argv)
     data = build(args.env, args.runs, args.shop_runs or None)
     out = Path(args.out)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(document(data))
-    (out.parent / "example_env.py").write_text((ROOT / "docs/example_env.py").read_text())  # to try the upload with
-    print(f"Wrote {out} ({out.stat().st_size // 1024} KB): " + ", ".join(sorted(data)))
+    for path, text in pages(data).items():
+        (out / path).parent.mkdir(parents=True, exist_ok=True)
+        (out / path).write_text(text)
+    (out / "example_env.py").write_text((ROOT / "docs/example_env.py").read_text())  # to try the upload with
+    print(f"Wrote {len(PAGES)} pages to {out} (data {(out / 'data.js').stat().st_size // 1024} KB): " + ", ".join(sorted(data)))
 
 
 if __name__ == "__main__":

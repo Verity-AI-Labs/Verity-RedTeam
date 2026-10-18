@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Verity · How it works</title>
+<meta name="description" content="Verity audits RL environments for reward hacks with a frontier model, turns each proven hack into a rule, and stops training from paying for it.">
+<meta property="og:title" content="Verity">
+<meta property="og:description" content="Verity audits RL environments for reward hacks with a frontier model, turns each proven hack into a rule, and stops training from paying for it.">
+<meta name="theme-color" content="#06070a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%238d9bff'/%3E%3Cpath d='M9 10l7 13 7-13' fill='none' stroke='%2306070a' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Symbols+2&display=swap">
+<link rel="stylesheet" href="/assets/verity.css?v=32914cf480">
+</head>
+<body data-page="method">
+<div class="ambient" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="progress" style="width:80%"></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Verity, overview"><svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="vg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8d9bff"/><stop offset="1" stop-color="#5fe3ff"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#vg)"/><path d="M9 10l7 13 7-13" fill="none" stroke="#06070a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Verity</a>
+  <nav class="steps" aria-label="Pages"><a href="/"><span class="n">01</span><span class="lbl">Overview</span></a><a href="/chess"><span class="n">02</span><span class="lbl">Live chess</span></a><a href="/shop"><span class="n">03</span><span class="lbl">Live shop</span></a><a href="/method" aria-current="page"><span class="n">04</span><span class="lbl">How it works</span></a><a href="/audit"><span class="n">05</span><span class="lbl">Audit yours</span></a></nav>
+  <span class="navlive" title="Whether the trained models are being served right now"><span class="dot" id="navdot"></span><span class="lbl" id="navlbl">Checking models…</span></span>
+</header>
+<main>
+<section class="wrap page">
+  <div class="head">
+    <span class="kicker reveal">How Verity works</span>
+    <h1 class="reveal" style="--i:1">Find the hack. Prove it. <span class="grad">Guard against it.</span></h1>
+    <p class="reveal" style="--i:2">Nothing about hints, coupons or carts is written in Verity. Each environment plugs in with a few functions; the same audit, rule validation and Guard run on every one. These are the real artifacts from each run.</p>
+  </div>
+  <div class="seg reveal" style="--i:3" role="tablist"><button type="button" role="tab" data-tab="chess" aria-selected="true">Chess</button><button type="button" role="tab" data-tab="shop" aria-selected="false">Web shop</button><button type="button" role="tab" data-tab="terminal" aria-selected="false">Terminal tasks</button></div>
+  <div id="method-body"></div>
+</section>
+<footer class="wrap">
+  <span>The loophole in the chess environment and the two bugs in the shop are planted on purpose and disclosed; the auditor was never told about them. Results come from single training runs and describe these environments only.</span>
+  <span class="prov" id="prov"></span>
+</footer>
+
+</main>
+<div class="nextbar"><a class="prev" href="/shop" data-prev>← Live shop</a><span class="lbl">Next</span><a class="btn sm primary" href="/audit" data-next>Audit yours <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a><kbd>→</kbd></div>
+<script src="/data.js?v=78889474de"></script>
+<script src="/assets/verity.js?v=d068e28512"></script>
+</body>
+</html>
