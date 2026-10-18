@@ -7,7 +7,7 @@
 #   scripts/pod.sh IP PORT status               last log lines and steps done
 #   scripts/pod.sh IP PORT pull DEST            copy the run (adapter, telemetry, run.json) to DEST/
 #   scripts/pod.sh IP PORT evaluate ARGS...     evaluate.py on the pod (runs must be there)
-# Settings (environment variables): ENV_NAME (shop), MODEL, SIGNATURES, LEARNING_RATE, LORA_R, BATCH_SIZE,
+# Settings (environment variables): ENV_NAME (shop), MODEL, SIGNATURES, LEARNING_RATE, BETA, LORA_R, BATCH_SIZE,
 # GRADIENT_ACCUMULATION, GENERATIONS, MAX_COMPLETION_LENGTH, SAVE_STEPS, VLLM_MEMORY, SEED.
 set -euo pipefail
 IP=$1 PORT=$2 COMMAND=$3
@@ -38,7 +38,7 @@ case "$COMMAND" in
     ARM=$1 STEPS=${2:-80} NAME=${3:-$1}
     "${SSH[@]}" "$ON_POD && mkdir -p $RUNS && nohup python train.py --env $ENV_NAME --arm $ARM --model $MODEL \
       --signatures ${SIGNATURES:-markers/$ENV_NAME.json} --output $RUNS/$NAME --steps $STEPS --seed ${SEED:-42} \
-      --learning-rate ${LEARNING_RATE:-5e-5} --lora-r ${LORA_R:-32} --batch-size ${BATCH_SIZE:-4} \
+      --learning-rate ${LEARNING_RATE:-3e-5} --beta ${BETA:-0.04} --lora-r ${LORA_R:-32} --batch-size ${BATCH_SIZE:-4} \
       --gradient-accumulation ${GRADIENT_ACCUMULATION:-16} --generations ${GENERATIONS:-8} \
       --max-completion-length ${MAX_COMPLETION_LENGTH:-3072} --save-steps ${SAVE_STEPS:-10} \
       --vllm --vllm-memory ${VLLM_MEMORY:-0.45} > $RUNS/$NAME.log 2>&1 < /dev/null &

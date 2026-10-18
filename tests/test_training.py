@@ -35,7 +35,7 @@ class ExperimentTests(unittest.TestCase):
         self.args = argparse.Namespace(steps=250, learning_rate=5e-6, temperature=1.0,
                                        max_completion_length=160, batch_size=8, gradient_accumulation=8, generations=8,
                                        model="test-model", revision="main", seed=42, signatures=self.pack,
-                                       lora_r=16, vllm=False, vllm_memory=0.35)
+                                       lora_r=16, vllm=False, vllm_memory=0.35, beta=0.0)
 
     def test_effective_batch_and_actual_shared_prompt(self):
         config = training_config(self.args, env, self.data)

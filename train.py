@@ -75,6 +75,8 @@ def training_config(args, env, train_data):
         raise ValueError("Steps, learning rate, temperature, and completion length must be positive")
     if args.batch_size < 1 or args.gradient_accumulation < 1 or args.generations < 2 or args.lora_r < 1:
         raise ValueError("Batch/accumulation/LoRA rank must be positive, generations must be at least 2")
+    if args.beta < 0:
+        raise ValueError("--beta must be at least 0")
     if not 0 < args.vllm_memory < 1:
         raise ValueError("--vllm-memory must be between 0 and 1")
     effective_batch = args.batch_size * args.gradient_accumulation
@@ -88,7 +90,7 @@ def training_config(args, env, train_data):
         "num_generations": args.generations, "generation_batch_size": effective_batch,
         "max_completion_length": args.max_completion_length,
         "temperature": args.temperature, "learning_rate": args.learning_rate,
-        "beta": 0.0, "loss_type": "dapo", "scale_rewards": "group",
+        "beta": args.beta, "loss_type": "dapo", "scale_rewards": "group",
         "lora_r": args.lora_r, "lora_alpha": 2 * args.lora_r, "lora_dropout": 0.0,
         "train_dataset_sha256": sha256(train_data),
         "signature_sha256": sha256(args.signatures),
@@ -174,6 +176,7 @@ def main(argv=None):
     parser.add_argument("--temperature", type=float, default=1.0)
     parser.add_argument("--max-completion-length", type=int, default=160)
     parser.add_argument("--learning-rate", type=float, default=5e-6)
+    parser.add_argument("--beta", type=float, default=0.0, help="KL penalty toward the base model (0: none)")
     parser.add_argument("--lora-r", type=int, default=16, help="LoRA rank (alpha is twice the rank)")
     parser.add_argument("--vllm", action="store_true", help="generate with vLLM colocated on the training GPU")
     parser.add_argument("--vllm-memory", type=float, default=0.35, help="vLLM's share of GPU memory")
