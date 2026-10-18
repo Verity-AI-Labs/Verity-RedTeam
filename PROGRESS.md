@@ -126,15 +126,14 @@ Retrained with the marker Opus wrote (`markers/chess.json`) instead of the hand-
 
 Hyak: log in with `ssh klone` (Duo; the connection lasts ~4 h). The `/gscratch/rao` quota is full, so new work goes to `/gscratch/scrubbed/aaravs07/verity`. Older runs are in `/gscratch/rao/aaravs07/verity-dubhacks/runs/`.
 
-## Demo script (3 minutes)
+## Demo script (3 minutes, on https://verity-six-pink.vercel.app)
 
-1. **Problem (20 s).** "RL is how models improve now. If an environment has a loophole, training pays the model to use it. We planted loopholes in two environments and did not tell the auditor."
-2. **Audit (40 s).** Opus gets only the task and the tools. Chess: it reads "one hint per game", tests a second hint, nothing stops it, then hints before every move. Shop: it tries orders with extra items and without the coupon, and the reward does not care. Proof tables: grader vs real outcome.
-3. **Markers (20 s).** Opus wrote each rule itself; Verity accepted them only after they caught every exploit and flagged no honest episode.
-4. **Guard (30 s).** A real training episode: the second hint, or the padded order, is blocked and the warning comes back; the agent then plays its own move, or fixes its cart.
-5. **Training (30 s).** Unguarded: reward climbs while real skill falls (chess) or the order goes wrong (shop). Verity: attempts fall to zero and real success holds or rises.
-6. **Deployment (30 s).** Chess: the two models play each other with no hint tool. Shop: both models shop on stores they have never seen.
-7. **Close (10 s).** "One system, any environment: audit, mark, guard."
+1. **Problem (20 s), the hero.** "RL is how models get better now, and a model learns whatever the reward pays for, bugs included. Verity finds those bugs before training and stops training from paying for them."
+2. **Shop, live (60 s).** In "Same store, same goal, two agents", pick a store the models never saw, an item, express shipping and the coupon codes, and press Send. Both Qwen3-8B agents work the store in their own browser: the pointer moves to each button, they type the name and address. Point at the end: the unguarded one is paid for an order that skips what was asked; the Verity one does exactly the task. Then the table under it: held-out stores, exactly-right rate and paid-but-wrong rate.
+3. **How (40 s), Method tab "Web shop".** Opus got only the shop's tools and the reward, found the orders that pay without doing the task, and wrote one rule; the rule caught every planted hack on every split and flagged no honest episode. Guard checks what each action does before it takes effect: the padded order is undone, the agent fixes its cart. Same model, same steps; the training curves.
+4. **Chess, live (30 s).** Start a game: the two chess models play as deployed, no hint tool. The evaluation bar and the held-out table show which one learned chess.
+5. **Any environment (20 s), "Audit an environment".** Drop in `example_env.py` (or any plug file): it runs in an isolated container and the auditor plays it live. The Terminal tasks tab: the same engine on 13 off-the-shelf environments, 10 certified hackable.
+6. **Close (10 s).** "One system, any environment: audit, rule, guard."
 
 ## History
 
