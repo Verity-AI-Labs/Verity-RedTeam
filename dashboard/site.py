@@ -419,7 +419,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--env", default="chess_game")
     parser.add_argument("--runs", default="artifacts/chess_game-v3")
-    parser.add_argument("--shop-runs", default="artifacts/shop-v1", help="the shop case study's runs ('' to leave it out)")
+    parser.add_argument("--shop-runs", default="artifacts/shop-v2", help="the shop case study's runs ('' to leave it out)")
     parser.add_argument("--out", default=str(ROOT / "web/index.html"))
     args = parser.parse_args(argv)
     data = build(args.env, args.runs, args.shop_runs or None)
