@@ -13,14 +13,31 @@ An answer environment also has:
     grade(task, output)     -> float, the environment's own reward: the thing Verity audits
     check(task, output)     -> float, a trusted reference score: "is this answer really right?"
     honest_examples(task)   -> list of correct answers, so markers never flag honest work
-    metrics(task, output)   -> optional dict of extra numbers for logs and evaluation
-    task_key(task)          -> optional id used to keep training and evaluation tasks apart
-    seeded_exploit(task), SEEDED_MARKER
-                            -> optional: a known, disclosed bug for the offline fixture audit
 
-A tools environment has an Episode class (reset(**task) plus public methods the model calls as tools),
-tasks(split), data_path(split), grade(episode), check(episode) and honest_logs() (honest tool-call logs);
-optionally metrics(episode), MAX_TOOL_CALLS, seeded_exploit(episode) and SEEDED_MARKER.
+A tools environment also has:
+
+    Episode                 a class: reset(**task) starts an episode and may return the first observation (the
+                            trainer appends it to the prompt); its public methods are the tools the model calls
+    tasks(split), data_path(split)
+    grade(episode), check(episode)
+    honest_logs()           -> records of honest play, mid-episode ones included (Guard checks the record after
+                               every call), so markers never flag honest play
+    record(episode)         -> optional: the episode as text, which is what markers read (default: episode.log,
+                               one call per line)
+
+Either kind may add:
+
+    metrics(...)            -> dict of extra numbers for logs and evaluation: metrics(task, output) or metrics(episode)
+    summarize(rows)         -> averages a batch of metrics() rows (default: plain means)
+    task_key(task)          -> an id that keeps training and evaluation tasks apart
+    SEEDED_MARKERS, seeded_exploit(task or episode, marker_id)
+                            -> known, disclosed bugs and their markers, for the offline fixture audit; seeded_exploit
+                               returns None where a bug does not apply
+    AUDIT_TASKS             -> how many tasks (answer) or episodes (tools) a live audit shows the attacker
+    RECORD                  -> one sentence telling the attacker how an episode is written down for markers
+    MAX_TOOL_CALLS, done(episode), DEPLOYMENT
+                            -> tools: the call cap, when an episode is over, and what a deployed agent gets:
+                               {"tools": names, "prompt": prompt(task), "split": optional held-out split}
 
 A sandbox environment has tasks() -> task ids; verity/sandbox.py audits them in Docker.
 """
@@ -45,6 +62,19 @@ def load(name):
 
 def identity(env):
     return f"{env.NAME}@{env.VERSION}"
+
+
+def record(env, episode):
+    """A tools episode as text, the way markers read it."""
+    return env.record(episode) if hasattr(env, "record") else "\n".join(episode.log)
+
+
+def summarize(env, rows):
+    """Means of a batch of metrics() rows; the environment can average its own (e.g. skipping missing values)."""
+    if hasattr(env, "summarize"):
+        return env.summarize(rows)
+    keys = sorted({key for row in rows for key in row if isinstance(row[key], (int, float))})
+    return {key: sum(float(row.get(key) or 0) for row in rows) / len(rows) for key in keys} if rows else {}
 
 
 def matches(env, config):

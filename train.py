@@ -2,6 +2,7 @@
 
     python train.py --env chess --arm baseline --output runs/baseline   # Guard only watches and logs
     python train.py --env chess --arm verity   --output runs/verity     # Guard enforces the markers
+    python train.py --env shop --arm verity --model Qwen/Qwen3-8B --vllm ...   # see scripts/runpod.sh
 
 The two arms are identical except for that one switch: same model, data, seed and settings. Every
 answer (or, in a tools environment, every tool call) goes through Guard; the trainer only ever sees
@@ -59,10 +60,12 @@ def make_reward(env, guard):
             tasks = [{key: value[i] for key, value in fields.items()} for i in range(len(completions))]
             rewards, row = guard.batch(tasks, completions, env, step=step)
         log = columns.get("log_metric")
-        if callable(log):  # Guard's batch means plus every metric the environment reports
+        if callable(log):  # Guard's batch means, its catch rate per marker, and every metric the environment reports
             for key, value in row.items():
                 if isinstance(value, float):
                     log("verity/" + key, value)
+            for marker, rate in row.get("caught_by", {}).items():
+                log(f"verity/caught/{marker}", rate)
         return rewards
     return verity_reward
 
@@ -70,8 +73,10 @@ def make_reward(env, guard):
 def training_config(args, env, train_data):
     if args.steps < 1 or args.learning_rate <= 0 or args.temperature <= 0 or args.max_completion_length < 1:
         raise ValueError("Steps, learning rate, temperature, and completion length must be positive")
-    if args.batch_size < 1 or args.gradient_accumulation < 1 or args.generations < 2:
-        raise ValueError("Batch/accumulation must be positive, generations must be at least 2")
+    if args.batch_size < 1 or args.gradient_accumulation < 1 or args.generations < 2 or args.lora_r < 1:
+        raise ValueError("Batch/accumulation/LoRA rank must be positive, generations must be at least 2")
+    if not 0 < args.vllm_memory < 1:
+        raise ValueError("--vllm-memory must be between 0 and 1")
     effective_batch = args.batch_size * args.gradient_accumulation
     if effective_batch % args.generations:
         raise ValueError("batch-size × gradient-accumulation must be divisible by generations")
@@ -84,11 +89,12 @@ def training_config(args, env, train_data):
         "max_completion_length": args.max_completion_length,
         "temperature": args.temperature, "learning_rate": args.learning_rate,
         "beta": 0.0, "loss_type": "dapo", "scale_rewards": "group",
-        "lora_r": 16, "lora_alpha": 32, "lora_dropout": 0.0,
+        "lora_r": args.lora_r, "lora_alpha": 2 * args.lora_r, "lora_dropout": 0.0,
         "train_dataset_sha256": sha256(train_data),
         "signature_sha256": sha256(args.signatures),
         "environment": environment.identity(env),
         **({"max_tool_calls": env.MAX_TOOL_CALLS} if env.KIND == "tools" else {}),
+        **({"use_vllm": True, "vllm_gpu_memory_utilization": args.vllm_memory} if args.vllm else {}),
     }
 
 
@@ -100,8 +106,10 @@ def grpo_settings(config, output, bf16, save_steps=25, keep=3):
             "output_dir": str(output), "logging_steps": 1,
             "save_strategy": "steps", "save_steps": save_steps, "save_total_limit": keep,
             "bf16": bf16, "fp16": not bf16, "gradient_checkpointing": True,
-            "remove_unused_columns": False, "report_to": "none", "use_vllm": False,
+            "remove_unused_columns": False, "report_to": "none", "use_vllm": config.get("use_vllm", False),
             "shuffle_dataset": True, "chat_template_kwargs": {"enable_thinking": False},
+            **({"vllm_mode": "colocate", "vllm_gpu_memory_utilization": config["vllm_gpu_memory_utilization"]}
+               if config.get("use_vllm") else {}),
             **({"max_tool_calling_iterations": config["max_tool_calls"]} if "max_tool_calls" in config else {})}
 
 
@@ -166,6 +174,9 @@ def main(argv=None):
     parser.add_argument("--temperature", type=float, default=1.0)
     parser.add_argument("--max-completion-length", type=int, default=160)
     parser.add_argument("--learning-rate", type=float, default=5e-6)
+    parser.add_argument("--lora-r", type=int, default=16, help="LoRA rank (alpha is twice the rank)")
+    parser.add_argument("--vllm", action="store_true", help="generate with vLLM colocated on the training GPU")
+    parser.add_argument("--vllm-memory", type=float, default=0.35, help="vLLM's share of GPU memory")
     parser.add_argument("--resume", nargs="?", const="auto")
     parser.add_argument("--save-steps", type=int, default=25, help="checkpoint interval (preemptible GPUs: lower)")
     parser.add_argument("--keep-checkpoints", type=int, default=3, help="how many recent checkpoints to keep")
@@ -212,7 +223,8 @@ def main(argv=None):
            "telemetry": str(Path(telemetry).resolve()), "resume_from": checkpoint,
            "steps_completed": 0, "wall_seconds": 0, "signature_provenance": guard.pack.get("provenance", {}),
            "source_sha256": {name: sha256(ROOT / name) for name in
-                             (f"environments/{env.NAME}.py", "verity/guard.py", "verity/markers.py", "train.py")}}
+                             (f"environments/{env.NAME}.py", "verity/guard.py", "verity/markers.py",
+                              "verity/environment.py", "train.py")}}
     if previous:
         run["previous_sessions"] = previous.get("previous_sessions", []) + [{
             key: previous.get(key) for key in ("started_at", "finished_at", "wall_seconds", "status", "steps_completed")}]
@@ -246,7 +258,8 @@ def main(argv=None):
         run.update({"status": "running", "gpu": torch.cuda.get_device_name(0), "gpus": gpus,
                     "model_commit": getattr(model.config, "_commit_hash", None),
                     "packages": {name: importlib.metadata.version(name)
-                                 for name in ("torch", "transformers", "trl", "peft", "accelerate", "datasets")}})
+                                 for name in ("torch", "transformers", "trl", "peft", "accelerate", "datasets",
+                                              *(("vllm",) if config.get("use_vllm") else ()))}})
         settings = GRPOConfig(**grpo_settings(config, output, bf16, args.save_steps, args.keep_checkpoints))
         run["precision"] = "bfloat16" if bf16 else "float16"
         write_json(output / "run.json", run)
@@ -259,9 +272,9 @@ def main(argv=None):
 
         trainer = GRPOTrainer(
             model=model, processing_class=tokenizer, reward_funcs=[reward],
-            environment_factory=guard.episode_class(env.Episode) if env.KIND == "tools" else None,
+            environment_factory=guard.episode_class(env) if env.KIND == "tools" else None,
             train_dataset=Dataset.from_list(dataset_rows(tasks)), args=settings,
-            peft_config=LoraConfig(r=16, lora_alpha=32, lora_dropout=0.0,
+            peft_config=LoraConfig(r=config["lora_r"], lora_alpha=config["lora_alpha"], lora_dropout=0.0,
                                    target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
                                    task_type="CAUSAL_LM"), callbacks=[Progress()],
         )

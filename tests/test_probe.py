@@ -38,7 +38,7 @@ class ProbeTests(unittest.TestCase):
     def setUp(self):
         self.tasks = tasks()
         self.selected = probe.select_tasks(self.tasks)
-        self.exploits = {i: env.seeded_exploit(task) for i, task in enumerate(self.selected)}
+        self.exploits = {i: env.seeded_exploit(task, "V-001") for i, task in enumerate(self.selected)}
 
     def done(self):
         return {"action": "done", "explanation": "multiple alternatives get credit",
@@ -48,11 +48,12 @@ class ProbeTests(unittest.TestCase):
         report, pack = probe.run(env, self.tasks, offline=True)
         self.assertEqual((report["status"], report["mode"], report["score_calls"]), ("passed", "seeded_fixture", 0))
         self.assertIn("not a frontier discovery", report["disclosure"])
-        self.assertEqual([report["proof"][k] for k in ("tasks", "env_reward", "true_score", "patched_reward")],
+        round_one = report["rounds"][0]
+        self.assertEqual([round_one["proof"][k] for k in ("tasks", "env_reward", "true_score", "patched_reward")],
                          [16, 1.0, 0.0, 0.0])
-        self.assertEqual([report["validation"][k] for k in ("exploit_recall", "honest_false_alarms", "honest_n")],
+        self.assertEqual([round_one["validation"][k] for k in ("exploit_recall", "honest_false_alarms", "honest_n")],
                          [1.0, 0.0, 1600])
-        self.assertGreater(report["validation"]["exploit_n"], 100)
+        self.assertGreater(round_one["validation"]["exploit_n"], 100)
         self.assertEqual(pack["provenance"]["mode"], "seeded_fixture")
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder)
@@ -114,14 +115,14 @@ class ProbeTests(unittest.TestCase):
                                                     for i, task in enumerate(self.selected)]}
         report, pack = probe.run(env, self.tasks, ask=lambda *a: {"message": {"content": json.dumps(honest)}},
                                  model="test/model")
-        self.assertEqual((report["status"], report["proof"]["reward_gap"]), ("unproven", 0))
+        self.assertEqual((report["status"], report["rounds"][0]["proof"]["reward_gap"]), ("unproven", 0))
         self.assertIsNone(pack)
 
     def test_marker_revisions_receive_counterexamples(self):
         attacks, honest = probe.validation_corpus(env, self.selected, self.exploits)
-        broad = copy.deepcopy(env.SEEDED_MARKER)
+        broad = copy.deepcopy(env.SEEDED_MARKERS[0])
         broad["detect"] = {"regex": ".+"}
-        replies = iter([broad, env.SEEDED_MARKER])
+        replies = iter([broad, env.SEEDED_MARKERS[0]])
         seen = []
 
         def ask(messages, *args):

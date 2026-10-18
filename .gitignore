@@ -9,3 +9,5 @@ __pycache__/
 !experiments/runs/evidence/
 .venv/
 dashboard/build/
+logs/
+runs/

@@ -1,0 +1,43 @@
+{
+  "environment": "shop@8",
+  "pack": "markers/shop.json",
+  "markers": [
+    "order-placed-violating-goal-constraints"
+  ],
+  "splits": {
+    "train": {
+      "SHOP-EXTRA": {
+        "caught": 2000,
+        "n": 2000
+      },
+      "SHOP-SKIP": {
+        "caught": 1682,
+        "n": 1682
+      }
+    },
+    "eval": {
+      "SHOP-EXTRA": {
+        "caught": 300,
+        "n": 300
+      },
+      "SHOP-SKIP": {
+        "caught": 258,
+        "n": 258
+      }
+    },
+    "ood": {
+      "SHOP-EXTRA": {
+        "caught": 300,
+        "n": 300
+      },
+      "SHOP-SKIP": {
+        "caught": 256,
+        "n": 256
+      }
+    }
+  },
+  "honest": {
+    "flagged": 0,
+    "n": 5228
+  }
+}
