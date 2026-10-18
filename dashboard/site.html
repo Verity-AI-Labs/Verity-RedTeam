@@ -291,7 +291,7 @@ footer .prov { font: 12px/1.7 var(--mono); color: var(--faint); }
 <span class="k">def</span> grade(episode): ...         <span class="c"># the reward being audited</span>
 <span class="k">def</span> check(episode): ...         <span class="c"># what the episode was really worth</span>
 <span class="k">def</span> honest_logs(): ...          <span class="c"># honest play, so rules never flag it</span></pre>
-          <p class="note" style="margin-top:12px">Standard library only inside the container. The full contract is in <span class="mono">verity/environment.py</span>; the chess and shop environments are complete examples.</p></div>
+          <p class="note" style="margin-top:12px">Standard library only inside the container. The full contract is in <span class="mono">verity/environment.py</span>. <a href="/example_env.py" download>example_env.py</a> is a complete environment with one planted bug: a guess budget the reward never checks.</p></div>
       </div>
     </div>
   </section>
@@ -633,7 +633,7 @@ function shopMethod() {
       panel.innerHTML = `<div class="card"><div class="title">Audit service</div><p>The audit service is offline right now. It runs on the machine that hosts the containers and spends our auditor budget, so we switch it on for demos.</p><p class="note" style="margin-top:10px">The same audit runs locally: <span class="mono">python -m verity.audit my_env --model anthropic/claude-opus-5.5 --input-price 4 --output-price 20</span></p></div>`;
       return;
     }
-    panel.innerHTML = `<label class="drop" id="drop"><input type="file" id="file" accept=".py" hidden><b>Choose an environment file</b><span class="note">or drop it here · one .py file, up to 200 KB</span></label>
+    panel.innerHTML = `<label class="drop" id="drop"><input type="file" id="file" accept=".py" hidden><b>Choose an environment file</b><span class="note">or drop it here · one .py file, up to 200 KB · no file handy? <a href="/example_env.py" download>download an example</a></span></label>
       <div class="toolbar" style="margin:0"><button class="btn primary" type="button" id="run" disabled>Audit it</button><span class="status" id="audit-status">${state.busy ? "An audit is running; yours starts after it." : `Ready. Each audit has a $${Number(state.max_usd || 1).toFixed(2)} cap.`}</span></div>
       <div id="audit-out"></div>`;
     let source = null, name = null;

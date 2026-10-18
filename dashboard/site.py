@@ -391,6 +391,7 @@ def main(argv=None):
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(document(data))
+    (out.parent / "example_env.py").write_text((ROOT / "docs/example_env.py").read_text())  # to try the upload with
     print(f"Wrote {out} ({out.stat().st_size // 1024} KB): " + ", ".join(sorted(data)))
 
 
