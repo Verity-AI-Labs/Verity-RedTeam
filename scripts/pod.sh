@@ -72,7 +72,7 @@ case "$COMMAND" in
   serve)
     TOKEN=$1
     CHESS=/workspace/runs/chess_game-v3 SHOP=${SHOP_RUNS:-/workspace/runs/shop}
-    "${SSH[@]}" "$ON_POD && pkill -f dashboard/live.py; pkill -f 'cloudflared tunnel'; sleep 2; \
+    "${SSH[@]}" "$ON_POD && pkill -f '^python dashboard/live.py'; pkill -f '^/workspace/cloudflared'; sleep 2; \
       STOCKFISH=/usr/games/stockfish nohup python dashboard/live.py \
         \$(test -f $CHESS/verity/adapter/adapter_config.json && echo --chess-runs $CHESS) \
         \$(test -f $SHOP/verity/adapter/adapter_config.json && echo --shop-runs $SHOP) \

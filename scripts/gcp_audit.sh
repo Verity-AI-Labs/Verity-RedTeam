@@ -34,12 +34,15 @@ touch /var/lib/verity-ready' \
     git ls-files | grep -v '^experiments/runs/' | tar czf - -T - | "${SSH[@]}" 'rm -rf verity && mkdir verity && tar xzf - -C verity'
     { grep '^OPENROUTER_API_KEY' .env; echo "VERITY_TOKEN=$TOKEN"; } | \
       "${SSH[@]}" 'umask 077; cat > verity/.secrets && grep "^OPENROUTER" verity/.secrets > verity/.env'
-    "${SSH[@]}" "cd verity && pkill -f '[a]udit_server.py'; pkill -f '[c]loudflared tunnel'; sleep 1; \
-      export \$(grep VERITY_TOKEN .secrets); \
-      setsid nohup python3 dashboard/audit_server.py --port 8771 > audit.log 2>&1 < /dev/null & \
-      setsid nohup cloudflared tunnel --no-autoupdate --url http://127.0.0.1:8771 > tunnel.log 2>&1 < /dev/null & \
-      for i in \$(seq 1 30); do grep -q trycloudflare tunnel.log && break; sleep 2; done; \
-      grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' tunnel.log | head -n 1" ;;
+    # the service as a systemd unit (restarts on failure, keys from the mode-600 file); the tunnel only if not running,
+    # since a new quick tunnel gets a new URL
+    "${SSH[@]}" "cd verity && sudo systemctl stop verity-audit 2>/dev/null; sudo systemctl reset-failed verity-audit 2>/dev/null; \
+      sudo systemd-run --unit verity-audit --uid=\"\$USER\" --property=EnvironmentFile=\"\$HOME/verity/.secrets\" \
+        --property=WorkingDirectory=\"\$HOME/verity\" --property=Restart=always /usr/bin/python3 dashboard/audit_server.py --port 8771; \
+      pgrep -f '^cloudflared tunnel' >/dev/null || (setsid nohup cloudflared tunnel --no-autoupdate --url http://127.0.0.1:8771 \
+        > ~/tunnel.log 2>&1 < /dev/null &); \
+      for i in \$(seq 1 30); do grep -q trycloudflare ~/tunnel.log && break; sleep 2; done; \
+      grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' ~/tunnel.log | head -n 1" ;;
   terminate)
     "${G[@]}" compute instances delete "$NAME" --zone "$ZONE" ;;
   *)
