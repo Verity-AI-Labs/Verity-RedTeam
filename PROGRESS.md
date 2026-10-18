@@ -1,20 +1,19 @@
 # Progress
 
-As of **Sun Oct 18, 2026, 04:00**. DubHacks submissions are due **Sun Oct 18, 10:30 PDT** (judging 11:30–14:00). The repo layout is in [README.md](README.md); the step-by-step lab notebook is [docs/log.md](docs/log.md).
+As of **Sun Oct 18, 2026, 07:20**. DubHacks submissions are due **Sun Oct 18, 10:30 PDT** (judging 11:30–14:00). The repo layout is in [README.md](README.md); the step-by-step lab notebook is [docs/log.md](docs/log.md).
 
-## Right now (Oct 18, 04:00)
+## Right now (Oct 18, 07:20)
 
-**Site: https://verity-six-pink.vercel.app** (Vercel production; `python dashboard/site.py --shop-runs artifacts/shop-v3 && cd web && vercel deploy --prod` updates it). Built from the current results; the shop section shows attempt 4 until attempt 5 is evaluated.
+**Site: https://verity-six-pink.vercel.app**: five pages (overview, live chess, live shop, how it works, audit yours) built by `python dashboard/site.py` from `dashboard/site/` into `web/`; `cd web && vercel deploy --prod`. Arrow keys move between pages.
 
 | Thread | State | Next action |
 |---|---|---|
-| **Audit service** | **On Google Cloud** (user's project, free trial): VM `verity-audit` (e2-small, us-west1-b), `dashboard/audit_server.py` as the systemd unit `verity-audit`, Cloudflare quick tunnel; Vercel `AUDIT_URL` points at it; tested through the site (upload path, Docker sandbox tests on the VM). The Mac's audit server and tunnel are stopped. `scripts/gcp_audit.sh` launches and deploys it. | If the tunnel restarts, its URL changes: update `AUDIT_URL` and redeploy. |
-| **Shared token** | Rotated at 03:52 (an old value was printed in a session log): new value in `.local-token`, Vercel `VERITY_TOKEN`, and the VM's `.secrets`. | The live server gets the new value when started. |
-| **Shop, attempt 4 (shop@11, 40 steps)** | Done and evaluated (vLLM, greedy, no Guard), `artifacts/shop-v3`. Held-out stores (300): paid-but-wrong untrained 46% / unguarded 55% / Verity 34%; coupon applied 19% / 15% / 28%; exactly right 28% / 35% / 33%; reward paid 0.62 / 0.75 / 0.61. New stores (300): paid-but-wrong 33% / 46% / 30%; exactly right 24% / 31% / 32%. The learning rate had decayed to ~1e-6 by step 40 while Verity's catch rate was still falling (0.44 → 0.26 over the last 8 steps). | The site's backup result. |
-| **Shop, attempt 5 (continued)** | With the user's agreement: both arms continue from their step-40 adapters for 40 more steps (`--init-adapter`, fresh optimizer and schedule, seed 43, otherwise identical): baseline on H100 87.120.211.211:11339 (pod 13c4kjl8am27q9), verity on H100 64.247.201.58:15374 (pod 7i0ar2uvw3nd7v), runs in `/workspace/runs/shop11b`. Started ~04:00, done ~05:00-05:45. | Pull, evaluate both splits on one pod, verify on the Mac, delete both pods (user approved deleting pods once their data is saved). |
-| **chess_game v3** | Both arms finished 300 steps; final adapters on the Mac and the A40. Deployed evaluation (99 held-out positions) and 4 held-out games running on the A40. | Copy results; site. |
-| **Live server** | A40 69.30.85.106:22197 (pod 5o1xnm5c0s68h7, $0.59/h) has both chess adapters and the shop@11 attempt-4 adapters. | Starts after the match (`SHOP_RUNS=/workspace/runs/shop11 scripts/pod.sh ... serve`); set Vercel `INFERENCE_URL`; redeploy. |
-| **Pods deleted** | Attempt 3/4 pods H200 wkrewngbdtjfz8 (02:34) and H100 yvwicz1c97fpgd (03:09), after a dry-run sync showed no file left only on them (optimizer states excluded). | — |
+| **Live demos** | **Down.** RunPod credit ran out at ~05:30 and RunPod deleted every pod, including the A40 live server. Nothing needed was lost: all adapters and results are in `artifacts/`. Google Cloud cannot host a GPU today (the trial project's global GPU quota is 0). | When RunPod has credit, `restore_live.sh` (session scratchpad; it creates a 48 GB serving pod, syncs, `setup-serve`, copies the chess and shop adapters, `serve`, sets Vercel `INFERENCE_URL`, redeploys) runs automatically: ~20 min, ~$0.50/h. |
+| **Audit service** | Up on Google Cloud: VM `verity-audit` (e2-small, us-west1-b), systemd unit `verity-audit`, Cloudflare tunnel, Vercel `AUDIT_URL`. Tested through the site; no paid audit run on the VM yet. | Offer one example audit (≤ $1) when the user agrees. |
+| **Shop, presented** | **Attempt 4** (shop@11, 40 steps each), `artifacts/shop-v3`: held-out paid-but-wrong 46% untrained / 55% unguarded / 34% Verity; exactly right 28% / 35% / 33%; reward 0.62 / 0.75 / 0.61. New stores: paid-but-wrong 33% / 46% / 30%. The user chose to present these (07:15). | — |
+| **Shop, attempt 5** | Continued training from step 40 (`--init-adapter`, seed 43): the Verity arm finished (`artifacts/shop-v4/verity`); the baseline's continuation died with the pods. Not evaluated, not presented; say so if asked. | — |
+| **Chess** | Final (300 steps each). Deployed evaluation on 99 held-out positions: untrained 0.265, unguarded 0.293, Verity 0.339 (illegal tries per game 0.13 / 0.10 / 1.47). Training, last 25 steps: unguarded extra hint paid in 100% of games, own-move quality 0.00; Verity 0%, 0.49. | — |
+| **Live harness** | Live chess: a new game replaces one in progress; up to ten tries per move for both models (the evaluation keeps four); a reply without a move gets one reminder. Live shop: the task is typed in plain words and read against the store's catalogue (`shop.interpret`). | — |
 | **Push** | User approved pushing to GitHub when everything is done. | Last step. |
 
 ## The two demos
