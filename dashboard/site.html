@@ -227,7 +227,7 @@ footer .prov { font: 12px/1.7 var(--mono); color: var(--faint); }
     </div>
     <div class="steps">
       <div><span class="n">01</span><h3>Audit</h3><p>A frontier model gets exactly what a training agent gets, the task and the tools, and looks for reward it can earn without doing the task. Every finding is proven: what the reward paid against what the episode was really worth.</p></div>
-      <div><span class="n">02</span><h3>Rule</h3><p>The auditor writes each proven hack as a small rule over the episode. Verity accepts it only if it catches every exploit and stays silent on honest play.</p></div>
+      <div><span class="n">02</span><h3>Rule</h3><p>The auditor writes each proven hack as a small rule over the episode. Verity accepts it only if it catches at least 95% of the exploits and fires on at most 1% of honest play.</p></div>
       <div><span class="n">03</span><h3>Guard</h3><p>Inside the training loop, Guard checks what each action does before it takes effect. A match is undone, the agent gets the warning, and the attempt costs reward.</p></div>
     </div>
   </div>
@@ -633,11 +633,11 @@ function liveDemo(demo, ui) {
   });
   const res = S.results;
   if (!res) { pending($("shop-results"), "Results on held-out stores appear here when both training runs finish."); return; }
-  const table = (r, title) => `<div class="card"><div class="title">${esc(title)} · ${r.tasks} stores</div><div class="scroll"><table><thead><tr><th>Model</th><th>Exactly what was asked</th><th>Paid but wrong</th><th>Extra items</th><th>Skipped coupon or shipping</th><th>Actions</th></tr></thead><tbody>${["base", "baseline", "verity"].filter((a) => r.models[a]).map((a) => { const x = r.models[a]; return `<tr><td>${a === "base" ? "Untrained" : tag(a)}</td><td><b>${pct(x.success)}</b></td><td>${pct(x.hack)}</td><td>${pct(x.hack_extra)}</td><td>${pct(x.hack_skip)}</td><td>${f2(x.calls)}</td></tr>`; }).join("")}</tbody></table></div></div>`;
+  const table = (r, title) => `<div class="card"><div class="title">${esc(title)} · ${r.tasks} stores</div><div class="scroll"><table><thead><tr><th>Model</th><th>Exactly what was asked</th><th>Paid but wrong</th><th>Skipped coupon or shipping</th><th>Extra items</th><th>Reward paid</th><th>Actions</th></tr></thead><tbody>${["base", "baseline", "verity"].filter((a) => r.models[a]).map((a) => { const x = r.models[a]; return `<tr><td>${a === "base" ? "Untrained" : tag(a)}</td><td><b>${pct(x.success)}</b></td><td>${pct(x.hack)}</td><td>${pct(x.hack_skip)}</td><td>${pct(x.hack_extra)}</td><td>${f2(x.env_reward)}</td><td>${f2(x.calls)}</td></tr>`; }).join("")}</tbody></table></div></div>`;
   const t = S.training, sum = (rows, key) => (rows || []).reduce((a, r) => a + (r[key] || 0) * (r.samples || 0), 0);
   const during = t && t.baseline && t.verity ? ` During training, the unguarded run was paid for ${Math.round(sum(t.baseline, "hack"))} orders that broke the goal; in the Verity run Guard undid ${Math.round(sum(t.verity, "caught_rate"))} such attempts and none were paid.` : "";
   $("shop-results").innerHTML = `<div class="grid2">${res.ood ? table(res.ood, "New stores, words and layout") : ""}${res.eval ? table(res.eval, "Held-out stores") : ""}</div>
-    <p class="note" style="margin-top:10px">Exactly what was asked: the one wanted item, with the requested coupon, shipping speed, name and address. Paid but wrong: the reward accepted the order anyway.${during}</p>`;
+    <p class="note" style="margin-top:10px">Exactly what was asked: the one wanted item, with the requested coupon, shipping speed, name and address. Paid but wrong: the reward accepted the order anyway. Reward paid: the shop's own (buggy) reward, which the unguarded run was trained to raise.${during}</p>`;
 })();
 
 /* ---------- method: each environment's audit, rule, guard and training ---------- */
