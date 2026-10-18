@@ -2,18 +2,18 @@
 
 As of **Sat Oct 17, 2026, evening**. DubHacks submissions are due **Sun Oct 18, 10:30 PDT** (judging 11:30–14:00). The repo layout is in [README.md](README.md); the step-by-step lab notebook is [docs/log.md](docs/log.md).
 
-## Right now (Oct 17, 23:35)
+## Right now (Oct 18, 00:00)
 
-**Site: https://verity-six-pink.vercel.app** (Vercel production; every `cd web && vercel deploy --prod` updates it).
+**Site: https://verity-six-pink.vercel.app** (Vercel production; `python dashboard/site.py && cd web && vercel deploy --prod` updates it).
 
 | Thread | State | Next action |
 |---|---|---|
 | **Merge** | Done: `GUI` merged into `dubhacks`, one Verity core, both demos; 197 tests pass. Committed, not pushed. | Push when the user says so. |
-| **Site** | Rebuilt for production: hero, live chess match, live side-by-side shop agents, the method per environment with real artifacts, environment upload. Deployed. | Redeploy after results (`python dashboard/site.py && cd web && vercel deploy --prod`). |
-| **Audit service** | Live: `dashboard/audit_server.py` on the Mac (Docker via OrbStack), behind a Cloudflare quick tunnel; Vercel `AUDIT_URL` + `VERITY_TOKEN` set. Tested end to end with Opus on `docs/example_env.py` ($0.16; Opus did not find the planted bug in that run). OpenRouter has about $2.20 left. | Keep the Mac awake with the server and tunnel running (`logs/audit-*.log`); a new tunnel needs a new `AUDIT_URL`. |
-| **Shop training** | RunPod, two H100s (CUDA 13), identical settings: baseline pod 103.207.149.171:13247, verity pod 64.247.201.54:13325. Attempt 2 (lr 3e-5, KL beta 0.04, 60 steps) started 23:35. Attempt 1 (lr 5e-5, no KL) was stopped: its unguarded arm collapsed at steps 11-15 (see disclosures). | Pull runs, evaluate both splits with vLLM (`--record 6`), then the baseline pod becomes the live server. |
-| **chess_game v3** | Hyak, both arms at ~step 150/300, done ~03:00. | Copy adapters to the pod, evaluate as deployed, one match, live server. |
-| **Live server** | `dashboard/live.py` written (four adapters, chess + shop); pod has Stockfish and cloudflared. | Start on the baseline pod after evaluation, tunnel it, set Vercel `INFERENCE_URL`, redeploy. |
+| **Site** | Production page: hero, live chess match, the shop demo (compose a task on an unseen store; both agents work it in browser windows with an animated pointer), the method per environment with real artifacts, environment upload. | Redeploy with results. |
+| **Audit service** | Live through the site: `dashboard/audit_server.py` on the Mac (Docker via OrbStack) behind a Cloudflare quick tunnel; Vercel `AUDIT_URL` + `VERITY_TOKEN`. Tested with Opus ($0.16). OpenRouter topped up (~$12). | Move to a cloud VM with Docker when the AWS account exists (RunPod pods cannot run Docker). |
+| **Shop training** | Attempt 2 on two RunPod H100s, identical settings (lr 3e-5, KL beta 0.04, 60 steps): baseline 103.207.149.171:13247 (done ~01:00), verity 64.247.201.54:13325 (done ~01:15). Stable so far. | `scripts/pod.sh ... pull artifacts/shop-v1`; copy the verity run to the baseline pod; evaluate eval + deployment splits with vLLM (`--record 6`). |
+| **chess_game v3** | Hyak: verity step ~220/300 (done ~02:00), baseline ~195/300 (done ~02:50). | Copy adapters to the baseline pod; evaluate as deployed; one match. |
+| **Live server** | `dashboard/live.py` tested locally for both demos (composed tasks included). | `scripts/pod.sh 103.207.149.171 13247 serve "$VERITY_TOKEN"`; set Vercel `INFERENCE_URL` to the printed URL; redeploy. |
 
 ## The two demos
 
