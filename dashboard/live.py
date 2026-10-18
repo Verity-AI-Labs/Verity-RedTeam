@@ -20,6 +20,7 @@ import random
 import re
 import sys
 import threading
+import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
@@ -60,30 +61,69 @@ class Prefixed:
         return self.policy.chat(messages, arm if arm == "base" else f"{self.demo}-{arm}", tools)
 
 
-class Chess:
-    """One live game at a time between the two chess models."""
+class Sessions:
+    """Each visitor's own demo (keyed by a session id the page makes), with a cap on demos running at once (they share
+    one GPU) and cleanup of visitors who left (no poll for IDLE seconds)."""
+    MAX_RUNNING, IDLE = 4, 120
+
+    def __init__(self):
+        self.lock, self.sessions = threading.Lock(), {}  # session -> {"state", "thread", "seen"}
+        threading.Thread(target=self._janitor, daemon=True).start()
+
+    def get(self, session):
+        entry = self.sessions.get(session)
+        if entry:
+            entry["seen"] = time.monotonic()
+        return entry["state"] if entry else None
+
+    def begin(self, session, state, target, *args):
+        """Run target(state, *args) as this visitor's demo, replacing their own; None, or an error to show."""
+        old = self.sessions.get(session)
+        if old and old["thread"].is_alive():
+            old["state"].update(stop=True, status="stopped", reason="replaced")
+        elif sum(entry["thread"].is_alive() for entry in self.sessions.values()) >= self.MAX_RUNNING:
+            return "The models are busy with other visitors' demos right now. Try again in a minute."
+        thread = threading.Thread(target=target, args=(state, *args), daemon=True)
+        self.sessions[session] = {"state": state, "thread": thread, "seen": time.monotonic()}
+        thread.start()
+        return None
+
+    def stop(self, session):
+        entry = self.sessions.get(session)
+        if entry:
+            entry["state"]["stop"] = True
+
+    def _janitor(self):
+        while True:
+            time.sleep(30)
+            with self.lock:
+                for session, entry in list(self.sessions.items()):
+                    if time.monotonic() - entry["seen"] > self.IDLE:
+                        entry["state"]["stop"] = True  # the visitor left: stop after the current move
+                        if not entry["thread"].is_alive():
+                            del self.sessions[session]
+
+
+class Chess(Sessions):
+    """Each visitor's own live game between the two chess models."""
 
     def __init__(self, policy, runs):
+        super().__init__()
         self.policy, self.runs = Prefixed(policy, "chess"), Path(runs)
         self.starts = [task["fen"] for task in chess_game.tasks("eval")]
-        self.lock, self.game, self.thread = threading.Lock(), None, None
 
-    def start(self, body):
-        """Start a game; one in progress is replaced (it stops after its current move). Returns an error or None."""
+    def start(self, body, session):
+        """Start this visitor's game (replacing their own one in progress). Returns an error or None."""
         with self.lock:
-            if self.game and self.thread and self.thread.is_alive():
-                self.game.update(stop=True, status="stopped", reason="replaced by a new game")
             white = body.get("white") if body.get("white") in ARMS else "verity"
             if body.get("start") == "heldout":
                 fen, opening = random.choice(self.starts), None
             else:  # a random well-known opening, so each game differs
                 opening = random.choice(list(OPENINGS))
                 fen = opening_fen(OPENINGS[opening])
-            self.game = {"white": white, "black": "baseline" if white == "verity" else "verity", "start_fen": fen,
-                         "opening": opening, "plies": [], "status": "playing", "live": True}
-            self.thread = threading.Thread(target=self.play, args=(self.game,), daemon=True)
-            self.thread.start()
-            return None
+            game = {"white": white, "black": "baseline" if white == "verity" else "verity", "start_fen": fen,
+                    "opening": opening, "plies": [], "status": "playing", "live": True}
+            return self.begin(session, game, self.play)
 
     def play(self, game):
         try:
@@ -102,28 +142,25 @@ class Chess:
         except Exception as error:  # shown on the page; the server keeps running
             game.update(status="error", reason=f"{type(error).__name__}: {error}")
 
-    def stop(self):
-        if self.game:
-            self.game["stop"] = True
-
-    def state(self):
-        game = self.game
-        return {"available": True, "game": None if game is None else {**game, "plies": list(game["plies"])}}
+    def state(self, session):
+        game = self.get(session)
+        return {"available": True, "game": None if game is None else
+                {**{k: v for k, v in game.items() if k != "stop"}, "plies": list(game["plies"])}}
 
 
-class Shop:
-    """One live store at a time: both shop models get the same deployment task and act in turn."""
+class Shop(Sessions):
+    """Each visitor's own live store: both shop models get the same deployment task and act in turn."""
 
     def __init__(self, policy, runs):
+        super().__init__()
         self.policy, self.runs = Prefixed(policy, "shop"), Path(runs)
         self.tasks = shop.tasks(shop.DEPLOYMENT["split"])
         from transformers.utils import get_json_schema
         self.tools = [get_json_schema(getattr(shop.Episode(), name)) for name in tool_names(shop.Episode)]
-        self.lock, self.run, self.thread = threading.Lock(), None, None
 
-    def start(self, body):
-        """Start a task on a store: a request in plain words ("text"), a composed one ("row"), or a random held-out task.
-        A task in progress is replaced. Returns an error the page can show, or None."""
+    def start(self, body, session):
+        """Start this visitor's task on a store: a request in plain words ("text"), a composed one ("row"), or a random
+        held-out task, replacing their own task in progress. Returns an error the page can show, or None."""
         with self.lock:
             index = body.get("store", body.get("task"))
             index = index if isinstance(index, int) and 0 <= index < len(self.tasks) else random.randrange(len(self.tasks))
@@ -140,15 +177,11 @@ class Shop:
                 site = shop.compose(json.loads(task["site"]), body["row"], body.get("shipping", "standard"),
                                     bool(body.get("coupon")))
                 task = {"prompt": shop.prompt(site), "site": json.dumps(site), "key": shop.key(site)}
-            if self.run and self.thread and self.thread.is_alive():
-                self.run.update(stop=True, status="stopped", reason="replaced by a new task")
             site = json.loads(task["site"])
-            self.run = {"task": index, "goal": site["goal"], "store": site["store"], "status": "playing",
-                        "request": request or None, "understood": understood,
-                        "arms": {arm: {"frames": [], "done": False} for arm in ARMS}}
-            self.thread = threading.Thread(target=self.play, args=(self.run, task), daemon=True)
-            self.thread.start()
-            return None
+            run = {"task": index, "goal": site["goal"], "store": site["store"], "status": "playing",
+                   "request": request or None, "understood": understood,
+                   "arms": {arm: {"frames": [], "done": False} for arm in ARMS}}
+            return self.begin(session, run, self.play, task)
 
     def play(self, run, task):
         try:
@@ -200,12 +233,8 @@ class Shop:
         return {**shop.measure(episode), "done": True, "order": shop.order_line(episode.state)[len("# order: "):],
                 "outcome": shop.check(episode), "reward": shop.grade(episode)}
 
-    def stop(self):
-        if self.run:
-            self.run["stop"] = True
-
-    def state(self):
-        run = self.run
+    def state(self, session):
+        run = self.get(session)
         return {"available": True, "run": None if run is None else json.loads(json.dumps(
             {k: v for k, v in run.items() if k != "stop"}))}
 
@@ -224,14 +253,16 @@ def handler(demos, page, token=None):
         def demo(self):
             url = urlparse(self.path)
             query = parse_qs(url.query)
-            return url.path, query.get("demo", ["chess"])[0], query.get("action", [""])[0]
+            session = query.get("session", [""])[0]
+            return (url.path, query.get("demo", ["chess"])[0], query.get("action", [""])[0],
+                    session if re.fullmatch(r"[A-Za-z0-9_-]{8,64}", session) else "")
 
         def do_GET(self):
-            path, name, _ = self.demo()
+            path, name, _, session = self.demo()
             if path in ("/", "/index.html") and page:
                 return self.send(200, page, "text/html")
             if path == "/api/live":
-                return self.send(200, demos[name].state() if name in demos else {"available": False})
+                return self.send(200, demos[name].state(session) if name in demos else {"available": False})
             self.send(404, {"error": "not found"})
 
         def do_POST(self):
@@ -242,14 +273,16 @@ def handler(demos, page, token=None):
                 return self.send(400, {"error": "invalid JSON"})
             if token and self.headers.get("X-Verity-Token") != token:
                 return self.send(403, {"error": "missing or wrong X-Verity-Token"})
-            path, name, action = self.demo()
+            path, name, action, session = self.demo()
             if path != "/api/live" or name not in demos or action not in ("start", "stop"):
-                return self.send(404, {"error": "POST /api/live?demo=chess|shop&action=start|stop"})
+                return self.send(404, {"error": "POST /api/live?demo=chess|shop&action=start|stop&session=..."})
+            if not session:
+                return self.send(400, {"error": "missing or invalid session"})
             if action == "start":
-                error = demos[name].start(body)
-                return self.send(400, {**demos[name].state(), "error": error}) if error else self.send(200, demos[name].state())
-            demos[name].stop()
-            return self.send(200, demos[name].state())
+                error = demos[name].start(body, session)
+                return self.send(400, {**demos[name].state(session), "error": error}) if error else self.send(200, demos[name].state(session))
+            demos[name].stop(session)
+            return self.send(200, demos[name].state(session))
 
         def log_message(self, *_args):
             pass

@@ -17,6 +17,10 @@ const isPage = (text) => /^<h1>/.test(text || "");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const mean = (rows, key) => rows && rows.length ? rows.reduce((a, r) => a + (r[key] || 0), 0) / rows.length : null;
 const tail = (rows, n = 25) => (rows || []).slice(-n);
+const SID = (() => {  /* this tab's session: each visitor gets their own live game and shop task */
+  const make = () => Array.from(crypto.getRandomValues(new Uint8Array(12)), (b) => b.toString(16).padStart(2, "0")).join("");
+  try { let id = sessionStorage.getItem("verity-session"); if (!id) { id = make(); sessionStorage.setItem("verity-session", id); } return id; } catch (e) { return make(); }
+})();
 const ARROW = `<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 /* ---------- page chrome: model status, arrow-key navigation, card spotlight ---------- */
@@ -380,7 +384,7 @@ function recordedStores() {
 function liveDemo(demo, ui) {
   const status = $(`${demo}-status`), go = $(`${demo}-go`), stop = $(`${demo}-stop`);
   const say = (text, error) => { status.textContent = text; status.parentElement.classList.toggle("err", !!error); };
-  fetch(`/api/live?demo=${demo}`).then((r) => r.ok ? r.json() : null).catch(() => null).then((state) => {
+  fetch(`/api/live?demo=${demo}&session=${SID}`).then((r) => r.ok ? r.json() : null).catch(() => null).then((state) => {
     $(`${demo}-controls`).hidden = false;
     if (!state || !state.available) {
       document.querySelectorAll(`#${demo}-controls .live-only`).forEach((el) => { el.hidden = true; });
@@ -396,7 +400,7 @@ function liveDemo(demo, ui) {
       if (busy) return;
       busy = true; go.disabled = true;
       if (action === "start") say(ui.starting || "Starting…");
-      post(`/api/live?demo=${demo}&action=${action}`, body).then((s) => { show(s); if (s && s.error) say(s.error, true); })
+      post(`/api/live?demo=${demo}&action=${action}&session=${SID}`, body).then((s) => { show(s); if (s && s.error) say(s.error, true); })
         .catch(() => say("Could not reach the inference server.", true))
         .finally(() => { busy = false; go.disabled = false; });
     };
@@ -404,7 +408,7 @@ function liveDemo(demo, ui) {
     go.addEventListener("click", () => send("start", ui.body ? ui.body() : {}));
     stop.addEventListener("click", () => send("stop"));
     show(state);
-    setInterval(() => { if (!busy) fetch(`/api/live?demo=${demo}`).then((r) => r.json()).then(show).catch(() => {}); }, 1000);
+    setInterval(() => { if (!busy) fetch(`/api/live?demo=${demo}&session=${SID}`).then((r) => r.json()).then(show).catch(() => {}); }, 1000);
   });
 }
 

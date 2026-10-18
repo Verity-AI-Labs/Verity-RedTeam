@@ -17,7 +17,8 @@ module.exports = async (req, res) => {
   const action = post ? String(req.query.action || "") : "";
   if (post && !ACTIONS.has(action)) return res.status(400).json({ error: "action must be start or stop" });
   try {
-    const upstream = await fetch(`${base}/api/live?demo=${demo}${post ? `&action=${action}` : ""}`, {
+    const session = String(req.query.session || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 64);  // each visitor's own demo
+    const upstream = await fetch(`${base}/api/live?demo=${demo}${post ? `&action=${action}` : ""}&session=${session}`, {
       method: post ? "POST" : "GET",
       headers: { "Content-Type": "application/json", "X-Verity-Token": process.env.VERITY_TOKEN || "" },
       body: post ? JSON.stringify(req.body || {}) : undefined,
