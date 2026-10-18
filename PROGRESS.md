@@ -1,20 +1,21 @@
 # Progress
 
-As of **Sun Oct 18, 2026, 01:40**. DubHacks submissions are due **Sun Oct 18, 10:30 PDT** (judging 11:30–14:00). The repo layout is in [README.md](README.md); the step-by-step lab notebook is [docs/log.md](docs/log.md).
+As of **Sun Oct 18, 2026, 04:00**. DubHacks submissions are due **Sun Oct 18, 10:30 PDT** (judging 11:30–14:00). The repo layout is in [README.md](README.md); the step-by-step lab notebook is [docs/log.md](docs/log.md).
 
-## Right now (Oct 18, 01:40)
+## Right now (Oct 18, 04:00)
 
-**Site: https://verity-six-pink.vercel.app** (Vercel production; `python dashboard/site.py && cd web && vercel deploy --prod` updates it).
+**Site: https://verity-six-pink.vercel.app** (Vercel production; `python dashboard/site.py --shop-runs artifacts/shop-v3 && cd web && vercel deploy --prod` updates it). Built from the current results; the shop section shows attempt 4 until attempt 5 is evaluated.
 
 | Thread | State | Next action |
 |---|---|---|
-| **Merge** | Done: `GUI` merged into `dubhacks`, one Verity core, both demos; 197 tests pass. Committed, not pushed. | Push when the user says so. |
-| **Site** | Production page: hero, live chess match, the shop demo (compose a task on an unseen store; both agents work it in browser windows with an animated pointer), the method per environment with real artifacts, environment upload. | Redeploy with results. |
-| **Audit service** | Live through the site: `dashboard/audit_server.py` on the Mac (Docker via OrbStack) behind a Cloudflare quick tunnel; Vercel `AUDIT_URL` + `VERITY_TOKEN`. Tested with Opus ($0.16). | Move to a cloud VM with Docker when the AWS account exists (`scripts/aws_audit.sh`; RunPod pods cannot run Docker). |
-| **Shop training** | Attempt 4 (**shop@11**, adds Buy now) since 01:37, identical settings (lr 3e-5, KL beta 0.04, LoRA 32, **40 steps** to fit the RunPod credit): baseline on the H200 103.196.86.20:45888, verity on the H100 64.247.201.37:16533, runs in `/workspace/runs/shop11`, backed up every 5 min to `artifacts/shop-v3`. Done ~02:35 and ~02:50. Attempt 3 (shop@9) finished both arms (60 steps): the backup, in `artifacts/shop-v2`; its code and data are kept on both pods in `/workspace/verity9`. | Evaluate both pairs on the H200 with vLLM (attempt 3 from `/workspace/verity9`); pull; delete the training pods. |
-| **RunPod credit** | $17.05 at 01:33, $9.92/h (H200 $5.29, H100 $3.99, A40 $0.59). Enough for 40-step runs, evaluation and the A40 through judging only if nothing else runs. | Ask the user to top up; delete the training pods as soon as evaluation is done. |
-| **chess_game v3** | Hyak: verity step ~220/300 (done ~02:00), baseline ~195/300 (done ~02:50). | Copy adapters to the baseline pod; evaluate as deployed; one match. |
-| **Live server** | `dashboard/live.py` tested locally for both demos (composed tasks included). | `scripts/pod.sh 103.207.149.171 13247 serve "$VERITY_TOKEN"`; set Vercel `INFERENCE_URL` to the printed URL; redeploy. |
+| **Audit service** | **On Google Cloud** (user's project, free trial): VM `verity-audit` (e2-small, us-west1-b), `dashboard/audit_server.py` as the systemd unit `verity-audit`, Cloudflare quick tunnel; Vercel `AUDIT_URL` points at it; tested through the site (upload path, Docker sandbox tests on the VM). The Mac's audit server and tunnel are stopped. `scripts/gcp_audit.sh` launches and deploys it. | If the tunnel restarts, its URL changes: update `AUDIT_URL` and redeploy. |
+| **Shared token** | Rotated at 03:52 (an old value was printed in a session log): new value in `.local-token`, Vercel `VERITY_TOKEN`, and the VM's `.secrets`. | The live server gets the new value when started. |
+| **Shop, attempt 4 (shop@11, 40 steps)** | Done and evaluated (vLLM, greedy, no Guard), `artifacts/shop-v3`. Held-out stores (300): paid-but-wrong untrained 46% / unguarded 55% / Verity 34%; coupon applied 19% / 15% / 28%; exactly right 28% / 35% / 33%; reward paid 0.62 / 0.75 / 0.61. New stores (300): paid-but-wrong 33% / 46% / 30%; exactly right 24% / 31% / 32%. The learning rate had decayed to ~1e-6 by step 40 while Verity's catch rate was still falling (0.44 → 0.26 over the last 8 steps). | The site's backup result. |
+| **Shop, attempt 5 (continued)** | With the user's agreement: both arms continue from their step-40 adapters for 40 more steps (`--init-adapter`, fresh optimizer and schedule, seed 43, otherwise identical): baseline on H100 87.120.211.211:11339 (pod 13c4kjl8am27q9), verity on H100 64.247.201.58:15374 (pod 7i0ar2uvw3nd7v), runs in `/workspace/runs/shop11b`. Started ~04:00, done ~05:00-05:45. | Pull, evaluate both splits on one pod, verify on the Mac, delete both pods (user approved deleting pods once their data is saved). |
+| **chess_game v3** | Both arms finished 300 steps; final adapters on the Mac and the A40. Deployed evaluation (99 held-out positions) and 4 held-out games running on the A40. | Copy results; site. |
+| **Live server** | A40 69.30.85.106:22197 (pod 5o1xnm5c0s68h7, $0.59/h) has both chess adapters and the shop@11 attempt-4 adapters. | Starts after the match (`SHOP_RUNS=/workspace/runs/shop11 scripts/pod.sh ... serve`); set Vercel `INFERENCE_URL`; redeploy. |
+| **Pods deleted** | Attempt 3/4 pods H200 wkrewngbdtjfz8 (02:34) and H100 yvwicz1c97fpgd (03:09), after a dry-run sync showed no file left only on them (optimizer states excluded). | — |
+| **Push** | User approved pushing to GitHub when everything is done. | Last step. |
 
 ## The two demos
 
