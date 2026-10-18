@@ -61,17 +61,18 @@ class Turn(env.Episode):
         return self.played is not None or self.board.is_game_over(claim_draw=True)
 
 
-def game(policy, white, black, number, fen=None):
-    """Play one game from fen (default: the initial position); yields a row per ply, then the result row."""
+def game(policy, white, black, number, fen=None, rounds=ROUNDS):
+    """Play one game from fen (default: the initial position); yields a row per ply, then the result row. rounds: model
+    turns per move (an illegal move or a tool call uses one); a side with no legal move after them loses on time."""
     board, arms = chess.Board(fen or chess.STARTING_FEN), {chess.WHITE: white, chess.BLACK: black}
     before, forfeit = env.evaluation(board, chess.WHITE), None
     while not board.is_game_over(claim_draw=True) and len(board.move_stack) < MAX_PLIES:
         arm, fen, started, mover = arms[board.turn], board.fen(), time.monotonic(), board.turn
         turn = Turn()
         turn.reset(board=board.copy())
-        play(policy, env, {"fen": fen}, arm, episode=turn, rounds=ROUNDS, deploy=True,
+        play(policy, env, {"fen": fen}, arm, episode=turn, rounds=rounds, deploy=True,
              nudge="Play your move now with the move tool, choosing one of the legal moves.")  # same for both models
-        if turn.played is None:  # no legal move in 4 turns: loses on time
+        if turn.played is None:  # no legal move in its turns: loses on time
             forfeit = (arm, turn)
             break
         move = turn.played
@@ -89,7 +90,7 @@ def game(policy, white, black, number, fen=None):
     if forfeit:
         arm, turn = forfeit
         result = "0-1" if board.turn == chess.WHITE else "1-0"
-        reason = f"{arm} played no legal move in {ROUNDS} turns and lost on time"
+        reason = f"{arm} played no legal move in {rounds} turns and lost on time"
         yield {"event": "forfeit", "game": number, "ply": len(board.move_stack) + 1, "policy": arm,
                "fen_before": board.fen(), "transcript": turn.transcript, "illegal": turn.illegal,
                "unknown_tool_calls": turn.unavailable}

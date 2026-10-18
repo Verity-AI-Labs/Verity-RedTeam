@@ -189,21 +189,49 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
 .command .grow { flex: 1; }
 .status { display: inline-flex; align-items: center; gap: 9px; font-size: 13.5px; color: var(--text-2); padding: 0 6px; }
 
-/* chess arena: two player cards around the board */
-.arena { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 560px) minmax(0, 1fr); gap: 20px; align-items: start; margin-top: 20px; }
-.player { padding: 22px; display: grid; gap: 14px; transition: box-shadow .3s, border-color .3s; }
-.player.turn { border-color: rgba(255, 255, 255, .22); }
-.player.verity.turn { box-shadow: 0 0 0 1px rgba(25, 158, 112, .45), 0 0 60px rgba(25, 158, 112, .18); }
-.player.baseline.turn { box-shadow: 0 0 0 1px rgba(217, 89, 38, .45), 0 0 60px rgba(217, 89, 38, .18); }
-.player .who { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.player .name { font-size: 22px; font-weight: 680; letter-spacing: -.03em; }
-.player .side { font: 500 12px var(--mono); color: var(--muted); }
-.player .stat { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--text-2); border-top: 1px solid var(--line); padding-top: 10px; }
-.player .stat b { color: var(--text); font-variant-numeric: tabular-nums; }
-.player .thinking { font-size: 13px; color: var(--muted); min-height: 20px; }
-.player.turn .thinking::after { content: ""; display: inline-block; width: 18px; text-align: left; animation: dots 1.2s steps(4) infinite; }
+/* shop: the request bar */
+.askbar { display: grid; gap: 10px; padding: 12px; border-radius: 22px; }
+.askrow { display: flex; gap: 10px; align-items: center; }
+.askrow input { flex: 1; min-width: 0; height: 56px; padding: 0 18px; border-radius: 15px; border: 1px solid var(--line-2); background: rgba(255, 255, 255, .045); color: var(--text); font: 500 16px var(--sans); transition: border-color .2s, box-shadow .2s; }
+.askrow input::placeholder { color: var(--muted); }
+.askrow input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(141, 155, 255, .18); }
+.askrow .btn { height: 56px; border-radius: 15px; } .askrow .btn kbd { background: rgba(0, 0, 0, .08); border-color: rgba(0, 0, 0, .15); color: #06070a; }
+.pick { display: inline-flex; align-items: center; gap: 6px; height: 56px; padding: 0 6px 0 14px; border-radius: 15px; background: rgba(255, 255, 255, .03); border: 1px solid var(--line); font-size: 12px; color: var(--muted); flex: none; }
+.pick select { height: 44px; max-width: 200px; border: 0; background: transparent; color: var(--text); font: 600 14px var(--sans); cursor: pointer; }
+.pick select option { background: #12141b; }
+.askrow2 { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 0 4px; }
+.askfoot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 2px 0 0; }
+.grow { flex: 1; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { height: 32px; padding: 0 13px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text-2); font: 500 12.5px var(--sans); cursor: pointer; transition: color .2s, border-color .2s, background .2s; }
+.chip:hover { color: var(--text); border-color: var(--line-2); background: var(--surface-2); }
+.askstatus, .status { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: var(--text-2); padding: 0 6px; min-height: 22px; }
+.askstatus.err, .status.err { color: var(--plain-ink); }
+.goalbar .asked { display: grid; gap: 2px; margin-bottom: 8px; } .goalbar .req { font-size: 15px; color: var(--text-2); font-style: italic; }
+.goalbar .understood { font-size: 12.5px; color: var(--verity-ink); margin-top: 4px; }
+
+/* chess: the board and the match panel (players at the top and bottom, the move, the list, the chances) */
+.arena2 { display: grid; grid-template-columns: minmax(0, 640px) minmax(0, 1fr); gap: 20px; align-items: stretch; margin-top: 20px; }
+.boardcol { display: grid; gap: 10px; align-content: start; }
+.matchpanel { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; contain: size; }  /* as tall as the board */
+.prow { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 12px; padding: 16px 18px; transition: background .35s; }
+.prow[data-side="b"] { border-bottom: 1px solid var(--line); } .prow[data-side="w"] { border-top: 1px solid var(--line); }
+.prow .av { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; font: 800 15px var(--sans); color: #06070a; }
+.prow .av.verity { background: var(--verity); } .prow .av.baseline { background: var(--plain); }
+.prow .who { display: grid; min-width: 0; } .prow .nm { font-weight: 680; font-size: 16px; letter-spacing: -.02em; }
+.prow .sub { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.prow .state { font: 600 12px var(--sans); color: var(--text-2); min-width: 64px; text-align: right; }
+.prow .st { display: flex; gap: 18px; text-align: right; font-size: 11px; color: var(--muted); }
+.prow .st b { display: block; font-size: 15px; color: var(--text); font-variant-numeric: tabular-nums; }
+.prow.turn .state::after { content: ""; display: inline-block; width: 16px; text-align: left; animation: dots 1.2s steps(4) infinite; }
+.prow.turn:has(.av.verity) { background: linear-gradient(90deg, rgba(25, 158, 112, .16), transparent 70%); }
+.prow.turn:has(.av.baseline) { background: linear-gradient(90deg, rgba(217, 89, 38, .16), transparent 70%); }
+.prow[data-state="won"] .state { color: var(--verity-ink); }
 @keyframes dots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
-.boardcol { display: grid; gap: 12px; }
+.mp { display: grid; gap: 12px; padding: 14px 18px; align-content: start; min-height: 0; overflow-y: auto; }
+.mp-move { height: 150px; overflow-y: auto; }
+.mvhead { display: flex; justify-content: space-between; align-items: center; gap: 10px; } .mvhead b { font-size: 22px; letter-spacing: -.02em; }
+.result { margin-top: 10px; font-size: 14px; color: var(--text-2); } .result b { color: var(--text); }
 .boardwrap { display: grid; grid-template-columns: 12px minmax(0, 1fr); gap: 10px; padding: 14px; border-radius: 20px; }
 .evalbar { position: relative; background: #1b1f27; border-radius: 4px; overflow: hidden; }
 .evalbar div { position: absolute; left: 0; right: 0; bottom: 0; background: #f2f4f8; transition: height .5s var(--ease); }
@@ -219,12 +247,11 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
 .controls button { height: 34px; min-width: 38px; padding: 0 11px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font: 500 13px var(--sans); cursor: pointer; }
 .controls button:hover { background: var(--surface-2); }
 .controls .pos { margin-left: auto; font: 12px var(--mono); color: var(--muted); }
-.below { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 20px; margin-top: 20px; }
-.moves { font: 13px/1.95 var(--mono); max-height: 170px; overflow-y: auto; }
+.moves { font: 13px/1.95 var(--mono); height: 88px; overflow-y: auto; }
 .moves button { font: inherit; background: none; border: 0; color: var(--text); padding: 0 4px; cursor: pointer; border-radius: 5px; }
 .moves button.on { background: var(--accent); color: #06070a; }
 .moves .n { color: var(--muted); margin-left: 6px; }
-.evalchart svg { width: 100%; height: auto; display: block; margin-top: 14px; border-radius: 10px; }
+.evalchart svg { width: 100%; height: auto; display: block; border-radius: 10px; }
 .evalchart text { font: 600 11px var(--sans); }
 .games { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
 .games button { height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text-2); font: 550 13px var(--sans); cursor: pointer; }
@@ -243,7 +270,7 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
 .log li.now { box-shadow: inset 2px 0 0 var(--accent-2); background: rgba(255, 255, 255, .04); }
 .log li.sum .r { color: var(--text); font-weight: 600; }
 .log li.flag { background: var(--verity-bg); }
-.log li { animation: logline .35s var(--ease) both; }
+.log li.new { animation: logline .35s var(--ease) both; }
 @keyframes logline { from { opacity: 0; transform: translateX(-6px); } }
 pre.code { margin: 0; background: #0c0e13; border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; font: 12.5px/1.65 var(--mono); color: #d7dceb; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
 .k { color: var(--accent); } .cm { color: var(--muted); }
@@ -338,12 +365,15 @@ footer { padding: 40px 0 120px; color: var(--muted); font-size: 13px; display: g
 footer .prov { font: 11.5px/1.7 var(--mono); }
 
 @media (max-width: 1080px) {
-  .arena { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .arena .boardcol { grid-column: 1 / -1; order: -1; max-width: 620px; justify-self: center; width: 100%; }
+  .arena2 { grid-template-columns: minmax(0, 1fr); }
+  .matchpanel { contain: none; } .mp { overflow: visible; }
+  .arena2 .boardcol { max-width: 640px; width: 100%; justify-self: center; }
+  .prow .st { display: none; }
   .float.f1 { left: 8px; } .float.f2 { right: 8px; }
 }
 @media (max-width: 860px) {
-  .winbody, .trio, .grid2, .duo, .below { grid-template-columns: minmax(0, 1fr); }
+  .winbody, .trio, .grid2, .duo { grid-template-columns: minmax(0, 1fr); }
+  .askrow { flex-wrap: wrap; } .pick { width: 100%; } .askrow input { flex-basis: 100%; }
   .bento { grid-template-columns: minmax(0, 1fr); }
   .bento .w2, .bento .w3, .bento .w4 { grid-column: auto; }
   .float { position: relative; inset: auto !important; width: auto; margin-top: 12px; }
@@ -352,7 +382,6 @@ footer .prov { font: 11.5px/1.7 var(--mono); }
   .facts { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 560px) {
-  .arena { grid-template-columns: minmax(0, 1fr); }
   .nextbar .lbl { display: none; }
   .command label { width: 100%; }
   .command select { max-width: none; flex: 1; }

@@ -4,15 +4,14 @@
     <h1 class="reveal" style="--i:1">Same store. Same goal. <span class="grad">Watch what each one skips.</span></h1>
     <p class="reveal" style="--i:2">Both are Qwen3-8B, fine-tuned with the same reinforcement-learning run on a web shop they operate like a person at a browser: click, type, choose. The reward had two planted bugs: it never checked for extra items, and never checked the coupon or the shipping speed. Every product also has a Buy now button that skips the cart, where coupons are applied. Here both work a store they never saw in training. No Guard is running.</p>
   </div>
-  <div class="glass command reveal" style="--i:3" id="shop-controls" hidden>
-    <label>Store<select id="c-store"></select></label>
-    <label>Buy<select id="c-item"></select></label>
-    <label>Shipping<select id="c-ship"><option value="express" selected>Express</option><option value="standard">Standard</option></select></label>
-    <label>Coupon<select id="c-coupon"><option value="1" selected>Codes, one works</option><option value="0">None</option></select></label>
-    <button class="btn primary" type="button" id="shop-go">Send to both agents <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-    <button class="btn" type="button" id="shop-random">Random task</button>
-    <button class="btn" type="button" id="shop-stop">Stop</button>
-    <span class="status"><span class="dot" id="shop-dot"></span><span id="shop-status">Checking the inference server…</span></span>
+  <div class="glass askbar reveal" style="--i:3" id="shop-controls" hidden>
+    <div class="askrow">
+      <label class="pick live-only">Store<select id="c-store" aria-label="Store"></select></label>
+      <input class="live-only" id="c-text" type="text" autocomplete="off" maxlength="300" aria-label="What to buy" placeholder="Tell both agents what to buy, in your own words">
+      <button class="btn primary live-only" type="button" id="shop-go">Send <kbd>↵</kbd></button>
+    </div>
+    <div class="askrow2 live-only"><span class="muted" style="font-size:12.5px">Try</span><div class="chips" id="c-examples"></div></div>
+    <div class="askfoot"><span class="askstatus"><span class="dot" id="shop-dot"></span><span id="shop-status">Checking the inference server…</span></span><span class="grow"></span><button class="btn sm live-only" type="button" id="shop-random">Random task</button><button class="btn sm live-only" type="button" id="shop-stop">Stop</button></div>
   </div>
   <div id="shop-viewer"></div>
   <div class="section-title"><span class="kicker">Held-out evaluation</span><h2>What each one does, on hundreds of stores.</h2></div>

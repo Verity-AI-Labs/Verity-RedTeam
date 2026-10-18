@@ -160,25 +160,52 @@ function evalChart(g, ply) {
     <polyline fill="none" stroke="#f3f5f9" stroke-width="1.8" stroke-linejoin="round" points="${pts.map(([i, v]) => `${X(i)},${Y(v)}`).join(" ")}"/>
     <circle cx="${X(cur[0])}" cy="${Y(cur[1])}" r="4.5" fill="#5fe3ff"/></svg>`;
 }
-function playerCard(arm) {
+const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+function playerRow(arm, side) {
   const t = D.training || {}, R = ((D.results || {}).closed || {}).models || {};
-  return `<aside class="glass player ${arm}" data-arm="${arm}">
-    <div class="who"><span class="name">${NAME[arm]}</span>${tag(arm)}</div>
-    <span class="side"></span>
-    <p class="soft" style="font-size:13.5px">${arm === "verity" ? "Trained with Verity's Guard enforcing the auditor's rule." : "Same model, data and steps. Guard only watched."}</p>
-    <div class="stat"><span>Extra hints paid in training</span><b>${pct(mean(tail(t[arm]), "hint_abuse"))}</b></div>
-    <div class="stat"><span>Own-move quality in training</span><b>${f2(mean(tail(t[arm]), "own_quality"))}</b></div>
-    <div class="stat"><span>Skill as deployed</span><b>${R[arm] ? f2(R[arm].env_reward) : "–"}</b></div>
-    <div class="thinking"></div></aside>`;
+  return `<span class="av ${arm}">${arm === "verity" ? "V" : "U"}</span><span class="who"><span class="nm">${NAME[arm]}</span><span class="sub">${side === "w" ? "White" : "Black"} · ${arm === "verity" ? "trained with Verity's Guard" : "trained without Guard"}</span></span><span class="state"></span>
+    <span class="st"><span><b>${pct(mean(tail(t[arm]), "hint_abuse"))}</b>extra hints paid in training</span><span><b>${R[arm] ? f2(R[arm].env_reward) : "–"}</b>skill as deployed</span></span>`;
+}
+function moveHTML(g, p, ply, live) {
+  let html;
+  if (!p) html = `<div class="title">${g.opening ? esc(g.opening) : "Start position"}</div><p class="soft" style="font-size:14px">${NAME[g.white]} plays White, ${NAME[g.black]} plays Black.${live && g.status === "playing" ? " The first move is on its way." : ""}</p>`;
+  else {
+    const items = (p.transcript || []).map((x) => x.say != null ? `<li><span class="i">·</span><span class="r">“${esc(x.say)}”</span></li>`
+      : `<li><span class="i">→</span><span>${esc(x.call)}(${esc(Object.values(x.arguments || {}).join(", "))}) <span class="r">${esc(x.result)}</span></span></li>`).join("");
+    html = `<div class="mvhead"><b>${Math.ceil(p.ply / 2)}${p.color === "white" ? "." : "…"} ${esc(p.san)}</b>${tag(p.policy)}</div>
+      <p class="note" style="margin:4px 0 10px">Evaluation <b class="soft">${(p.eval_white_cp / 100).toFixed(2)}</b> (White's view)${p.quality != null ? ` · move quality <b class="soft">${f2(p.quality)}</b>` : ""}</p>
+      <ol class="log">${items || `<li><span class="i"></span><span class="r">No tool calls.</span></li>`}</ol>`;
+  }
+  if (ply === g.plies.length && g.forfeit) html += `<p class="note" style="margin-top:10px"><b class="u">${NAME[g.forfeit.policy]} lost on time:</b> ${esc(g.reason || "no legal move in its turns")}.</p>`;
+  if (ply === g.plies.length && g.result) html += `<p class="result">Result <b>${esc(g.result)}</b> · ${esc(g.reason || "")}</p>`;
+  return html;
 }
 function chessViewer(root, live) {
-  root.innerHTML = `${live ? "" : `<div class="games"></div>`}<div class="arena">${playerCard("baseline")}
-      <div class="boardcol"><div class="glass boardwrap"><div class="evalbar" title="Stockfish evaluation"><div class="fill"></div></div><div class="board"></div></div>
+  root.innerHTML = `${live ? "" : `<div class="games"></div>`}<div class="arena2">
+      <div class="boardcol"><div class="glass boardwrap"><div class="evalbar" title="Stockfish evaluation, White's view"><div class="fill"></div></div><div class="board"></div></div>
         <div class="controls"><button type="button" data-act="first" aria-label="First move">⏮</button><button type="button" data-act="prev" aria-label="Previous move">◀</button><button type="button" data-act="play">Play</button><button type="button" data-act="next" aria-label="Next move">▶</button><button type="button" data-act="last" aria-label="Last move">⏭</button><span class="pos"></span></div></div>
-      ${playerCard("verity")}</div>
-    <div class="below"><div class="glass card turn"></div><div class="glass card"><div class="title">Moves · winning chances</div><div class="moves"></div><div class="evalchart"></div></div></div>`;
-  const q = (s) => root.querySelector(s);
-  let games = [], game = 0, ply = 0, timer = null, follow = live;
+      <div class="glass matchpanel"><div class="prow" data-side="b"></div>
+        <div class="mp"><div class="mp-move"></div><div><div class="title" style="margin:0 0 6px">Moves</div><div class="moves"></div></div><div class="evalchart"></div></div>
+        <div class="prow" data-side="w"></div></div></div>`;
+  const q = (sel) => root.querySelector(sel), board = q(".board"), squares = [];
+  for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {  /* 64 squares made once; moves only change what differs */
+    const el = document.createElement("div");
+    el.className = `sq ${(r + c) % 2 ? "d" : "l"}`;
+    el.dataset.name = FILES[c] + (8 - r);
+    el.innerHTML = `<span class="pc"></span>${c === 0 ? `<span class="coord rank">${8 - r}</span>` : ""}${r === 7 ? `<span class="coord file">${FILES[c]}</span>` : ""}`;
+    board.appendChild(el); squares.push(el);
+  }
+  const setBoard = (fen, last) => {
+    const cells = [];
+    for (const row of fen.split(" ")[0].split("/")) for (const ch of row) { if (/\d/.test(ch)) for (let k = 0; k < +ch; k++) cells.push(""); else cells.push(ch); }
+    const hl = last ? [last.slice(0, 2), last.slice(2, 4)] : [];
+    squares.forEach((el, i) => {
+      const piece = cells[i] || "";
+      if (el.dataset.p !== piece) { el.dataset.p = piece; el.firstChild.innerHTML = piece ? `<span class="${piece === piece.toUpperCase() ? "w" : "b"}">${GLYPH[piece.toLowerCase()]}&#xFE0E;</span>` : ""; }
+      el.classList.toggle("hl", hl.includes(el.dataset.name));
+    });
+  };
+  let games = [], game = 0, ply = 0, timer = null, follow = live, drawn = {}, seen = 0;
   const G = () => games[game];
   const stop = () => { clearInterval(timer); timer = null; q('[data-act="play"]').textContent = "Play"; };
   function go(act) {
@@ -196,46 +223,44 @@ function chessViewer(root, live) {
     draw();
   }
   q(".controls").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) go(b.dataset.act); });
+  q(".moves").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; stop(); ply = +b.dataset.p; follow = live && ply === G().plies.length; draw(); });
   if (!live) q(".games").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; game = +b.dataset.g; ply = 0; stop(); draw(); });
   function draw() {
     const g = G();
     if (!g) return;
-    const p = g.plies[ply - 1];
-    if (!live) root.querySelectorAll(".games button").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.g === game)));
+    const id = `${game}|${g.start_fen}|${g.white}`, p = g.plies[ply - 1];
     const last = g.plies[g.plies.length - 1], whiteToMove = last ? last.color === "black" : g.start_fen.split(" ")[1] === "w";
-    const mover = whiteToMove ? g.white : g.black, playing = live && g.status === "playing";
-    for (const arm of ["baseline", "verity"]) {
-      const card = q(`.player[data-arm="${arm}"]`);
-      card.querySelector(".side").textContent = `plays ${g.white === arm ? "White" : "Black"}`;
-      card.classList.toggle("turn", playing && mover === arm);
-      card.querySelector(".thinking").textContent = playing && mover === arm ? "Thinking" : g.winner === arm ? "Won this game" : "";
+    const playing = live && g.status === "playing", mover = whiteToMove ? g.white : g.black;
+    if (drawn.id !== id) { for (const [side, arm] of [["w", g.white], ["b", g.black]]) q(`.prow[data-side="${side}"]`).innerHTML = playerRow(arm, side); drawn = { id }; }
+    for (const [side, arm] of [["w", g.white], ["b", g.black]]) {
+      const row = q(`.prow[data-side="${side}"]`);
+      const state = playing && mover === arm ? "thinking" : g.status !== "finished" ? "" : g.winner === arm ? "won" : g.winner === "draw" ? "draw" : "lost";
+      row.classList.toggle("turn", state === "thinking");
+      if (row.dataset.state !== state) { row.dataset.state = state; row.querySelector(".state").textContent = { thinking: "Thinking", won: "Won", lost: "Lost", draw: "Draw" }[state] || ""; }
     }
-    q(".board").innerHTML = boardHTML(p ? p.fen_after : g.start_fen, p && p.uci);
-    q(".evalchart").innerHTML = evalChart(g, ply);
+    const view = `${id}|${ply}|${g.plies.length}|${g.status}`;
+    if (drawn.view === view) return;
+    drawn.view = view;
+    setBoard(p ? p.fen_after : g.start_fen, p && p.uci);
     const cp = p ? p.eval_white_cp : (g.plies[0] ? g.plies[0].eval_before_white_cp : 0);
     q(".fill").style.height = `${100 / (1 + Math.pow(10, -(cp || 0) / 400))}%`;
     q(".pos").textContent = `move ${ply} of ${g.plies.length}`;
-    let html;
-    if (!p) html = `<div class="title">${g.opening ? esc(g.opening) : "Start position"}</div><p class="soft">${NAME[g.white]} plays White.${g.result ? ` Result: <b>${esc(g.result)}</b> (${esc(g.reason)}).` : ""}</p>`;
-    else {
-      const items = (p.transcript || []).map((x) => x.say != null ? `<li><span class="i">·</span><span class="r">“${esc(x.say)}”</span></li>`
-        : `<li><span class="i">→</span><span>${esc(x.call)}(${esc(Object.values(x.arguments || {}).join(", "))}) <span class="r">${esc(x.result)}</span></span></li>`).join("");
-      html = `<div class="title">This move: what the model did</div><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><b style="font-size:22px;letter-spacing:-.02em">${Math.ceil(p.ply / 2)}${p.color === "white" ? "." : "…"} ${esc(p.san)}</b>${tag(p.policy)}</div>
-        <p class="note" style="margin:6px 0 12px">Evaluation after the move <b class="soft">${(p.eval_white_cp / 100).toFixed(2)}</b> (White's view)${p.quality != null ? ` · move quality <b class="soft">${f2(p.quality)}</b>, ${Math.round(p.cp_loss)} centipawns lost` : ""}</p>
-        <ol class="log">${items || `<li><span class="i"></span><span class="r">No tool calls.</span></li>`}</ol>`;
-    }
-    const f = g.forfeit && ply === g.plies.length ? g.forfeit : null;
-    if (f) html += `<p class="note" style="margin-top:10px"><b class="u">${NAME[f.policy]} lost on time:</b> no legal move in four turns.</p>`;
-    q(".turn").innerHTML = html;
-    q(".moves").innerHTML = g.plies.map((m, i) => `${m.color === "white" ? `<span class="n">${Math.ceil(m.ply / 2)}.</span>` : ""}<button type="button" class="${i + 1 === ply ? "on" : ""}" data-p="${i + 1}">${esc(m.san)}</button>`).join("") || '<span class="note">No moves yet.</span>';
-    q(".moves").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; stop(); ply = +b.dataset.p; follow = live && ply === g.plies.length; draw(); };
-    const on = q(".moves .on"); if (on && follow) on.scrollIntoView({ block: "nearest" });
+    q(".evalchart").innerHTML = evalChart(g, ply);
+    const moves = q(".moves");
+    moves.innerHTML = g.plies.map((m, i) => `${m.color === "white" ? `<span class="n">${Math.ceil(m.ply / 2)}.</span>` : ""}<button type="button" class="${i + 1 === ply ? "on" : ""}" data-p="${i + 1}">${esc(m.san)}</button>`).join("") || '<span class="note">No moves yet.</span>';
+    if (follow) moves.scrollTop = moves.scrollHeight;  /* scrolls the list only, never the page */
+    q(".mp-move").innerHTML = moveHTML(g, p, ply, live);
   }
   return {
     set(list) {
       games = list;
       if (!live) q(".games").innerHTML = games.map((g, i) => `<button type="button" data-g="${i}" aria-pressed="${i === game}">Game ${i + 1}: ${NAME[g.white]} as White · ${esc(g.result || "")}</button>`).join("");
-      if (follow && G()) ply = G().plies.length;
+      const g = G();
+      if (!g) return;
+      if (g.plies.length < seen) follow = live;  /* a new game began */
+      seen = g.plies.length;
+      if (follow) ply = g.plies.length;
+      if (!live) root.querySelectorAll(".games button").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.g === game)));
       draw();
     }, go,
   };
@@ -284,7 +309,7 @@ function lane(root, arm) {
     if (f.page) render(f.page);
     address();
     shown += 1;
-    log.insertAdjacentHTML("beforeend", `<li class="now"><span class="i">${shown}</span><span>${esc(callText(f))} <span class="r">${esc(f.result)}</span></span></li>`);
+    log.insertAdjacentHTML("beforeend", `<li class="now new"><span class="i">${shown}</span><span>${esc(callText(f))} <span class="r">${esc(f.result)}</span></span></li>`);
     log.querySelectorAll("li.now").forEach((li, i, all) => { if (i < all.length - 1) li.classList.remove("now"); });
     log.scrollTop = log.scrollHeight;
     q(".count").textContent = `${shown} action${shown === 1 ? "" : "s"}`;
@@ -306,7 +331,7 @@ function lane(root, arm) {
   };
 }
 function shopStage(root) {
-  root.innerHTML = `<div class="glass goalbar"><span class="lbl">The task, given to both agents</span><span class="goal"></span></div>
+  root.innerHTML = `<div class="glass goalbar"><div class="asked" hidden><span class="lbl">You asked</span><span class="req"></span></div><span class="lbl">The order both agents got</span><span class="goal"></span><span class="understood"></span></div>
     <div class="duo"><div class="lane" data-arm="baseline"></div><div class="lane" data-arm="verity"></div></div>`;
   const lanes = { baseline: lane(root.querySelector('[data-arm="baseline"]'), "baseline"), verity: lane(root.querySelector('[data-arm="verity"]'), "verity") };
   let current = null, fed = { baseline: 0, verity: 0 }, done = { baseline: false, verity: false };
@@ -314,13 +339,17 @@ function shopStage(root) {
     idle() {
       if (current === "idle") return;
       current = "idle";
-      root.querySelector(".goal").textContent = "Pick a store, an item, a shipping speed and a coupon above, then send it.";
+      root.querySelector(".goal").textContent = "Type a request above, like “the cheapest lantern, express shipping, use a coupon”.";
+      root.querySelector(".asked").hidden = true; root.querySelector(".understood").textContent = "";
       for (const arm of ["baseline", "verity"]) lanes[arm].idle();
     },
     show(run, key) {  /* a run (live state or recording); key changes when a new run starts */
       if (key !== current) {
         current = key; fed = { baseline: 0, verity: 0 }; done = { baseline: false, verity: false };
         root.querySelector(".goal").textContent = run.goal;
+        root.querySelector(".asked").hidden = !run.request;
+        root.querySelector(".req").textContent = run.request ? `“${run.request}”` : "";
+        root.querySelector(".understood").textContent = run.understood ? `Read as: ${run.understood}` : "";
         for (const arm of ["baseline", "verity"]) lanes[arm].reset(run.store || "", run.arms[arm].first_page || run.arms[arm].page);
       }
       for (const arm of ["baseline", "verity"]) {
@@ -350,23 +379,32 @@ function recordedStores() {
 /* ---------- live control, shared by both demos ---------- */
 function liveDemo(demo, ui) {
   const status = $(`${demo}-status`), go = $(`${demo}-go`), stop = $(`${demo}-stop`);
+  const say = (text, error) => { status.textContent = text; status.parentElement.classList.toggle("err", !!error); };
   fetch(`/api/live?demo=${demo}`).then((r) => r.ok ? r.json() : null).catch(() => null).then((state) => {
     $(`${demo}-controls`).hidden = false;
     if (!state || !state.available) {
-      document.querySelectorAll(`#${demo}-controls label, #${demo}-go, #${demo}-stop, #${demo}-random`).forEach((el) => { el.hidden = true; });
-      status.textContent = ui.offline;
+      document.querySelectorAll(`#${demo}-controls .live-only`).forEach((el) => { el.hidden = true; });
+      say(ui.offline);
       ui.recorded();
       return;
     }
     $(`${demo}-dot`).classList.add("on");
     const view = ui.viewer();
-    const show = (s) => { if (s && s.available) go.disabled = ui.show(s, view, status); };
-    const send = (action, body) => post(`/api/live?demo=${demo}&action=${action}`, body).then(show).catch(() => { status.textContent = "Could not reach the inference server."; });
+    let busy = false;
+    const show = (s) => { if (s && s.available) ui.show(s, view, say); };
+    const send = (action, body) => {
+      if (busy) return;
+      busy = true; go.disabled = true;
+      if (action === "start") say(ui.starting || "Starting…");
+      post(`/api/live?demo=${demo}&action=${action}`, body).then((s) => { show(s); if (s && s.error) say(s.error, true); })
+        .catch(() => say("Could not reach the inference server.", true))
+        .finally(() => { busy = false; go.disabled = false; });
+    };
     if (ui.extra) ui.extra(send);
     go.addEventListener("click", () => send("start", ui.body ? ui.body() : {}));
     stop.addEventListener("click", () => send("stop"));
     show(state);
-    setInterval(() => fetch(`/api/live?demo=${demo}`).then((r) => r.json()).then(show).catch(() => {}), 1000);
+    setInterval(() => { if (!busy) fetch(`/api/live?demo=${demo}`).then((r) => r.json()).then(show).catch(() => {}); }, 1000);
   });
 }
 
@@ -377,17 +415,15 @@ function chessPage() {
     recorded() { const games = recorded(); if (games.length) chessViewer($("chess-viewer"), false).set(games); else pending($("chess-viewer"), "No recorded games yet. Live play starts when the inference server is online."); },
     viewer: () => chessViewer($("chess-viewer"), true),
     body: () => ({ white: $("chess-white").value, start: $("chess-start").value }),
-    show(s, view, status) {
+    starting: "Starting a new game…",
+    show(s, view, say) {
       const g = s.game;
-      if (!g) { const games = recorded(); if (games.length) view.set([games[0]]); else view.set([{ white: "verity", black: "baseline", start_fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", plies: [], status: "idle" }]); status.textContent = "Live. Press Start and the two models play a game."; return false; }
+      if (!g) { view.set([{ white: $("chess-white").value, black: $("chess-white").value === "verity" ? "baseline" : "verity", start_fen: START, plies: [], status: "idle" }]); say("Live. Press Start: the two models play each other right now."); return; }
       view.set([g]);
       if (g.status === "playing") {
         const last = g.plies[g.plies.length - 1], white = last ? last.color === "black" : g.start_fen.split(" ")[1] === "w";
-        status.textContent = `${g.opening ? g.opening + " · " : ""}${NAME[white ? g.white : g.black]} (${white ? "White" : "Black"}) is thinking · move ${g.plies.length + 1}`;
-        return true;
-      }
-      status.textContent = g.status === "finished" ? `Finished: ${g.result}, ${g.reason}.` : `${g.status}${g.reason ? ": " + g.reason : ""}`;
-      return false;
+        say(`${g.opening ? g.opening + " · " : ""}${NAME[white ? g.white : g.black]} (${white ? "White" : "Black"}) is thinking · move ${g.plies.length + 1}`);
+      } else say(g.status === "finished" ? `Finished: ${g.result}, ${g.reason}.` : `Game ${g.status}${g.reason ? ": " + g.reason : ""}.`);
     },
   });
   const r = D.results;
@@ -401,14 +437,21 @@ function chessPage() {
 }
 
 function shopPage() {
-  const stores = S.stores || [], option = (r) => r.kind === "size" ? `size ${r.option}` : r.option;
-  const fillItems = () => {
-    const st = stores[+$("c-store").value];
-    $("c-item").innerHTML = st ? st.rows.map((r, i) => r.stock ? `<option value="${i}">${esc(r.product)} · ${esc(option(r))} · $${r.price.toFixed(2)}</option>` : "").join("") : "";
+  const stores = S.stores || [];
+  const noun = (name) => name.split(" ").slice(1).join(" ").toLowerCase();  /* "Halcyon Desk Lamp" -> "desk lamp" */
+  const examples = () => {
+    const st = stores[+$("c-store").value], rows = st ? st.rows.filter((r) => r.stock) : [];
+    if (!rows.length) { $("c-examples").innerHTML = ""; return; }
+    const cheap = rows.reduce((a, r) => r.price < a.price ? r : a), other = rows.find((r) => r.product !== cheap.product) || rows[0];
+    const list = [`The cheapest ${noun(cheap.product)}, express shipping, use a coupon`,
+      `A ${other.product} in ${other.kind === "size" ? `size ${other.option}` : other.option.toLowerCase()}, standard shipping`,
+      `Anything under $${Math.ceil(Math.max(...rows.map((r) => r.price)))} with a promo code, ship it fast`];
+    $("c-examples").innerHTML = list.map((t) => `<button type="button" class="chip">${esc(t)}</button>`).join("");
+    $("c-text").placeholder = `Tell both agents what to buy at ${st.store}, in your own words`;
   };
   $("c-store").innerHTML = stores.map((st, i) => `<option value="${i}">${esc(st.store)}</option>`).join("");
-  $("c-store").addEventListener("change", fillItems);
-  fillItems();
+  $("c-store").addEventListener("change", examples);
+  examples();
   liveDemo("shop", {
     offline: "The inference server is offline. Below: real episodes of these two models on the same held-out stores, replayed action by action.",
     recorded() {
@@ -422,16 +465,21 @@ function shopPage() {
       play(0);
     },
     viewer: () => { $("shop-viewer").innerHTML = `<div id="shop-stage"></div>`; return shopStage($("shop-stage")); },
-    body: () => ({ store: +$("c-store").value, row: +$("c-item").value, shipping: $("c-ship").value, coupon: $("c-coupon").value === "1" }),
-    show(s, view, status) {
+    starting: "Reading your request against the store's catalogue…",
+    body: () => { const st = stores[+$("c-store").value]; return { store: st ? st.index : 0, text: $("c-text").value }; },
+    show(s, view, say) {
       const run = s.run;
-      if (!run) { view.idle(); status.textContent = "Live. Compose a task, or pick a random one."; return false; }
+      if (!run) { view.idle(); say("Live. Type a request, or click an example."); return; }
       view.show(run, `${run.task}|${run.goal}`);
-      if (run.status === "playing") { status.textContent = "Both agents are working on it…"; return true; }
-      status.textContent = run.status === "finished" ? "Finished. Send another task." : `${run.status}${run.reason ? ": " + run.reason : ""}`;
-      return false;
+      if (run.status === "playing") say("Both agents are working on it…");
+      else say(run.status === "finished" ? "Finished. Send another request." : `${run.status}${run.reason ? ": " + run.reason : ""}`);
     },
-    extra(send) { $("shop-random").addEventListener("click", () => send("start", {})); },
+    extra(send) {
+      const go = () => $("shop-go").click();
+      $("c-text").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); go(); } });
+      $("c-examples").addEventListener("click", (e) => { const b = e.target.closest(".chip"); if (b) { $("c-text").value = b.textContent; go(); } });
+      $("shop-random").addEventListener("click", () => send("start", {}));
+    },
   });
   const res = S.results;
   if (!res) { pending($("shop-results"), "Results on held-out stores appear here when both training runs finish."); return; }
@@ -531,18 +579,27 @@ function auditPage() {
     drop.addEventListener("drop", (e) => { e.preventDefault(); drop.classList.remove("over"); pick(e.dataTransfer.files[0]); });
     $("run").addEventListener("click", () => {
       $("run").disabled = true;
+      shown = 0; closed = false; $("audit-out").innerHTML = "";
       post("/api/audit", { filename: name, source }).then((job) => {
         if (!job.id) { $("audit-status").textContent = job.error || "The audit service refused the file."; $("run").disabled = false; return; }
         const poll = () => fetch(`/api/audit?id=${encodeURIComponent(job.id)}`).then((r) => r.json()).then((s) => { render(s); if (["queued", "running"].includes(s.status)) setTimeout(poll, 1500); else $("run").disabled = false; });
         poll();
       }).catch(() => { $("audit-status").textContent = "Could not reach the audit service."; $("run").disabled = false; });
     });
+    let shown = 0, closed = false;
     function render(s) {
       $("audit-status").textContent = { queued: "Queued.", running: "Auditing…", passed: "Done: hacks proven and rules written.", unproven: "Done: no hack proven.", error: "The audit stopped." }[s.status] || s.status;
-      const events = (s.events || []).map((e, i) => `<li class="${e.flag ? "flag" : ""}"><span class="i">${i + 1}</span><span class="${e.flag ? "" : "r"}">${esc(e.text)}</span></li>`).join("");
-      const rules = (s.markers || []).map((m) => `<div class="glass card"><div class="title">Rule ${esc(m.id)}</div><p class="soft" style="margin-bottom:12px">${esc(m.summary)}</p>${ruleJSON(m)}</div>`).join("");
-      $("audit-out").innerHTML = `<div class="stack"><div class="glass term"><div class="titlebar"><i></i><i></i><i></i><span>${esc(s.environment || name || "your environment")} · ${esc(s.status || "")}${s.cost_usd != null ? ` · $${Number(s.cost_usd).toFixed(2)}` : ""}</span></div>${s.error ? `<p class="u" style="padding:12px 16px 0">${esc(s.error)}</p>` : ""}<ol class="log">${events}</ol></div>${s.summary ? `<div class="glass card"><div class="title">What the auditor found</div><p class="soft">${esc(s.summary)}</p></div>` : ""}${rules}</div>`;
-      const log = $("audit-out").querySelector(".term .log"); if (log) log.scrollTop = log.scrollHeight;
+      if (!$("audit-log")) $("audit-out").innerHTML = `<div class="stack"><div class="glass term"><div class="titlebar"><i></i><i></i><i></i><span id="audit-title"></span></div><p class="u" id="audit-error" hidden style="padding:12px 16px 0"></p><ol class="log" id="audit-log"></ol></div><div class="stack" id="audit-end"></div></div>`;
+      $("audit-title").textContent = `${s.environment || name || "your environment"} · ${s.status || ""}${s.cost_usd != null ? ` · $${Number(s.cost_usd).toFixed(2)}` : ""}`;
+      const log = $("audit-log"), events = s.events || [];
+      for (; shown < events.length; shown++) log.insertAdjacentHTML("beforeend", `<li class="new ${events[shown].flag ? "flag" : ""}"><span class="i">${shown + 1}</span><span class="${events[shown].flag ? "" : "r"}">${esc(events[shown].text)}</span></li>`);
+      log.scrollTop = log.scrollHeight;
+      if (s.error) { $("audit-error").hidden = false; $("audit-error").textContent = s.error; }
+      if (!closed && !["queued", "running"].includes(s.status)) {
+        closed = true;
+        $("audit-end").innerHTML = (s.summary ? `<div class="glass card"><div class="title">What the auditor found</div><p class="soft">${esc(s.summary)}</p></div>` : "")
+          + (s.markers || []).map((m) => `<div class="glass card"><div class="title">Rule ${esc(m.id)}</div><p class="soft" style="margin-bottom:12px">${esc(m.summary)}</p>${ruleJSON(m)}</div>`).join("");
+      }
     }
   });
 }

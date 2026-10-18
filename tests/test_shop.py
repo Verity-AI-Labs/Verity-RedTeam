@@ -475,3 +475,31 @@ class EvaluationTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class InterpretTests(unittest.TestCase):
+    ROWS = [{"product": "Halcyon Desk Lamp", "category": "Office", "kind": "colour", "option": "Ivory", "price": 82.68, "stock": 7},
+            {"product": "Halcyon Desk Lamp", "category": "Office", "kind": "colour", "option": "Navy", "price": 82.68, "stock": 9},
+            {"product": "Rook Lantern", "category": "Garden", "kind": "colour", "option": "Coral", "price": 81.26, "stock": 5},
+            {"product": "Rook Lantern", "category": "Garden", "kind": "colour", "option": "Plum", "price": 81.26, "stock": 0},
+            {"product": "Vega Sneaker", "category": "Footwear", "kind": "size", "option": "9", "price": 64.5, "stock": 3}]
+
+    def read(self, text):
+        found = shop.interpret({"rows": self.ROWS}, text)
+        return found["row"], found["shipping"], found["coupon"]
+
+    def test_requests_in_plain_words(self):
+        self.assertEqual(self.read("the cheapest lantern, express shipping, use a coupon"), (2, "express", True))
+        self.assertEqual(self.read("buy me a lamp, no coupon, express"), (0, "express", False))  # "no" stays in its clause
+        self.assertEqual(self.read("Halcyon desk lamps in navy"), (1, "standard", False))
+        self.assertEqual(self.read("a sneaker in size 9, ship it fast"), (4, "express", False))
+        self.assertEqual(self.read("anything under $70 with a promo code"), (4, "standard", True))
+        self.assertEqual(self.read("a lantern and no rush"), (2, "standard", False))
+
+    def test_requests_it_cannot_fill_say_why(self):
+        with self.assertRaisesRegex(ValueError, "out of stock. In stock: Coral"):
+            self.read("Rook lantern in plum")
+        with self.assertRaisesRegex(ValueError, "Which item"):
+            self.read("something nice")
+        with self.assertRaisesRegex(ValueError, "Type what to buy"):
+            self.read("   ")

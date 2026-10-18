@@ -34,6 +34,7 @@ from evaluate import TOOL_CALL, Policy, run_call, tool_calls, tool_names  # noqa
 import scripts.match as match  # noqa: E402
 
 ARMS = ("baseline", "verity")
+LIVE_ROUNDS = 10  # live games: tries per move for both models (an illegal move is refused); the evaluation uses 4
 # well-known openings a live game can start from (the models move deterministically, so the start varies the game)
 OPENINGS = {"Italian Game": "e4 e5 Nf3 Nc6 Bc4", "Ruy Lopez": "e4 e5 Nf3 Nc6 Bb5", "Sicilian Defence": "e4 c5 Nf3 d6",
             "French Defence": "e4 e6 d4 d5", "Caro-Kann Defence": "e4 c6 d4 d5", "Scandinavian Defence": "e4 d5 exd5 Qxd5",
@@ -68,9 +69,10 @@ class Chess:
         self.lock, self.game, self.thread = threading.Lock(), None, None
 
     def start(self, body):
+        """Start a game; one in progress is replaced (it stops after its current move). Returns an error or None."""
         with self.lock:
-            if self.thread and self.thread.is_alive():
-                return False
+            if self.game and self.thread and self.thread.is_alive():
+                self.game.update(stop=True, status="stopped", reason="replaced by a new game")
             white = body.get("white") if body.get("white") in ARMS else "verity"
             if body.get("start") == "heldout":
                 fen, opening = random.choice(self.starts), None
@@ -81,11 +83,11 @@ class Chess:
                          "opening": opening, "plies": [], "status": "playing", "live": True}
             self.thread = threading.Thread(target=self.play, args=(self.game,), daemon=True)
             self.thread.start()
-            return True
+            return None
 
     def play(self, game):
         try:
-            for row in match.game(self.policy, game["white"], game["black"], 0, fen=game["start_fen"]):
+            for row in match.game(self.policy, game["white"], game["black"], 0, fen=game["start_fen"], rounds=LIVE_ROUNDS):
                 if game.get("stop"):
                     game.update(status="stopped", reason="stopped from the page")
                     return
@@ -120,22 +122,33 @@ class Shop:
         self.lock, self.run, self.thread = threading.Lock(), None, None
 
     def start(self, body):
+        """Start a task on a store: a request in plain words ("text"), a composed one ("row"), or a random held-out task.
+        A task in progress is replaced. Returns an error the page can show, or None."""
         with self.lock:
-            if self.thread and self.thread.is_alive():
-                return False
             index = body.get("store", body.get("task"))
             index = index if isinstance(index, int) and 0 <= index < len(self.tasks) else random.randrange(len(self.tasks))
-            task = self.tasks[index]
-            if isinstance(body.get("row"), int):  # a task composed on the page: this store, this item, these options
+            task, request, understood = self.tasks[index], str(body.get("text") or "").strip()[:300], None
+            if request:  # the shopper's words, read against this store's catalogue, become the order both agents get
+                base = json.loads(task["site"])
+                try:
+                    found = shop.interpret(base, request)
+                except ValueError as error:
+                    return str(error)
+                site, understood = shop.compose(base, found["row"], found["shipping"], found["coupon"]), found["understood"]
+                task = {"prompt": shop.prompt(site), "site": json.dumps(site), "key": shop.key(site)}
+            elif isinstance(body.get("row"), int):  # a task composed on the page: this store, this item, these options
                 site = shop.compose(json.loads(task["site"]), body["row"], body.get("shipping", "standard"),
                                     bool(body.get("coupon")))
                 task = {"prompt": shop.prompt(site), "site": json.dumps(site), "key": shop.key(site)}
+            if self.run and self.thread and self.thread.is_alive():
+                self.run.update(stop=True, status="stopped", reason="replaced by a new task")
             site = json.loads(task["site"])
             self.run = {"task": index, "goal": site["goal"], "store": site["store"], "status": "playing",
+                        "request": request or None, "understood": understood,
                         "arms": {arm: {"frames": [], "done": False} for arm in ARMS}}
             self.thread = threading.Thread(target=self.play, args=(self.run, task), daemon=True)
             self.thread.start()
-            return True
+            return None
 
     def play(self, run, task):
         try:
@@ -233,7 +246,8 @@ def handler(demos, page, token=None):
             if path != "/api/live" or name not in demos or action not in ("start", "stop"):
                 return self.send(404, {"error": "POST /api/live?demo=chess|shop&action=start|stop"})
             if action == "start":
-                return self.send(200 if demos[name].start(body) else 409, demos[name].state())
+                error = demos[name].start(body)
+                return self.send(400, {**demos[name].state(), "error": error}) if error else self.send(200, demos[name].state())
             demos[name].stop()
             return self.send(200, demos[name].state())
 

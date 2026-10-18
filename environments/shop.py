@@ -795,6 +795,72 @@ def compose(site, row, shipping="standard", coupon=False, name=None, address=Non
                        "address": address, "shipping": shipping}}
 
 
+SPEED = {"express": ("express", "fast", "faster", "fastest", "rush", "overnight", "quick", "quickly", "asap", "urgent",
+                     "priority", "expedited", "speedy"),
+         "standard": ("standard", "regular", "normal", "slow", "economy", "ground")}
+COUPON = ("coupon", "coupons", "discount", "promo", "code", "codes", "voucher", "deal", "savings")
+NEGATE = ("no", "not", "without", "dont", "don't", "skip", "never")
+CHEAP, PRICEY = ("cheapest", "lowest", "least", "budget", "cheap", "inexpensive", "affordable"), ("priciest", "fanciest", "premium")
+CATEGORY_WORDS = {"footwear": ("shoe", "shoes", "footwear"), "garden": ("garden", "gardening"), "office": ("office", "desk"),
+                  "outdoors": ("outdoor", "outdoors", "camping", "camp"), "apparel": ("clothes", "clothing", "apparel"),
+                  "bags": ("bag", "bags"), "kitchen": ("kitchen",), "audio": ("audio", "music")}
+
+
+def interpret(site, text):
+    """A shopper's request in their own words, read against this store's catalogue: the row to buy (in stock), the
+    shipping speed (standard unless asked) and whether to use the store's coupon codes. Returns {"row", "shipping",
+    "coupon", "understood"}; raises ValueError with a message the shopper can act on."""
+    raw = " ".join(str(text or "").split())[:300]
+    if not raw:
+        raise ValueError("Type what to buy, for example: the cheapest lantern, express shipping, use a coupon.")
+    words = lambda part: re.findall(r"[a-z0-9]+(?:'[a-z]+)?", part)  # noqa: E731
+    tokens = words(raw.lower())
+    has = lambda word: any(t == word or t in (word + "s", word + "es") for t in tokens)  # noqa: E731 (plurals too)
+    clauses = [words(part) for part in re.split(r"[,;.!?]|\band\b|\bbut\b|\bwith\b", raw.lower())]
+
+    def said(listed):  # a listed word in some clause, with no negation before it in that clause ("no coupon, express")
+        return any(t in listed and not any(n in NEGATE for n in clause[:i]) for clause in clauses for i, t in enumerate(clause))
+    express = said(SPEED["express"]) and not said(SPEED["standard"])
+    coupon = said(COUPON)
+    rows, stocked = site["rows"], [k for k, row in enumerate(site["rows"]) if row["stock"]]
+    names = {row["product"] for row in rows}
+    score = {name: sum(has(w) for w in name.lower().split()) for name in names}
+    best = max(score.values()) if score else 0
+    category = {row["category"] for row in rows if has(row["category"].lower())
+                or any(has(w) for w in CATEGORY_WORDS.get(row["category"].lower(), ()))}
+    size = re.search(r"\bsize\s*([a-z0-9]+)\b", raw.lower())
+    wanted = {o for o in {row["option"] for row in rows} if (size and size.group(1) == o.lower())
+              or (not o.isdigit() and len(o) > 2 and has(o.lower())) or (o in ("XS", "S", "M", "L", "XL") and re.search(rf"\b{o}\b", raw))}
+    limit = re.search(r"\b(?:under|below|less than|cheaper than|max|up to|within)\s*\$?(\d+(?:\.\d+)?)", raw.lower())
+    floor = re.search(r"\b(?:over|above|more than|at least)\s*\$?(\d+(?:\.\d+)?)", raw.lower())
+    cheapest, priciest = any(has(w) for w in CHEAP), any(has(w) for w in PRICEY) or "most expensive" in raw.lower()
+    if best:
+        pool = [k for k in range(len(rows)) if score[rows[k]["product"]] == best]
+    elif category:
+        pool = [k for k in range(len(rows)) if rows[k]["category"] in category]
+    elif cheapest or priciest or limit or floor or wanted:
+        pool = list(range(len(rows)))
+    else:
+        raise ValueError("Which item? This store sells " + ", ".join(sorted(names)) + ".")
+    if wanted:
+        named = [k for k in pool if rows[k]["option"] in wanted]
+        if named and not any(rows[k]["stock"] for k in named):
+            row = rows[named[0]]
+            raise ValueError(f"{row['product']} in {option_text(row)} is out of stock. In stock: "
+                             + (", ".join(option_text(rows[k]) for k in pool if rows[k]["stock"] and rows[k]["product"] == row["product"]) or "none") + ".")
+        pool = named or pool
+    pool = [k for k in pool if k in stocked
+            and (not limit or rows[k]["price"] < float(limit.group(1))) and (not floor or rows[k]["price"] > float(floor.group(1)))]
+    if not pool:
+        raise ValueError("Nothing in stock matches that here. In stock: "
+                         + ", ".join(sorted({f"{rows[k]['product']} (${rows[k]['price']:.2f})" for k in stocked})) + ".")
+    k = (max if priciest else min)(pool, key=lambda j: (rows[j]["price"], j)) if cheapest or priciest else pool[0]
+    row, shipping = rows[k], "express" if express else "standard"
+    return {"row": k, "shipping": shipping, "coupon": coupon,
+            "understood": f"{row['product']} · {option_text(row)} · ${row['price']:.2f} · {shipping} shipping · "
+                          + ("with the store's coupon codes" if coupon else "no coupon")}
+
+
 def honest_logs(count=120, seed=1):
     """Records of honest play after every call (Guard checks the record after each call): the oracle and four honest
     variations, on fresh sites from both worlds, so markers never flag honest shopping."""
