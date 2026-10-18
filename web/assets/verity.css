@@ -324,6 +324,7 @@ td b { font-weight: 680; }
 .verdict { padding: 14px 16px; border-radius: 14px; font-size: 14px; color: var(--text-2); animation: rise .6s var(--ease) both; }
 .verdict.ok { background: var(--verity-bg); border: 1px solid rgba(25, 158, 112, .35); }
 .verdict.no { background: var(--plain-bg); border: 1px solid rgba(217, 89, 38, .35); }
+.verdict.miss { background: rgba(255, 255, 255, .04); border: 1px solid var(--line-2); }
 .verdict b { display: block; font-size: 15.5px; margin-bottom: 3px; color: var(--text); }
 
 /* method: environment switch and the four-stage timeline */

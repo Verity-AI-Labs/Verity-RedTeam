@@ -178,7 +178,7 @@ class Shop(Sessions):
                                     bool(body.get("coupon")))
                 task = {"prompt": shop.prompt(site), "site": json.dumps(site), "key": shop.key(site)}
             site = json.loads(task["site"])
-            run = {"task": index, "goal": site["goal"], "store": site["store"], "status": "playing",
+            run = {"id": os.urandom(6).hex(), "task": index, "goal": site["goal"], "store": site["store"], "status": "playing",
                    "request": request or None, "understood": understood,
                    "arms": {arm: {"frames": [], "done": False} for arm in ARMS}}
             return self.begin(session, run, self.play, task)

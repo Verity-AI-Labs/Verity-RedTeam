@@ -20,7 +20,7 @@
   <div class="trio">
     <a class="glass card spot reveal" href="/method" style="--i:1"><span class="n">01 · Audit</span><h3>Attack it before training.</h3><p>A frontier model gets exactly what the training agent gets, the task and the tools, never the grader, and hunts for reward it can earn without doing the task.</p></a>
     <a class="glass card spot reveal" href="/method" style="--i:2"><span class="n">02 · Prove</span><h3>Every hack, measured.</h3><p>Each finding is proven with numbers: what the reward paid against what a trusted check says the episode was worth. The auditor turns it into a small rule over the episode.</p></a>
-    <a class="glass card spot reveal" href="/method" style="--i:3"><span class="n">03 · Guard</span><h3>Redirect, don't reward.</h3><p>Inside the training loop Guard checks what each action does. A match is undone, the agent reads the warning and keeps going, and the attempt costs reward.</p></a>
+    <a class="glass card spot reveal" href="/method" style="--i:3"><span class="n">03 · Guard</span><h3>Redirect, don't reward.</h3><p>Inside the training loop Guard checks the result of each action. When a rule fires, the simulated episode is rolled back, the agent reads the warning and keeps going, and the attempt costs reward.</p></a>
   </div>
   <div class="section-title"><span class="kicker">Measured, not claimed</span><h2>Same model, same training. <span class="grad">One difference: Verity.</span></h2></div>
   <div class="bento" id="bento"></div>
