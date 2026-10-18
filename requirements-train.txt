@@ -5,3 +5,4 @@ trl==1.16.0
 peft==0.21.1
 datasets==5.0.1
 # vllm==0.31.0   # only for --use-vllm; it needs exactly torch 2.13.0 and transformers <5.18
+bitsandbytes>=0.48.0   # only for --load-in-4bit (QLoRA); needs Linux and CUDA
