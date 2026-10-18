@@ -146,3 +146,26 @@ class DashboardTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SiteTests(unittest.TestCase):
+    def test_the_shop_case_builds_from_the_audit_and_runs(self):
+        from dashboard import site
+        with tempfile.TemporaryDirectory() as folder:
+            runs = Path(folder)
+            for arm in ("baseline", "verity"):
+                (runs / arm).mkdir()
+                rows = [{"event": "rollout", "step": step, "env_reward": .8, "true_score": .5, "success": .5,
+                         "hack": .1 if arm == "baseline" else 0.0, "caught_rate": .2 if arm == "verity" else .1}
+                        for step in range(3)]
+                (runs / arm / "telemetry.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+            data = site.shop_data(runs)
+        self.assertEqual(data["environment"], "shop@8")
+        self.assertEqual([len(data["training"][arm]) for arm in ("baseline", "verity")], [3, 3])
+        if "audit" in data:  # the live audit's markers are in the repo
+            self.assertTrue(any(step.get("flag") for step in data["audit"]["steps"]))
+            demo = data["guard_demo"]
+            self.assertEqual([s["blocked"] for s in demo["steps"]].count(True), 1)
+            self.assertEqual(demo["true_score"], 1.0)
+        page = site.document({"shop": data})
+        self.assertIn('id="shop-replay"', page)

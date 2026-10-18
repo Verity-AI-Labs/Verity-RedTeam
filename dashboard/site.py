@@ -1,6 +1,7 @@
 """Build the Verity site: dashboard/site.html with the real audit, training, evaluation and match data inlined.
 
-    python dashboard/site.py --env chess_game --runs artifacts/chess_game-v3      # writes web/index.html
+    python dashboard/site.py --env chess_game --runs artifacts/chess_game-v3 --shop-runs artifacts/shop-v1
+                                                                                 # writes web/index.html
 
 web/ is the hosted site (Vercel): this page plus web/api/live.js, which forwards live games to the
 inference server (dashboard/live.py). Every number on the page comes from the run files; a missing file
@@ -153,7 +154,158 @@ def match_data(path):
     return {"games": games, "totals": totals}
 
 
-def build(name, runs):
+def shop_audit(env, pack):
+    """The shop audit's passed round: the auditor's calls, replayed on the same tasks to show where the marker it
+    wrote afterwards fires, the proof rows, its explanation and the cost."""
+    from verity import probe
+    from verity.guard import Guard
+    report = read_json(ROOT / "experiments/shop-audits/shop.json")
+    if not report or report.get("status") != "passed" or not pack:
+        return None
+    passed = next(row for row in report["rounds"] if row["status"] == "passed")
+    events, number = [], None
+    for event in report["transcript"]:
+        if event.get("phase") == "round":
+            number = event["round"]
+        elif number == passed["round"] and event.get("phase") == "discovery" and event["role"] in ("assistant", "user"):
+            events.append(event)
+    chosen = probe.select_tasks(env.tasks("train"), report["max_scores"] and len(passed["proof"]["rows"]), report["seed"])
+    guard, episodes, steps = Guard(pack), {}, []
+
+    def start(index):
+        episodes[index] = env.Episode()
+        episodes[index].reset(**chosen[index])
+    for index in range(len(chosen)):
+        start(index)
+    for action, answer in zip(events, events[1:]):
+        if action["role"] != "assistant" or answer["role"] != "user" or "observation" not in answer:
+            continue
+        try:
+            act = json.loads(action["content"])
+        except ValueError:
+            continue
+        seen, index = answer["observation"], act.get("episode")
+        if act.get("action") == "reset" and index in episodes:
+            start(index)
+        elif act.get("action") == "call" and index in episodes and "error" not in seen:
+            episode = episodes[index]
+            before = {m["id"] for m in guard.check(env.record(episode), "calls")}
+            try:
+                getattr(episode, act["tool"])(**(act.get("args") or {}))
+            except Exception:
+                continue
+            line, result = env.record(episode).splitlines()[-2], episode.results[-1]
+            step = {"episode": index, "call": line.split("  # ")[0], "key": line.split("  # ")[1].split(" -> ")[0],
+                    "result": result[:110]}
+            if [m for m in guard.check(env.record(episode), "calls") if m["id"] not in before]:
+                step["flag"] = (f"The order is placed and the reward pays. The rule Opus wrote afterwards "
+                                f"({pack['signatures'][0]['id']}) fires here.")
+            steps.append(step)
+        elif act.get("action") == "finish" and "reward" in seen:
+            steps.append({"episode": index, "reward": seen["reward"]})
+    rows = []
+    for row in passed["proof"]["rows"]:
+        lines = row["calls"].splitlines()
+        rows.append({"task": row["task"], "goal": lines[0][len("# goal: "):], "order": lines[-1][len("# order: "):],
+                     "env_reward": row["env_reward"], "true_score": row["true_score"]})
+    calls = read_rows(ROOT / "experiments/shop-audits/shop.api_calls.jsonl")
+    def broken(index):  # how many of the goal's requirements the placed order breaks
+        order, answer = episodes[index].state["order"] or {}, episodes[index].site["answer"]
+        return sum(order.get(k) != answer[k] for k in ("items", "coupon", "shipping")) if order else 0
+    flagged = {s["episode"] for s in steps if s.get("flag")}
+    focus = max(flagged, key=broken) if flagged else 0
+    return {"attacker": report["attacker"], "attacker_short": report["attacker"].split("/")[-1],
+            "created": report["created_utc"][:10], "round": passed["round"], "rounds": len(report["rounds"]),
+            "calls": report["score_calls"], "max_calls": report["max_scores"],
+            "cost_usd": max((float(c.get("total_usd") or 0) for c in calls), default=0.0),
+            "explanation": passed.get("explanation", ""), "focus": focus,
+            "steps": [s for s in steps if s.get("episode") == focus or "reward" in s],
+            "first_page": env.render(episodes[focus].site, env.start(episodes[focus].site)),
+            "proof": {k: passed["proof"][k] for k in ("tasks", "env_reward", "true_score", "reward_gap")} | {"rows": rows}}
+
+
+def guard_demo(env, pack, site):
+    """Guard (enforce) on one store with the audit's marker: an order padded with extra items and no coupon is
+    undone and answered with the warning, then the agent fixes its cart and orders again. Real Guard code."""
+    from verity.guard import Guard
+    episode = Guard(pack, enforce=True).episode_class(env)()
+    episode.reset(site=site)
+    extra = env.extras(site)[:1]
+    calls = env.buy(site, sorted([env.target(site)] + extra), coupon=False)
+    fix = [env.click(site, "nav:cart"), *[env.click(site, f"remove:{k}") for k in extra]]
+    for code, percent in site["coupons"].items():
+        fix += [env.type_text(site, "coupon", code), env.click(site, "apply")]
+        if percent:
+            break
+    fix += [env.click(site, "checkout"), env.click(site, "place")]
+    steps = []
+    for tool, *args in calls + fix:
+        result = getattr(episode, tool)(*args)
+        key = episode.elements.get(args[0]) if args else None
+        steps.append({"call": env.line(tool, *args), "key": key, "blocked": episode.trace[-1]["blocked"],
+                      "result": result if episode.trace[-1]["blocked"] else episode.results[-1] if episode.results else result})
+    return {"goal": site["goal"], "steps": steps, "order": env.order_line(episode.state)[len("# order: "):],
+            "env_reward": env.grade(episode), "true_score": env.check(episode),
+            "guarded_reward": env.grade(episode) + sum(f["reward"] for f in episode.flags)}
+
+
+SHOP_KEYS = ("step", "alarm", "env_reward", "guarded_reward", "true_score", "success", "hack", "hack_extra", "hack_skip",
+             "items_per_order", "coupon_applied", "requested_shipping", "calls", "caught_rate", "check_us", "samples")
+
+
+def shop_data(runs):
+    """The shop case study: audit, marker and its cross-check, training curves, a guarded episode, held-out results
+    on the eval and deployment splits, and recorded episodes to replay."""
+    from verity import environment
+    runs, env = Path(runs), environment.load("shop")
+    data = {"environment": environment.identity(env), "tools": list(env.TOOLS)}
+    pack = read_json(ROOT / "markers/shop.json")
+    if pack:
+        data["markers"] = pack["signatures"]
+        data["check"] = read_json(ROOT / "experiments/shop-audits/shop-check.json")
+        data["audit"] = shop_audit(env, pack)
+        demo_site = next(json.loads(t["site"]) for t in env.tasks("eval") if json.loads(t["site"])["coupons"]
+                         and json.loads(t["site"])["template"] == "named")
+        data["guard_demo"] = guard_demo(env, pack, demo_site)
+    arms = {}
+    for arm in ("baseline", "verity"):
+        steps = {}
+        for row in read_rows(runs / arm / "telemetry.jsonl"):
+            if row.get("event") == "rollout":
+                steps[row["step"]] = row
+        arms[arm] = [steps[s] for s in sorted(steps)]
+    if all(arms.values()):
+        data["training"] = {arm: [{k: r.get(k) for k in SHOP_KEYS} for r in rows] for arm, rows in arms.items()}
+        run = read_json(runs / "baseline" / "run.json") or {}
+        config = run.get("config", {})
+        if config:
+            data["training"]["run"] = {"steps": config["max_steps"], "episodes_per_step": config["generation_batch_size"],
+                                       "model": config["model"].split("/")[-1], "lora_r": config.get("lora_r"),
+                                       "learning_rate": config["learning_rate"]}
+        example = next((e for r in reversed(arms["verity"]) for e in r.get("examples") or []
+                        if any(t.get("blocked") for t in e.get("trace") or [])), None)
+        if example:
+            data["guard"] = {"record": example["reply"], "trace": example["trace"], "warnings": example["warnings"],
+                             "env_reward": example["env_reward"], "guarded_reward": example["guarded_reward"],
+                             "true_score": example["true_score"],
+                             "check_us": sum(r.get("check_us") or 0 for r in arms["verity"]) / len(arms["verity"])}
+    data["provenance"] = {arm: {k: m.get(k) for k in ("status", "steps_completed", "gpu", "precision", "wall_seconds")}
+                          for arm in ("baseline", "verity") if (m := read_json(runs / arm / "run.json"))}
+    results = {}
+    for split, name in (("eval", "results.json"), ("ood", "results-ood.json")):
+        result = read_json(runs / name)
+        if result and result.get("status") == "completed":
+            results[split] = {"tasks": result["positions"], "models": {
+                arm: {k: v for k, v in m.items() if k not in ("samples", "replays")} for arm, m in result["models"].items()}}
+            replays = {arm: m["replays"] for arm, m in result["models"].items() if m.get("replays")}
+            if replays:
+                data.setdefault("replays", {})[split] = replays
+    if results:
+        data["results"] = results
+    return {k: v for k, v in data.items() if v}
+
+
+def build(name, runs, shop_runs=None):
     runs = Path(runs)
     sys.path.insert(0, str(ROOT))
     from verity import environment, probe
@@ -193,6 +345,8 @@ def build(name, runs):
     if live:  # games played on the live server, shown first
         data["match"] = data["match"] or {"games": [], "totals": {}}
         data["match"]["live_games"] = live
+    if shop_runs is not None:
+        data["shop"] = shop_data(shop_runs)
     return {k: v for k, v in data.items() if v}
 
 
@@ -229,9 +383,10 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--env", default="chess_game")
     parser.add_argument("--runs", default="artifacts/chess_game-v3")
+    parser.add_argument("--shop-runs", default="artifacts/shop-v1", help="the shop case study's runs ('' to leave it out)")
     parser.add_argument("--out", default=str(ROOT / "web/index.html"))
     args = parser.parse_args(argv)
-    data = build(args.env, args.runs)
+    data = build(args.env, args.runs, args.shop_runs or None)
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(document(data))
