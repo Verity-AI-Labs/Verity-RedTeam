@@ -147,20 +147,23 @@ class Shop:
                     if said and not calls:
                         state["said"] = said[:300]
                     if not calls or shop.done(episode):
-                        state.update(done=True, order=shop.order_line(episode.state)[len("# order: "):],
-                                     outcome=shop.check(episode), reward=shop.grade(episode), **shop.measure(episode))
+                        state.update(self.result(episode))
                 if all(run["arms"][arm]["done"] for arm in ARMS):
                     break
             for arm in ARMS:  # out of actions
                 if not run["arms"][arm]["done"]:
-                    episode = episodes[arm]
-                    run["arms"][arm].update(done=True, order=shop.order_line(episode.state)[len("# order: "):],
-                                            outcome=shop.check(episode), reward=shop.grade(episode), **shop.measure(episode))
+                    run["arms"][arm].update(self.result(episodes[arm]))
             run["status"] = "finished"
             with (self.runs / "live-stores.jsonl").open("a", encoding="utf-8") as stream:
                 stream.write(json.dumps({k: v for k, v in run.items() if k != "stop"}) + "\n")
         except Exception as error:
             run.update(status="error", reason=f"{type(error).__name__}: {error}")
+
+    @staticmethod
+    def result(episode):
+        """How the episode ended: the order as placed, whether it was exactly what was asked, and the shop's numbers."""
+        return {**shop.measure(episode), "done": True, "order": shop.order_line(episode.state)[len("# order: "):],
+                "outcome": shop.check(episode), "reward": shop.grade(episode)}
 
     def stop(self):
         if self.run:

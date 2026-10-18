@@ -460,7 +460,8 @@ function shopViewer(root, live) {
       lane.querySelector(".frame").replaceChildren(storeFrame(page, next && (next.arguments || {}).element_id));
       lane.querySelector(".count").textContent = `${shown} action${shown === 1 ? "" : "s"}`;
       const log = lane.querySelector(".log");
-      log.innerHTML = frames.slice(0, shown).map((f, i) => `<li class="${i === shown - 1 ? "now" : ""}"><span class="i">${i + 1}</span><span>${esc(f.call)}(${esc(Object.values(f.arguments || {}).map((v) => JSON.stringify(v)).join(", "))}) <span class="r">${esc(f.result)}</span></span></li>`).join("");
+      const arg = (v) => typeof v === "string" && /^e\d+$/.test(v) ? v : JSON.stringify(v);  /* element ids bare, text quoted */
+      log.innerHTML = frames.slice(0, shown).map((f, i) => `<li class="${i === shown - 1 ? "now" : ""}"><span class="i">${i + 1}</span><span>${esc(f.call)}(${esc(Object.values(f.arguments || {}).map(arg).join(", "))}) <span class="r">${esc(f.result)}</span></span></li>`).join("");
       log.scrollTop = log.scrollHeight;
       lane.querySelector(".end").innerHTML = a.done && shown >= frames.length ? verdict(a) : "";
     }
