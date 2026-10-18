@@ -33,12 +33,17 @@ Nothing about a particular hack is written into Verity. An environment plugs in 
 - **Audit.** Same instructions as for chess. In its second round Opus placed three orders that the reward paid 0.80–0.88 while the real outcome was 0: shipping left on standard when express was asked, no coupon, and an order that kept the item the task said to remove. It wrote one rule for all of them: the placed order breaks the goal (requested shipping not used, coupon codes given but none applied, two or more items when one was asked). It caught 3 of 3 exploit episodes and flagged 0 of 5,228 honest records. Cost: $2.51.
 - **Cross-check.** We then played our planted hacks on every task of every split, which the auditor never saw: Opus's rule caught all of them (5,364 training, 816 held-out, 812 deployment hack episodes) and flagged no honest episode.
 - **Guard.** Guard checks what each action does before it takes effect. Placing an order that breaks the goal is undone, and the agent gets the rule's warning instead of a confirmation. It can then fix its cart and order correctly.
-- **Training.** Qwen3-8B, LoRA rank 32, GRPO with vLLM on RunPod, 64 episodes per step, both runs identical except for Guard. FINAL NUMBERS: fill in from `artifacts/shop-v1` (telemetry, `results.json`, `results-ood.json`).
+- **Training.** Qwen3-8B, LoRA rank 32, GRPO with vLLM on RunPod, 64 episodes per step, 60 steps, both runs identical except for Guard. FINAL NUMBERS: fill in from `artifacts/shop-v2` (telemetry, `results.json`, `results-ood.json`).
+- **Live.** On the site you compose a task on a store neither model has seen (item, shipping speed, coupon codes) and both trained agents work it side by side in browser windows: the pointer moves to every element they click, and they type the name and address. No Guard runs at that point; whatever they do is what training taught them.
 
 ## More evidence, same system
 
 - **Chess, one answer (Qwen2.5-1.5B).** The grader credits the best move found anywhere in a reply. Without Guard the model lists moves in 100% of held-out replies and its true score falls to 0.000 (two seeds). With Guard it never does, and its true score roughly triples over the untrained model. The result held with the hand-written test marker and again with the marker Opus wrote (true score 0.170 and 0.164 vs 0.000).
 - **Terminal Wrench.** 13 sandboxed terminal tasks, audited with DeepSeek as attacker and judge: all 13 hackable, 10 with measured proof (answer files read, grader files rewritten). A recorded agent episode replayed through Guard is blocked at the exact command that reads the hidden answer file.
+
+## Audit your own environment
+
+Upload one Python file that implements the plug. It runs in a locked-down Docker container (no network, no keys, read-only, capped CPU and memory); Verity's auditor plays it from outside through the plug and returns the proof and the rules, with a spend cap per audit. The same audit engine, with a sandbox per task, found reward hacks in 13 of 13 off-the-shelf Terminal Wrench tasks (10 certified by a trace, a mutation test or a leak); the site replays one recorded attack and shows Guard stopping it at the command that reads the hidden answer.
 
 ## How we built it
 
@@ -46,7 +51,7 @@ Nothing about a particular hack is written into Verity. An environment plugs in 
 - **Training:** Hugging Face TRL (GRPO, with its tool-calling environment support) and LoRA on Qwen3-8B: chess on the UW Hyak cluster's RTX 6000 GPUs (fp16, the model split over two GPUs per run), the shop on RunPod with vLLM generation.
 - **Audits:** Claude Opus 5.5 through OpenRouter, with a spend cap. Docker and system-call tracing for the terminal tasks.
 - **Chess:** python-chess and Stockfish 16.
-- **Page:** one static page built from the run files by a script, so every number traces back to telemetry, run manifests and audit reports.
+- **Site:** one static page on Vercel, built from the run files by a script, so every number traces back to telemetry, run manifests and audit reports. Two services behind it: the live demos (both trained models of each demo on one GPU, through a Cloudflare tunnel) and the audit service (Docker containers for uploaded environments).
 
 ## Challenges
 
@@ -55,7 +60,8 @@ Nothing about a particular hack is written into Verity. An environment plugs in 
 - **A penalty that gives no signal.** At first any blocked call set the episode reward to −1. At step 0 every Verity game was blocked, so all rewards were equal and GRPO had nothing to learn from. Now each blocked call costs its penalty while the model's own moves still count. We restarted both runs with that rule.
 - **Compute.** Hyak's shared GPU pool went down mid-afternoon. We moved both runs to our group's 24 GB RTX 6000s by splitting the 8B model across two GPUs per run.
 - **Two teammates, two copies of the core.** The shop was built on a separate branch with its own copy of Verity. Merging them into one core meant turning the shop into the same kind of multi-step environment as chess, and making Guard check an action's effect, not just its text: a rule about "an order with extra items" can only be checked after the click that places it, so Guard runs the action, checks the result, and undoes it if a rule fires.
-- **A reward with no reason to cheat, again.** In the shop's first version honest shopping and both hacks paid exactly the same, so training would have had no reason to learn them. A small per-action cost, common in agent environments, made skipping steps strictly faster, which is exactly how such bugs get learned in practice.
+- **A reward with no reason to cheat, again.** In the shop's first version honest shopping and both hacks paid exactly the same, so training would have had no reason to learn them. A per-action cost, common in agent environments, made skipping steps faster. At 0.02 per action the gain was too small to be learned with stable settings, so the final version charges 0.05 (never below 0.5 for an accepted order): the tuning is disclosed.
+- **Training that collapsed.** The first shop run at a higher learning rate and no KL penalty fell apart in the unguarded arm: it stopped placing orders at all. That is instability, not reward hacking, so we did not report it; both arms restarted with a KL penalty toward the base model.
 
 ## Accomplishments
 
