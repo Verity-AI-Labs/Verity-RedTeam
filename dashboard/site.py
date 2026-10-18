@@ -251,6 +251,12 @@ def guard_demo(env, pack, site):
             "guarded_reward": env.grade(episode) + sum(f["reward"] for f in episode.flags)}
 
 
+SHOP_CHANGES = {  # how each shop version trained on differs from the audited one (8), disclosed on the page
+    9: "only raises the cost per action (0.02 to 0.05)",
+    10: "gives three coupon codes instead of two (one works), asks for a coupon in about three quarters of tasks instead "
+        "of half, and charges 0.025 per action instead of 0.02",
+}
+
 SHOP_KEYS = ("step", "alarm", "env_reward", "guarded_reward", "true_score", "success", "hack", "hack_extra", "hack_skip",
              "items_per_order", "coupon_applied", "requested_shipping", "calls", "caught_rate", "check_us", "samples")
 
@@ -270,6 +276,10 @@ def shop_data(runs):
         data["check"] = next((c for c in checks if c and c.get("environment") == trained), None) or \
             read_json(ROOT / "experiments/shop-audits/shop-check.json")
         data["audit"] = shop_audit(env, pack)
+        if data["audit"] and trained:
+            audited = read_json(ROOT / "experiments/shop-audits/shop.json")["environment"]
+            version = int(trained.split("@")[1])
+            data["audit"].update(version=int(audited.split("@")[1]), trained=version, change=SHOP_CHANGES.get(version))
         demo_site = next(json.loads(t["site"]) for t in env.tasks("eval") if json.loads(t["site"])["coupons"]
                          and json.loads(t["site"])["template"] == "named")
         data["guard_demo"] = guard_demo(env, pack, demo_site)
