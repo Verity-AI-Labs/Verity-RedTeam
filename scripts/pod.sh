@@ -41,7 +41,7 @@ case "$COMMAND" in
       --learning-rate ${LEARNING_RATE:-5e-5} --lora-r ${LORA_R:-32} --batch-size ${BATCH_SIZE:-4} \
       --gradient-accumulation ${GRADIENT_ACCUMULATION:-16} --generations ${GENERATIONS:-8} \
       --max-completion-length ${MAX_COMPLETION_LENGTH:-3072} --save-steps ${SAVE_STEPS:-10} \
-      --vllm --vllm-memory ${VLLM_MEMORY:-0.45} > $RUNS/$NAME.log 2>&1 &
+      --vllm --vllm-memory ${VLLM_MEMORY:-0.45} > $RUNS/$NAME.log 2>&1 < /dev/null &
       echo started $NAME" ;;
   status)
     "${SSH[@]}" "tail -n 5 $RUNS/*.log; for run in $RUNS/*/run.json; do python3 -c \"import json,sys; r=json.load(open(sys.argv[1])); \

@@ -50,7 +50,7 @@ def audit_data(name, pack):
         seen = answer["observation"]
         if act.get("action") == "call":
             call = f"{act['tool']}({', '.join(str(v) for v in (act.get('args') or {}).values())})"
-            result = str(seen.get("result", seen.get("error", ""))).split(" Position (FEN)")[0]
+            result = str(seen.get("result", seen.get("error", ""))).split(" Position (FEN)")[0].split("\n")[0]
             step = {"episode": act["episode"], "call": call, "result": result[:90]}
             log = logs.setdefault(act["episode"], [])
             before = {m["id"] for m in guard.check("\n".join(log), field)} if guard else set()
@@ -302,6 +302,7 @@ def shop_data(runs):
                 data.setdefault("replays", {})[split] = replays
     if results:
         data["results"] = results
+    data["live_runs"] = [run for run in read_rows(runs / "live-stores.jsonl") if run.get("status") == "finished"][-6:]
     return {k: v for k, v in data.items() if v}
 
 
@@ -374,7 +375,7 @@ def document(data):
     return ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
             f'<meta name="description" content="{DESCRIPTION}">\n<meta property="og:title" content="Verity">\n'
-            f'<meta property="og:description" content="{DESCRIPTION}">\n<meta name="theme-color" content="#eef1f4">\n'
+            f'<meta property="og:description" content="{DESCRIPTION}">\n<meta name="theme-color" content="#ffffff">\n'
             f'<link rel="icon" href="{ICON}">\n<style>body{{margin:0}}[hidden]{{display:none!important}}</style>\n'
             f'{page[:split]}</head>\n<body>\n{page[split:]}\n</body>\n</html>\n')
 

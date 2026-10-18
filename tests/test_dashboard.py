@@ -168,4 +168,4 @@ class SiteTests(unittest.TestCase):
             self.assertEqual([s["blocked"] for s in demo["steps"]].count(True), 1)
             self.assertEqual(demo["true_score"], 1.0)
         page = site.document({"shop": data})
-        self.assertIn('id="shop-replay"', page)
+        self.assertIn('id="shop-viewer"', page)
