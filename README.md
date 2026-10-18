@@ -29,6 +29,7 @@ verity/                 THE SYSTEM: knows nothing about any particular environme
   llm.py                model client: OpenRouter, DeepSeek or Ollama, with a spend cap
   markers.py            the marker format, rule matching, testing, conversion from sandbox reports
   guard.py              enforces markers between the environment and the trainer
+  container.py          runs an untrusted environment in an isolated container, presented through the plug
   prompts/              sandbox attacker and judge prompts
 environments/           ENVIRONMENTS plugged into Verity
   chess_game.py         multi-step chess through tools (legal_moves, move, hint), with a seeded, disclosed loophole
@@ -37,8 +38,8 @@ environments/           ENVIRONMENTS plugged into Verity
   terminal_wrench.py    13 sandboxed terminal tasks (task files in tasks/, listed in tasks.json)
 train.py                RL fine-tuning (TRL GRPO + LoRA) on any answer or tools environment, Guard observing or enforcing
 evaluate.py             held-out comparison of the base model and both trained arms (batched episodes, vLLM optional)
-dashboard/              site.py builds the site from the run files; live.py serves live chess games
-web/                    the hosted site (Vercel): index.html (built by site.py) and api/live.js
+dashboard/              site.py builds the site; live.py serves the live demos; audit_server.py audits uploads
+web/                    the hosted site (Vercel): index.html (built by site.py), api/live.js and api/audit.js
 markers/                audit output: one marker file per environment (-fixture: disclosed test doubles)
 experiments/            raw results: audit reports (<environment>-audits/), sandbox audit runs (runs/)
 scripts/                Hyak jobs (hyak.sh), RunPod pods (runpod.py, pod.sh), chess match, batch audits
@@ -91,6 +92,15 @@ brew install stockfish                                       # chess environment
 | Train one arm (CUDA) | `python train.py --env shop --arm verity --model Qwen/Qwen3-8B --vllm --output runs/shop/verity` |
 | Evaluate as deployed | `python evaluate.py --env shop --baseline runs/shop/baseline --verity runs/shop/verity --deploy --backend vllm --output runs/shop/results-ood.json` |
 | Build the site | `python dashboard/site.py` (writes `web/index.html`) |
+
+### The site and its two services
+
+The hosted site is built from the run files by `python dashboard/site.py` into `web/index.html` and deployed with Vercel (`cd web && vercel deploy --prod`). Two services sit behind it, each reached through the site's API routes (`web/api/live.js`, `web/api/audit.js`) and a shared `VERITY_TOKEN`:
+
+- **Live demos** (`dashboard/live.py`, on a GPU): one base model with the four trained adapters; the two chess models play each other, and the two shop models work the same unseen store side by side. Vercel setting: `INFERENCE_URL`.
+- **Environment audits** (`dashboard/audit_server.py`, wherever Docker runs): a visitor uploads one environment file; it runs in an isolated container (`verity/container.py`: no network, no keys, read-only, capped) and the auditor plays it through the plug, with a spend cap per audit. Vercel setting: `AUDIT_URL`. `docs/example_env.py` is a small environment to try it with.
+
+With a service offline, the page says so and replays recorded runs instead.
 
 ### Training on RunPod
 
