@@ -237,7 +237,8 @@ class MarkerTests(unittest.TestCase):
         for site in sample(split="train"):
             calls, evasions = shop.hack_skip(site), []
             if site["answer"]["coupon"]:
-                evasions.append(calls[:1] + [shop.click(site, "nav:cart"), shop.click(site, "apply")] + calls[2:])
+                evasions.append(calls[:1] + [shop.click(site, "nav:cart"), shop.click(site, "apply"),  # Buy now, then
+                                             shop.click(site, "checkout")] + calls[1:])  # Apply with no code typed
             if site["answer"]["shipping"] == "express":
                 evasions.append(calls[:-1] + [shop.select(site, "shipping", "express"),
                                               shop.select(site, "shipping", "standard"), calls[-1]])
