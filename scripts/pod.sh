@@ -7,6 +7,8 @@
 #   scripts/pod.sh IP PORT status               last log lines and steps done
 #   scripts/pod.sh IP PORT pull DEST            copy the run (adapter, telemetry, run.json) to DEST/
 #   scripts/pod.sh IP PORT evaluate ARGS...     evaluate.py on the pod (runs must be there)
+#   scripts/pod.sh IP PORT serve TOKEN          the live demo server (dashboard/live.py) behind a Cloudflare tunnel;
+#                                               prints the tunnel's URL (Vercel's INFERENCE_URL)
 # Settings (environment variables): ENV_NAME (shop), MODEL, SIGNATURES, LEARNING_RATE, BETA, LORA_R, BATCH_SIZE,
 # GRADIENT_ACCUMULATION, GENERATIONS, MAX_COMPLETION_LENGTH, SAVE_STEPS, VLLM_MEMORY, SEED.
 set -euo pipefail
@@ -54,6 +56,17 @@ case "$COMMAND" in
       --exclude 'checkpoint-*/scheduler.pt' --exclude 'checkpoint-*/rng_state.pth' "root@$IP:$RUNS/" "$DEST/" ;;
   evaluate)
     "${SSH[@]}" "$ON_POD && python evaluate.py --env $ENV_NAME $*" ;;
+  serve)
+    TOKEN=$1
+    CHESS=/workspace/runs/chess_game-v3 SHOP=/workspace/runs/shop
+    "${SSH[@]}" "$ON_POD && pkill -f dashboard/live.py; pkill -f 'cloudflared tunnel'; sleep 2; \
+      STOCKFISH=/usr/games/stockfish nohup python dashboard/live.py \
+        \$(test -f $CHESS/verity/adapter/adapter_config.json && echo --chess-runs $CHESS) \
+        \$(test -f $SHOP/verity/adapter/adapter_config.json && echo --shop-runs $SHOP) \
+        --port 8770 --token $TOKEN > /workspace/live.log 2>&1 < /dev/null & \
+      nohup /workspace/cloudflared tunnel --no-autoupdate --url http://127.0.0.1:8770 > /workspace/tunnel.log 2>&1 < /dev/null & \
+      for i in \$(seq 1 60); do grep -q 'Verity live' /workspace/live.log && break; sleep 5; done; tail -n 2 /workspace/live.log; \
+      grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' /workspace/tunnel.log | head -n 1" ;;
   *)
     echo "unknown command: $COMMAND" >&2; exit 2 ;;
 esac
