@@ -12,7 +12,8 @@
 #   scripts/pod.sh IP PORT serve TOKEN          the live demo server (dashboard/live.py) behind a Cloudflare tunnel;
 #                                               prints the tunnel's URL (Vercel's INFERENCE_URL)
 # Settings (environment variables): ENV_NAME (shop), MODEL, SIGNATURES, LEARNING_RATE, BETA, LORA_R, BATCH_SIZE,
-# GRADIENT_ACCUMULATION, GENERATIONS, MAX_COMPLETION_LENGTH, SAVE_STEPS, VLLM_MEMORY, SEED.
+# GRADIENT_ACCUMULATION, GENERATIONS, MAX_COMPLETION_LENGTH, SAVE_STEPS, VLLM_MEMORY, SEED; RUNS (the pod's folder for
+# runs, default /workspace/runs/$ENV_NAME); for serve, SHOP_RUNS (default /workspace/runs/shop).
 set -euo pipefail
 IP=$1 PORT=$2 COMMAND=$3
 shift 3
@@ -20,7 +21,7 @@ SSH=(ssh -o StrictHostKeyChecking=accept-new -o ServerAliveInterval=30 -p "$PORT
 ENV_NAME=${ENV_NAME:-shop}
 MODEL=${MODEL:-Qwen/Qwen3-8B}
 REMOTE=/workspace/verity
-RUNS=/workspace/runs/$ENV_NAME
+RUNS=${RUNS:-/workspace/runs/$ENV_NAME}
 ON_POD="cd $REMOTE && export HF_HOME=/workspace/hf PATH=/workspace/venv/bin:\$PATH PYTHONUNBUFFERED=1"
 
 case "$COMMAND" in
@@ -69,7 +70,7 @@ case "$COMMAND" in
     "${SSH[@]}" "$ON_POD && python evaluate.py --env $ENV_NAME $*" ;;
   serve)
     TOKEN=$1
-    CHESS=/workspace/runs/chess_game-v3 SHOP=/workspace/runs/shop
+    CHESS=/workspace/runs/chess_game-v3 SHOP=${SHOP_RUNS:-/workspace/runs/shop}
     "${SSH[@]}" "$ON_POD && pkill -f dashboard/live.py; pkill -f 'cloudflared tunnel'; sleep 2; \
       STOCKFISH=/usr/games/stockfish nohup python dashboard/live.py \
         \$(test -f $CHESS/verity/adapter/adapter_config.json && echo --chess-runs $CHESS) \

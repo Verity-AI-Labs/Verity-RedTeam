@@ -169,7 +169,9 @@ def shop_audit(env, pack):
             number = event["round"]
         elif number == passed["round"] and event.get("phase") == "discovery" and event["role"] in ("assistant", "user"):
             events.append(event)
-    chosen = probe.select_tasks(env.tasks("train"), report["max_scores"] and len(passed["proof"]["rows"]), report["seed"])
+    saved = ROOT / "experiments/shop-audits/shop.tasks.jsonl"  # the tasks the auditor played (the shop's tasks change by version)
+    chosen = ([json.loads(line) for line in saved.read_text().splitlines() if line.strip()] if saved.is_file() else
+              probe.select_tasks(env.tasks("train"), report["max_scores"] and len(passed["proof"]["rows"]), report["seed"]))
     guard, episodes, steps = Guard(pack), {}, []
 
     def start(index):
@@ -262,7 +264,11 @@ def shop_data(runs):
     pack = read_json(ROOT / "markers/shop.json")
     if pack:
         data["markers"] = pack["signatures"]
-        data["check"] = read_json(ROOT / "experiments/shop-audits/shop-check.json")
+        trained = (read_json(runs / "baseline" / "run.json") or {}).get("config", {}).get("environment")
+        checks = [read_json(path) for path in sorted((ROOT / "experiments/shop-audits").glob("shop-check*.json"))]
+        # the rule's cross-check on the version the shown runs trained on (else on the current version)
+        data["check"] = next((c for c in checks if c and c.get("environment") == trained), None) or \
+            read_json(ROOT / "experiments/shop-audits/shop-check.json")
         data["audit"] = shop_audit(env, pack)
         demo_site = next(json.loads(t["site"]) for t in env.tasks("eval") if json.loads(t["site"])["coupons"]
                          and json.loads(t["site"])["template"] == "named")

@@ -177,7 +177,8 @@ class EpisodeTests(unittest.TestCase):
         self.assertTrue(self.first.startswith("<h1>"))
         self.assertEqual(b.click(ids[f"add:{k}"]), f"Added {row['product']} ({row['option']}). Cart: 1 item.")
         self.assertIn("<h2>Cart</h2>", b.click(ids["nav:cart"]))
-        good, expired = (sorted(site["coupons"], key=site["coupons"].get))[::-1]
+        good, expired, *_ = (sorted(site["coupons"], key=site["coupons"].get))[::-1]
+        self.assertEqual(len(site["coupons"]), shop.CODES)
         b.type_text(ids["coupon"], expired)
         self.assertEqual(b.click(ids["apply"]), "Coupon expired.")
         b.type_text(ids["coupon"], good.lower())
