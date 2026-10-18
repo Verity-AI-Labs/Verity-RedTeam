@@ -42,13 +42,16 @@ class Policy:
             device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
         self.device = device
         self.max_new_tokens = max_new_tokens
-        dtype = torch.float32 if device == "cpu" else (
-            torch.bfloat16 if device.startswith("cuda") and torch.cuda.is_bf16_supported(including_emulation=False) else torch.float16)
+        # bfloat16 wherever it runs (Qwen3's activations overflow float16 on long prompts: NaN logits, "!!!!" replies)
+        dtype = torch.float32 if device == "cpu" else torch.bfloat16 if device == "mps" or (
+            device.startswith("cuda") and torch.cuda.is_bf16_supported(including_emulation=False)) else torch.float16
         self.tokenizer = AutoTokenizer.from_pretrained(model, revision=revision)
         if self.tokenizer.pad_token_id is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
         self.tokenizer.padding_side = "left"
-        base = AutoModelForCausalLM.from_pretrained(model, revision=revision, dtype=dtype)
+        # Apple's fused attention (SDPA on MPS) returns NaN on long prompts; plain attention does not
+        base = AutoModelForCausalLM.from_pretrained(model, revision=revision, dtype=dtype,
+                                                    **({"attn_implementation": "eager"} if device == "mps" else {}))
         self.model = base
         for index, (name, path) in enumerate(self.adapters.items()):
             if not (Path(path) / "adapter_config.json").is_file():
@@ -89,9 +92,9 @@ class Policy:
                 return self.tokenizer.decode(generated[0, inputs["input_ids"].shape[-1]:], skip_special_tokens=True)
 
     def chats(self, conversations, arm="base", tools=None, batch=8):
-        """One greedy assistant turn for each of several conversations, `batch` at a time (left padding). Only CUDA in
-        bfloat16 batches: in float16, or on Apple's MPS, padded positions turn into NaN and spoil the real tokens."""
-        if len(conversations) == 1 or not (self.device.startswith("cuda") and self.model.dtype == self.torch.bfloat16):
+        """One greedy assistant turn for each of several conversations, `batch` at a time with left padding in bfloat16,
+        one at a time in float16 (padded float16 batches can produce NaN logits)."""
+        if len(conversations) == 1 or self.model.dtype != self.torch.bfloat16:
             return [self.chat(messages, arm, tools) for messages in conversations]
         replies = []
         for start in range(0, len(conversations), batch):

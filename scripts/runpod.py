@@ -17,14 +17,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 API = "https://rest.runpod.io/v1"
-GPUS = ["NVIDIA H100 80GB HBM3", "NVIDIA H100 NVL", "NVIDIA H100 PCIe", "NVIDIA A100-SXM4-80GB", "NVIDIA A100 80GB PCIe"]
+GPUS = ["NVIDIA H100 80GB HBM3", "NVIDIA H100 NVL", "NVIDIA H100 PCIe", "NVIDIA H200", "NVIDIA A100-SXM4-80GB",
+        "NVIDIA A100 80GB PCIe"]
 IMAGE = "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04"
 
 
 def key():
     for line in (ROOT / ".env").read_text().splitlines() if (ROOT / ".env").is_file() else []:
-        if line.startswith("RUNPOD_API_KEY="):
-            os.environ.setdefault("RUNPOD_API_KEY", line.split("=", 1)[1].strip().strip("'\""))
+        name, _, value = line.partition("=")
+        if name.strip().removeprefix("export ").strip() == "RUNPOD_API_KEY" and value.strip():
+            os.environ.setdefault("RUNPOD_API_KEY", value.strip().strip("'\""))
     if not os.environ.get("RUNPOD_API_KEY"):
         sys.exit("RUNPOD_API_KEY is not set (add it to .env)")
     return os.environ["RUNPOD_API_KEY"]
@@ -32,7 +34,8 @@ def key():
 
 def call(method, path, body=None):
     request = urllib.request.Request(f"{API}{path}", method=method, data=json.dumps(body).encode() if body else None,
-                                     headers={"Authorization": f"Bearer {key()}", "Content-Type": "application/json"})
+                                     headers={"Authorization": f"Bearer {key()}", "Content-Type": "application/json",
+                                              "User-Agent": "verity-runpod/1.0"})
     try:
         with urllib.request.urlopen(request, timeout=60) as response:
             raw = response.read()
@@ -46,13 +49,13 @@ def ssh(pod):
     return f"ssh -o StrictHostKeyChecking=accept-new root@{pod['publicIp']} -p {port}" if pod.get("publicIp") and port else None
 
 
-def create(name, gpus, disk):
+def create(name, gpus, disk, cloud="SECURE"):
     public = next(iter(sorted((Path.home() / ".ssh").glob("id_*.pub"))), None)
     if public is None:
         sys.exit("No SSH public key in ~/.ssh")
     pod = call("POST", "/pods", {"name": name, "imageName": IMAGE, "gpuTypeIds": gpus, "gpuCount": 1,
                                  "containerDiskInGb": disk, "volumeInGb": 0, "ports": ["22/tcp"],
-                                 "env": {"PUBLIC_KEY": public.read_text().strip()}, "cloudType": "SECURE",
+                                 "env": {"PUBLIC_KEY": public.read_text().strip()}, "cloudType": cloud,
                                  "allowedCudaVersions": ["12.8", "12.9", "13.0"],  # recent drivers for vLLM's torch
                                  "supportPublicIp": True})
     print(f"Created {pod['id']} ({name}); waiting for SSH...", flush=True)
@@ -73,12 +76,13 @@ def main():
     made.add_argument("name")
     made.add_argument("--gpu", action="append", help=f"GPU type, in order of preference (default: {', '.join(GPUS)})")
     made.add_argument("--disk", type=int, default=150, help="container disk, GB (model, venv, checkpoints)")
+    made.add_argument("--cloud", choices=("SECURE", "COMMUNITY"), default="SECURE")
     commands.add_parser("list")
     deleted = commands.add_parser("delete")
     deleted.add_argument("pod")
     args = parser.parse_args()
     if args.command == "create":
-        create(args.name, args.gpu or GPUS, args.disk)
+        create(args.name, args.gpu or GPUS, args.disk, args.cloud)
     elif args.command == "list":
         for pod in call("GET", "/pods"):
             print(json.dumps({k: pod.get(k) for k in ("id", "name", "desiredStatus", "costPerHr")} | {"ssh": ssh(pod)}))

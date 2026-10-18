@@ -20,11 +20,12 @@ RUNS=/workspace/runs/$ENV_NAME
 ON_POD="cd $REMOTE && export HF_HOME=/workspace/hf PATH=/workspace/venv/bin:\$PATH PYTHONUNBUFFERED=1"
 
 case "$COMMAND" in
-  sync)
-    rsync -az -e "ssh -o StrictHostKeyChecking=accept-new -p $PORT" --delete \
-      --exclude '.venv*' --exclude artifacts/ --exclude experiments/runs/ --exclude data/ --exclude logs/ \
-      --exclude '.agent-*' --exclude __pycache__ --exclude .env --exclude 'dashboard/build/' \
-      "$(dirname "$0")/../" "root@$IP:$REMOTE/" ;;
+  sync)  # the files git tracks (no old audit runs), plus uncommitted changes to them
+    "${SSH[@]}" "command -v rsync >/dev/null || (apt-get update -qq && apt-get install -y -qq rsync >/dev/null)"
+    cd "$(dirname "$0")/.."
+    git ls-files | grep -v '^experiments/runs/' | rsync -az --files-from=- -e "ssh -o StrictHostKeyChecking=accept-new -p $PORT" \
+      ./ "root@$IP:$REMOTE/"
+    rsync -az -e "ssh -o StrictHostKeyChecking=accept-new -p $PORT" .git "root@$IP:$REMOTE/" ;;
   setup)
     "${SSH[@]}" "set -e; pip install -q uv && uv venv -q --python 3.12 /workspace/venv && \
       VIRTUAL_ENV=/workspace/venv uv pip install -q 'vllm==0.31.0' 'trl==1.16.0' 'peft==0.21.1' 'datasets==5.0.1' \
