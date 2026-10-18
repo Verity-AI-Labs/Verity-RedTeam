@@ -303,6 +303,10 @@ def shop_data(runs):
     if results:
         data["results"] = results
     data["live_runs"] = [run for run in read_rows(runs / "live-stores.jsonl") if run.get("status") == "finished"][-6:]
+    # deployment stores to compose a live task on: what each sells, in stock or not
+    data["stores"] = [{"index": i, "store": site["store"], "name": site["answer"]["name"], "address": site["answer"]["address"],
+                       "rows": [{k: row[k] for k in ("product", "option", "kind", "category", "price", "stock")} for row in site["rows"]]}
+                      for i, site in enumerate(read_rows(env.data_path(env.DEPLOYMENT["split"]))[:8])]
     return {k: v for k, v in data.items() if v}
 
 

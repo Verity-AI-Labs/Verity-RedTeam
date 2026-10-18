@@ -158,6 +158,21 @@ pre.code { margin: 0; background: var(--code); border: 1px solid var(--line); bo
 .goalbar { font-size: 15px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 16px; }
 .goalbar .lbl { font-size: 12.5px; color: var(--muted); display: block; margin-bottom: 2px; }
 
+/* shop: the task composer and the browser windows */
+.composer { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.6fr) minmax(0, .8fr) minmax(0, 1fr) auto; gap: 10px; align-items: end; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.composer label { display: grid; gap: 6px; font-size: 12.5px; color: var(--muted); font-weight: 500; min-width: 0; }
+.composer select { height: 40px; width: 100%; padding: 0 10px; border-radius: 8px; border: 1px solid var(--line-strong); background: var(--raised); color: var(--text); font: 500 14px var(--sans); }
+.browser { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 1px 2px rgba(15, 20, 30, .04), 0 10px 30px rgba(15, 20, 30, .07); }
+.browser .chrome { height: 36px; display: flex; align-items: center; gap: 7px; padding: 0 12px; background: #f1f3f6; border-bottom: 1px solid #e3e6eb; }
+.browser .chrome i { width: 10px; height: 10px; border-radius: 50%; background: #d3d8e0; flex: none; }
+.browser .addr { flex: 1; min-width: 0; height: 22px; margin-left: 8px; border-radius: 6px; background: #fff; border: 1px solid #e3e6eb; font: 12px var(--sans); color: #5a6472; display: flex; align-items: center; padding: 0 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.viewport { position: relative; }
+.viewport .storeframe { border: 0; border-radius: 0; }
+.pointer { position: absolute; left: 0; top: 0; width: 20px; height: 20px; pointer-events: none; z-index: 5; transition: transform .45s cubic-bezier(.2, .75, .25, 1); filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, .35)); }
+.ripple { position: absolute; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; background: rgba(31, 91, 216, .35); pointer-events: none; z-index: 4; animation: ripple .55s ease-out forwards; }
+@keyframes ripple { from { transform: scale(.3); opacity: 1; } to { transform: scale(2.3); opacity: 0; } }
+.storeframe .typing { outline: 2px solid #1f5bd8; outline-offset: 1px; }
+
 /* method tabs */
 .tabs { display: inline-flex; gap: 4px; padding: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 24px; }
 .tabs button { height: 34px; padding: 0 16px; border-radius: 7px; border: 0; background: transparent; color: var(--muted); font: 600 14px var(--sans); cursor: pointer; }
@@ -181,7 +196,7 @@ pre.code { margin: 0; background: var(--code); border: 1px solid var(--line); bo
 footer { padding-block: 40px 64px; color: var(--muted); font-size: 13.5px; display: grid; gap: 10px; }
 footer .prov { font: 12px/1.7 var(--mono); color: var(--faint); }
 @media (max-width: 900px) {
-  .grid2, .arena, .duo, .stage { grid-template-columns: minmax(0, 1fr); }
+  .grid2, .arena, .duo, .stage, .composer { grid-template-columns: minmax(0, 1fr); }
   .steps { grid-template-columns: minmax(0, 1fr); }
   .steps > div + div { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); }
 }
@@ -243,10 +258,19 @@ footer .prov { font: 12px/1.7 var(--mono); color: var(--faint); }
         <h2>Same store, same goal, two agents.</h2>
         <p>Both are Qwen3-8B, fine-tuned with the same reinforcement-learning run on a web shop they operate like a person at a browser: click, type, choose. The shop's reward had two bugs we planted: it never checked for extra items in the order, and never checked the coupon or the shipping speed. Here both agents work the same store, one they never saw in training, with new products, words and page layout. No Guard is running.</p>
       </div>
-      <div class="toolbar" id="shop-controls" hidden>
-        <button class="btn primary" type="button" id="shop-go">Shop a new store</button>
-        <button class="btn" type="button" id="shop-stop">Stop</button>
-        <span class="status"><span class="dot" id="shop-dot"></span><span id="shop-status">Checking the inference server…</span></span>
+      <div class="stack" id="shop-controls" hidden style="margin-bottom:16px">
+        <div class="composer" id="shop-composer">
+          <label>Store<select id="c-store"></select></label>
+          <label>Item<select id="c-item"></select></label>
+          <label>Shipping<select id="c-ship"><option value="standard">Standard</option><option value="express">Express</option></select></label>
+          <label>Coupon<select id="c-coupon"><option value="0">No coupon</option><option value="1">Two codes, one expired</option></select></label>
+          <button class="btn primary" type="button" id="shop-go">Send to both agents</button>
+        </div>
+        <div class="toolbar" style="margin:0">
+          <button class="btn" type="button" id="shop-random">Random held-out task</button>
+          <button class="btn" type="button" id="shop-stop">Stop</button>
+          <span class="status"><span class="dot" id="shop-dot"></span><span id="shop-status">Checking the inference server…</span></span>
+        </div>
       </div>
       <div id="shop-viewer"></div>
       <div id="shop-results" style="margin-top:28px"></div>
@@ -425,71 +449,86 @@ function chessViewer(root, live) {
   };
 }
 
-/* ---------- shop: the two agents on the same store ---------- */
-function storeFrame(html, id) {
-  const frame = document.createElement("div");
-  frame.className = "storeframe";
-  frame.innerHTML = html || "";  /* the environment's own HTML, generated by environments/shop.py */
-  const el = id && frame.querySelector(`[id="${CSS.escape(id)}"]`);
-  if (el) { el.classList.add("cursor"); requestAnimationFrame(() => el.scrollIntoView({ block: "nearest" })); }
-  return frame;
-}
+/* ---------- shop: the two agents on the same store, in browser windows ---------- */
+const POINTER = `<svg class="pointer" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 2l13 7.2-5.6 1.3 3.3 6.4-2.4 1.2-3.3-6.4L3.9 16z" fill="#0d1117" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/></svg>`;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 function verdict(a) {
   if (a.outcome) return `<div class="verdict ok"><b>Exactly what was asked.</b>Order: <span class="mono">${esc(a.order)}</span></div>`;
   if (a.order && a.order !== "none") return `<div class="verdict no"><b>Paid, but not what was asked.</b>Order: <span class="mono">${esc(a.order)}</span>${a.hack_extra ? " · extra items" : ""}${a.hack_skip ? " · coupon or shipping speed skipped" : ""}</div>`;
   return `<div class="verdict no"><b>No order placed.</b>${a.said ? esc(a.said) : ""}</div>`;
 }
-function shopViewer(root, live) {
-  root.innerHTML = `${live ? "" : `<div class="games"></div>`}<div class="goalbar"><span class="lbl">The task, for both agents</span><span class="goal"></span></div>
-    <div class="duo">${["baseline", "verity"].map((arm) => `<div class="lane" data-arm="${arm}"><div class="top">${tag(arm)}<span class="note count"></span></div><div class="frame"></div><ol class="log"></ol><div class="end"></div></div>`).join("")}</div>
-    ${live ? "" : `<div class="controls"><button type="button" data-act="first" aria-label="Start">⏮</button><button type="button" data-act="prev" aria-label="Previous action">◀</button><button type="button" data-act="play">Play</button><button type="button" data-act="next" aria-label="Next action">▶</button><button type="button" data-act="last" aria-label="End">⏭</button><span class="pos"></span></div>`}`;
-  const q = (s) => root.querySelector(s);
-  let runs = [], index = 0, step = 0, timer = null;
-  const R = () => runs[index];
-  const longest = () => Math.max(0, ...["baseline", "verity"].map((a) => (R().arms[a].frames || []).length));
-  const stop = () => { clearInterval(timer); timer = null; const b = q('[data-act="play"]'); if (b) b.textContent = "Play"; };
-  function draw() {
-    const run = R();
-    if (!run) return;
-    q(".goal").textContent = run.goal;
-    if (!live) root.querySelectorAll(".games button").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.g === index)));
-    for (const arm of ["baseline", "verity"]) {
-      const lane = root.querySelector(`[data-arm="${arm}"]`), a = run.arms[arm], frames = a.frames || [];
-      const shown = live ? frames.length : Math.min(step, frames.length), next = live ? null : frames[shown];
-      const page = live ? a.page : shown ? frames[shown - 1].page : a.first_page;
-      lane.querySelector(".frame").replaceChildren(storeFrame(page, next && (next.arguments || {}).element_id));
-      lane.querySelector(".count").textContent = `${shown} action${shown === 1 ? "" : "s"}`;
-      const log = lane.querySelector(".log");
-      const arg = (v) => typeof v === "string" && /^e\d+$/.test(v) ? v : JSON.stringify(v);  /* element ids bare, text quoted */
-      log.innerHTML = frames.slice(0, shown).map((f, i) => `<li class="${i === shown - 1 ? "now" : ""}"><span class="i">${i + 1}</span><span>${esc(f.call)}(${esc(Object.values(f.arguments || {}).map(arg).join(", "))}) <span class="r">${esc(f.result)}</span></span></li>`).join("");
-      log.scrollTop = log.scrollHeight;
-      lane.querySelector(".end").innerHTML = a.done && shown >= frames.length ? verdict(a) : "";
-    }
-    const pos = q(".pos");
-    if (pos) pos.textContent = `action ${Math.min(step, longest())} of ${longest()}`;
-  }
-  if (!live) {
-    q(".controls").addEventListener("click", (e) => {
-      const b = e.target.closest("button");
-      if (!b || !R()) return;
-      if (b.dataset.act === "play") {
-        if (timer) return stop();
-        if (step >= longest()) step = 0;
-        b.textContent = "Pause";
-        timer = setInterval(() => { if (step >= longest()) return stop(); step++; draw(); }, 1000);
-        return;
+const callText = (f) => `${f.call}(${Object.values(f.arguments || {}).map((v) => typeof v === "string" && /^e\d+$/.test(v) ? v : JSON.stringify(v)).join(", ")})`;
+/* one agent's browser: plays its actions in order, moving the pointer to each element before the page changes */
+function lane(root, arm) {
+  root.innerHTML = `<div class="top">${tag(arm)}<span class="note count">0 actions</span></div>
+    <div class="browser"><div class="chrome"><i></i><i></i><i></i><span class="addr"></span></div><div class="viewport"><div class="storeframe"></div>${POINTER}</div></div>
+    <ol class="log"></ol><div class="end"></div>`;
+  const q = (sel) => root.querySelector(sel), frame = q(".storeframe"), pointer = q(".pointer"), log = q(".log");
+  let store = "", page = "catalog", queue = [], busy = false, shown = 0, token = 0, ending = null;
+  const address = () => { q(".addr").textContent = `${store.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.shop / ${page}`; };
+  const render = (html) => { frame.innerHTML = html || ""; };
+  async function play(f, mine) {
+    const el = (f.arguments || {}).element_id && frame.querySelector(`[id="${CSS.escape(f.arguments.element_id)}"]`);
+    if (el) {
+      const top = el.offsetTop - frame.clientHeight / 2;
+      if (el.offsetTop < frame.scrollTop + 20 || el.offsetTop > frame.scrollTop + frame.clientHeight - 30) frame.scrollTop = Math.max(0, top);
+      const box = el.getBoundingClientRect(), view = frame.getBoundingClientRect();
+      const x = box.left - view.left + Math.min(box.width / 2, 26), y = box.top - view.top + box.height / 2;
+      pointer.style.transform = `translate(${x}px, ${y}px)`;
+      await sleep(480);
+      if (mine !== token) return;
+      if (f.call === "type_text" && el.tagName === "INPUT") {
+        el.classList.add("typing");
+        const text = String(f.arguments.text ?? "");
+        for (let i = 1; i <= text.length; i++) { el.value = text.slice(0, i); await sleep(Math.min(45, 700 / text.length)); if (mine !== token) return; }
+      } else if (f.call === "select_option" && el.tagName === "SELECT") {
+        el.value = String(f.arguments.option ?? ""); el.classList.add("typing"); await sleep(250);
+      } else {
+        const dot = document.createElement("span"); dot.className = "ripple"; dot.style.left = `${x}px`; dot.style.top = `${y}px`;
+        frame.parentElement.appendChild(dot); setTimeout(() => dot.remove(), 600); await sleep(200);
       }
-      stop();
-      step = { first: 0, prev: Math.max(0, step - 1), next: Math.min(longest(), step + 1), last: longest() }[b.dataset.act];
-      draw();
-    });
-    q(".games").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; index = +b.dataset.g; step = 0; stop(); draw(); });
+    } else await sleep(350);
+    if (mine !== token) return;
+    if (/^page: /.test(f.result || "")) page = f.result.slice(6);
+    if (f.page) render(f.page);
+    address();
+    shown += 1;
+    log.insertAdjacentHTML("beforeend", `<li class="now"><span class="i">${shown}</span><span>${esc(callText(f))} <span class="r">${esc(f.result)}</span></span></li>`);
+    log.querySelectorAll("li.now").forEach((li, i, all) => { if (i < all.length - 1) li.classList.remove("now"); });
+    log.scrollTop = log.scrollHeight;
+    q(".count").textContent = `${shown} action${shown === 1 ? "" : "s"}`;
+  }
+  async function drain() {
+    if (busy) return;
+    busy = true;
+    const mine = token;
+    while (queue.length && mine === token) await play(queue.shift(), mine);
+    busy = false;
+    if (mine === token && ending && !queue.length) { q(".end").innerHTML = ending; pointer.style.opacity = ".0"; }
   }
   return {
-    set(list) {
-      runs = list;
-      if (!live) q(".games").innerHTML = runs.map((r, i) => `<button type="button" data-g="${i}" aria-pressed="${i === index}">Store ${i + 1}</button>`).join("");
-      draw();
+    reset(name, first) { token += 1; queue = []; busy = false; shown = 0; ending = null; store = name || ""; page = "catalog"; render(first); address(); log.innerHTML = ""; q(".end").innerHTML = ""; q(".count").textContent = "0 actions"; pointer.style.opacity = "1"; pointer.style.transform = "translate(40px, 40px)"; },
+    push(frames) { queue.push(...frames); drain(); },
+    finish(html) { ending = html; drain(); },
+  };
+}
+function shopStage(root) {
+  root.innerHTML = `<div class="goalbar"><span class="lbl">The task, given to both agents</span><span class="goal"></span></div>
+    <div class="duo"><div class="lane" data-arm="baseline"></div><div class="lane" data-arm="verity"></div></div>`;
+  const lanes = { baseline: lane(root.querySelector('[data-arm="baseline"]'), "baseline"), verity: lane(root.querySelector('[data-arm="verity"]'), "verity") };
+  let current = null, fed = { baseline: 0, verity: 0 }, done = { baseline: false, verity: false };
+  return {
+    show(run, key) {  /* a run (live state or recording); key changes when a new run starts */
+      if (key !== current) {
+        current = key; fed = { baseline: 0, verity: 0 }; done = { baseline: false, verity: false };
+        root.querySelector(".goal").textContent = run.goal;
+        for (const arm of ["baseline", "verity"]) lanes[arm].reset(run.store || "", run.arms[arm].first_page || run.arms[arm].page);
+      }
+      for (const arm of ["baseline", "verity"]) {
+        const a = run.arms[arm], frames = a.frames || [];
+        if (frames.length > fed[arm]) { lanes[arm].push(frames.slice(fed[arm])); fed[arm] = frames.length; }
+        if (a.done && !done[arm]) { done[arm] = true; lanes[arm].finish(verdict(a)); }
+      }
     },
   };
 }
@@ -497,17 +536,16 @@ function shopViewer(root, live) {
    recorded episodes, paired by task (both models got the same held-out stores) */
 function recordedStores() {
   const live = (S.live_runs || []).map((run) => ({ ...run, arms: Object.fromEntries(Object.entries(run.arms).map(([arm, a]) =>
-    [arm, { ...a, first_page: a.first_page || (a.frames[0] || {}).page }])) }));
+    [arm, { ...a, first_page: a.first_page || a.page_first || ((a.frames || [])[0] || {}).page }])) }));
   if (live.length) return live;
   const rep = (S.replays || {}).ood || (S.replays || {}).eval;
   if (!rep || !rep.baseline || !rep.verity) return [];
-  const lane = (r) => {
+  const toLane = (r) => {
     let page = r.frames[0].observation;
     const frames = r.frames.slice(1).map((f) => { if (isPage(f.observation)) page = f.observation; return { call: f.call, arguments: f.arguments, result: isPage(f.observation) ? "new page" : f.observation, page }; });
-    return { first_page: r.frames[0].observation, frames, done: true, outcome: r.true_score, order: (r.record || "").split("\n").pop().replace("# order: ", ""),
-             hack_extra: r.hack_extra, hack_skip: r.hack_skip };
+    return { first_page: r.frames[0].observation, frames, done: true, outcome: r.true_score, order: (r.record || "").split("\n").pop().replace("# order: ", ""), hack_extra: r.hack_extra, hack_skip: r.hack_skip };
   };
-  return rep.baseline.map((b, i) => rep.verity[i] && rep.verity[i].task === b.task ? { goal: b.goal, arms: { baseline: lane(b), verity: lane(rep.verity[i]) } } : null).filter(Boolean);
+  return rep.baseline.map((b, i) => rep.verity[i] && rep.verity[i].task === b.task ? { goal: b.goal, store: "", arms: { baseline: toLane(b), verity: toLane(rep.verity[i]) } } : null).filter(Boolean);
 }
 
 /* ---------- live control, shared by both demos ---------- */
@@ -517,6 +555,7 @@ function liveDemo(demo, ui) {
     $(`${demo}-controls`).hidden = false;
     if (!state || !state.available) {
       go.hidden = stop.hidden = true;
+      document.querySelectorAll(`#${demo}-controls .composer, #${demo}-random`).forEach((el) => { el.hidden = true; });
       status.textContent = ui.offline;
       ui.recorded();
       return;
@@ -525,6 +564,7 @@ function liveDemo(demo, ui) {
     const view = ui.viewer();
     const show = (s) => { if (s && s.available) go.disabled = ui.show(s, view, status); };
     const send = (action, body) => post(`/api/live?demo=${demo}&action=${action}`, body).then(show).catch(() => { status.textContent = "Could not reach the inference server."; });
+    if (ui.extra) ui.extra(send);
     go.addEventListener("click", () => send("start", ui.body ? ui.body() : {}));
     stop.addEventListener("click", () => send("stop"));
     show(state);
@@ -559,18 +599,37 @@ function liveDemo(demo, ui) {
 })();
 
 (function shopDemo() {
+  const stores = S.stores || [], option = (r) => r.kind === "size" ? `size ${r.option}` : r.option;
+  const fillItems = () => {
+    const st = stores[+$("c-store").value];
+    $("c-item").innerHTML = st ? st.rows.map((r, i) => r.stock ? `<option value="${i}">${esc(r.product)} · ${esc(option(r))} · $${r.price.toFixed(2)}</option>` : "").join("") : "";
+  };
+  $("c-store").innerHTML = stores.map((st, i) => `<option value="${i}">${esc(st.store)}</option>`).join("");
+  $("c-store").addEventListener("change", fillItems);
+  fillItems();
   liveDemo("shop", {
-    offline: "The inference server is offline. Below: real episodes of these two models on the same held-out stores, action by action.",
-    recorded() { const runs = recordedStores(); if (runs.length) shopViewer($("shop-viewer"), false).set(runs); else pending($("shop-viewer"), "Recorded episodes appear here after the held-out evaluation. Live play starts when the inference server is online."); },
-    viewer: () => shopViewer($("shop-viewer"), true),
+    offline: "The inference server is offline. Below: real episodes of these two models on the same held-out stores, replayed action by action.",
+    recorded() {
+      const runs = recordedStores();
+      if (!runs.length) { pending($("shop-viewer"), "Recorded episodes appear here after the held-out evaluation. Live tasks start when the inference server is online."); return; }
+      $("shop-viewer").innerHTML = `<div class="games" id="shop-recorded"></div><div id="shop-stage"></div>`;
+      const stage = shopStage($("shop-stage"));
+      const play = (i) => { document.querySelectorAll("#shop-recorded button").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.g === i))); stage.show(runs[i], `recorded-${i}-${Date.now()}`); };
+      $("shop-recorded").innerHTML = runs.map((r, i) => `<button type="button" data-g="${i}">Store ${i + 1}</button>`).join("");
+      $("shop-recorded").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) play(+b.dataset.g); });
+      play(0);
+    },
+    viewer: () => { $("shop-viewer").innerHTML = `<div id="shop-stage"></div>`; return shopStage($("shop-stage")); },
+    body: () => ({ store: +$("c-store").value, row: +$("c-item").value, shipping: $("c-ship").value, coupon: $("c-coupon").value === "1" }),
     show(s, view, status) {
       const run = s.run;
-      if (!run) { status.textContent = "Live. Press the button and both agents shop the same new store."; return false; }
-      view.set([run]);
-      if (run.status === "playing") { status.textContent = "Both agents are shopping…"; return true; }
-      status.textContent = run.status === "finished" ? "Finished. Press again for another store." : `${run.status}${run.reason ? ": " + run.reason : ""}`;
+      if (!run) { status.textContent = "Live. Compose a task above, or pick a random held-out one."; return false; }
+      view.show(run, `${run.task}|${run.goal}`);
+      if (run.status === "playing") { status.textContent = "Both agents are working on it…"; return true; }
+      status.textContent = run.status === "finished" ? "Finished. Send another task." : `${run.status}${run.reason ? ": " + run.reason : ""}`;
       return false;
     },
+    extra(send) { $("shop-random").addEventListener("click", () => send("start", {})); },
   });
   const res = S.results;
   if (!res) { pending($("shop-results"), "Results on held-out stores appear here when both training runs finish."); return; }

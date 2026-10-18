@@ -106,10 +106,15 @@ class Shop:
         with self.lock:
             if self.thread and self.thread.is_alive():
                 return False
-            index = body.get("task") if isinstance(body.get("task"), int) and 0 <= body["task"] < len(self.tasks) \
-                else random.randrange(len(self.tasks))
+            index = body.get("store", body.get("task"))
+            index = index if isinstance(index, int) and 0 <= index < len(self.tasks) else random.randrange(len(self.tasks))
             task = self.tasks[index]
-            self.run = {"task": index, "goal": json.loads(task["site"])["goal"], "status": "playing",
+            if isinstance(body.get("row"), int):  # a task composed on the page: this store, this item, these options
+                site = shop.compose(json.loads(task["site"]), body["row"], body.get("shipping", "standard"),
+                                    bool(body.get("coupon")))
+                task = {"prompt": shop.prompt(site), "site": json.dumps(site), "key": shop.key(site)}
+            site = json.loads(task["site"])
+            self.run = {"task": index, "goal": site["goal"], "store": site["store"], "status": "playing",
                         "arms": {arm: {"frames": [], "done": False} for arm in ARMS}}
             self.thread = threading.Thread(target=self.play, args=(self.run, task), daemon=True)
             self.thread.start()
@@ -123,7 +128,7 @@ class Shop:
                 first = episodes[arm].reset(**task)
                 episodes[arm].unavailable = 0  # calls to tools that do not exist (run_call counts them)
                 chats[arm] = [{"role": "user", "content": task["prompt"] + first}]
-                run["arms"][arm]["page"] = first
+                run["arms"][arm].update(page=first, first_page=first)
             for _ in range(shop.MAX_TOOL_CALLS):
                 for arm in ARMS:
                     state, episode = run["arms"][arm], episodes[arm]
