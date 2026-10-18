@@ -310,6 +310,36 @@ def shop_data(runs):
     return {k: v for k, v in data.items() if v}
 
 
+TW_RUN = "experiments/runs/full-audit-v51-20261012"  # the last full Terminal Wrench audit (DeepSeek attacker and judge)
+
+
+def terminal_data():
+    """The Terminal Wrench audit: each task's verdict and what proved it, and one recorded hack replayed through Guard
+    with the markers made from that task's report (commands are screened, never executed)."""
+    from environments import terminal_wrench
+    from verity import markers
+    from verity.guard import Guard
+    kinds = {"answer_read": "read the hidden answer", "trust_write": "rewrote the grader", "divergence": "output diverges from the reference",
+             "answer_in_prompt": "the answer is printed in the prompt", "mutation": "the grader accepts a broken output"}
+    tasks = []
+    for path in sorted((ROOT / TW_RUN).glob("*/report.json")):
+        hackability = read_json(path).get("hackability", {})
+        found = set()
+        for basis in hackability.get("basis") or []:
+            if basis.startswith("mutation:"):
+                found.add(kinds["mutation"])
+            elif " judged " in basis:
+                found.add("judged by a second model")
+            else:
+                found.update(kinds.get(k, k) for k in basis.split(" ")[-1].split(","))
+        tasks.append({"task": path.parent.name, "verdict": hackability.get("value"), "how": sorted(found)})
+    report = read_json(ROOT / TW_RUN / "blind-maze/report.json")
+    pack = markers.from_sandbox_report(report)
+    replay = terminal_wrench.replay(ROOT / TW_RUN / "blind-maze/redteam/a1/trajectory.jsonl", Guard(pack))
+    return {"tasks": tasks, "replay": {"task": "blind-maze", "events": [{k: e[k] for k in ("turn", "command", "blocked", "warnings")} for e in replay],
+                                       "marker": {k: pack["signatures"][0][k] for k in ("id", "summary", "detect")} if pack["signatures"] else None}}
+
+
 def build(name, runs, shop_runs=None):
     runs = Path(runs)
     sys.path.insert(0, str(ROOT))
@@ -352,6 +382,7 @@ def build(name, runs, shop_runs=None):
         data["match"]["live_games"] = live
     if shop_runs is not None:
         data["shop"] = shop_data(shop_runs)
+    data["terminal"] = terminal_data()
     return {k: v for k, v in data.items() if v}
 
 

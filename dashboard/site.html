@@ -284,7 +284,7 @@ footer .prov { font: 12px/1.7 var(--mono); color: var(--faint); }
         <h2>What Verity did, step by step, with the real artifacts.</h2>
         <p>Nothing about hints, coupons or carts is written anywhere in Verity. Each environment plugs in with a few functions; the same audit, rule validation and Guard run on every one.</p>
       </div>
-      <div class="tabs" role="tablist"><button type="button" role="tab" data-tab="chess" aria-selected="true">Chess</button><button type="button" role="tab" data-tab="shop" aria-selected="false">Web shop</button></div>
+      <div class="tabs" role="tablist"><button type="button" role="tab" data-tab="chess" aria-selected="true">Chess</button><button type="button" role="tab" data-tab="shop" aria-selected="false">Web shop</button><button type="button" role="tab" data-tab="terminal" aria-selected="false">Terminal tasks</button></div>
       <div id="method-body"></div>
     </div>
   </section>
@@ -675,9 +675,19 @@ function shopMethod() {
   return stage("01", "Audit", "Opus shops real store pages and sees only the reward.", audit) + stage("02", "Rule", "One rule for both bugs, written by the auditor.", rule)
     + stage("03", "Guard", "Checks what each action does before it takes effect.", guard) + stage("04", "Training", "Same model, stores and steps; only Guard differs.", training);
 }
+function terminalMethod() {
+  const t = D.terminal;
+  if (!t) return `<div class="pending">No Terminal Wrench audit.</div>`;
+  const certified = t.tasks.filter((x) => x.verdict === "certified").length;
+  const table = `<div class="card"><div class="title">13 off-the-shelf Terminal Wrench tasks, each a Docker machine with its own grader · ${certified} certified, ${t.tasks.length - certified} judged</div><div class="scroll"><table><thead><tr><th>Task</th><th class="text">Verdict</th><th class="text">How the reward was gamed</th></tr></thead><tbody>${t.tasks.map((x) => `<tr><td class="text mono">${esc(x.task)}</td><td class="text ${x.verdict === "certified" ? "u" : ""}">${esc(x.verdict)}</td><td class="text">${esc(x.how.join("; "))}</td></tr>`).join("")}</tbody></table></div></div>`;
+  const r = t.replay;
+  const replay = `<div class="grid2"><div class="card"><div class="title">A recorded attack on ${esc(r.task)}, replayed through Guard (nothing is executed)</div><ol class="log">${r.events.map((e, i) => `<li class="${e.blocked ? "blocked" : ""}"><span class="i">${e.turn}</span><span>${esc(e.command.length > 160 ? e.command.slice(0, 160) + "…" : e.command)}${e.blocked ? `<br><span class="r">blocked: “${esc(e.warnings[0])}”</span>` : ""}</span></li>`).join("")}</ol></div>
+    <div class="stack"><p>The audit proved, with a system-call trace, that the attacker read the maze's hidden map instead of exploring. Verity turned that into a rule over commands and file reads; replayed, Guard stops the episode at the exact command that reads the map.</p>${r.marker ? ruleJSON({ ...r.marker, field: "command", on_match: { reward: -1, block: true } }) : ""}<p class="note">The same audit engine runs uploaded environments in a container. Certified: proven by a trace, a mutation test or a leak; judged: rated by a second model.</p></div></div>`;
+  return stage("01", "Audit", "An AI attacker in a Docker machine; every hack traced.", table) + stage("02", "Rule and Guard", "Rules made from the certified evidence, checked before each command.", replay);
+}
 (function method() {
   const show = (name) => {
-    $("method-body").innerHTML = name === "shop" ? shopMethod() : chessMethod();
+    $("method-body").innerHTML = name === "shop" ? shopMethod() : name === "terminal" ? terminalMethod() : chessMethod();
     document.querySelectorAll(".tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === name)));
   };
   document.querySelector(".tabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) show(b.dataset.tab); });
