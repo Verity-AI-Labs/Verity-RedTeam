@@ -284,7 +284,7 @@ def vllm_engine(model, adapters, max_lora_rank, max_new_tokens):
     tokenizer = AutoTokenizer.from_pretrained(model)
     llm = LLM(model=model, enable_lora=bool(adapters), max_lora_rank=max_lora_rank, gpu_memory_utilization=0.85,
               max_model_len=16384)
-    params = SamplingParams(temperature=0.0, max_tokens=max_new_tokens)
+    params = SamplingParams(temperature=0.0, max_tokens=max_new_tokens, skip_special_tokens=False)  # keep <tool_call>
     requests = {name: LoRARequest(name, number, str(path)) for number, (name, path) in enumerate(adapters.items(), 1)}
 
     def respond(arm):
@@ -292,7 +292,7 @@ def vllm_engine(model, adapters, max_lora_rank, max_new_tokens):
             prompts = [tokenizer.apply_chat_template(chat, tools=tools, add_generation_prompt=True, tokenize=False,
                                                      enable_thinking=False) for chat in conversations]
             outputs = llm.generate(prompts, params, lora_request=requests.get(arm), use_tqdm=False)
-            return [output.outputs[0].text for output in outputs]
+            return [re.sub(r"<\|[^|]*\|>", "", output.outputs[0].text) for output in outputs]  # minus <|im_end|> and the like
         return turn
     return respond
 
