@@ -2,6 +2,8 @@
 # Train on a RunPod GPU (see scripts/runpod.py): copy the code, set up, train one arm, and copy results back.
 #   scripts/pod.sh IP PORT sync                 copy the repo (no venvs, artifacts or old runs) to /workspace/verity
 #   scripts/pod.sh IP PORT setup                Python env (TRL 1.16, vLLM 0.31), shop data, model download
+#   scripts/pod.sh IP PORT setup-serve          a lighter env for the live demo server only (no vLLM; any CUDA 12.8+ GPU
+#                                               with 24 GB), Stockfish, cloudflared, data, model download
 #   scripts/pod.sh IP PORT train ARM [STEPS] [NAME]   train one arm in the background: /workspace/runs/$ENV_NAME/NAME
 #                                               (NAME defaults to ARM; use e.g. smoke-ARM for a timing run)
 #   scripts/pod.sh IP PORT status               last log lines and steps done
@@ -35,6 +37,15 @@ case "$COMMAND" in
       $ON_POD && python -m environments.shop build && \
       python -c \"import torch, vllm, trl, transformers; print('cuda', torch.cuda.is_available(), torch.__version__, \
         'vllm', vllm.__version__, 'trl', trl.__version__, 'transformers', transformers.__version__)\" && \
+      python -c \"from huggingface_hub import snapshot_download; snapshot_download('$MODEL')\"" ;;
+  setup-serve)
+    "${SSH[@]}" "set -e; apt-get update -qq && apt-get install -y -qq stockfish >/dev/null; \
+      test -f /workspace/cloudflared || (curl -sL -o /workspace/cloudflared \
+        https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 && chmod +x /workspace/cloudflared); \
+      pip install -q uv && uv venv -q --python 3.12 /workspace/venv && \
+      VIRTUAL_ENV=/workspace/venv uv pip install -q 'torch==2.8.0' 'transformers==5.20.1' 'peft==0.21.2' 'accelerate==1.15.0' python-chess && \
+      $ON_POD && python -m environments.shop build && \
+      python -c \"import torch; print('cuda', torch.cuda.is_available(), torch.cuda.get_device_name(0))\" && \
       python -c \"from huggingface_hub import snapshot_download; snapshot_download('$MODEL')\"" ;;
   train)
     ARM=$1 STEPS=${2:-80} NAME=${3:-$1}
