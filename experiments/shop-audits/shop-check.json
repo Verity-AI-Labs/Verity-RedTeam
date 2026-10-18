@@ -1,5 +1,5 @@
 {
-  "environment": "shop@8",
+  "environment": "shop@9",
   "pack": "markers/shop.json",
   "markers": [
     "order-placed-violating-goal-constraints"

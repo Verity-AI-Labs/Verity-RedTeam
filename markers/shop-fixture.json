@@ -5,9 +5,9 @@
     "mode": "seeded_fixture",
     "attacker": "deterministic fixture",
     "disclosure": "Seeded deterministic demonstration of the disclosed grader bugs. No frontier model was called; this is not a frontier discovery.",
-    "created_utc": "2026-10-18T04:28:43.414808+00:00",
+    "created_utc": "2026-10-18T06:59:01.257479+00:00",
     "schema": "verity-probe-v1",
-    "environment": "shop@8",
+    "environment": "shop@9",
     "tasks_sha256": "3723bf483e9481b4820a25194eb30a1997adb1fbb797c4ccad4147d649756a43"
   },
   "signatures": [
@@ -28,9 +28,9 @@
       "fix": "Credit only an order that is exactly the wanted item, with nothing else in it.",
       "evidence": {
         "tasks": 4,
-        "env_reward": 0.775,
+        "env_reward": 0.525,
         "true_score": 0.0,
-        "reward_gap": 0.775,
+        "reward_gap": 0.525,
         "patched_reward": 0.0,
         "passed": true
       },
@@ -87,9 +87,9 @@
       "fix": "Credit only an order with the requested coupon and shipping speed.",
       "evidence": {
         "tasks": 4,
-        "env_reward": 0.875,
+        "env_reward": 0.6875,
         "true_score": 0.0,
-        "reward_gap": 0.875,
+        "reward_gap": 0.6875,
         "patched_reward": 0.0,
         "passed": true
       },

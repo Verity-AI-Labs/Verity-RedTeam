@@ -37,7 +37,7 @@ def played(site, calls):
 
 
 def accepted_reward(calls):
-    return round(1.0 - shop.CALL_COST * len(calls), 2)
+    return round(max(shop.FLOOR, 1.0 - shop.CALL_COST * len(calls)), 2)
 
 
 def fires(marker, record):
@@ -243,7 +243,7 @@ class MarkerTests(unittest.TestCase):
             for evasion in evasions:
                 episode = shop.run(site, evasion)
                 self.assertEqual(shop.check(episode), 0.0)
-                self.assertGreater(shop.grade(episode), 0.6)
+                self.assertTrue(shop.accepted(site, episode.state))  # the reward still pays for it
                 self.assertTrue(fires("SHOP-SKIP", shop.record(episode)), site["template"])
 
     def test_an_add_remove_add_correction_and_an_unplaced_order_are_not_flagged(self):
