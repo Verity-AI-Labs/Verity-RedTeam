@@ -178,8 +178,8 @@ def main(argv=None):
     parser.add_argument("--input-price", type=float, default=4.0)
     parser.add_argument("--output-price", type=float, default=20.0)
     parser.add_argument("--max-usd", type=float, default=1.0, help="spend cap per audit")
-    parser.add_argument("--episodes", type=int, default=3)
-    parser.add_argument("--max-calls", type=int, default=40)
+    parser.add_argument("--episodes", type=int, default=4)
+    parser.add_argument("--max-calls", type=int, default=60)
     args = parser.parse_args(argv)
     if not os.environ.get("OPENROUTER_API_KEY"):
         parser.error("OPENROUTER_API_KEY is not set (put it in .env)")
