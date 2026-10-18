@@ -160,7 +160,7 @@ class SiteTests(unittest.TestCase):
                         for step in range(3)]
                 (runs / arm / "telemetry.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
             data = site.shop_data(runs)
-        self.assertEqual(data["environment"], "shop@8")
+        self.assertEqual(data["environment"], f"shop@{__import__('environments.shop').shop.VERSION}")
         self.assertEqual([len(data["training"][arm]) for arm in ("baseline", "verity")], [3, 3])
         if "audit" in data:  # the live audit's markers are in the repo
             self.assertTrue(any(step.get("flag") for step in data["audit"]["steps"]))
