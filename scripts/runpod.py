@@ -49,7 +49,7 @@ def ssh(pod):
     return f"ssh -o StrictHostKeyChecking=accept-new root@{pod['publicIp']} -p {port}" if pod.get("publicIp") and port else None
 
 
-def create(name, gpus, disk, cloud="SECURE"):
+def create(name, gpus, disk, cloud="SECURE", cuda=("13.0",)):
     public = next(iter(sorted((Path.home() / ".ssh").glob("id_*.pub"))), None)
     if public is None:
         sys.exit("No SSH public key in ~/.ssh")
@@ -77,12 +77,13 @@ def main():
     made.add_argument("--gpu", action="append", help=f"GPU type, in order of preference (default: {', '.join(GPUS)})")
     made.add_argument("--disk", type=int, default=150, help="container disk, GB (model, venv, checkpoints)")
     made.add_argument("--cloud", choices=("SECURE", "COMMUNITY"), default="SECURE")
+    made.add_argument("--cuda", nargs="+", default=["13.0"], help="driver CUDA versions to accept (serving: 12.8 12.9 13.0)")
     commands.add_parser("list")
     deleted = commands.add_parser("delete")
     deleted.add_argument("pod")
     args = parser.parse_args()
     if args.command == "create":
-        create(args.name, args.gpu or GPUS, args.disk, args.cloud)
+        create(args.name, args.gpu or GPUS, args.disk, args.cloud, args.cuda)
     elif args.command == "list":
         for pod in call("GET", "/pods"):
             print(json.dumps({k: pod.get(k) for k in ("id", "name", "desiredStatus", "costPerHr")} | {"ssh": ssh(pod)}))
