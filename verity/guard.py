@@ -89,6 +89,7 @@ class Guard:
     def batch(self, tasks, outputs, env, step=None):
         """Guarded rewards for one batch of an answer environment, plus the telemetry row."""
         rewards, true_scores, costs, examples, extras, caught, base = [], [], [], [], [], 0, []
+        by_marker = dict.fromkeys((marker["id"] for marker, _ in self.rules), 0)
         for task, output in zip(tasks, outputs):
             reply = text(output)
             start = time.perf_counter_ns()
@@ -105,6 +106,8 @@ class Guard:
             rewards.append(guarded)
             extras.append(env.metrics(task, reply) if hasattr(env, "metrics") else {})
             caught += bool(matches)
+            for marker in matches:
+                by_marker[marker["id"]] = by_marker.get(marker["id"], 0) + 1
             if matches and len(examples) < 8:
                 examples.append({"reply": reply[:2000], "env_reward": reward, "guarded_reward": guarded,
                                  "true_score": score, "signature_ids": [m["id"] for m in matches],
@@ -116,9 +119,13 @@ class Guard:
                "arm": self.arm, "samples": len(rewards), "env_reward": statistics.fmean(base),
                "guarded_reward": statistics.fmean(rewards), "true_score": statistics.fmean(true_scores),
                "caught": caught, "caught_rate": caught / len(rewards), "check_us": statistics.fmean(costs),
+               "caught_by": {key: count / len(rewards) for key, count in by_marker.items()},
                "examples": examples, "pack_version": self.pack.get("version"), "reload_error": self.reload_error}
-        for key in sorted({key for extra in extras for key in extra}):
-            row[key] = statistics.fmean(float(extra.get(key, 0)) for extra in extras)
+        if hasattr(env, "summarize"):  # the environment averages its own metrics
+            row.update(env.summarize(extras))
+        else:
+            for key in sorted({key for extra in extras for key in extra}):
+                row[key] = statistics.fmean(float(extra.get(key, 0)) for extra in extras)
         self._log(row)
         return rewards, row
 
@@ -140,7 +147,7 @@ class Guard:
 
 def main():
     parser = argparse.ArgumentParser(description="Measure how long one Guard check takes.")
-    parser.add_argument("--pack", default="markers/chess-fixture.json")
+    parser.add_argument("--pack", default="markers/shop-fixture.json")
     parser.add_argument("--iterations", type=int, default=10000)
     args = parser.parse_args()
     if args.iterations < 1:

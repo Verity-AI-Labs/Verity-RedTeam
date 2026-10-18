@@ -1,8 +1,8 @@
 """Audit any environment and write its markers. The one entry point to Verity's audits.
 
-    python -m verity.audit shop --fixture                          replay the disclosed seeded bug, no API calls
-    python -m verity.audit flights --model anthropic/claude-opus-5.5 --input-price 4 --output-price 20
-    python -m verity.audit shop --provider deepseek --model deepseek-flash
+    python -m verity.audit shop --fixture                          replay the disclosed seeded bugs, no API calls
+    python -m verity.audit shop --model anthropic/claude-opus-5.5 --input-price 4 --output-price 20 --rounds 2
+    python -m verity.audit shop --provider deepseek --model deepseek-flash --rounds 2
 
 Answer environments go through verity/probe.py.
 Markers land in markers/, reports in experiments/<environment>-audits/.
@@ -46,7 +46,8 @@ def audit_answer_environment(env, args, parser):
                             max_tries=args.api_retries, log=report_path.with_suffix(".api_calls.jsonl"))
     report, pack = probe.run(env, tasks, ask=client.ask if client else None, model=args.model,
                              offline=args.fixture, count=args.count, seed=args.seed,
-                             max_scores=args.max_scores, audit_kind=args.audit_kind, max_steps=args.max_steps)
+                             max_scores=args.max_scores, audit_kind=args.audit_kind, max_steps=args.max_steps,
+                             rounds=args.rounds)
     report["data"] = {"path": str(args.data or "default"), "tasks_sha256": fingerprint}
     if client:
         report["api"] = {"request_config": client.request_config(), "digest": client.digest(args.model), **client.stats()}
@@ -54,19 +55,25 @@ def audit_answer_environment(env, args, parser):
         pack["provenance"]["tasks_sha256"] = fingerprint
     probe.write_outputs(report, pack, pack_path, report_path)
     print(json.dumps({k: report[k] for k in ("status", "mode", "attacker", "environment")}))
-    for key in ("proof", "validation"):
-        if report.get(key):
-            print(json.dumps({k: v for k, v in report[key].items() if k != "rows"}))
+    for row in report["rounds"]:
+        marker = row.get("signature", {}).get("id")
+        print(f"round {row['round']}: {row['status']}" + (f", marker {marker}" if marker else "")
+              + (f" ({row['error']})" if row.get("error") else ""))
+        for key in ("proof", "validation"):
+            if row.get(key):
+                print("  " + json.dumps({k: v for k, v in row[key].items()
+                                         if k not in ("rows", "misses", "false_alarm_examples")}))
     if report.get("error"):
         print(report["error"], file=sys.stderr)
-    print(f"Report: {report_path.with_suffix('.md')}" + (f"; markers: {pack_path}" if pack else "; no markers written"))
+    count = len(pack["signatures"]) if pack else 0
+    print(f"Report: {report_path.with_suffix('.md')}" + (f"; {count} markers: {pack_path}" if pack else "; no markers written"))
     return 0 if report["status"] == "passed" else 1
 
 
 def main(argv=None):
     llm.load_env()
     parser = argparse.ArgumentParser(description="Audit an RL environment for reward hacks and write its markers.")
-    parser.add_argument("environment", help="a module in environments/, e.g. shop or flights")
+    parser.add_argument("environment", help="a module in environments/, e.g. shop")
     parser.add_argument("--out", help="marker file (default markers/<name>.json)")
     parser.add_argument("--model", help="attacker model id")
     parser.add_argument("--provider", choices=("openrouter", "deepseek"), default="openrouter",
@@ -75,7 +82,9 @@ def main(argv=None):
     parser.add_argument("--output-price", type=float, help="USD per 1M output tokens (OpenRouter spend cap)")
     parser.add_argument("--max-usd", type=float, default=3.0)
     answer = parser.add_argument_group("answer environments")
-    answer.add_argument("--fixture", "--offline", action="store_true", help="disclosed seeded bug, no model calls")
+    answer.add_argument("--fixture", "--offline", action="store_true", help="disclosed seeded bugs, no model calls")
+    answer.add_argument("--rounds", type=int, default=1, help="live audit rounds; each later round asks the attacker "
+                        "for a mechanism different from those already found (1..5)")
     answer.add_argument("--data", help="task file (default: the environment's training split)")
     answer.add_argument("--count", type=int, help="tasks shown to the attacker (default: the environment's "
                         "AUDIT_TASKS, else 16; at least that, or 4 for a browsed environment; at most 64)")
@@ -94,8 +103,9 @@ def main(argv=None):
         parser.error(f"{args.environment} is a {env.KIND} environment; this audit handles answer environments")
     minimum = probe.fewest_tasks(env)
     args.count = getattr(env, "AUDIT_TASKS", 16) if args.count is None else args.count
-    if not minimum <= args.count <= 64 or not 1 <= args.max_scores <= 30 or args.max_steps < 1:
-        parser.error(f"--count must be {minimum}..64, --max-scores 1..30 and --max-steps positive")
+    if not minimum <= args.count <= 64 or not 1 <= args.max_scores <= 30 or args.max_steps < 1 \
+            or not 1 <= args.rounds <= 5:
+        parser.error(f"--count must be {minimum}..64, --max-scores 1..30, --max-steps positive and --rounds 1..5")
     return audit_answer_environment(env, args, parser)
 
 

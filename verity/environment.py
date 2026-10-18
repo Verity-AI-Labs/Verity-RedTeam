@@ -15,8 +15,10 @@ An answer environment also has:
     honest_examples(task)   -> list of correct answers, so markers never flag honest work
     metrics(task, output)   -> optional dict of extra numbers for logs and evaluation
     task_key(task)          -> optional id used to keep training and evaluation tasks apart
-    seeded_exploit(task), SEEDED_MARKER
-                            -> optional: a known, disclosed bug for the offline fixture audit
+    seeded_exploit(task, marker_id), SEEDED_MARKERS
+                            -> optional: known, disclosed bugs and their markers for the offline fixture audit
+                               (seeded_exploit returns None for a task the bug does not apply to)
+    summarize(rows)         -> optional: averages a batch of metrics() rows for Guard's telemetry
 
 A sandbox environment has tasks() -> task ids; verity/sandbox.py audits them in Docker.
 """

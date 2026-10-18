@@ -1,8 +1,8 @@
-# for train.py only; the environments use the Python standard library
+# for train.py and evaluate.py on a CUDA GPU (Python 3.11+); the environments and Verity use only the standard library
 torch==2.13.0
 transformers==5.17.0
 trl==1.16.0
 peft==0.21.1
 datasets==5.0.1
-# vllm==0.31.0   # only for --use-vllm; it needs exactly torch 2.13.0 and transformers <5.18
-bitsandbytes>=0.48.0   # only for --load-in-4bit (QLoRA); needs Linux and CUDA
+vllm==0.31.0   # generation in training and evaluation; it needs exactly torch 2.13.0 and transformers <5.18
+bitsandbytes>=0.48.0   # only for --load-in-4bit --no-vllm (QLoRA)
