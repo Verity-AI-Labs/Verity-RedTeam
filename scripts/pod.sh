@@ -2,7 +2,8 @@
 # Train on a RunPod GPU (see scripts/runpod.py): copy the code, set up, train one arm, and copy results back.
 #   scripts/pod.sh IP PORT sync                 copy the repo (no venvs, artifacts or old runs) to /workspace/verity
 #   scripts/pod.sh IP PORT setup                Python env (TRL 1.16, vLLM 0.31), shop data, model download
-#   scripts/pod.sh IP PORT train ARM [STEPS]    train one arm in the background: /workspace/runs/$ENV_NAME/ARM
+#   scripts/pod.sh IP PORT train ARM [STEPS] [NAME]   train one arm in the background: /workspace/runs/$ENV_NAME/NAME
+#                                               (NAME defaults to ARM; use e.g. smoke-ARM for a timing run)
 #   scripts/pod.sh IP PORT status               last log lines and steps done
 #   scripts/pod.sh IP PORT pull DEST            copy the run (adapter, telemetry, run.json) to DEST/
 #   scripts/pod.sh IP PORT evaluate ARGS...     evaluate.py on the pod (runs must be there)
@@ -33,14 +34,14 @@ case "$COMMAND" in
         'vllm', vllm.__version__, 'trl', trl.__version__, 'transformers', transformers.__version__)\" && \
       python -c \"from huggingface_hub import snapshot_download; snapshot_download('$MODEL')\"" ;;
   train)
-    ARM=$1 STEPS=${2:-80}
+    ARM=$1 STEPS=${2:-80} NAME=${3:-$1}
     "${SSH[@]}" "$ON_POD && mkdir -p $RUNS && nohup python train.py --env $ENV_NAME --arm $ARM --model $MODEL \
-      --signatures ${SIGNATURES:-markers/$ENV_NAME.json} --output $RUNS/$ARM --steps $STEPS --seed ${SEED:-42} \
+      --signatures ${SIGNATURES:-markers/$ENV_NAME.json} --output $RUNS/$NAME --steps $STEPS --seed ${SEED:-42} \
       --learning-rate ${LEARNING_RATE:-5e-5} --lora-r ${LORA_R:-32} --batch-size ${BATCH_SIZE:-4} \
       --gradient-accumulation ${GRADIENT_ACCUMULATION:-16} --generations ${GENERATIONS:-8} \
       --max-completion-length ${MAX_COMPLETION_LENGTH:-3072} --save-steps ${SAVE_STEPS:-10} \
-      --vllm --vllm-memory ${VLLM_MEMORY:-0.35} > $RUNS/$ARM.log 2>&1 &
-      echo started $ARM" ;;
+      --vllm --vllm-memory ${VLLM_MEMORY:-0.45} > $RUNS/$NAME.log 2>&1 &
+      echo started $NAME" ;;
   status)
     "${SSH[@]}" "tail -n 5 $RUNS/*.log; for run in $RUNS/*/run.json; do python3 -c \"import json,sys; r=json.load(open(sys.argv[1])); \
       print(sys.argv[1], r['status'], r['steps_completed'], 'steps', r.get('wall_seconds'), 's', r.get('error', ''))\" \$run; done; \

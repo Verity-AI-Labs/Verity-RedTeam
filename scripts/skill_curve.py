@@ -3,8 +3,8 @@
     python scripts/skill_curve.py --runs runs/chess_game-8b --steps 0 50 100 --tasks 24 --output runs/skill-curve.json
 
 Step 0 is the untrained model. Every checkpoint plays the same held-out positions with only the
-environment's deployment tools (evaluate.play with deploy=True), greedy decoding. Results are appended
-to the output as they finish, so a partial curve is usable.
+environment's deployment tools (evaluate.play_all with deploy=True, all positions in lockstep batches),
+greedy decoding. Results are appended to the output as they finish, so a partial curve is usable.
 """
 import argparse
 import json
@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from evaluate import Policy, evaluate_episodes  # noqa: E402
+from evaluate import Policy, episode_sample, play_all, summary  # noqa: E402
 from train import utc_now  # noqa: E402
 from verity import environment  # noqa: E402
 
@@ -33,6 +33,7 @@ def main(argv=None):
     parser.add_argument("--eval-data")
     parser.add_argument("--output", required=True)
     parser.add_argument("--device", default="auto")
+    parser.add_argument("--batch", type=int, default=16, help="positions per generate call")
     args = parser.parse_args(argv)
     env, runs = environment.load(args.env), Path(args.runs)
     config = json.loads((runs / "baseline" / "run.json").read_text())["config"]
@@ -42,7 +43,9 @@ def main(argv=None):
         adapters = {} if step == 0 else {arm: str(adapter(runs / arm, step)) for arm in ("baseline", "verity")}
         policy = Policy(config["model"], adapters, device=args.device, max_new_tokens=256)
         for arm in (["base"] if step == 0 else ["baseline", "verity"]):
-            result = evaluate_episodes(policy, env, tasks, arm, deploy=True)
+            episodes = play_all(env, tasks, lambda chats, tools, arm=arm: policy.chats(chats, arm, tools, args.batch),
+                                deploy=True)
+            result = summary(env, [episode_sample(env, task, episode) for task, episode in zip(tasks, episodes)])
             row = {"created_at": utc_now(), "step": step, "arm": arm, "tasks": len(tasks),
                    **{k: v for k, v in result.items() if k != "samples"}}
             with output.open("a", encoding="utf-8") as stream:

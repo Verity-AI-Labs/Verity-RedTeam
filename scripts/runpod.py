@@ -53,6 +53,7 @@ def create(name, gpus, disk):
     pod = call("POST", "/pods", {"name": name, "imageName": IMAGE, "gpuTypeIds": gpus, "gpuCount": 1,
                                  "containerDiskInGb": disk, "volumeInGb": 0, "ports": ["22/tcp"],
                                  "env": {"PUBLIC_KEY": public.read_text().strip()}, "cloudType": "SECURE",
+                                 "allowedCudaVersions": ["12.8", "12.9", "13.0"],  # recent drivers for vLLM's torch
                                  "supportPublicIp": True})
     print(f"Created {pod['id']} ({name}); waiting for SSH...", flush=True)
     for _ in range(90):

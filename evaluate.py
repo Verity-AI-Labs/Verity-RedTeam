@@ -89,9 +89,10 @@ class Policy:
                 return self.tokenizer.decode(generated[0, inputs["input_ids"].shape[-1]:], skip_special_tokens=True)
 
     def chats(self, conversations, arm="base", tools=None, batch=8):
-        """One greedy assistant turn for each of several conversations, `batch` at a time (left padding)."""
-        if len(conversations) == 1:
-            return [self.chat(conversations[0], arm, tools)]
+        """One greedy assistant turn for each of several conversations, `batch` at a time (left padding). Only CUDA in
+        bfloat16 batches: in float16, or on Apple's MPS, padded positions turn into NaN and spoil the real tokens."""
+        if len(conversations) == 1 or not (self.device.startswith("cuda") and self.model.dtype == self.torch.bfloat16):
+            return [self.chat(messages, arm, tools) for messages in conversations]
         replies = []
         for start in range(0, len(conversations), batch):
             with self.lock, self.torch.inference_mode():
@@ -235,7 +236,8 @@ def play_all(env, tasks, respond, deploy=False, disabled=(), keep=0):
     names = tool_names(env.Episode)
     if deploy:
         names = [name for name in names if name in env.DEPLOYMENT["tools"]]
-    tools = [getattr(env.Episode, name) for name in names]
+    from transformers.utils import get_json_schema
+    tools = [get_json_schema(getattr(env.Episode(), name)) for name in names]  # each tool's schema, from a bound method
     episodes, chats = [], []
     for index, task in enumerate(tasks):
         episode = env.Episode()

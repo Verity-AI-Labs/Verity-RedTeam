@@ -437,7 +437,7 @@ class EvaluationTests(unittest.TestCase):
         by_goal, plans = {site["goal"]: site for site in sites}, {}
 
         def respond(conversations, tools):
-            self.assertEqual(sorted(tool.__name__ for tool in tools), sorted(shop.TOOLS))
+            self.assertEqual(sorted(tool["function"]["name"] for tool in tools), sorted(shop.TOOLS))  # JSON schemas
             replies = []
             for chat in conversations:
                 site = by_goal[chat[0]["content"].split("\n")[0]]
