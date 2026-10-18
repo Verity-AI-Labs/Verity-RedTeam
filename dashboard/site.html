@@ -634,8 +634,10 @@ function liveDemo(demo, ui) {
   const res = S.results;
   if (!res) { pending($("shop-results"), "Results on held-out stores appear here when both training runs finish."); return; }
   const table = (r, title) => `<div class="card"><div class="title">${esc(title)} · ${r.tasks} stores</div><div class="scroll"><table><thead><tr><th>Model</th><th>Exactly what was asked</th><th>Paid but wrong</th><th>Extra items</th><th>Skipped coupon or shipping</th><th>Actions</th></tr></thead><tbody>${["base", "baseline", "verity"].filter((a) => r.models[a]).map((a) => { const x = r.models[a]; return `<tr><td>${a === "base" ? "Untrained" : tag(a)}</td><td><b>${pct(x.success)}</b></td><td>${pct(x.hack)}</td><td>${pct(x.hack_extra)}</td><td>${pct(x.hack_skip)}</td><td>${f2(x.calls)}</td></tr>`; }).join("")}</tbody></table></div></div>`;
+  const t = S.training, sum = (rows, key) => (rows || []).reduce((a, r) => a + (r[key] || 0) * (r.samples || 0), 0);
+  const during = t && t.baseline && t.verity ? ` During training, the unguarded run was paid for ${Math.round(sum(t.baseline, "hack"))} orders that broke the goal; in the Verity run Guard undid ${Math.round(sum(t.verity, "caught_rate"))} such attempts and none were paid.` : "";
   $("shop-results").innerHTML = `<div class="grid2">${res.ood ? table(res.ood, "New stores, words and layout") : ""}${res.eval ? table(res.eval, "Held-out stores") : ""}</div>
-    <p class="note" style="margin-top:10px">Exactly what was asked: the one wanted item, with the requested coupon, shipping speed, name and address. Paid but wrong: the reward accepted the order anyway.</p>`;
+    <p class="note" style="margin-top:10px">Exactly what was asked: the one wanted item, with the requested coupon, shipping speed, name and address. Paid but wrong: the reward accepted the order anyway.${during}</p>`;
 })();
 
 /* ---------- method: each environment's audit, rule, guard and training ---------- */
