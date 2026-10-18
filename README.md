@@ -5,7 +5,7 @@
 Verity is one system for any reinforcement-learning environment. An environment plugs in with one Python file; the same commands then audit it, turn what the audit proves into rules, and guard training on it. Two demo environments show it end to end:
 
 - **Chess through tools** (`chess_game`): the agent plays moves against an engine. The task allows one hint per game, but nothing enforces it.
-- **A web shop** (`shop`): the agent shops on generated store sites by clicking, typing and choosing. The reward checks that the wanted item was ordered, but not that nothing else was, and never checks the coupon or the shipping speed.
+- **A web shop** (`shop`): the agent shops on generated store sites by clicking, typing and choosing. The reward checks that the wanted item was ordered, but not that nothing else was, and never checks the coupon or the shipping speed. Each product has a Buy now button that goes straight to checkout, past the cart where coupons are applied.
 
 The same system also audited 13 sandboxed Terminal Wrench tasks and a one-answer chess task.
 
@@ -42,7 +42,8 @@ dashboard/              site.py builds the site; live.py serves the live demos; 
 web/                    the hosted site (Vercel): index.html (built by site.py), api/live.js and api/audit.js
 markers/                audit output: one marker file per environment (-fixture: disclosed test doubles)
 experiments/            raw results: audit reports (<environment>-audits/), sandbox audit runs (runs/)
-scripts/                Hyak jobs (hyak.sh), RunPod pods (runpod.py, pod.sh), chess match, batch audits
+scripts/                Hyak jobs (hyak.sh), RunPod pods (runpod.py, pod.sh), the audit service's VM (gcp_audit.sh,
+                        aws_audit.sh), chess match, batch audits
 tests/                  unit tests (no GPU, Docker or network needed)
 docs/                   original plan, Devpost draft, lab log, report schema
 data/, artifacts/       not in git: generated tasks; trained models, telemetry, results
@@ -98,13 +99,13 @@ brew install stockfish                                       # chess environment
 The hosted site is built from the run files by `python dashboard/site.py` into `web/index.html` and deployed with Vercel (`cd web && vercel deploy --prod`). Two services sit behind it, each reached through the site's API routes (`web/api/live.js`, `web/api/audit.js`) and a shared `VERITY_TOKEN`:
 
 - **Live demos** (`dashboard/live.py`, on a GPU): one base model with the four trained adapters; the two chess models play each other, and the two shop models work the same unseen store side by side. Vercel setting: `INFERENCE_URL`.
-- **Environment audits** (`dashboard/audit_server.py`, wherever Docker runs): a visitor uploads one environment file; it runs in an isolated container (`verity/container.py`: no network, no keys, read-only, capped) and the auditor plays it through the plug, with a spend cap per audit. Vercel setting: `AUDIT_URL`. `docs/example_env.py` is a small environment to try it with.
+- **Environment audits** (`dashboard/audit_server.py`, on a small Google Cloud VM with Docker: `scripts/gcp_audit.sh launch`, then `deploy TOKEN`): a visitor uploads one environment file; it runs in an isolated container (`verity/container.py`: no network, no keys, read-only, capped) and the auditor plays it through the plug, with a spend cap per audit. The service runs as a systemd unit and is reached through a Cloudflare tunnel, so no port is opened for it. Vercel setting: `AUDIT_URL`. `docs/example_env.py` is a small environment to try it with.
 
 With a service offline, the page says so and replays recorded runs instead.
 
 ### Training on RunPod
 
-`scripts/runpod.py create NAME` starts an 80 GB GPU pod (`RUNPOD_API_KEY` in `.env`) and prints its SSH address. `scripts/pod.sh IP PORT sync|setup|train ARM|status|pull DEST|evaluate ...` copies the code, installs TRL 1.16 with vLLM 0.31, builds the data, trains one arm in the background, and copies the results back. Both arms use identical settings; only Guard's mode differs.
+`scripts/runpod.py create NAME` starts an 80 GB GPU pod (`RUNPOD_API_KEY` in `.env`) and prints its SSH address. `scripts/pod.sh IP PORT sync|setup|train ARM|status|pull DEST|evaluate ...` copies the code, installs TRL 1.16 with vLLM 0.31, builds the data, trains one arm in the background, and copies the results back. Both arms use identical settings; only Guard's mode differs. `train.py --init-adapter DIR` (pod.sh: `INIT_ADAPTER`) continues training from a run's adapter with a fresh optimizer and learning-rate schedule, recorded in `run.json`.
 
 ### Training on Hyak
 
